@@ -463,7 +463,9 @@ class FGProduction
     function approvedRWM()
     {
         $temp_production_id = getRequest('production_id');
-        if (getFromSession('u_type_id') != 101) {
+        $approved_permission = getFromSession('approved_permission');
+
+        if (getFromSession('u_type_id') != 101 || $approved_permission != 1) {
             $msg = "You are not authorized !!!";
             header("location:index.php?app=fg.production&cmd=unapproved_rwm_list&error_msg=$msg");
             exit;
