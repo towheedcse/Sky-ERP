@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+$purchase_order_no = getRequest("voucher_no");
+$account_head	   = getRequest("party_code");
+dateIFrame(REL_EXT_DIR);
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+if($transaction_type=="Payment"){
+	$creditBlock = "display:block;margin-top:0px;margin-bottom:0px;";
+	$debitBlock = "display:none;margin-top:0px;margin-bottom:0px;";
+}else if($transaction_type=="Received"){
+	$creditBlock = "display:none;margin-top:0px;margin-bottom:0px;";
+	$debitBlock = "display:block;margin-top:0px;margin-bottom:0px;";
+}else{
+	$creditBlock = "display:none;margin-top:0px;margin-bottom:0px;";
+	$debitBlock = "display:block;margin-top:0px;margin-bottom:0px;";
+}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/journal.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Genaral Vouchar</title>
+<style>
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+</style>
+</head>
+<body>
+<form name="frmjournal" id="formID" method="post">
+<table width="72%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="374" align="center" valign="top"><table width="85%"  class="addBorder" cellspacing="0" cellpadding="3">
+      <tr>
+        <td class="topHeader" colspan="4"><div id="tblTitle" align="left"><strong> Payment Vouchar </strong></div></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td style="color:#CC0000 "><div align="left"><?=getRequest('msg')?></div></td>
+        <td>&nbsp;</td>
+        </tr>
+      <tr>
+
+        <td width="4%">&nbsp;</td>
+
+        <td width="19%"><div align="right">Bill No. </div></td>
+
+        <td width="73%"><input type="text" name="custom_voucher_no" id="custom_voucher_no" style="width:170px;" value="<?=$custom_voucher_no?>"></td>
+
+        <td width="4%">&nbsp;</td>
+        </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Date</div></td>
+        <td><input name="created_date" id="created_date" style="width:145px;" value="<?=dateInputFormatDMY($created_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['created_date']);return false;" title="calendar" class="validate[required]" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['created_date']);return false;" title="calendar" width="18" height="18"> </td>
+        <td>&nbsp;</td>
+        </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Transaction Type</div></td>
+        <td>
+		<select name="transaction_type" id="transaction_type" style="width:190px"  class="validate[required]">          
+          <option value="Overhead Cost">Overhead Cost</option>
+          <option value="Administrative Cost">Administrative Cost</option>
+          <option value="Bank Gurantee">Bank Gurantee</option>			
+		  <option value="LC">Margin(LC)</option>
+          <option value="Loan">Loan</option>
+          <option value="Others">Others</option>
+        </select></td>
+        <td>&nbsp;</td>
+        </tr>
+      
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td>
+
+              <div align="right">Dr Account </div>		</td>
+
+        <td>
+
+		<div align="left">
+          <select name="dr_account" id="dr_account" style="width:390px" class="validate[required]">            
+             <optgroup label="Account Head">	
+				<option value="">Select One</option>
+              <?php	  	
+				$project_id = getFromSession('project_id');
+				foreach($head_list as $i=>$v)
+				{
+					$sub_id = $v->sub_id;	
+					$sub_head_name = $v->sub_head_name;
+					$head_type	=	$v->head_type;
+					$head_details	=	$v->head_details;
+				?>
+              <option value="<?=$sub_id?>" <?php if($account_head==$sub_id) echo "selected";?> >
+			  <? if($head_details==""){?>
+              <?=$sub_head_name." - ".$head_type?>
+			  <?}else{?>
+              <?=$sub_head_name.", ".$head_details." - ".$head_type?>
+			  <?}?>
+              </option>
+			
+              <?}?>
+			</optgroup>
+
+			<optgroup label="Bank Account Head">	
+				<?
+				$bsql= "SELECT * FROM ".BANK_TBL." WHERE project_id  = '".$project_id."'";
+				$bres = mysql_query($bsql);
+				while($row=mysql_fetch_object($bres)){
+				$bank_id = $row->bank_id;
+				$asql= "SELECT * FROM ".BANK_ACCOUNT_TBL." WHERE bank_code='".$bank_id."'";
+				$ares = mysql_query($asql);
+				while($arow=mysql_fetch_object($ares)){
+				?>
+				<option value="<?=$arow->bank_account_no?>" <?php if($account_head==$arow->bank_account_no) echo "selected";?>>
+              	<?=$row->bank_name.'->'.$arow->bank_account_no?>
+               </option>
+				<?}}?>
+			</optgroup>
+
+			<optgroup label="Supplier Account Head">	
+				<?
+				$ssql= "SELECT * FROM ".SUPPLIER_TBL." WHERE project_id  = '".$project_id."'";
+				$sres = mysql_query($ssql);
+				while($srow=mysql_fetch_object($sres)){
+				$supplier_code = $srow->supplier_code;
+				?>
+				<option value="<?=$supplier_code?>" <?php if($account_head==$supplier_code) echo "selected";?>>
+              	<?=$srow->name?>
+               </option>
+				<?}?>
+			</optgroup>
+          </select>
+		</div>		</td>
+
+        <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td align="right">Cr Account</td>
+        <td><input name="mode_of_payment" id="radio" type="radio" value="Check" onClick="showhideCashCheck('Check')" <?php if($mode_of_payment=="Check"){echo "checked";}else{echo "checked";}?> >
+          Cheque
+          <input name="mode_of_payment" id="radio" type="radio"  value="Cash" onClick="showhideCashCheck('Cash')" <?php if($mode_of_payment=="Cash") echo "checked";?> >
+				Cash</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="3" align="right">
+		
+				<div align="left" id="Check" style="<?=$checkMode?>">
+                  <table width="100%" border="0">
+				  <tr>
+                      <td width="19%"><div align="right">
+                        <label id="bank_name">Bank Name</label>
+                      </div></td>
+                      <td width="26%"><input type="text" name="bank_name" id="bank_name2" style="width:170px;" value="<?=$bank_name?>"></td>
+                      <td width="18%"><div align="right">Acc No.
+                        </div>
+                        <div align="right">
+                          <label id="bank_name"></label>
+                        </div></td>
+                      <td width="37%">
+                        <div align="left">
+                          <input type="text" name="acc_no" id="acc_no" style="width:160px;" value="<?=$acc_no?>">
+</div></td>
+                    </tr>
+                    <tr>
+                      <td width="19%"><div align="right">Cheque No.</div></td>
+                      <td width="26%"><input type="text" name="check_no" id="check_no" style="width:170px;" value="<?=$check_no?>"></td>
+                      <td width="18%"><div align="right">Cheque Issue Date</div>
+                        <div align="right">
+                          <label id="acc_no"></label>
+                      </div></td>
+                      <td width="37%">
+                        <div align="left">
+                          <input name="check_issue_date" id="check_issue_date" style="width:140px;" value="<?=dateInputFormatDMY($check_issue_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['check_issue_date']);return false;" title="calendar" type="text">
+                          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['check_issue_date']);return false;" title="calendar" width="18" height="18"> </div></td>
+                    </tr>
+                  </table>
+		        </div>		
+				
+				<div align="left" id="Cash" style="<?=$cashMode?>" >			
+					<table width="100%" border="0">			
+					  <tr>			
+						<td width="19%"><div align="right">			
+								<label id="tt_sender">Ref. No.</label>			
+						</div>	</td>			
+						<td width="61%">									
+						<div align="left">			
+							<input type="text" name="ref_no" id="ref_no" style="width:170px;" value="<?=$ref_no?>">			
+						</div>						</td>			
+						<td width="20%">						</td>			
+					  </tr>			
+					</table>			
+				</div>				</td>
+        </tr>
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td><div align="right">Currency </div></td>
+
+        <td><select name="currency" id="currency" style="width:190px" class="validate[required]">
+
+            <option value=''>Select One</option>
+
+            <?php
+
+			$countryid =$currency;
+			if($countryid==""){ $countryid =1;}
+			foreach($currency_list as $i=>$v)
+			{
+
+				$currency_id = $v->currency_id;
+				$currency_des = $v->currency_des;	
+			?>
+
+            <option value="<?=$currency_id?>"<?php if($countryid==$currency_id) echo "selected";?> >
+
+            <?=$currency_des?>
+            </option>
+
+            <?}?>
+
+        </select></td>
+
+        <td>&nbsp;</td>
+        </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Amount</div></td>
+        <td><input type="text" name="amount" id="Payment_f" style="width:170px;" value="<?=getRequest('due')?>"></td>
+        <td>&nbsp;</td>
+        </tr>
+
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td height="74"><div align="right">Notes</div></td>
+
+        <td>
+
+		<div align="left">
+
+            <textarea name="description" id="description" cols="67" rows="3"><?=$details?></textarea>
+        </div>		</td>
+        <td>&nbsp;</td>
+        </tr>
+
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>
+
+			<input type="submit" name="submit" value="Save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+
+            <input name="Reset" type="reset" id="Reset" value="Reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'">
+
+            <input type="button" name="Submit2" value="Cancel" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" onClick="javascript:window.location='index.php?app=advanced_payment'">        </td>
+        <td>&nbsp;</td>
+        </tr>
+
+      <tr>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>
+			<input type="hidden" name="cmd" id="cmd" value="<?=getRequest('cmd')?>"> 
+            <input type="hidden" name="cmd" id="cmd" value="<?=getRequest('cmd')?>">         </td>
+        <td>&nbsp;</td>
+        </tr>
+
+    </table></td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+</table>
+
+</form>
+
+</body>
+
+</html>
+

@@ -1,0 +1,572 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR); 
+$catagory		= getRequest('catagory');  
+$subcatagory 		= getRequest('subcatagory'); 
+$divisionid 		= getRequest('division_id'); 
+$product		= getRequest('product');  
+$district 		= getRequest('district');   
+$area 			= getRequest('area');    
+$by_category 		= getRequest('by_category');  
+$date_from 	  	= formatDate(getRequest('date_from')); $date_to = formatDate(getRequest('date_to')); 
+$fdate 			= dateInputFormatDMY($date_from);  $tdate = dateInputFormatDMY($date_to);
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+dateIFrame(REL_EXT_DIR);
+require_once(CLASS_DIR . '/common.list.class.php');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<title>General ERP</title>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{
+    border-color: #999999;
+    border-style: solid;
+}
+table{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+.active{ color:#FFF !important; background-color:#009 !important}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Sales Target Status</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1119"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="100%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+		  <tr>
+		  <td align="left" class="topbg" height="26" colspan="15"><span><strong>Search Sales Status</strong></span>
+		  <span style="float:right">By Category 
+		  <input name="by_category" type="checkbox" value="1" <? if($by_category){echo "checked";}?>>
+		  </span> 
+		  </td>
+		 </tr>
+		 <tr>
+		   <td width="5%" align="right">From</td>
+		   <td width="10%"><input name="date_from" id="date_from" style="width:85px;" value="<?=dateInputFormatDMY($date_from)?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" class="validate[required]" title="calendar" type="text" tabindex="1">
+             <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Form" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;"></td>
+		   <td width="5%">To</td>
+		   <td width="10%"><input name="date_to" id="date_to" style="width:85px;" value="<?=dateInputFormatDMY($date_to)?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" class="validate[required]" title="calendar" type="text" tabindex="2">
+             <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;"></td>
+		   
+		   <td width="6%">Category </td>
+		   <td width="22%">
+           <select name="catagory" id="catagory" style="width:190px" tabindex="4" onChange="javascript:getSubCatagoryList(this.value)">
+		     <option value=''>Select Category</option>
+		     <?php           
+			foreach($catagory_list as $i=>$v)
+			{
+				$catagory_code = $v->catagory_code;
+				$catagory_name = $v->catagory_name;	
+			?>
+		     <option value="<?=$catagory_code?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+		       <?=$catagory_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+           <td width="10%">Sub Category</td>
+           <td width="22%"><select name="subcatagory" id="subcatagory" style="width:190px" tabindex="5">
+             <option value=''>Sub Category</option>
+             <?php			
+			  $sql="SELECT subcatagory_id, subcatagory_name FROM ".SUB_CATAGORY_TBL." WHERE catagory_id='$catagory'";
+			  $res = mysql_query($sql);			  
+			  if(mysql_num_rows($res)>0){
+			  if($subcatagory !=""){					
+				while($row = mysql_fetch_object($res)){
+				?>
+             <option value="<?=$row->subcatagory_id?>"<?php if($row->subcatagory_id==$subcatagory) echo "selected";?> >
+             <?=$row->subcatagory_name?>
+             </option>
+             <?} }?>
+             <? }?>
+   </select></td>
+   
+	   <td width="5%">&nbsp;</td>
+	 </tr>
+
+	 <tr>
+		   
+           <td width="5%">Division</td>
+		   <td width="10%">
+           <select name="division_id" id="division_id" style="width:105px"  onChange="javascript:getDistrictList(this.value)">
+		     <option value="">Select Division</option>
+     			<?php
+			$sql = "SELECT * FROM ".DIVISION_TBL;
+			$result=mysql_query($sql);
+			while($row=mysql_fetch_array($result)){
+			?>
+		     <option value="<?=$row['division_id']?>" <? if($row['division_id']==$divisionid){ echo 'selected';} ?> >
+		       <?=$row['division_name_eng']?>
+		       </option>
+		     <?php } ?>
+		     </select>
+		   </td>
+		   <td width="5%">Area</td>
+		   <td width="10%">
+           <select name="district" id="district" style="width:120px" tabindex="5" onChange="javascript:getAreaList(this.value)" >
+		     <option value="">Select Area</option>
+		    <?php	
+		    $DISsql = "SELECT * FROM ".DISTRICT_TBL." WHERE division_id >0";            
+		    $DISsql.=" ORDER BY district_name";
+		    $Dresult=mysql_query($DISsql);
+		    while($Drow=mysql_fetch_object($Dresult)){
+                	$district_name = $Drow->district_name;	
+            	    ?>
+		     <option value="<?=$Drow->district_id?>"<?php if($Drow->district_id==$district) echo "selected";?> >
+		       <?=$district_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="6%">TRT</td>
+		   <td width="22%">
+           <select name="area" id="area" style="width:200px" tabindex="6"  >
+		     <option value="">Select TRT</option>
+		     <?php	
+             $Asql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id'";			
+             $Asql.=" ORDER BY area_name";
+             $Aresult=mysql_query($Asql);
+             while($av=mysql_fetch_object($Aresult)){			
+                $area_id = $av->area_id;	
+                $area_name = $av->area_name;	
+              ?>
+		     <option value="<?=$area_id?>"<?php if($area_id==$area) echo "selected";?> >
+		       <?=$area_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   
+		   <td width="10%">Product</td>
+		   <td width="22%">
+			<select name="product" id="product" style="width:190px">
+			    <option value=''>Select One</option>
+			      
+				<?php			
+		                  $sql="SELECT product_id, product_name, product_code FROM ".PRODUCT_TBL." WHERE product_type='Sales Item' ORDER BY product_name ASC";
+				  $res = mysql_query($sql);			  
+				  if(mysql_num_rows($res)>0){				  					
+					while($row = mysql_fetch_object($res)){
+					?>
+		              <option value="<?=$row->product_id?>"<?php if($row->product_id==$product) echo "selected";?> >
+		                <?=(new CommonList())->normalizeProductName($row->product_code,$row->product_name)?>
+		                </option>
+		              <?} }?>
+		              
+			</select>
+		   </td>
+	 	   <td width="5%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		 </tr>
+
+		</table>
+		<? if($fdate!="" || $tdate!=""){ ?>
+		<br>
+		<!--Start Pagination -->	 
+		<div class="pagination">
+		<?	
+		$Limitfrom = getRequest('from');
+		$Limitto = getRequest('to');
+		if($Limitfrom == "" && $Limitto == ""){$Limitto=0; $Limitfrom=12;}
+		$sql2="SELECT * FROM ".DIVISION_TBL." WHERE project_id = '$project_id' ";
+		if($division_id !=""){ $sql2.=" AND division_id='$divisionid' "; }
+		$sql2.="GROUP BY division_id LIMIT $Limitfrom, $Limitto";             
+				
+		$tres 	= mysql_query($sql2);
+		$totalrecord = mysql_num_rows($tres);
+							
+		$from_rs=$_REQUEST['from'];
+		$to_rs=$from_rs+12;
+		if($from_rs>=12){$from_rs =$from_rs+1;}
+		if($from_rs=="" || $from_rs==0){$from_rs =1;}
+		if($to_rs=="" || $totalrecord < 12){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >8){$to_rs=12;}
+		if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+		if($totalrecord==0){ $from_rs=0;}
+		?>
+		<div style="float:left; font-size:13px;">
+			 <span>Results <strong><?=$from_rs?>-<?=$to_rs?></strong> of 
+			 <strong>
+			 <?=$totalrecord;	
+			if($totalrecord>0){?>
+			 </strong>			 </span>			</div>
+			<div style="float:right;font-size:13px;"> &nbsp;&nbsp;
+			 &nbsp;&nbsp;<span style="height:20px">Page:</span>
+			<?php	 						
+			$plink = $_REQUEST['page_no'];
+			if($plink==""){$plink=1;}
+			if($totalrecord > 12)
+			{
+				$res = $totalrecord/12;
+				$res=(int)$res;
+				if(($totalrecord%12)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+		
+			if($totalrecord >12)
+			{
+				$two = $_REQUEST['from'];
+				$pno = $_REQUEST['page_no'];
+				$pno = $pno-1;
+				$frm = $two - 12;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=sales.report&cmd=sales.status_by_trt&date_from=$fdate&date_to=$tdate&division_id=$divisionid&catagory=$catagory&subcatagory=$subcatagory&by_category=$by_category&product=$product&from=$frm&to=8&page_no=$pno'><span>Prev</span></a>&nbsp;";
+				}
+			}	
+		
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=12;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "class='active'";}
+						echo "href='?app=sales.report&cmd=sales.status_by_trt&date_from=$fdate&date_to=$tdate&division_id=$divisionid&catagory=$catagory&subcatagory=$subcatagory&by_category=$by_category&product=$product&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "class='active'";} 
+						echo "href='?app=sales.report&cmd=sales.status_by_trt&date_from=$fdate&date_to=$tdate&division_id=$divisionid&catagory=$catagory&subcatagory=$subcatagory&by_category=$by_category&product=$product&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}			
+		
+					$i++;
+					$from =$from+12;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+			if($totalrecord >12)
+			{
+				$f = $_REQUEST['from'];
+				$page = $_REQUEST['page_no'];
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=12;$page=2;}else{ $f=$f+12;} 
+				$t = 12;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=sales.report&cmd=sales.status_by_trt&date_from=$fdate&date_to=$tdate&division_id=$divisionid&catagory=$catagory&subcatagory=$subcatagory&by_category=$by_category&product=$product&from=$f&to=$t&page_no=$page'><span>Next</span></a>";
+				}
+			}
+		
+		  }?>
+&nbsp;&nbsp;&nbsp;		</div>	
+	</div>
+		<!-- End Pagenation -->	
+		<br style="clear:both">
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp;Sales  Status</strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">
+			  <span style="font-size:20px; font-weight:bold"> <?=$row->project_name?></span><br>
+			  <span style="font-size:14px; font-weight:normal"><?=$row->location?></span><br><br>
+              <?php if($catagory!=""){?>
+              <span style="font-size:14px; font-weight:bold"><?php echo getDeliveryPointName($catagory);?></span><br>
+              <?php }?>             
+              <span style="font-size:13px; font-weight:normal; margin-top:1px; padding:2px">
+              <?php echo formatDate4Display($date_from). " to ".formatDate4Display($date_to); ?><br>
+              </span>
+              
+              </div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+			    <td width="3%" align="left" nowrap>Sl</td>
+			    <td width="64%" align="left" nowrap>Particulars </td>
+			    <td width="15%" align="right" nowrap>Sales Quantity</td>
+			    <td width="18%" align="right" nowrap>Sales Value (Tk)</td>
+			    </tr>
+				<?
+				  $csl=1; $totalGroupBalanceQty = 0; $totalGroupTQStock=0; $totalGroupSalesQty = 0; $totalGroupSalesValue=0;                 
+				  $from = getRequest('from');   $to = getRequest('to');  
+				  if($from == "" && $to== ""){$from=0; $to=12;}				  
+				  $project_id  = getFromSession('project_id');  
+				  $csql="SELECT * FROM ".DIVISION_TBL." WHERE project_id = '$project_id' ";
+				  if($divisionid !=""){ $csql.=" AND division_id='$divisionid' "; }
+				  $csql.="GROUP BY division_id LIMIT $from, $to";
+				  $cres = mysql_query($csql);
+				  while($crow = mysql_fetch_object($cres)){	
+                  		  $GroupBalanceQty=0; $GroupTQStock=0; $GroupSalesQty = 0; $GroupSalesValue=0;
+				  $division_id = $crow->division_id;
+				?>
+			  <tr bgcolor="#99CC99">
+				<td align="left" nowrap><?=$csl?></td>
+				<td align="left" nowrap style="font-style:oblique"><?=$crow->division_name_eng?></td>
+				<td align="right" nowrap>
+				<?php 
+				$GroupSalesQty = getTotalSalesDeliveryQtyByTRT($division_id,$product,$catagory,$subcatagory,$district,$area,1); echo number_format($GroupSalesQty, 2, '.', '')." Pcs";       
+				$totalGroupSalesQty+=$GroupSalesQty;
+				?>
+				</td>				
+				<td align="right">
+				<? 
+				 $GroupSalesValue = getTotalSalesValueByTRT($division_id,$product,$catagory,$subcatagory,$district,$area,1); echo number_format($GroupSalesValue, 2, '.', ''); 
+				 $totalGroupSalesValue+= $GroupSalesValue;
+				?>				
+				</td>
+				</tr>
+                		<!-- Start Area -->
+                		<?
+				  $asl=1; $totalAreaTQStock=0; $totalAreaSalesQty = 0; $totalAreaSalesValue=0; $totalAreaBalanceQty=0;
+				  			  
+				  $project_id  = getFromSession('project_id'); 
+                  $asql="SELECT * FROM ".DISTRICT_TBL." WHERE project_id='$project_id' AND division_id='$division_id' ";
+                  if($district !=""){ $asql.=" AND district_id='$district' "; }
+				  $asql.="GROUP BY `district_id`";
+				  $ares = mysql_query($asql);                  
+				  while($arow = mysql_fetch_object($ares)){	
+                  $AreaTQStock=0; $AreaSalesQty=0; $AreaSalesValue=0; $AreaBalanceQty=0;
+				  $district_id 	= $arow->district_id;
+				?>
+                
+                	    <tr bgcolor="#CFC0FA">
+				<td align="left" nowrap><?=$asl?></td>
+				<td align="left" nowrap style="font-style:oblique">Area-<?=$arow->district_name?></td>
+				<td align="right" nowrap>
+				<?php 
+				$AreaSalesQty = getTotalSalesDeliveryQtyByTRT($division_id,$product,$catagory,$subcatagory,$district_id); echo number_format($AreaSalesQty, 2, '.', '')." Pcs";               
+				$totalAreaSalesQty+=$AreaSalesQty;
+				?>				</td>				
+				<td align="right">
+				  <?php 
+				 $AreaSalesValue = getTotalSalesValueByTRT($division_id,$product,$catagory,$subcatagory,$district_id); echo number_format($AreaSalesValue, 2, '.', ''); 
+				 $totalAreaSalesValue+=$AreaSalesValue;
+				?>				
+				</td>
+				</tr>
+                                
+                
+                		<!-- Start TRT Area -->
+                		<?
+				  $tsl=1; $totalTRTAreaTQStock=0; $totalTRTAreaSalesQty = 0; $totalTRTAreaSalesValue=0; $totalTRTAreaBalanceQty=0;
+				  			  
+				  $project_id  = getFromSession('project_id');  
+                  $tsql= "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id' ";
+                  if($area !=""){ $tsql.=" AND area_id='$area' "; }
+				  $tsql.="GROUP BY `area_id`";
+				  $tres = mysql_query($tsql);
+				  while($trow = mysql_fetch_object($tres)){	
+                  		 $TRTAreaTQStock=0; $TRTAreaSalesQty=0; $TRTAreaSalesValue=0; $TRTAreaBalanceQty=0;
+				  $area_id 		= $trow->area_id;
+				?>
+                
+                	    <tr bgcolor="#F3F3F3">
+				<td align="left" nowrap><?=$tsl?></td>
+				<td align="left" nowrap style="font-style:oblique"><?=$trow->area_name?></td>
+				<td align="right" nowrap>
+				<?php 
+				$TRTAreaSalesQty = getTotalSalesDeliveryQtyByTRT($division_id,$product,$catagory,$subcatagory,$district_id,$area_id); echo number_format($TRTAreaSalesQty, 2, '.', '')." Pcs";               
+				$totalTRTAreaSalesQty+=$TRTAreaSalesQty;
+				?>				  
+				</td>				
+				<td align="right">
+				<?php 
+				 $TRTAreaSalesValue = getTotalSalesValueByTRT($division_id,$product,$catagory,$subcatagory,$district_id,$area_id); echo number_format($TRTAreaSalesValue, 2, '.', ''); 
+				 $totalTRTAreaSalesValue+=$TRTAreaSalesValue;
+				?>				  
+				</td>
+				</tr>                     
+                 
+                <!-- Start Product -->             
+                
+                <?php
+	 	$sl=1; $totalProductTQStock=0; $totalProductSalesQty = 0; $totalProductSalesValue=0;             			             
+	 	$getSql= "SELECT c.catagory_name,p.product_id,p.product_name,p.m_unit,SUM(st.delivery_qty) as delivery_qty,SUM(st.total_amount) as total_amount FROM ".DELIVERY_SALES_STATUS_VIEW." as st,".PRODUCT_TBL." as p,".CATAGORY_TBL." as c WHERE st.product=p.product_id AND p.catagory=c.catagory_code AND st.project_id='".$project_id."'";
+                if($date_from !=""){
+                    $getSql		.=" AND st.delivery_date >= '".$date_from."'";
+                }
+                if($date_to !=""){
+                    $getSql		.=" AND st.delivery_date <= '".$date_to."'";
+                }                                
+                if($division_id !=""){ $getSql.=" AND st.division='$division_id' "; }else{ $getSql.=" AND st.division='$divisionid' ";}
+                if($district !=""){ $getSql.=" AND st.district='$district' "; }else{ $getSql.=" AND st.district='$district_id' ";}
+                if($area !=""){ $getSql.=" AND st.area='$area' "; }else{ $getSql.=" AND st.area='$area_id' ";}
+                if($catagory !=""){ $getSql.=" AND st.catagory='$catagory' "; }
+                if($subcatagory !=""){$getSql.=" AND p.subcatagory='$subcatagory'";} 
+ 		if($product !=""){$getSql.=" AND st.product ='$product'";} 
+                if($by_category==1){
+		$getSql		.=" GROUP BY st.catagory ORDER BY c.`catagory_name` ASC";
+		}else{ 
+                $getSql		.=" GROUP BY st.product ORDER BY p.`product_name` ASC";
+		}
+                $gres 		= mysql_query($getSql); //echo $getSql;
+                while($row = mysql_fetch_object($gres)){
+                $ProductSalesQty=0; $ProductSalesValue=0;
+                $product_id =$row->product;	              	   	
+		$totalProductTQStock+=$row->delivery_qty;				
+		$mUnit = $row->m_unit;	
+	  	?>
+	  	<tr>
+		<td align="left" nowrap><?=$sl?></td>
+		<td align="left" nowrap style="font-size:11px; font-weight:normal">
+		<?php if($by_category==1){echo $row->catagory_name;}else{ echo $row->product_name;}?>
+		</td>
+		<td align="right" style="font-size:11px; font-weight:normal">
+		  <?php $ProductSalesQty = $row->delivery_qty; echo number_format($ProductSalesQty, 2, '.', '')." ".$row->m_unit; $totalProductSalesQty+=$ProductSalesQty;?>				  </td>				
+		<td align="right" style="font-size:11px; font-weight:normal">
+		  <?php $ProductSalesValue = $row->total_amount; echo number_format($ProductSalesValue, 2, '.', ''); $totalProductSalesValue+=$ProductSalesValue;?>				  </td>
+		</tr>			               
+
+		<?php $sl++;} ?>
+		<!-- End Product -->                
+		<tr>
+		<td colspan="2" align="left" nowrap>
+		  <div align="right">Total </div></td>
+		<td align="right" nowrap><?php echo number_format($TRTAreaSalesQty, 2, '.', '').' Pcs';?></td>
+		<td align="right" nowrap><?php echo number_format($TRTAreaSalesValue, 2, '.', '');?></td>
+		</tr>
+               <?php $tsl++; }?>
+               <!-- End TRT Area -->
+               
+               <?php $asl++; }?>
+               <!-- End Area -->
+                
+               <?php $csl++;}?>
+               <!-- End Group -->
+               	<tr>
+				<td colspan="2" align="left" nowrap>
+				  <div align="right">Area Total </div></td>
+				<td align="right" nowrap><?php echo number_format($totalAreaSalesQty, 2, '.', '').' Pcs';?></td>
+				<td align="right" nowrap><?php echo number_format($totalAreaSalesValue, 2, '.', '');?></td>
+				</tr>
+                 
+				<tr>
+				<td colspan="2" align="left" nowrap>
+				  <div align="right">Division Total </div></td>
+				<td align="right" nowrap><?php echo number_format($totalGroupSalesQty, 2, '.', '').' Pcs';?></td>
+				<td align="right" nowrap><?php echo number_format($totalGroupSalesValue, 2, '.', '');?></td>
+				</tr>
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        <p class="pageBreak"></p>
+        <p align="center">
+          <input value="Print" style="" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+        </p>
+        <div style="height:45px; display:block"></div>
+		<? }?>			
+	  </div>
+	  </form>			  </td>
+	</tr>
+  </tbody>
+</table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

@@ -1,0 +1,146 @@
+<div id="Conten_right">
+
+			   <div id="content_right_inner" align="center">
+		
+			   <div class="right_block">
+
+					<h3 onclick="show_hide_menu('home')"><span style=" display:block;padding: 5px;">Home</span>
+
+					<span class="arrow_down" id="arrow_home">&nbsp;&nbsp;</span></h3>
+
+					<div id="home" class="right_block_inner" style="display:none">
+						<ul>
+						 <? if(getFromSession('u_type_id')==101){?>
+							<li><a href="">Approval</a></li>				
+							<li><a href="?app=journal&cmd=add">Account Journal</a></li>
+							<li><a href="?app=journal&cmd=transaction_lst">Transaction List</a></li>
+							<li><a href="?app=sales&cmd=admin_sal_dtl">Sales Details</a></li>
+							<li><a href="?app=journal&cmd=due_payment_list">Payable List</a></li>
+							<li><a href="?app=journal&cmd=due_receive_list">Receivable List</a></li>
+						 <?}?>
+						</ul>
+
+					</div>
+
+				</div>
+			
+				<br />
+			
+			   <div class="right_block">
+
+					<h3 onclick="show_hide_menu('setup')"><span style="display:block;padding: 5px;">Setup</span>
+
+					<span class="arrow_down" id="arrow_setup">&nbsp;&nbsp;</span></h3>
+
+					<div id="setup" class="right_block_inner" <?php if(!empty($active_main) && $active_main=='setup') echo 'style="display:block"'; else echo 'style="display:none"';?>>
+
+						<ul>
+						 <? if(getFromSession('u_type_id')==101 && getFromSession('project')==''){?>
+							<li><a href="?app=project">Project</a></li>
+							<li><a href="?app=employee">Employee</a></li>
+							<li><a href="?app=account_head&cmd=add">Account Head</a></li>
+							<li><a href="?app=user">User</a></li>
+							<li><a href="?app=bank">Bank</a></li>							
+						<?}?>
+						</ul>					
+
+					</div>
+
+				</div>
+				<br />				
+
+				<div class="right_block" >
+
+					<h3 onclick="show_hide_menu('sample')"><span style=" display:block;padding: 5px;">Memo</span>
+
+					<span class="arrow_down" id="arrow_sample">&nbsp;&nbsp;</span></h3>
+
+					<div id="sample" class="right_block_inner" style="display:none">
+
+						<ul>						
+							<li><a href="?app=payment">Payment</a></li>
+							<li><a href="?app=agent&cmd=posting">Recieved</a></li>							
+							<li><a href="?app=recieved">Jurnal</a></li>							
+						</ul>
+
+					</div>
+
+				</div>
+
+				<br />
+
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('order')"><span style="display:block;padding: 5px;">Reports</span>
+
+					<span class="arrow_down" id="arrow_order">&nbsp;&nbsp;</span></h3>
+
+					<div id="order" class="right_block_inner" style="display:none">
+
+						<ul>
+						 <? if(getFromSession('u_type_id')==101 && getFromSession('project')==''){?>		
+							<li><a href="?app=master_order&cmd=add">Daily Transaction</a></li>
+							<li><a href="?app=master_order&cmd=add">Monthly Transaction</a></li>
+						<?}?>
+
+						</ul>
+
+					</div>
+
+				</div>
+
+				<br />
+			   
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('my_account')"><span style=" display:block;padding: 5px;">Bank Status</span>
+
+					<span class="arrow_down" id="arrow_my_account">&nbsp;&nbsp;</span></h3>
+
+					<div id="my_account" class="right_block_inner" <?php if(!empty($active_main) && $active_main=='my_account') echo 'style="display:block"'; else echo 'style="display:none"';?>>
+
+						<ul>
+						 <? if(getFromSession('u_type_id')==101 && getFromSession('project')==''){?>
+							<li <?php if(!empty($submenu_item) AND $submenu_item=='account_basic') echo'id="active"';?>><a href="<?=SERVER.ALIAS?>account/basic">Bank Deposit</a></li>
+							<li <?php if(!empty($submenu_item) AND $submenu_item=='account_basic') echo'id="active"';?>><a href="<?=SERVER.ALIAS?>account/basic">Bank Withdrawal</a></li>
+							<li><a href="?app=agent&cmd=my_account_status">My Account Status</a></li>
+						<?}?>
+						</ul>
+
+					</div>
+
+				</div>
+			
+				<br />
+
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('buddies')"><span style=" display:block;padding: 5px;">Others</span>
+
+					<span class="arrow_down" id="arrow_buddies">&nbsp;&nbsp;</span></h3>
+
+					<div id="buddies" class="right_block_inner" style="display:none">
+
+						<ul>
+						 <? if(getFromSession('u_type_id')==101 && getFromSession('project')==''){?>
+							<li><a href="#">Block User</a></li>
+							<li><a href="#">Unblock User</a></li>						
+						<?}?>
+
+						</ul>
+
+					</div>
+
+				</div>
+
+				</div>
+
+			   <div style="width:100%; height:15px">&nbsp;</div>
+
+			   
+
+			   
+
+				
+
+			   </div>

@@ -1,0 +1,45 @@
+/* CSS Document */
+.addBorder
+{
+border-bottom:1px solid #000033;
+border-top:1px solid #000033;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:12px;
+}
+
+#deftable
+{
+
+background-image:url(/images/Table_bg.png);
+}
+.eftable
+{
+background-color: #FF6666;
+}
+
+a:link{color: #000000;
+text-decoration:none;
+}
+a:hover{
+color: #009900;
+}
+a:visited{color: #990000;
+}
+
+.hilightFont
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:16px;
+font-weight:bold;
+color:#000033;
+}
+#tableTop
+{
+
+background-image: url(/images/Table_Top_bg.png);
+}
+
+.align
+{
+margin-left:30px;
+}

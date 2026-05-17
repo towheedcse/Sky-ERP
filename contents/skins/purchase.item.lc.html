@@ -1,0 +1,529 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data); 
+$mode_of_payment = "Payable"; $discount=0; $service_charge=0;  $store_id="D0001";
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+$purchase_date = date("Y-m-d"); $free_qty=0;
+
+$getSql	= "SELECT supplier,store_id,purchase_date,received_date FROM ".TEMP_PURCHASE_TBL." WHERE created_by = '".getFromSession('userid')."' AND project_id='".getFromSession('project_id')."'";
+$gres 	= mysql_query($getSql);
+if(mysql_num_rows($gres)>0){
+$row = mysql_fetch_array($gres);
+extract($row);
+}  
+     
+if($message==""){ $message = getRequest('msg');} $currency=1; $general_discount_amount=0; $exclusive_discount_amount=0; $additional_discount=0; $discount=0;
+ dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/purchase.item.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+var CANCEL_URL = "index.php?app=purchase&cmd=pur_dtl";
+
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Sales Order</title>
+<style>
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.style2 {color: #666666}
+.bangFont {font: 130% SutonnyMJ;
+}
+</style>
+</head>
+<body>
+
+<form name="frmbuyerorder" method="post">
+
+<table width="100%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="322" align="center" valign="top">
+
+		<table width="95%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+			  <tr>
+
+				<td class="topHeader" colspan="9"><div id="tblTitle" align="left">Purchase<strong></strong></div></td> 
+			  </tr>
+			
+			<tr>
+
+			    <td width="2%">&nbsp;</td>
+
+			    <td width="10%">&nbsp;</td>
+
+			    <td width="22%">&nbsp;</td>
+
+			    <td width="3%">&nbsp;</td>
+
+			    <td width="22%">&nbsp;</td>
+
+			    <td width="7%">&nbsp;</td>
+
+			    <td colspan="2">&nbsp;</td>
+          	</tr>
+			
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="supplier_lbl">Supplier</label></td>
+			    <td>
+                <select name="supplier" id="supplier" style="width:180px" class="validate[required]">
+			      <option value="">Select Supplier</option>
+			      <?php	 
+				  	
+					foreach($supplier_list as $i=>$v)
+					{
+
+						$supplier_code = $v->supplier_code;	
+						$name = $v->name;	
+					?>
+			      <option value="<?=$supplier_code?>"<?php if($supplier_code==$supplier) echo "selected";?> >
+			        <?=$name?>
+		          </option>
+			      <?}?>
+		        </select></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td align="right">Invoice No. </td>
+			    <td colspan="2"><input type="text" name="quotation_no" id="quotation_no" style="width:190px;" value="<?=$quotation_no?>"></td>
+	      	 </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="currency_lbl">Currency</label></td>
+			    <td>
+                <select name="currency" id="currency" style="width:180px" class="validate[required]">
+                  <option value=''>Select One</option>
+                  <?php				  	
+				  foreach($currency_list as $i=>$v)			
+				  {
+					$currency_id = $v->currency_id;			
+					$currency_name = $v->currency_name;				
+					$currency_des = $v->currency_des;	
+				  ?>
+                  <option value="<?=$currency_id.'###'.$currency_name?>"<?php if($currency==$currency_id) echo "selected";?> >
+                  <?=$currency_des?>
+                  </option>
+                  <?}?>
+                </select>
+                </td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td align="right">Track No. </td>
+			    <td colspan="2"><input type="text" name="track_no" id="track_no" style="width:63px;" value="<?=$track_no?>">&nbsp;&nbsp;
+Van No.
+  <input type="text" name="van_no" id="van_no" style="width:65px;" value="<?=$van_no?>"></td>
+	          </tr>
+              <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="purchase_date_lbl">Purchase Date</label></td>
+			    <td><input name="purchase_date" id="purchase_date" style="width:160px;" value="<?=dateInputFormatDMY($purchase_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" type="text">
+                  <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" width="15" height="15"></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td> Store </td>
+			    <td colspan="2">
+				<select name="store_id" id="store_id" style="width:190px" tabindex="1" class="validate[required]">
+                  <option value="">Select Store Name</option>
+                  <?php	 
+				  	
+					foreach($depo_list as $i=>$v)
+					{
+
+						$delivery_pid = $v->delivery_pid;	
+						$delivery_point_name = $v->delivery_point_name;	
+					?>
+                  <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$store_id) echo "selected";?> >
+                  <?=$delivery_point_name?>
+                  </option>
+                  <?}?>
+                </select></td>
+			  </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>Delivery Note </td>
+			    <td colspan="3"><label>
+			      <textarea name="delivery_note" cols="65" rows="1">Directly to our Factory, 41, Shamsuddin Mansion,(6thFloor), Gulshan-2 (North) C/A,
+Dhaka-1212, Bangladesh within .... days </textarea>
+			    </label></td>
+			    <td nowrap>Payment Note </td>
+			    <td colspan="2"><textarea name="payment_note" cols="50" style="padding:0; margin:0" rows="1">Payment will be made by Cash cheque after receiving quality certificate and MRR from the Hospital.</textarea></td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>Warranty Note </td>
+			    <td colspan="6">
+				<textarea name="warranty_note" cols="147" rows="2">In the event of supply of any defective goods or service which do not conform to our requirement specified above have to be replaced by you at your own expenses within 03 (three) days of delivery. Other-wise no payment will be made against the work order.</textarea></td>
+	      </tr>
+		  <tr>
+		      <td colspan="8">
+				  <fieldset>
+				    
+				    <legend>Product Details</legend>
+					  <table width="100%"  cellspacing="0" cellpadding="2">
+                        <tr>
+                          <td width="0%"><div align="left"> </div></td>
+                          <td width="12%"><div align="left"><label id="product_lbl">Product</label></div></td>
+                          <td width="10%"><label id="catagory_lbl">Catagory</label></td>
+                          <td width="10%"><label id="brand_lbl">Brand</label></td>
+                          <td width="16%">Details</td>
+					      <td width="6%">Serial  No.</td>
+					      <td width="5%">Warranty</td>
+                          <td width="6%"><div align="left"><label id="qty_lbl"> Quantity<span id="qty_m"></span></label></div></td>
+                          <td width="5%">Free Qty</td>
+                          <td width="7%"><div align="left"><label id="unit_price_lbl">Rate</label></div></td>
+                          <td width="6%"><div align="left"><label id="unit_discount_lbl">Discount % </label></div></td>
+                          <td width="17%"><div align="left"><label id="amount_lbl">Amount </label></div></td>
+                        </tr>
+                        <tr>
+                          <td><div align="left"> </div></td>
+                          <td><div align="left">
+						  <select name="product" id="product" style="width:150px" tabindex="9" onChange="javascript:getProductDtl(this.value)">
+                            <option value="">Select One</option>
+							<?php												
+							foreach($product_list as $i=>$v)
+							{							
+							$product_id = $v->product_id;
+							$product_name = $v->product_name;	
+							?>
+                            <option value="<?=$product_id.'###'.$product_name?>"<?php if($product==$product_id) echo "selected";?> >
+                            <?=$product_name?>
+                            </option>
+                            <?}?>
+                          </select>
+                          </div></td>
+                          <td>
+						  <select name="catagory" id="catagory" style="width:130px">
+                                <option value=''>Select One</option>
+                                <?php												
+									foreach($cat_list as $i=>$v)
+									{
+										$catagory_code = $v->catagory_code;
+										$catagory_name = $v->catagory_name;	
+									?>
+                                <option value="<?=$catagory_code.'###'.$catagory_name?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+                                <?=$catagory_name?>
+                                </option>
+                                <?}?>
+                            </select>						  </td>
+                          <td>
+						  <select name="brand" id="brand" style="width:130px"> <!-- onChange="getProductList(this.value)" -->
+                              <option value="">Select One</option>
+                              <?php						
+								foreach($brand_list as $i=>$v){
+									$brand_id = $v->brand_id;
+									$brand_name = $v->brand_name;	
+							  ?>
+                              <option value="<?=$brand_id.'###'.$brand_name?>"<?php if($brand==$brand_id) echo "selected";?> >
+                              <?=$brand_name?>
+                              </option>
+                              <?}?>
+                            </select>						  </td>
+                          <td><input type="text" name="details" id="details" style="width:210px"/></td>
+                          <td><input type="text" style="width:70px; " name="serial"  id="serial" value="<?=$serial?>" tabindex="9"/></td>
+                          <td><div align="left">
+					        <input type="text" style="width:60px; " name="warranty" id="warranty" value="<?=$warranty?>" tabindex="10" />
+					        </div></td>
+                         
+                          <td><div align="left">
+                            <input type="text" style="width:70px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="10">
+                          </div></td> 
+                          <td><!--select name="m_unit" id="m_unit" style="width:100px" class="validate[required]" onChange="checkUnit(this.value)">
+							  <option value="" >Select</option>
+							  <option value="pc" <? if($fbdunit=="pc"){ echo "selected";} ?> >pc</option>
+							  <option value="kg" <? if($fbdunit=="kg"){ echo "selected";} ?> >kg</option>
+							  <option value="bag" <? if($fbdunit=="bag"){ echo "selected";} ?> >bag</option>
+							  <option value="carton" <? if($fbdunit=="carton"){ echo "selected";} ?> >carton</option>
+							  <option value="ltr" <? if($fbdunit=="ltr"){ echo "selected";} ?> >ltr</option>
+							  <option value="sty" <? if($fbdunit=="sty"){ echo "selected";} ?> >sty</option>
+							  <option value="thousand" <? if($fbdunit=="thousand"){ echo "selected";} ?> >thousand</option>
+							  <option value="ft" <? if($fbdunit=="ft"){ echo "selected";} ?> >ft</option>
+							  <option value="mtr" <? if($fbdunit=="mtr"){ echo "selected";} ?> >mtr</option>
+							  <option value="sec" <? if($fbdunit=="sec"){ echo "selected";} ?> >sec</option>
+                            </select-->
+                          <input type="text" style="width:60px; " name="free_qty" id="free_qty" value="<?=$free_qty?>" tabindex="11" /></td>
+                          <td><div align="left">
+                              <input type="text" style="width:80px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="12">
+                          </div></td>
+                          <td><div align="left">
+                            <input type="text" style="width:70px; " name="unit_discount" id="unit_discount" value="0"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="13">
+                          </div></td>
+                          <td><div align="left">
+                              <input type="text" style="width:100px;" name="total" id="total" value="<?=$total?>"  class="validate[required]" tabindex="14">
+                          </div></td>
+                        </tr>
+                        <tr>
+                          <td height="28">&nbsp;</td>
+                          <td>&nbsp;</td>
+                          <td><input type="hidden" name="total_unit" id="total_unit" value="pc"/>
+                            <input type="hidden" name="total_bag" id="total_bag" value="0"/></td>
+                          <td>&nbsp;</td>
+                          <td><input type="hidden" name="m_unit" id="m_unit" value="pc"/></td>
+                          <td>&nbsp;</td>
+                          <td>&nbsp;</td>
+                          <td>
+                           <input type="hidden" style="width:60px; " name="warranty" id="warranty" value="<?=$warranty?>" readonly="" />
+                          <input type="hidden" style="width:135px; " name="serial"  id="serial" value="<?=$serial?>" tabindex="9" readonly=""/>
+                          </td>
+                          <td>&nbsp;</td>
+                          <td>&nbsp;</td>
+                          <td><input type="hidden" name="discount_amount" id="discount_amount" value="0"></td>
+                          <td nowrap><input name="button" type="button" class="button"  onClick="salesProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Add" tabindex="15">
+                              <input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=user_home';"></td>
+                        </tr>
+                      </table>
+			    </fieldset>			  </td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td width="12%">&nbsp;</td>
+			    <td width="22%">&nbsp;</td>
+	      	</tr>						
+
+			  <tr align="center">
+
+			    <td colspan="8" align="left">
+                <div id="tbs">
+				<? 
+				$salesArr = explode("####-@@@@",$tmp_sales); echo $salesArr[0]; $total_amount = $salesArr[1]; 
+				$discount=$salesArr[2]; $total_value = ($total_amount+$discount);
+				?>
+				</div>
+                </td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right"> Special Discount  (%)</div></td>
+			    <td align="left">
+				<input type="text" name="general_discount_percent" id="general_discount_percent" style="width:80px;" value="<?=$general_discount_percent?>" class="validate[required]" onKeyUp="calGDiscount()" tabindex="16"/>
+				<input type="text" name="general_discount_amount" id="general_discount_amount" style="width:80px;" value="<?=$general_discount_amount?>" readonly=""/>
+				</td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left"><div align="right">Total Amount </div></td>
+			    <td align="left">
+				<input type="text" name="total_amount" id="total_amount" style="width:130px;" value="<?=$total_amount?>" class="validate[required]" readonly=""></td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right">Exclusive Discount (%)</div></td>
+			    <td align="left">
+				<input type="text" name="exclusive_discount_percent" id="exclusive_discount_percent" style="width:80px;" value="<?=$exclusive_discount_percent?>" class="validate[required]" onKeyUp="calExDiscount()" tabindex="16"/>
+				<input type="text" name="exclusive_discount_amount" id="exclusive_discount_amount" style="width:80px;" value="<?=$exclusive_discount_amount?>" readonly=""/>				</td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left"><div align="right">Additional Discount (Tk)</div></td>
+			    <td align="left">
+				<input type="text" name="additional_discount" id="additional_discount" style="width:130px;" value="<?=$additional_discount?>" onKeyUp="calNetPayble()" tabindex="17"/>		
+				</td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right">Mode of Payment</div></td>
+			    <td align="left">
+                <div align="left">
+				  <input name="mode_of_payment" id="radio" type="radio" value="Check" onClick="showhideCashCheck('Check')" <?php if($mode_of_payment=="Check"){echo "checked";}else{echo "checked";}?> >
+				Cheque
+				<input name="mode_of_payment" id="radio" type="radio"  value="Cash" onClick="showhideCashCheck('Cash')" <?php if($mode_of_payment=="Cash") echo "checked";?> >
+				Cash
+				<input name="mode_of_payment" id="radio" type="radio"  value="Payable" onFocus="creditSale()" onClick="showhideCashCheck('Payable')" <?php if($mode_of_payment=="Payable") echo "checked";?> >
+				Due
+				</div>
+                </td>
+			    <td align="left">
+				<input type="hidden" style="width:130px; " name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="">
+				</td>
+			    <td colspan="3" align="left"><div align="right">Net LC Payable </div></td>
+			    <td><div align="left">
+			      <input type="text" name="net_payble" id="net_payble" style="width:130px;" value="<?=$net_payble?>" class="validate[required]" readonly="">
+			      </div></td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right">Bank Charge (%)</div></td>
+			    <td align="left"><input type="text" name="general_discount_percent2" id="general_discount_percent2" style="width:80px;" value="<?=$general_discount_percent?>" class="validate[required]" onKeyUp="calGDiscount()" tabindex="16"/>
+                <input type="text" name="general_discount_amount2" id="general_discount_amount2" style="width:80px;" value="<?=$general_discount_amount?>" readonly=""/></td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left"><div align="right">VAT &amp; Tex (%)</div></td>
+			    <td align="left"><input type="text" name="general_discount_percent3" id="general_discount_percent3" style="width:48px;" value="<?=$general_discount_percent?>" class="validate[required]" onKeyUp="calGDiscount()" tabindex="16"/>
+                <input type="text" name="general_discount_amount3" id="general_discount_amount3" style="width:75px;" value="<?=$general_discount_amount?>" readonly=""/></td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right">Transport Cost (%)</div></td>
+			    <td align="left"><input type="text" name="general_discount_percent4" id="general_discount_percent4" style="width:80px;" value="<?=$general_discount_percent?>" class="validate[required]" onKeyUp="calGDiscount()" tabindex="16"/>
+                <input type="text" name="general_discount_amount4" id="general_discount_amount4" style="width:80px;" value="<?=$general_discount_amount?>" readonly=""/></td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left"><div align="right">CNF (%)</div></td>
+			    <td align="left"><input type="text" name="general_discount_percent5" id="general_discount_percent5" style="width:48px;" value="<?=$general_discount_percent?>" class="validate[required]" onKeyUp="calGDiscount()" tabindex="16"/>
+                <input type="text" name="general_discount_amount5" id="general_discount_amount5" style="width:75px;" value="<?=$general_discount_amount?>" readonly=""/></td>
+	      </tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left" nowrap><div align="right">Grand Total</div></td>
+			    <td align="left"><input type="text" name="net_payble2" id="net_payble2" style="width:130px;" value="<?=$net_payble?>" class="validate[required]" readonly=""></td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left">&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+	      </tr>
+		 <tr align="center">
+			    <td colspan="8" align="left">
+				<div align="left" id="Check" style="<?=$checkMode?>">
+                  <table width="100%" border="0">
+                    <tr>
+                      <td width="13%"><div align="right">
+                        <label id="bank_name">Bank Name</label>
+                      </div></td>
+                      <td width="35%"><input type="text" name="bank_name" id="bank_name" style="width:170px;" value="<?=$bank_name?>"></td>
+                      <td width="29%"><div align="right">Acc No.
+                        </div>
+                        <div align="right">
+                          <label id="bank_name"></label>
+                      </div></td>
+                      <td width="23%">
+                        <div align="left">
+                          <input type="text" name="acc_no" id="acc_no" style="width:170px;" value="<?=$acc_no?>">
+</div></td>
+                    </tr>
+                    <tr>
+                      <td><div align="right">Cheque No.</div></td>
+                      <td><input type="text" name="check_no" id="check_no" style="width:170px;" value="<?=$check_no?>"></td>
+                      <td><div align="right">Check Issue Date</div>
+                        <div align="right">
+                          <label id="acc_no"></label>
+                      </div></td>
+                      <td>
+                        <div align="left">
+                          <input name="check_issue_date" id="check_issue_date" style="width:140px;" value="<?=dateInputFormatDMY($check_issue_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['check_issue_date']);return false;" title="calendar" type="text">
+                          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['check_issue_date']);return false;" title="calendar" width="18" height="18"> </div></td>
+                    </tr>
+                  </table>
+		        </div>
+
+					<div align="left" id="Cash" style="<?=$cashMode?>" >
+			
+						<table width="100%" border="0">
+			
+						  <tr>
+			
+							<td width="4%">&nbsp;</td>
+			
+							<td width="73%">
+			
+								<div align="right">
+			
+									<label id="tt_sender">Ref. No.</label>
+							</div>							</td>
+			
+							<td width="23%">
+			
+							<div align="left">
+			
+								<input type="text" name="ref_no" id="ref_no" style="width:170px;" value="<?=$ref_no?>">
+							</div>							</td>		
+						  </tr>
+						</table>
+					</div>				</td>
+	      	</tr>
+			  <tr align="center">
+			    <td align="left">&nbsp;</td>
+			    <td align="left"><div align="right">Paid Amount</div></td>
+			    <td align="left">
+                <input type="text" style="width:130px; " name="paid_amount" id="paid_amount" value="<?=$paid_amount?>" class="validate[required]" onKeyUp="calDueAmount()">
+                <input type="hidden" style="width:130px; " name="advanced_paid_amount" id="advanced_paid_amount" value="0" onKeyUp="calDueAmount()"></td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left"><div align="right">Due Amount </div></td>
+			    <td><div align="left">
+			       <input type="text" style="width:130px; " name="due" id="due" value="<?=$due?>" class="validate[required]" readonly="">
+			    </div></td>
+	      </tr>
+			  <tr>
+
+				<td>&nbsp;</td>
+				<td colspan="5">
+
+				<input type="hidden" name="cmd" value="savePurchase">
+				<input name="transaction_type" id="transaction_type" type="hidden" value="Payment">
+				<input type="hidden" name="transaction_name" value="Purchase">				
+                <input type="hidden" name="branch_id" id="branch_id" value="<?=getFromSession('branch_id')?>"> 				
+                <input type="hidden" name="service_charge" readonly="" id="service_charge" style="width:130px;" onKeyUp="calNetPayble()" value="<?=$service_charge?>" class="validate[required]"/>				
+                <input type="hidden" name="discount" id="discount" style="width:130px;" onKeyUp="calNetPayble()" value="<?=$discount?>" readonly="" class="validate[required]">
+                </td>
+
+				<td width="12%">&nbsp;</td>
+
+			    <td>
+
+				<div align="left">
+
+		        <input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave();" onMouseOver="calNetPayble()" tabindex="19">
+				</div>				</td>
+			  </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td colspan="5">&nbsp;				</td>
+
+				<td>&nbsp;</td>
+
+			    <td>&nbsp;</td>
+			  </tr>
+		</table>
+
+      </td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+</body>
+
+</html>
+

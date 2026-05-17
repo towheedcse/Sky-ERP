@@ -1,0 +1,539 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+?>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/account_head.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<script>
+
+   var myTable = new SortTable("myTable");
+   //Add the coloums of the table as name,attribute,alignment,content type
+   myTable.AddColumn("check box",      "", "center", "");
+   myTable.AddColumn("Account Code",      "", "left", "");
+   myTable.AddColumn("Head Name",     "", "left",   "");
+   myTable.AddColumn("Head Type",     "", "left",   "");
+   myTable.AddColumn("Head Deatils",     "", "left",   "");
+   myTable.AddColumn("Action",         "", "center", "");
+   var i = 1;
+
+   //Now populate the coloums with the user data
+
+<?php
+
+foreach($fabrics_list[0] as $v)
+
+{
+
+?> 
+
+  myTable.AddLine("<input type=\"checkbox\" name=\"chkBox\" value=\"<?=$v[0]->sub_id?>\" id=\"chkBox['<?=$v[0]->sub_id?>']\">","<?=$v[0]->sub_id?> <input type=\"hidden\" value=\"<?=$v[0]->sub_id?>\" id=\"sub_id<?=$v[0]->sub_id?>\">", "<?=$v[0]->sub_head_name?> <input type=\"hidden\" value=\"<?=$v[0]->sub_head_name?>\" id=\"sub_head_name<?=$v[0]->sub_id?>\">" , "<?=$v[0]->head_type?> <input type=\"hidden\" value=\"<?=$v[0]->head_type?>\" id=\"head_type<?=$v[0]->sub_id?>\">", "<?=$v[0]->head_details?> <input type=\"hidden\" value=\"<?=$v[0]->head_details?>\" id=\"head_details<?=$v[0]->sub_id?>\">", "<a href=javascript:editSetting('<?=$v[0]->sub_id?>') target='_top'><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;&nbsp;<a onClick='return doConfirm(PROMPT_DELETE_CONFIRM);'href=javascript:deleteRecord('<?=$v[0]->sub_id?>') target='_top'><img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.png'><a/>"); 
+
+	if(i%2==0) 
+
+    	myTable.AddLineProperties("id='<?=$v[0]->sub_id?>' name='<?=$v[0]->sub_id?>' class='reportEvenRow'");
+
+   else
+
+       myTable.AddLineProperties("id='<?=$v[0]->sub_id?>' name='<?=$v[0]->sub_id?>' class='reportOddRow'");
+
+     ++i;
+
+<?php
+
+}
+
+?>
+
+</script>
+
+<title>Account Head</title>
+<style type="text/css">
+<!--
+.style1 {color: #FFFFFF}
+-->
+</style>
+<body bgcolor="#FFFFFF">
+
+<form name="account_head" method="post">
+
+  <table width="100%" id="tblbg" border="0" style="background-color:#FFFFFF " align="center" cellpadding="0" cellspacing="0">
+
+  <tr>
+
+    <td width="4" valign="top">	
+
+	</td>
+
+    <td width="985" valign="top">
+
+	<table width="100%" border="0" cellpadding="1" cellspacing="1" id="tblbg" class="addBorder">
+
+          <tbody>            
+
+            <tr> 
+
+              <td colspan="5" bgcolor="#FFEAEA"><div id="status_msg" class="message"> 
+
+                  <?php if($message) echo $message; ?>
+
+               </div></td>
+
+            </tr>
+
+                      
+
+            <tr> 
+
+              <td colspan="5">
+
+			  <div id="entry" style="display:block">
+
+			    <table width="70%" align="center" cellpadding="4"cellspacing="0" style="border: 1px solid; background-color:#FFFFFF">
+
+                  <tr bgcolor="#CCCCCC">
+
+                    <td class="topbg" height="26" colspan="5"><span><strong>&nbsp;Accounts Head Setup </strong></span></td>
+
+                  </tr>
+
+                  <tr>
+
+                    <td colspan="5">&nbsp;</td>
+
+                  </tr>
+
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="sub_head_name">Head Name </label></td>
+                    <td><input type="text" name="sub_head_name" id="sub_head_name" style="width:270px" class="validate[required]" ></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>Head Type </td>
+                    <td>
+					<select name="head_type" id="head_type" class="validate[required]" >
+					  <optgroup label="Assets">
+                      <option value="Cash">Cash</option>
+                      <option value="Bank">Bank</option>
+                      <option value="Fixed Assets">Fixed Assets</option>
+                      <option value="Current Assets">Current Assets</option>
+                      <option value="Accounts Recievable">Accounts Recievable</option>
+                      <option value="Equipments">Equipments</option>      
+                      <option value="Stocks">Stocks</option>
+                      <option value="Sales">Sales</option>
+                      <option value="Incomes">Incomes</option>
+                      <option value="LC">Margin(LC)</option>
+                      <option value="Bank Guarantee">Bank Guarantee</option>        
+                      <option value="Loan to Others">Loan to Others</option>
+                      <option value="Other">Others</option>
+                      </optgroup>
+                      <optgroup label="Liabilities + Owners Equity">
+                      <option value="Accounts Payable">Accounts Payable</option>
+                      <option value="Short term Loan">Short term Loan</option>
+                      <option value="Loan">Loan</option>
+                      <option value="Capital">Capital</option>
+                      <option value="Others">Others</option>
+                      </optgroup>
+                      <optgroup label="All Expenses">
+                      <option value="Administrative Cost">Expenses</option>                  
+                      <option value="Liabilities for Expenses">Liabilities for Expenses</option> 
+                      <option value="Overhead Cost">Overhead Cost</option>   
+                      </optgroup>
+                      <optgroup label="Othesr Head">
+                      <option value="Customer">Customer</option>
+                      <option value="Supplier">Suppliers</option>	  
+                      <option value="Reference">Sales Reference</option>	  	  
+                      <option value="Employee">Employee</option>
+                      <option value="Closing Balance">Closing Balance</option>
+                      <option value="Opening Balance">Opening Balance</option>
+                      </optgroup>
+                    </select>					
+					</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+
+                    <td width="3%">&nbsp;</td>
+
+                    <td width="19%" valign="top"><label id="head_details">Head Details</label> </td>
+
+                    <td width="67%" valign="top"><textarea name="head_details" id="head_details" cols="45" rows="3"></textarea></td>
+
+                    <td width="6%">&nbsp;</td>
+
+                    <td width="5%">&nbsp;</td>
+
+                  </tr>
+
+                  <tr>
+
+                    <td>&nbsp;</td>
+
+                    <td>&nbsp;</td>
+
+                    <td><input value="Save" name="save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" />
+
+                      <input name="reset" type="reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" value="Reset" />                      </td>
+
+                    <td>&nbsp;</td>
+
+                    <td>&nbsp;</td>
+
+                  </tr>
+
+                  <tr>
+
+                    <td>&nbsp;</td>
+
+                    <td>&nbsp;</td>
+
+                    <td>
+					<input type="hidden" name="id" id="id" value="<?=$sub_id?>">
+                    <input type="hidden" name="project_id" id="project_id" value="<?=$project_id?>">
+					</td>
+
+                    <td>&nbsp;</td>
+
+                    <td>&nbsp;</td>
+
+                  </tr>
+
+                </table>
+
+			  </div>			  
+
+			  </td>
+
+            </tr>
+
+           
+
+            <tr> 
+
+              <td width="63"> <input type="hidden" name="id" id="id"></td>
+
+              <td width="165">&nbsp;</td>
+
+              <td width="613">
+			 <form id="src" method="post" action="">
+			  <table width="98%"  border="0" cellspacing="0" cellpadding="0">
+
+                <tr>
+
+                  <th width="14%" scope="row"><div align="right"><span class="style1">Search</span>&nbsp; </div></th>
+
+                  <td width="44%"><input type="text" name="srckey" id="srckey" style="width:258px; height:23" value="<?=getRequest('srckey')?>">                      </td>
+
+                  <td width="42%"><input type="submit" name="Search" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'"></td>
+                </tr>
+
+              </table>
+		  </form>
+			</td>
+
+              <td width="65">&nbsp;</td>
+
+              <td width="63">&nbsp;</td>
+
+            </tr>
+
+            <tr>
+
+              <td align="center" colspan="5"><div align="center" style="width:300px; background-color:FFEAEA" id="footer_status_msg"></div></td>
+
+            </tr>
+
+            <tr>
+
+			<td>&nbsp;</td>
+
+              <td colspan="3" bgcolor="#00B9B9">
+
+			<div class="page_link">  
+
+			  <?			 			 	
+
+				$from_rs=getRequest('from');
+
+				$to_rs=$from_rs+25;
+
+				if($from_rs>=25){$from_rs =$from_rs+1;}
+
+				if($from_rs=="" || $from_rs==0){$from_rs =1;}
+
+				if($to_rs=="" || $totalrecord<25){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >25){$to_rs=25;}
+
+				if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+
+				?>
+
+				<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+
+				
+
+			  if($totalrecord>0){?>
+
+			 </span>
+
+			 <span style="float:right"> 
+
+			  Page:
+
+	 		<?php	 						
+
+			$plink = getRequest('page_no');
+
+			if($plink==""){$plink=1;}
+
+			if($totalrecord > 25)
+
+			{
+
+				$res = $totalrecord/25;
+
+				$res=(int)$res;
+
+				if(($totalrecord%25)!=0)
+
+				{	
+
+					$totalpage = $res+1;
+
+				}
+
+				else
+
+				{
+
+				$totalpage = $res;
+
+				}
+
+			}
+
+			else
+
+			{
+
+				$totalpage = 1;
+
+			}		
+
+
+
+			if($totalrecord >25)
+
+			{
+
+				$two = getRequest('from');
+
+				$pno = getRequest('page_no');
+
+				$pno = $pno-1;
+
+				$frm = $two - 25;				
+
+				
+
+				if($pno <= $totalpage && $pno >0)
+
+				{
+
+					echo "<a id='$pno' href='?app=account_head&from=$frm&to=25&page_no=$pno'><b>Prev</b></a>&nbsp;";
+
+				}
+
+			}	
+
+
+
+			if($totalpage>=1)
+
+			{	
+
+				$i = 1;
+
+				$from =0; $to=25;
+
+				while($i<=$totalpage)
+
+				{		
+
+					if($from ==0)
+
+					{		
+
+						echo "<a id='$i'";
+
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+
+						echo "href='?app=account_head&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+
+					}
+
+					else
+
+					{
+
+						echo "<a id='$i'"; 
+
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";} 
+
+						echo "href='?app=account_head&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+
+					}			
+
+
+
+					$i++;
+
+					$from =$from+25;
+
+					if($to >$totalrecord){ $to=$totalrecord;} 
+
+				}
+
+			}
+
+		  	if($totalrecord >25)
+
+			{
+
+				$f = getRequest('from');
+
+				$page = getRequest('page_no');
+
+				$page = $page+1;
+
+				if($f ==""||$f ==0){ $f=25;$page=2;}else{ $f=$f+25;} 
+
+				$t = 25;
+
+				if($t >$totalrecord){ $t=$totalrecord;} 
+
+				if($page <= $totalpage)
+
+				{
+
+					echo "&nbsp;<a id='$page' href='?app=account_head&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+
+				}
+
+			}
+
+
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+
+		   </span>
+
+		  </div>
+
+		  <?}?>
+
+									
+
+			</td>
+
+			<td width="63">&nbsp;</td>
+
+            </tr>
+
+            <tr> 
+
+              <td colspan="5">		 
+
+			
+
+			  <table width="87%" style="border:1px solid;" align="center" bgcolor="#FFFFFF">
+
+                  <script>
+
+				 //This variable holds the number of click event that a user
+
+				 //did on the table header, it is require to find the display order
+
+				 var counter = 0;
+
+			  	</script>
+
+                  <tbody id="installed_systems" name="installed_systems">
+
+                    <tr>
+
+                      <td align="left" colspan="3"> </td>
+
+                    </tr>
+
+                    <tr class="tbl_header" align="center"> 
+
+                      <td width="20"> <input type="checkbox" name="select_all" onClick="selectAll(document.farrics.select_all, document.farrics.chkBox)">                      </td>
+
+                      <td width="96"><div align="left"><a href="javascript:SortRows(myTable,1); onclick=toggleSort(0);">Account Code</a> 
+
+                          <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+
+					      <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2">
+
+					    </div></td>
+
+					 <td width="234" align="left"><a href="javascript:SortRows(myTable,1); onclick=toggleSort(2);">Head Name </a> 
+
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4">
+
+					</td>  
+					<td width="129" align="left"><a href="javascript:SortRows(myTable,3); onclick=toggleSort(4);">Head Type </a> 
+
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_5"> 
+
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_6">
+
+					</td>      
+					<td width="281" align="left"><a href="javascript:SortRows(myTable,1); onclick=toggleSort(6);">Head Details </a> 
+
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_5"> 
+
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_6">
+
+					</td>        
+					                 
+
+                    
+
+                     <td width="65">Action</td>
+
+                    </tr>
+
+                    <script>myTable.WriteRows()</script>
+
+                  </tbody>
+                </table></td>
+
+            </tr>
+
+            <tr> 
+
+              <td colspan="5">&nbsp;</td>
+
+            </tr>
+
+          </tbody>
+
+</form>
+
+</body>

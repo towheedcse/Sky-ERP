@@ -1,0 +1,247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Product Convert Challan</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$getSql	= "SELECT * FROM ".DELIVERY_POINT_TBL." WHERE delivery_pid = '".$transfer_from."'";
+$gres = mysql_query($getSql);
+$tfrow = mysql_fetch_object($gres);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+body{ font-size:12px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=15,top=5,width=99%,height=1200px')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Delivery Challan</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{ font-size:12px;}.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmbooking" method="post">
+<div id="printChallan">
+<table width="97%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp; Pending Product Convert Challan </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:normal"> <?=$project_name?></span><br>
+      <span style="font-size:12px; font-weight:normal"><?=$location?></span>
+	</div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset style="width:95%">
+	<legend>Challan Details</legend>	
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="16%" align="left" nowrap>Transfer Challan No.</td>
+        <td width="38%" align="left"><?=$transfer_no?></td>
+        <td width="12%" align="left" nowrap> <div align="right">Transfer Date </div></td>
+        <td width="34%" align="left"><?=$transfer_date?></td>
+      </tr>
+      <tr>
+        <td><div align="left">Transfer From </div></td>
+        <td align="left"><?=$tfrow->delivery_point_name?></td>
+        <td width="12%" align="left" nowrap> <div align="right"> Transfer To </div></td>
+        <td width="34%" align="left"><?=$delivery_point_name?></td>
+        </tr>
+      <tr>
+		<td align="left">Details</td>
+        <td><div align="left"><? if($tfrow->details!=""){ echo $tfrow->details;}?></div></td>
+		<td><div align="right">Details</div></td>
+		<td><? if($details!=""){ echo $details;}?></td>
+        </tr>
+     <tr>
+		<td align="left">Narration</td>
+        <td><div align="left"><? if($narration!=""){ echo $narration;}?></div></td>
+		<td><div align="right">&nbsp;</div></td>
+		<td>&nbsp;</td>
+        </tr>
+    </table>
+    <br><br>
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="4%" align="left">SL.</td>
+        <td width="32%">Product </td>
+        <td width="17%">Convert Product</td>
+        <td width="13%"><div align="center">Transfer Quantity</div></td>
+        <td width="13%"><div align="center">Rate</div></td>
+        <td width="12%" align="left"><div align="center">Amount </div></td>
+      </tr>
+		<?
+		$i=1; $total_order_qty =0; $total_qty=0; $total_pending_qty=0; $total_free_qty=0;
+	  	foreach($item_list as $val){
+		if($val->qty>0){
+		$total_qty+=$val->qty;
+		?>
+      <tr>
+        <td align="left"><?=$i?></td>
+        <td>
+            <?=$val->product_name?>
+          <? echo $val->product_desc;?>
+        </td>
+        <td>
+            <?=$val->new_product_name?>
+          <? echo $val->new_product_desc;?>
+        </td>
+        <td align="left"><div align="center">
+            <?=number_format($val->qty,0).' '.$val->m_unit?>
+        </div></td>
+        <td align="left"><div align="center"> <?=number_format($val->unit_price,2).' '.$val->curr_symble?> </div></td>
+        <td align="left"><div align="center"><?=number_format($val->total,2).' '.$val->curr_symble?></div></td>
+        
+      </tr> 
+		<? }?>
+		<?$i++;}?>
+        <tr>
+        <td colspan="3" align="left"><div align="right"> Total</div></td>
+		<td align="center"><? echo number_format($total_qty,0).' '.$val->m_unit;?></td>
+		<td align="center">&nbsp;</td>
+		<td align="center"><? echo number_format($total_amount,0).' '.$val->curr_symble;?></td>
+        </tr>
+    </table>
+	<br><br>
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">     
+      <tr>
+        <td width="35%" height="84" align="center">
+		<div style="width:268px; border-top:1px dashed #000; margin-top:25px">Signature of Customer<br/><span style="font-weight:normal">(Received the above Goods in good condition)</span></div>
+		</td>
+        <td width="32%" align="center"><div style="width:268px; border-top:1px dashed #000; margin-top:25px">Signature of Verified by <br/>
+              <span style="font-weight:normal">(On behalf of <?=$project_name?>)</span></div></td>
+		<td width="33%" align="center"><div style="width:268px; border-top:1px dashed #000; margin-top:25px">Signature of Sales Person <br/>
+		      <span style="font-weight:normal">(On behalf of <?=$project_name?>)</span></div></td>
+      </tr>
+    </table><br>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+<br/><br/>
+</div>	
+<p align="center" id="btnPrint">
+  <input value="Print" onClick="printContent('printChallan')" name="save" class="button" type="submit" />
+</p>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+</script>
+</form>
+</body>
+</html>
+

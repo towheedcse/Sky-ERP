@@ -1,0 +1,997 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<?php
+extract($data);
+//dumpVar($data);
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+ if($message==""){ $message = getRequest('msg');}
+
+$msg = getRequest('msg');
+$error_msg = getRequest('error_msg');
+
+ $currency=1;
+ dateIFrame(REL_EXT_DIR);
+
+require_once(CLASS_DIR.'/common.list.class.php');
+
+?>
+
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/purchase_order.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+	<!-- Select2 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var J = jQuery.noConflict();
+	</script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+	<script language="javascript1.3">
+		J("[class^=validate]").validationEngine({
+        inlineValidation: false,
+        success :  false,
+        failure : function() { callFailFunction()  }
+        })
+  var CANCEL_URL = "index.php?app=purchase_order&cmd=list";
+
+	function showConfirmDelete(e, count) {
+		e.preventDefault(); // stop the link from navigating
+
+		// Get the <a> element that was clicked
+		var url = e.currentTarget.href;
+
+		if (count == 1) {
+			var r = confirm("If you delete the last record then delete the PO also?");
+			if (!r) {
+				return false; // user cancelled
+			}
+		}
+
+		// Now redirect to the link’s URL
+		window.location.href = url;
+	}
+	</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Purchase Order Edit</title>
+	<style>
+		input{
+			background-color:#ffffff;
+			border: 1px solid #006699;
+		}
+		.style2 {color: #666666}
+		.bangFont {font: 130% SutonnyMJ;
+		}
+		p#head_code_error {
+			color: red;
+			margin-top: 3px;
+			display: none;
+		}
+	</style>
+	<style>
+		/* Select2 Styling & Fixes */
+		.select2-container .select2-selection--single {
+			height: 38px;
+			border: 1px solid #ccc;
+			display: flex;
+			align-items: center;
+		}
+		.select2-container--default .select2-selection--single .select2-selection__rendered {
+			padding-left: 12px;
+		}
+		/* Ensure Select2 doesn't jump outside the flex container */
+		.select2-container { width: 100% !important; }
+
+		.containerDiv {
+			padding: 20px;
+		}
+
+
+		div#lc_container {
+			position: relative;
+		}
+		div#payable_container {
+			position: relative;
+		}
+		span.select2-dropdown.select2-dropdown--below {
+			top: 32px;
+		}
+
+		span.select2-selection.select2-selection--single {
+			height: 30px;
+			width: 100%;
+		}
+		.text-center {
+			text-align: center !important;
+		}
+		.text-right {
+			text-align: right !important;
+		}
+
+
+		.swal2-popup.swal2-modal.swal2-icon-warning.swal2-show {
+			flex-direction: column;
+		}
+		div#tbs td {
+			padding: 6px 8px;
+			border: 1px solid #95949463;
+		}
+
+		input{
+			background-color:#ffffff;
+			border: 1px solid #006699;
+		}
+		.chosen-container-single .chosen-search input[type="text"] {
+			width: 89%;
+		}
+		#product_chosen > .chosen-drop > .chosen-search input[type="text"] {
+			width: 80% !important;
+		}
+
+		/* Import LC row: completely hidden (no space) until Import selected */
+		#import_row {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+
+<?php if(isset($msg) && !empty($msg)){?>
+<p style="color: green; margin-top: 10px; padding: 5px 0; background: #f6fff5; border-radius: 5px; width: 98%;"><?=$msg?></p>
+<?php }?>
+
+
+<?php if(isset($error_msg) && !empty($error_msg)){?>
+<p style="color: red; margin-top: 10px; padding: 5px 0; background: #ffe5ef; border-radius: 5px; width: 98%;"><?=$error_msg?></p>
+<?php }?>
+
+<form name="frmbuyerorder" id="frmbuyerorder" method="post">
+	<table width="100%" align="center" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td height="322" align="center" valign="top">
+				<table width="97%"  class="addBorder" cellspacing="0" cellpadding="2">
+					<tr>
+						<td class="topHeader" colspan="9"><div id="tblTitle" align="left">&nbsp;<strong>Purchase Order Edit </strong></div></td>
+					</tr>
+					<!--tr>
+                      <td width="3%">&nbsp;</td>
+                      <td width="13%">PO No. </td>
+                      <td width="21%"><input type="text" name="po_no" id="po_no" style="width:160px;" value="<?=$po_no?>"></td>
+                      <td width="11%">&nbsp;</td>
+                      <td width="12%">&nbsp;</td>
+                      <td width="8%">LC No. </td>
+                      <td colspan="2"><div align="left"><input type="text" name="lc_no" id="lc_no" style="width:160px;" value="<?=$lc_no?>"></div></td>
+                   </tr-->
+
+					<tr>
+						<td width="1%">&nbsp;</td>
+						<td width="18%"><label id="supplier_lbl">Supplier</label></td>
+						<td width="33%"><select name="supplier" id="supplier" style="width:180px" class="validate[required]">
+							<option value="">Select Supplier</option>
+							<?php
+				  	require_once(CLASS_DIR . '/common.list.class.php');
+					foreach($supplier_list as $i=>$v)
+							{
+
+							$sub_id = $v->sub_id;
+							$sub_head_name = $v->sub_head_name;
+							$code = $v->code;
+							?>
+							<option value="<?=$sub_id?>"<?php if($sub_id==$supplier_id) echo "selected";?> >
+							<?=(new CommonList())->normalizeUserName($code,$sub_head_name)?>
+							</option>
+							<?}?>
+						</select></td>
+						<td width="1%">&nbsp;</td>
+						<td width="1%">&nbsp;</td>
+						<td width="15%">SPR No. </td>
+						<td colspan="2">
+							<input type="hidden" name="spr_no_value" id="spr_no_value" value="<?=$spr_no?>" />
+							<div align="left" style="width:230px"><select name="spr_no" id="spr_no" style="width:180px" class="chosen-select-deselect" onchange="getSPRDetails()">
+								<option value="">Select SPR</option>
+								<?php
+
+					foreach($spr_list as $i=>$v)
+								{
+								?>
+								<option value="<?=$v->voucher_no?>" >
+									<?=$v->voucher_no?>
+								</option>
+								<?}?>
+							</select>
+								<p id="showSprNo" style="margin-top: 2px; margin-bottom: 5px;"><?=$spr_no?></p>
+							</div>
+						</td>
+					</tr>
+					<!-- Import LC Row: shown only when Purchase Type = Import -->
+					<tr id="import_row">
+						<td>&nbsp;</td>
+						<td>LC No.</td>
+						<td>
+							<div id="lc_container" style="width:280px">
+								<select name="lc_no" id="lc_no" style="width:180px">
+									<option value="">Select LC No</option>
+									<?php
+									foreach($lc_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+
+									$headName = "";
+									if($v->code!=""){
+									$headName .= $v->code."::";
+									}
+									$headName .= $v->sub_head_name;
+									if($v->head_details!=""){
+									$headName .= ", ".$v->head_details;
+									}
+									?>
+									<option value="<?=$sub_id?>" <?php if($lc_no==$sub_id) echo "selected";?> ><?=$headName?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Payable</td>
+						<td colspan="2">
+							<div id="payable_container" style="width:280px">
+								<select name="payable_id" id="payable_id" style="width:180px">
+									<option value="">Select Payable</option>
+									<?php
+									foreach($payable_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+
+									$headName = "";
+									if($v->code!=""){
+									$headName .= $v->code."::";
+									}
+									$headName .= $v->sub_head_name;
+									if($v->head_details!=""){
+									$headName .= ", ".$v->head_details;
+									}
+									?>
+									<option value="<?=$sub_id?>" <?php if($payable_id==$sub_id) echo "selected";?> ><?=$headName?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><label for="purchase_type">Purchase Type</label></td>
+						<td>
+							<select name="purchase_type" id="purchase_type" style="width:180px" class="validate[required]">
+								<option value=''>Select One</option>
+								<option value='import' <?php if($purchase_type=="import") echo "selected";?> >Import Purchase</option>
+								<option value='local' <?php if($purchase_type=="local") echo "selected";?> >Local Purchase</option>
+								<option value='other' <?php if($purchase_type=="other") echo "selected";?> >Other Service</option>
+							</select>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Manual SPR No. </td>
+						<td colspan="2">
+							<input type="hidden" id="prev_m_spr" value="<?=$manual_spr_no?>"/>
+							<input type="text" name="manual_spr_no" id="manual_spr_no" style="width:160px;" value="<?=$manual_spr_no?>"  oninput="checkSRNo(this.value)"/>
+							<p id="head_code_error" class="textDanger">SPR No Already Exists</p>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><div align="left">
+							<label id="cost_center_lbl">Cost Center</label>
+						</div></td>
+						<td><div align="left" style="width:230px">
+							<select name="cost_center" id="cost_center" style="width:230px" class="chosen-select-deselect" tabindex="6">
+								<option value="">Select Account Head</option>
+								<?php foreach($cost_center_list as $i=>$v){?>
+								<option value="<?=$v->sub_id?>"<?php if($cost_center==$v->sub_id) echo "selected";?> ><?php if($v->code!=""){ echo $v->code."::";}echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+								<?}?>
+							</select>
+						</div></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Quotation No. </td>
+						<td colspan="2"><input type="text" name="quotation_no" id="quotation_no" style="width:160px;" value="<?=$quotation_no?>"/></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><label id="currency_lbl">Currency</label></td>
+						<td><select name="currency" id="currency" style="width:180px" class="validate[required]">
+							<option value=''>Select One</option>
+							<?php
+
+									$countryid =$country;
+									foreach($currency_list as $i=>$v)
+							{
+							$currency_id = $v->currency_id;
+							$currency_name = $v->currency_name;
+							$currency_des = $v->currency_des;
+
+							?>
+							<option value="<?=$currency_id.'###'.$currency_name?>"<?php if($currency==$currency_id) echo "selected";?> >
+							<?=$currency_des?>
+							</option>
+							<?}?>
+						</select></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Truck No. </td>
+						<td colspan="2"><input type="text" name="track_no" id="track_no" style="width:160px;" value="<?=$track_no?>"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Order Date</td>
+						<td><input name="order_date" id="order_date" style="width:160px;" value="<?=date('d-m-Y',strtotime($order_date))?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['order_date']);return false;" title="calendar" type="text">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['order_date']);return false;" title="calendar" width="15" height="15"></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Van No.</td>
+						<td colspan="2"><input type="text" name="van_no" id="van_no" style="width:160px;" value="<?=$van_no?>"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Delivery Date</td>
+						<td><input name="delivery_date" id="delivery_date" style="width:160px;" value="<?=date('d-m-Y',strtotime($delivery_date))?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" type="text">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" width="15" height="15"></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Delivery Address</td>
+						<td colspan="2"><textarea name="delivery_note" id="delivery_note" cols="50" rows="2"><?=$delivery_note?></textarea></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Payment Note</td>
+						<td>
+							<textarea name="payment_note" id="payment_note" cols="50" rows="2"><?=$payment_note?></textarea>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+
+
+<?php
+
+$total = "";
+$po_details_id ="";
+$podDetails = "";
+$product_id_Name = "";
+$edit_max_qty = "";
+$edit_min_qty = 0;
+$edit_spr_no = "";
+$edit_spd_id = "";
+$vat_percent = "";
+$vat_amount = "";
+
+$editLock = false;
+
+if(isset($pod_details->id)){
+		$po_details_id = $pod_details->id;
+		$product_id = $pod_details->product_id;
+		$product_name = $pod_details->product_name;
+		$product_id_Name = $product_id."###".$product_name;
+		$edit_spr_no = $pod_details->spr_no;
+		$edit_spd_id = $pod_details->spd_id;
+		$podDetails = $pod_details->details;
+		$custom_brand = $pod_details->custom_brand;
+		$qty = $pod_details->qty;
+		$edit_max_qty = $pod_details->qty;
+		$unit_price = $pod_details->unit_price;
+		$total = bcmul($qty, $pod_details->unit_price, 11);
+		$vat_percent = $pod_details->vat_percent;
+		$vat_amount = $pod_details->vat_amount;
+
+		if(isset($pod_details->pd_pod_id) && !empty($pod_details->pd_pod_id)){
+			$editLock = true;
+			$edit_min_qty = $pod_details->total_pd_qty;
+		}
+
+}
+
+?>
+
+					<td colspan="8">
+						<fieldset><legend>Item Details</legend>
+							<table width="100%"  cellspacing="0" cellpadding="2">
+								<tr>
+									<td width="1%"><div align="left">
+
+									</div>
+									</td>
+									<td width="13%"><label id="product_lbl">Product</label></td>
+									<td width="10%">Brand</td>
+									<td width="21%">Details</td>
+									<td width="10%"><div align="left"><label id="qty_lbl">Quantity<span id="qty_m">(Pc)</span></label></div></td>
+									<td width="10%"><div align="left"><label id="unit_price_lbl">Unit Price<span id="uprice_m">(per Pc)</span></label>
+
+									</div></td>
+									<td width="10%" style="display:none"><div align="left"><label id="unit_price_lbl">Vat (%)</label>
+									</div></td>
+									<td width="10%">
+										<div align="left">
+											<label id="totalvalue_lbl">Total Value</label>
+										</div>
+									</td>
+									<td width="21%">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div align="left">
+											<input type="hidden" name="catagory" id="catagory" value="<?=$catagory?>">
+											<input type="hidden" name="brand" id="brand" value="<?=$brand?>">
+											<input type="hidden" name="po_details_id" id="po_details_id" value="<?=$po_details_id?>">
+											<input type="hidden" name="edit_product_id" id="edit_product_id" value="<?=$product_id?>">
+											<input type="hidden" name="edit_max_qty" id="edit_max_qty" value="<?=$edit_max_qty?>">
+											<input type="hidden" name="edit_min_qty" id="edit_min_qty" value="<?=$edit_min_qty?>">
+											<input type="hidden" name="edit_spr_no" id="edit_spr_no" value="<?=$edit_spr_no?>">
+											<input type="hidden" name="edit_spd_id" id="edit_spd_id" value="<?=$edit_spd_id?>">
+										</div></td>
+									<td>
+										<select name="product" id="product" style="width:165px" onChange="javascript:getProductDtl(this.value)" class="chosen-select-deselect" <?php if(!empty($edit_spr_no)){echo "disabled";} ?>>
+											<option value="">Select One</option>
+											<?php
+		foreach($product_list as $i=>$v){
+											$product_id = $v->product_id;
+											$productIdANDName = $product_id."###".$v->product_name;
+											?>
+											<option value='<?=$productIdANDName?>' <?php if($product==$product_id) echo "selected";?> >
+											<?=(new CommonList())->normalizeProductName($v->product_code, $v->product_name)?>
+											</option>
+											<?}?>
+										</select>
+									</td>
+									<td><div align="left">
+										<input type="text" style="width:180px; " name="custom_brand" id="custom_brand" value="<?=$custom_brand?>">
+									</div></td>
+									<td><input type="text" name="details" value="<?=$podDetails?>" id="details" style="width:260px"/></td>
+									<td><div align="left">
+										<input type="text" style="width:110px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()">
+									</div></td>
+									<td><div align="left">
+										<input type="text" style="width:110px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()" <?php if($editLock){echo "disabled";} ?>>
+									</div></td>
+									<td style="display:none"><div align="left">
+										<input type="hidden" style="width:110px; " name="vat_percent" id="vat_percent" value="<?=$vat_percent?>"  class="validate[required]" onKeyUp="calVatAmount()">
+										<input type="hidden" name="vat_amount" id="vat_amount" value="<?=$vat_amount?>">
+									</div></td>
+									<td><div align="left">
+										<input type="text" style="width:120px; " name="total" id="total" value="<?=$total?>"  class="validate[required]" <?php if($editLock){echo "disabled";} ?>>
+									</div></td>
+									<td>
+										<input type="hidden" name="m_unit" id="m_unit" value="pc"/>
+										<input type="hidden" name="total_unit" id="total_unit" value="pc"/>
+										<input type="hidden" name="total_bag" id="total_bag" value="0"/>
+										<input name="button" type="button" class="button"  onClick="addProductItem();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Next">
+										<input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=purchase_order&cmd=po_edit&voucher_no=<?=$voucher_no?>';"></td>
+								</tr>
+							</table>
+						</fieldset>
+					</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td width="10%">&nbsp;</td>
+			<td width="21%">&nbsp;</td>
+		</tr>
+
+		<tr align="center">
+
+			<td colspan="8" align="left">
+
+				<table width="100%" align="center" bgcolor="#3399CC">
+
+					<tr>
+						<td width="8%" nowrap>Catagory</td>
+
+						<td width="8%" nowrap>Brand</td>
+
+						<td width="26%" nowrap>Product</td>
+
+						<td width="5%" nowrap>Unit</td>
+
+						<td width="8%" nowrap><div align="left">Quantity</div></td>
+
+						<td width="7%" nowrap><div align="left">Unit Price</div></td>
+						<!-- <td width="5%" nowrap><div align="left">Vat (%)</div></td>
+                        <td width="7%" nowrap><div align="left">Vat Amount</div></td> -->
+
+						<td width="10%" nowrap>Total Value</td>
+						<td width="15%" nowrap>Option</td>
+					</tr>
+
+					<tbody id="tbs" bgcolor="#CCCC99">
+					<?php
+					if(isset($itemList)){
+						$total_value = $itemList['total_value'];
+						echo $itemList['row'];
+					}
+
+					?>
+					</tbody>
+				</table>				</td>
+		</tr>
+		<tr>
+			<td align="left"><div align="right">  </div></td>
+
+			<td align="left">
+				<div align="right">Discount</div>
+				<div align="right" style="display:none">Mode of Payment</div></td>
+
+			<td align="left"><div align="left" style="display:none">
+				<input name="mode_of_payment" id="radio" type="radio"  value="Payable" onClick="showhideCashCheck('Recievable')" <?php if($mode_of_payment=="Payable"){ echo "checked";}else{echo "checked";}?> >
+				Due
+			</div>
+				<input type="text" name="discount" id="discount" style="width:130px;" onKeyUp="calNetPayable()" value="<?=$discount_amount?>" class="validate[required]">
+			</td>
+
+			<td align="left"><div align="right"></div></td>
+
+			<td colspan="3" align="left"><div align="right">Grand Total</div></td>
+
+			<td>
+
+				<div align="left">
+
+					<input type="text" style="width:130px; " name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="">
+				</div>				</td>
+		</tr>
+		<tr align="center">
+			<td align="left">&nbsp;</td>
+			<td align="left"><div align="right">Remark</div></td>
+			<td align="left"><input type="text" name="remark" id="remark" style="width:130px;" value="<?=$remark?>"></td>
+			<td align="left">&nbsp;</td>
+			<!-- <td colspan="3" align="left"><div align="right">Vat (%) <input type="text" name="total_vat_percent" id="total_vat_percent" style="width:50px;" value="<?=$total_vat_percent?>" oninput="calTotalVat()"></div></td> -->
+			<td colspan="3" align="left"><div align="right">Additional Cost </div></td>
+			<td><div align="left">
+				<input type="text" name="additional_cost" id="additional_cost" style="width:130px;" value="<?=$additional_cost?>" oninput="calNetPayable()">
+			</div></td>
+		</tr>
+		<tr align="center">
+			<td align="left">&nbsp;</td>
+			<td align="left"></td>
+			<td align="left"></td>
+			<td align="left">&nbsp;</td>
+			<td colspan="3" align="left">
+				<div align="right">
+					VAT Type
+					<select name="vat_type" id="vat_type" onchange="calTotalVat()" style="width:90px;">
+						<option value="percent" <? if($vat_type=="percent"){ echo "selected";}?> >Percentage (%)</option>
+						<option value="fixed" <? if($vat_type=="fixed"){ echo "selected";}?>>Fixed</option>
+					</select>
+
+					VAT
+					<input type="text" name="total_vat_percent" id="total_vat_percent" style="width:50px;" value="<?=$total_vat_percent?>" oninput="calTotalVat()">
+				</div>
+			</td>
+			<td><div align="left">
+				<input type="text" name="total_vat_amount" id="total_vat_amount" style="width:130px;" value="<?=$total_vat_amount?>" readonly>
+			</div></td>
+		</tr>
+
+		<tr align="center">
+			<td align="left">&nbsp;</td>
+			<td align="left"></td>
+			<td align="left"></td>
+			<td align="left">&nbsp;</td>
+			<td colspan="3" align="left">
+				<div align="right">
+					TDS Type
+					<select name="tds_type" id="tds_type" onchange="calTotalTDS()" style="width:90px;">
+						<option value="percent" <? if($tds_type=="percent"){ echo "selected";}?> >Percentage (%)</option>
+						<option value="fixed" <? if($tds_type=="fixed"){ echo "selected";}?>>Fixed</option>
+					</select>
+
+					TDS
+					<input type="text" name="total_tds_percent" id="total_tds_percent" style="width:50px;" value="<?=$total_tds_percent?>" oninput="calTotalTDS()">
+				</div>
+			</td>
+			<td><div align="left">
+				<input type="text" name="total_tds_amount" id="total_tds_amount" style="width:130px;" value="<?=$total_tds_amount?>" readonly>
+			</div></td>
+		</tr>
+
+		<tr align="center">
+			<td align="left">&nbsp;</td>
+			<td align="left">&nbsp;</td>
+			<td align="left">&nbsp;</td>
+			<td align="left">&nbsp;</td>
+			<td colspan="3" align="left"><div align="right">Total Amount </div></td>
+			<td><div align="left">
+				<?php
+$net_payble = ($total_value + $additional_cost) - ($total_tds_amount + $discount_amount);
+$grand_total = $net_payble + $total_vat_amount;
+?>
+				<input type="hidden" name="net_payble" id="net_payble" style="width:130px;" value="<?=$net_payble?>" class="validate[required]">
+				<input type="text" name="grand_total" id="grand_total" style="width:130px;" value="<?=$grand_total?>" class="validate[required]">
+			</div></td>
+		</tr>
+		<tr>
+
+			<td>&nbsp;</td>
+
+			<td colspan="5">
+				<div style="margin-top:10px;">
+					<ul style="list-style: none; padding-left: 0;">
+						<?php
+							$termsArray = explode(",", $term_condition);
+							foreach($terms_list as $val){
+
+						?>
+						<li>
+							<label for="terms_condition<?= $val->id ?>">
+								<input type="checkbox"
+									   name="terms_condition[]"
+									   id="terms_condition<?= $val->id ?>"
+								<?=in_array($val->id, $termsArray, true) ? "checked" : "" ?>
+								value="<?= $val->id ?>" />
+								<?= htmlspecialchars($val->name) ?>
+							</label>
+						</li>
+						<?php
+
+						}
+						?>
+					</ul>
+				</div>
+			</td>
+			<td>
+				<input type="hidden" name="voucher_no" id="voucher_no" value="<?=$voucher_no?>">
+				<input type="hidden" name="cmd" value="updatePurchaseOrder">
+				<input name="transaction_type" id="transaction_type" type="hidden" value="Payment">
+				<input type="hidden" name="transaction_name" value="Purchase">
+			</td>
+
+			<td>
+
+				<div align="left">
+
+					<input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" id="btnSave" onClick="wantToUpdate(event);">
+				</div>				</td>
+		</tr>
+
+		<tr>
+
+			<td>&nbsp;</td>
+
+			<td colspan="5">&nbsp;				</td>
+
+			<td>&nbsp;</td>
+
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+
+	</td>
+
+	</tr>
+
+	<tr>
+
+		<td>&nbsp;</td>
+
+	</tr>
+
+	</table>
+
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/bootstrap.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+<script>
+	$(function() {
+		$('.chosen-select').chosen({
+			search_contains: true, // allows matching in the middle of the string
+			width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+			allow_single_deselect: true,
+			search_contains: true,
+			width: "100%"
+		});
+	});
+
+	var product_id_Name = '<?=$product_id_Name?>';
+
+	if(product_id_Name != ""){
+		$("#product").val(product_id_Name).trigger('chosen:updated');
+	}
+
+	function getSPRDetails(){
+		var spr_no = $("#spr_no").val();
+		var voucher_no = $("#voucher_no").val();
+		var discount = parseFloat($("#discount").val());
+
+		if(spr_no != "") {
+			if(voucher_no == "") {
+				alert("Voucher No Missing");
+				return false;
+			}else{
+				if (confirm("Sure want to add product???")) {
+					const data ={
+						spr_no: spr_no,
+						voucher_no: voucher_no,
+						discount: discount
+					}
+					addProduct(data);
+					return false;
+				} else {
+					$("#spr_no").val("").trigger("change");
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+
+	function addProductItem(){
+		var voucher_no = $("#voucher_no").val();
+
+		if(voucher_no == "") {
+			alert("Voucher No Missing");
+			return false;
+		}
+
+		var po_details_id = $("#po_details_id").val();
+		var edit_product_id = $("#edit_product_id").val();
+		var edit_max_qty = $("#edit_max_qty").val();
+		var edit_min_qty = $("#edit_min_qty").val();
+		var catagory_id = $("#catagory").val();
+		var brand_id = $("#brand").val();
+		var custom_brand = $("#custom_brand").val();
+		var product_id = $("#product").val();
+		var details = $("#details").val();
+		var m_unit = $("#m_unit").val();
+		var edit_spr_no = $("#edit_spr_no").val();
+		var edit_spd_id = $("#edit_spd_id").val();
+
+		var unit_price = parseFloat($("#unit_price").val());
+		var vat_percent = parseFloat($("#vat_percent").val());
+		var vat_amount = parseFloat($("#vat_amount").val());
+		var qty = parseFloat($("#qty").val());
+		var total = parseFloat($("#total").val());
+		var discount = parseFloat($("#discount").val());
+
+		if(isNaN(unit_price)){
+			unit_price = "";
+		}
+		if(isNaN(qty)){
+			qty = "";
+		}
+		if(isNaN(total)){
+			total = "";
+		}
+
+		if(edit_spd_id != "" || po_details_id){
+			if(product_id === "" || unit_price === "" || qty === "" || total === "") {
+				alert("Product Data missing!");
+				return false;
+			}
+		}else{
+			if(catagory_id === "" || brand_id === "" || product_id === "" ||  m_unit === "" || unit_price === "" || qty === "" || total === "") {
+				alert("Product Data missing!");
+				return false;
+			}
+		}
+
+		const data ={
+			voucher_no: voucher_no,
+			catagory_id: catagory_id,
+			brand_id: brand_id,
+			custom_brand: custom_brand,
+			product_id: product_id,
+			details: details,
+			m_unit: m_unit,
+			unit_price: unit_price,
+			vat_percent: vat_percent,
+			vat_amount: vat_amount,
+			qty: qty,
+			total: total,
+			discount:discount,
+			po_details_id:po_details_id,
+			edit_product_id:edit_product_id,
+			edit_max_qty:edit_max_qty,
+			edit_min_qty:edit_min_qty,
+			edit_spr_no:edit_spr_no,
+			edit_spd_id:edit_spd_id
+		}
+
+		addProduct(data);
+		return false;
+
+	}
+
+	var approved_order_edit = "<?=$approved_order_edit?>";
+	function addProduct(data){
+		$.ajax({
+			url: '?app=purchase_order&cmd=po_update',
+			type: 'POST',
+			data: JSON.stringify(data),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function (response) {
+				if (response.status) {
+					//location refresh
+					var cmd = approved_order_edit == true ? "approved_po_edit" : "po_edit";
+
+					window.location.href= `index.php?app=purchase_order&cmd=${cmd}&voucher_no=${data.voucher_no}`;
+				} else {
+					alert(response.mesage);
+				}
+			},
+			error: function (xhr, status, error) {
+				alert('AJAX request failed: ' + error);
+			}
+		});
+	}
+
+	function checkSRNo(spr_voucher_no){
+		var prevVoucher = $("#prev_m_spr").val();
+		if(spr_voucher_no != "") {
+			$.ajax({
+				url: '?app=purchase.item&cmd=checkSPRVoucherNo',
+				type: 'POST',
+				data: JSON.stringify({spr_voucher_no: spr_voucher_no,prevVoucher:prevVoucher}),
+				contentType: 'application/json',
+				dataType: 'json',
+				success: function (response) {
+					if (response.status) {
+						$("#btnSave").prop('disabled', true);
+						$("#head_code_error").show();
+					} else {
+						$("#btnSave").prop('disabled', false);
+						$("#head_code_error").hide();
+					}
+				},
+				error: function (xhr, status, error) {
+					alert('AJAX request failed: ' + error);
+				}
+			});
+		}
+	}
+
+
+	function calTotalVat() {
+		var total_amount = parseFloat(document.getElementById('total_value').value) || 0;
+		var vat_type = document.getElementById('vat_type').value; // percent | fixed
+		var vat_input = parseFloat(document.getElementById('total_vat_percent').value) || 0;
+
+		if (vat_input < 0) vat_input = 0;
+		var total_vat_amount = 0;
+
+		if (vat_type === 'percent') {
+			// limit percentage
+			if (vat_input > 100) vat_input = 100;
+			document.getElementById('total_vat_percent').value = vat_input;
+			// calculate % VAT
+			total_vat_amount = (vat_input / 100) * total_amount;
+		} else {
+			// fixed VAT amount
+			total_vat_amount = vat_input;
+		}
+
+		document.getElementById('total_vat_amount').value = total_vat_amount.toFixed(9);
+		calNetPayable();
+	}
+
+	function calTotalTDS() {
+		var total_amount = parseFloat(document.getElementById('total_value').value) || 0;
+		var tds_type = document.getElementById('tds_type').value; // percent | fixed
+		var tds_input = parseFloat(document.getElementById('total_tds_percent').value) || 0;
+
+		if (tds_input < 0) tds_input = 0;
+		var total_tds_amount = 0;
+
+		if (tds_type === 'percent') {
+			// limit percentage
+			if (tds_input > 100) tds_input = 100;
+			document.getElementById('total_tds_percent').value = tds_input;
+			// calculate % VAT
+			total_tds_amount = (tds_input / 100) * total_amount;
+		} else {
+			// fixed VAT amount
+			total_tds_amount = tds_input;
+		}
+
+		document.getElementById('total_tds_amount').value = total_tds_amount.toFixed(9);
+		calNetPayable();
+	}
+
+
+
+	function calNetPayable(){
+		var total_amount = parseFloat(document.getElementById('total_value').value);
+		var total_vat_amount = parseFloat(document.getElementById('total_vat_amount').value);
+		var total_tds_amount = parseFloat(document.getElementById('total_tds_amount').value);
+		var additional_cost = parseFloat(document.getElementById('additional_cost').value);
+		var discount = parseFloat(document.getElementById('discount').value);
+
+		if(isNaN(total_amount) || total_amount==""){total_amount = 0}
+		if(isNaN(total_vat_amount) || total_vat_amount==""){total_vat_amount = 0}
+		if(isNaN(total_tds_amount) || total_tds_amount==""){total_tds_amount = 0}
+		if(isNaN(additional_cost) || additional_cost==""){additional_cost = 0}
+		if(isNaN(discount) || discount==""){discount = 0}
+
+		var netPayable = (total_amount + additional_cost) - (total_tds_amount + discount);
+		var netPayableWithVat = netPayable + total_vat_amount;
+		document.getElementById('net_payble').value = netPayable.toFixed(9);
+		document.getElementById('grand_total').value = netPayableWithVat.toFixed(9);
+	}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script>
+
+	$(function() {
+		$('#lc_no').select2({
+			dropdownParent: $('#lc_container'),
+			placeholder: "Select LC No",
+			allowClear: true,
+		});
+		$('#payable_id').select2({
+			dropdownParent: $('#payable_container'),
+			placeholder: "Select Payable",
+			allowClear: true,
+		});
+
+		calTotalVat();
+		calTotalTDS();
+
+		// Show/hide import row based on Purchase Type selection
+		$('#purchase_type').on('change', function() {
+			toggleImportRow($(this).val());
+		});
+
+		// On page load: show if already set to import
+		toggleImportRow($('#purchase_type').val());
+	});
+
+	function toggleImportRow(val) {
+		var row = $('#import_row');
+		if (val === 'import') {
+			row.slideDown(300);
+		} else {
+			row.slideUp(100);
+			// Reset selections when hidden
+			$('#lc_no').val(null).trigger('change');
+			$('#payable_id').val(null).trigger('change');
+		}
+	}
+</script>
+
+</body>
+
+</html>
+
+

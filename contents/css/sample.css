@@ -1,0 +1,133 @@
+/* CSS Document */
+body{
+	margin:0px;
+	padding:0px;
+	/* background-color:#ac1701; by farhad*/ 
+	background-image:url(../../../images/back_in.jpg);
+	background-repeat:repeat-x;
+	background-color:#FFFFFF;
+	text-align:center;
+
+}
+#tblbg{
+	margin:0px;
+	padding:0px;
+	/*background-image:url(/buyingerp/images/mainbody.gif);*/ 
+	background-image:url(../../../images/back_in.jpg);
+	background-repeat:repeat-x;
+	background-color:#FFFFFF;
+	text-align:center;
+}
+.topbg
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:14px;
+color: #000000;
+background-image:url(../../../images/common/table/education_top.gif);
+font-weight:bold;
+border:1px solid #000033;
+height:25px;
+cursor:pointer;
+}
+.topHeader
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:14px;
+color: #000000;
+background: #f5f6f6; /* Old browsers */
+background: -moz-linear-gradient(top,  #f5f6f6 0%, #dbdce2 21%, #b8bac6 49%, #dddfe3 80%, #f5f6f6 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f6f6), color-stop(21%,#dbdce2), color-stop(49%,#b8bac6), color-stop(80%,#dddfe3), color-stop(100%,#f5f6f6)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 ); /* IE6-9 */
+height:27px; padding-top:6px;
+}
+.tblHeader
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:14px;
+color: #000000;
+background-image:url(../../../images/common/table/education_top.gif);
+font-weight:bold;
+border:1px solid #000033;
+height:25px;
+}
+.addBorder
+{
+border:1px solid #003366;
+background-color:#F0F4DF;
+}
+
+.allCommonText
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:12px;
+color:#000000;
+}
+
+.HightlightText
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:11px;
+font-weight:bold;
+text-align:left;
+margin-left:6em;
+}
+#tblTitle
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:16px;
+color: #000000;
+font-weight:bold;
+border:0px;
+height:25px;
+}
+
+.Allbutton
+{
+border:.1em solid #003366;
+background-color:#003399;
+color:#FFFFFF;
+height:2em;
+width:8em;
+}
+
+.buttonFocus
+{
+border:.1em solid #003366;
+background-color: #0099FF;
+color:#FFFFFF;
+height:2em;
+width:8em;
+background-image:url(../../../images/common/button/button_hover);
+}
+.btn{
+background-image:url(../../../images/common/button/button.jpg);
+height:2em;
+width:8em;
+color:#FFCC00;
+font-size:12px;
+font-weight:bold;
+}
+.divmargin
+{
+margin-left:50px;
+}
+
+#textfield
+{
+width:250px;
+}
+.page_link a:link,a:visited{
+color:#333333;
+}
+.page_link a:hover{
+color:#FF6699;
+}
+.page_link a:active{
+color:#003300;
+}
+
+

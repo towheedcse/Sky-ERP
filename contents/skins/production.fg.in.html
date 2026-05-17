@@ -1,0 +1,605 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+    <?php
+extract($data);
+//dumpVar($data);
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR);
+
+require_once(CLASS_DIR . '/common.list.class.php');
+
+?>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Production</title>
+
+    <style>
+        :root { --base-100: #ffffff; --primary: #3b82f6; --border-color: #e5e7eb; }
+        .p-6 { padding: 1.5rem; }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .bg-base-100 { background-color: var(--base-100); }
+        .rounded-xl { border-radius: 0.75rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mt-5 { margin-top: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; font-weight: 700; }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .flex-1 { flex: 1; }
+        .gap-2 { gap: 0.5rem; }
+        .items-center { align-items: center; }
+        .items-end { align-items: flex-end; }
+        .w-full { width: 100%; }
+        .min-w-[200px] { min-width: 200px; }
+        .min-w-[150px] { min-width: 150px; }
+        .min-w-[100px] { min-width: 100px; }
+        .form-control { width: 100%; position: relative; }
+        .label { display: block; padding: 5px 0; font-size: 0.875rem; font-weight: 500; }
+        .custom-input, .custom-select { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; color: #fff; }
+        .btn-primary { background-color: var(--primary); }
+        .btn-neutral { background-color: #666; }
+        .alert { display: none; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        .table-zebra tr:nth-child(even) { background: #f9fafb; }
+        .bg-base-200 { background: #f3f4f6; }
+        .text-base { font-size: 1rem; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .ml-auto { margin-left: auto; }
+
+        /* Select2 Styling & Fixes */
+        .select2-container .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding-left: 12px;
+        }
+        /* Ensure Select2 doesn't jump outside the flex container */
+        .select2-container { width: 100% !important; }
+
+        .input-suggestions-dd { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #ccc; z-index: 10; max-height: 200px; overflow-y: auto; display: none; }
+        .input-suggestion { padding: 8px; cursor: pointer; border-bottom: 1px solid #eee; }
+        .input-suggestion:hover { background: #f0f0f0; }
+
+
+        p#head_code_error {
+            color: red;
+            margin-top: 3px;
+            display: none;
+        }
+        td#save-option>input:where([type='reset']){
+            background: #d0d0d0;
+            color: #000;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        td#save-option>input:where([type='submit']){
+            background: #2fc0ff;
+            color: #000;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        td#save-option{
+            padding: 20px 0 15px 0;
+        }
+        .containerDiv {
+            padding: 20px;
+        }
+        button.btn {
+            width: auto;
+            border: 1px solid #00000026;
+        }
+
+        button.btn i {
+            color: #000 !important;
+        }
+        button#addItem i {
+            color: #fff !important;
+        }
+        button.btn {
+            width: auto;
+            border: 1px solid #00000026;
+            color: #fff !important;
+        }
+        .select2-container--open .select2-dropdown {
+            top: 80px !important;
+        }
+        span.select2-selection.select2-selection--single {
+            height: 3rem;
+        }
+        .text-center {
+            text-align: center !important;
+        }
+        .text-right {
+            text-align: right !important;
+        }
+
+        .btnInfo{
+            background-color: hsl(214deg 20% 21% / 95%) !important;
+        }
+        .swal2-popup.swal2-modal.swal2-icon-warning.swal2-show {
+            flex-direction: column;
+        }
+        .label {
+            text-align: left;
+        }
+        button.btn.btn-sm.btn-danger.removeItem {
+            background: red;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="containerDiv">
+    <!-- Card: Form -->
+    <div class="p-6 shadow-md bg-base-100 rounded-xl">
+        <div id="danger-alert" class="alert alert-danger" role="alert"></div>
+        <div id="success-alert" class="alert alert-success" role="alert"></div>
+
+        <h1 class="mb-3 text-2xl font-bold">Finish Goods Entry</h1>
+
+        <form id="jobForm" onsubmit="return false">
+            <div class="flex flex-wrap items-end gap-2">
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Production Date</span>
+                    </div>
+                    <input type="date" placeholder="Type here" class="custom-input" id="production_date" name="production_date" />
+                </div>
+
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Production Factory</span>
+                    </div>
+                    <select class="custom-select" id="factory" name="factory">
+                        <option value="">Select Factory</option>
+                        <?php if(isset($factory_list)){
+                     foreach($factory_list as $f){ ?>
+                        <option value="<?= $f->factory_id ?>"><?= $f->factory_name ?></option>
+                        <?php } }; ?>
+                    </select>
+                </div>
+
+                <div class="form-control w-full min-w-[200px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Store</span>
+                    </div>
+                    <select class="custom-select" id="store" name="store">
+                        <option value="">Select Store</option>
+                        <?php if(isset($depo_list)){
+                         foreach($depo_list as $d){ ?>
+                        <option value="<?= $d->delivery_pid ?>"><?= $d->delivery_point_name ?></option>
+                        <?php } }; ?>
+                    </select>
+                </div>
+
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Inventory Type</span>
+                    </div>
+                    <select class="custom-select inv-type-select global-inv-type">
+                        <option value="">Select Type</option>
+                        <option value="A000017">Raw Materials</option>
+                        <option value="A000036">Finished Goods</option>
+                        <option value="S126">Assets</option>
+                        <option value="A007758">Maintanance</option>
+                    </select>
+                </div>
+
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Inventory Head</span>
+                    </div>
+                    <div id="GlobalInvHeadDiv">
+                        <select class="custom-select global-inv-head">
+                            <option value="">Select Head</option>
+                            <!-- Populated by JS based on Global Type -->
+                        </select>
+
+                        <input type="hidden" id="inventory_id" name="inventory_id">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-end gap-2">
+                <!-- <div class="form-control w-full min-w-[200px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Job Order No</span>
+                    </div>
+                    <select class="custom-select" id="job_id">
+                        <option value="">Select Job</option>
+                        <?php
+	  					foreach($job_list as $i=>$v)
+                        {
+                        $jobid = $v->id;
+                        $job_name = $v->job_name;
+                        ?>
+                        <option value="<?=$jobid?>" <?php if($jobid==$job_id) echo "selected";?>><?=$job_name?></option>
+                        <?}?>
+                    </select>
+                </div> -->
+
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Job ID/Name</span>
+                    </div>
+                    <select class="custom-select" id="job_name">
+                        <option value="">Select Job</option>
+                        <?php
+	  					foreach($job_name_list as $i=>$v)
+                        {
+                        $jobid = $v->transfer_no;
+                        $job_name = $v->job_name;
+                        $finish_item = $v->finish_item;
+                        ?>
+                        <option value="<?=$jobid?>" <?php if($jobid==$job_name) echo "selected";?> data-finish_item="<?=$finish_item?>"><?=$job_name?></option>
+                        <?}?>
+                    </select>
+                </div>
+
+
+                <label class="form-control w-full min-w-[200px] flex-1" id="finish_goods_container">
+                    <div class="label"><span class="label-text">Finish Product Name</span></div>
+                    <select class="custom-select" id="finish_goods" style="width:100%">
+                        <option value="">Select Product</option>
+                        <?php if(isset($finish_list)){
+                 foreach($finish_list as $p){
+
+                 $product_name = (new CommonList())->normalizeProductName($p->product_code,$p->product_name);
+                        ?>
+                        <option value="<?= $p->product_id ?>"><?=$product_name ?></option>
+                        <?php } } ; ?>
+                    </select>
+                </label>
+
+
+
+                <div class="form-control w-full min-w-[150px] flex-1">
+                    <div class="label">
+                        <span class="label-text">Production Quantity</span>
+                    </div>
+                    <input type="number" class="custom-input" value="0" />
+                </div>
+
+                <button class="btn btn-primary" id="addItem" type="button">
+                    <i class="fa-solid fa-plus" style="margin-right:5px;"></i> Add
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Card: List -->
+    <div class="p-6 mt-5 shadow-md bg-base-100 rounded-xl">
+        <div class="flex flex-wrap w-full mb-2 justify-between items-center">
+            <h2 class="mb-3 text-xl font-bold">Product list</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <thead class="text-base bg-base-200">
+                <tr>
+                    <th>Sl</th>
+<!--                    <th>Job Order No</th>-->
+                    <th>Job ID/Name</th>
+                    <th>Finish Product</th>
+                    <th>Qty</th>
+<!--                    <th>Qty (KG)</th>-->
+                    <th>Date</th>
+                    <th>Store</th>
+                    <th>Inventory Type</th>
+                    <th>Inventory Head</th>
+                    <th class="text-center">Options</th>
+                </tr>
+                </thead>
+                <tbody id="tableData">
+                <tr class="text-center">
+                    <td colspan="9" class="text-center">No Record Found</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex gap-1 mt-3">
+            <button class="btn btn-primary" id="saveProduction" type="submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const inventoryHeads = {
+        "equipment" : <?= json_encode($equipment_list); ?>,
+    "raw_material" : <?= json_encode($raw_material_list); ?>,
+    "fg" : <?= json_encode($fg_list); ?>,
+    "maintenance" : <?= json_encode($maintanance_list); ?>
+    };
+
+    const supplierData = <?= $supplierData; ?>;
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#production_date").val(new Date().toISOString().split('T')[0]);
+        $('#finish_goods').select2({
+            dropdownParent: $('#finish_goods_container')
+        });
+    });
+
+    const API_URL = "index.php?app=fg.production";
+    let productionItems = [];
+    let sl = 1;
+
+    // ADD ITEM
+    $("#addItem").on("click", function () {
+        $("#danger-alert").hide().text("");
+        $("#success-alert").hide().text("");
+
+        let factory = $("#factory").val();
+        let factoryText = $("#factory option:selected").text();
+
+        let production_date = $("#production_date").val();
+
+        let product = $("#finish_goods").val();
+        let productText = $("#finish_goods option:selected").text();
+
+        let qty = $("input[type='number']").val();
+
+        let store = $("#store").val();
+        let storeText = $("#store option:selected").text();
+
+        let jobID = $("#job_id").val();
+        let jobIDText = $("#job_id option:selected").text();
+        if(jobID == ""){
+            jobIDText = "";
+        }
+
+        let jobName = $("#job_name").val();
+        let jobNameText = $("#job_name option:selected").text();
+        if(jobName == ""){
+            jobNameText = "";
+        }
+
+        let invType = $(".global-inv-type").val();
+        let invTypeText = $(".global-inv-type option:selected").text();
+
+        let invHead = $(".global-inv-head").val();
+        let invHeadText = $(".global-inv-head option:selected").text();
+
+        if(product == "" || qty == "" || store == ""){
+            $("#danger-alert").show().text("Please fill all required fields");
+            return;
+        }
+        if(!production_date){
+            $("#danger-alert").show().text("Please select production date");
+            return;
+        }
+
+        let qtyInKg = "";
+
+        let item = {
+            factory: factory,
+            factoryText: factoryText,
+            product: product,
+            productText: productText,
+            qty: qty,
+            qtyInKg: qtyInKg,
+            store: store,
+            storeText: storeText,
+            jobID: jobID,
+            jobIDText: jobIDText,
+            jobName: jobName,
+            jobNameText: jobNameText,
+            invType: invType,
+            invTypeText: invTypeText,
+            invHead: invHead,
+            invHeadText: invHeadText,
+            production_date: production_date
+        };
+
+        productionItems.push(item);
+
+        renderTable();
+
+        clearItemFields();
+    });
+
+
+    // RENDER TABLE
+    function renderTable(){
+
+        let html = "";
+
+        if(productionItems.length === 0){
+            html = `
+        <tr class="text-center">
+            <td colspan="9" class="text-center">No Record Found</td>
+        </tr>`;
+        }else{
+
+            productionItems.forEach(function(item,index){
+                html += `
+            <tr>
+                <td>${index+1}</td>
+                <td>${item.jobNameText}</td>
+                <td>${item.productText}</td>
+                <td>${item.qty}</td>
+                <td>${item.production_date}</td>
+                <td>${item.storeText}</td>
+                <td>${item.invTypeText}</td>
+                <td>${item.invHeadText}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-danger removeItem" data-index="${index}">
+                        Remove
+                    </button>
+                </td>
+            </tr>`;
+            });
+
+        }
+
+        $("#tableData").html(html);
+    }
+
+
+    // REMOVE ITEM
+    $(document).on("click",".removeItem",function(){
+        let index = $(this).data("index");
+        productionItems.splice(index,1);
+        renderTable();
+    });
+
+    // CLEAR INPUTS
+    function clearItemFields(){
+        $("#finish_goods").val('').trigger('change');
+        $("input[type='number']").val(0);
+        $("#job_id").val('').trigger('change');
+        $("#job_name").val('');
+    }
+
+    // SUBMIT DATA
+    $("#saveProduction").on("click", function(){
+        $("#danger-alert").hide().text("");
+        $("#success-alert").hide().text("");
+
+        if(productionItems.length === 0){
+            $("#danger-alert").show().text("Please add at least one item");
+            return;
+        }
+
+        let URL = API_URL + "&cmd=bulk_production";
+        axios.post(URL, {rows: productionItems})
+            .then(function (response) {
+                $("#danger-alert").hide().text("");
+                $("#success-alert").hide().text("");
+
+                if(response.data.status === true){
+                    $("#success-alert").show().text("Production saved successfully");
+                    productionItems = [];
+                    renderTable();
+                }else{
+                    $("#danger-alert").show().text(response.data.message);
+                }
+            })
+            .catch(function (error) {
+                //console.log(error);
+            });
+    });
+
+
+    // inventory type change
+    $(".global-inv-type").on("change", function(){
+        let type = $(this).val();
+        let list = [];
+        if(type === "S126"){
+            list = inventoryHeads.equipment;
+        }
+        else if(type === "A000017"){
+            list = inventoryHeads.raw_material;
+        }
+        else if(type === "A000036"){
+            list = inventoryHeads.fg;
+        }
+        else if(type === "A007758"){
+            list = inventoryHeads.maintenance;
+        }
+        populateInventoryHead(list);
+    });
+
+
+    // populate inventory head dropdown
+    function populateInventoryHead(list){
+        let html = `<option value="">Select Head</option>`;
+        if(list && list.length > 0){
+            list.forEach(function(item){
+                html += `
+                <option value="${item.sub_id}">
+                    ${item.sub_head_name}
+                </option>
+            `;
+            });
+        }
+        $(".global-inv-head").html(html);
+    }
+
+    // set hidden inventory id
+    $(document).on("change",".global-inv-head",function(){
+        let val = $(this).val();
+        $("#inventory_id").val(val);
+    });
+
+    function handleStoreChange(store_id){
+        const match = supplierData.find(item => item.point_id === store_id);
+        if(match && match.sub_id){
+            if(match.section === "Equipment"){
+                $(".global-inv-type").val("S126").trigger("change");
+            }
+            else if(match.section === "raw_material"){
+                $(".global-inv-type").val("A000017").trigger("change");
+            }
+            else if(match.section === "fg"){
+                $(".global-inv-type").val("A000036").trigger("change");
+            }
+            else if(match.section === "maintanance"){
+                $(".global-inv-type").val("A007758").trigger("change");
+            }
+            setTimeout(function(){
+                $(".global-inv-head").val(match.sub_id).trigger("change");
+            },200);
+        }else{
+            $(".global-inv-type").val("");
+            $(".global-inv-head").html(`<option value="">Select Head</option>`);
+            $("#inventory_id").val("");
+        }
+    }
+
+    $("#store").on("change", function(){
+        let store_id = $(this).val();
+        handleStoreChange(store_id);
+    });
+
+    $('#job_name').on('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        var finishItem = selectedOption.getAttribute('data-finish_item');
+
+        if (finishItem) {
+            $("#finish_goods").val(finishItem).trigger('change');
+        } else {
+            $("#finish_goods").val('').trigger('change');
+        }
+    });
+
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>cost report</title>
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="navbar bg-base-100 shadow-sm">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a href="/">Home</a></li>
+            <li><a href="./cost report.html">Cost Report</a></li>
+            <li><a href="./LC report.html">LC Report</a></li>
+            <li><a href="./unapprove order.html">Unapproved Orders</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <a class="btn btn-ghost text-xl">Dashboard</a>
+      </div>
+      <div class="navbar-end">
+        <button class="btn btn-ghost btn-circle" onclick="toggleTheme()">
+          <div class="indicator">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="px-4 py-2 md:px-12 md:py-4">
+      <h1 class="text-3xl font-bold mb-3">Cost Report</h1>
+      <form
+        class="px-1 py-2 md:px-7 md:py-8 shadow-lg rounded-xl flex items-end flex-wrap gap-3 ml-2"
+      >
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">From</span>
+          </div>
+          <input
+            type="date"
+            class="input input-ghost input-bordered hover:bg-base-200 w-full"
+          />
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">To</span>
+          </div>
+          <input
+            type="date"
+            class="input input-ghost input-bordered hover:bg-base-200 w-full"
+          />
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Voucher Type</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Voucher</option>
+            <option>Voucher</option>
+            <option>Voucher</option>
+            <option>Voucher</option>
+          </select>
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Voucher of</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Department</option>
+            <option>Department</option>
+            <option>Department</option>
+            <option>Department</option>
+          </select>
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">User</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick User</option>
+            <option>User</option>
+            <option>User</option>
+            <option>User</option>
+          </select>
+        </label>
+        <label
+          class="form-control min-w-[200px] sm:min-w-[250px] flex-1 relative"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Acc. ID</span>
+          </div>
+          <input
+            type="text"
+            placeholder="Type here"
+            class="input input-ghost input-bordered hover:bg-base-200 w-full"
+          />
+          <div class="input-suggestions-dd active">
+            <!-- add all the batch list -->
+            <div class="input-suggestion">have to find</div>
+            <div class="input-suggestion">taddakdd</div>
+            <div class="input-suggestion">hello, world</div>
+          </div>
+        </label>
+        <button class="btn btn-primary rounded-lg">Submit</button>
+      </form>
+      <div class="py-3 md:py-8 px-2 md:px-5 mt-3 rounded-lg shadow-lg ml-2">
+        <div
+          class="flex items-center justify-center sm:justify-between gap-3 flex-wrap mb-3"
+        >
+          <h2 class="text-xl font-bold mb-3">Transactiion List</h2>
+          <div class="join">
+            <button
+              class="join-item btn hover:bg-primary hover:text-primary-content"
+            >
+              «
+            </button>
+            <div class="dropdown join-item">
+              <div tabindex="0" role="button" class="btn rounded-none">
+                page 1
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content z-[1] menu shadow bg-base-100 p-0 w-full"
+              >
+                <li><a class="text-center">page 2</a></li>
+                <li><a class="text-center">page 3</a></li>
+                <li><a class="text-center">page 4</a></li>
+                <li><a class="text-center">page 5</a></li>
+              </ul>
+            </div>
+            <button
+              class="join-item btn hover:bg-primary hover:text-primary-content"
+            >
+              »
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="table table-zebra">
+            <!-- head -->
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Voucher No.</th>
+                <th>Voucher Type</th>
+                <th>Acc. ID</th>
+                <th>Account Name</th>
+                <th>Particulars</th>
+                <th>Debit (BDT)</th>
+                <th>Credit (BDT)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>21 Dec 2023</th>
+                <td>X0000000</td>
+                <td>
+                  Sales Order
+                  <div class="text-xs">Sales</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    A993383
+                  </div>
+                  <div class="my-auto">A488555</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200">
+                    <div>112-some name</div>
+                    <div>address, some address, Bangladesh</div>
+                  </div>
+                  <div>
+                    <div>112-some name</div>
+                    <div>address, some address, Bangladesh</div>
+                  </div>
+                </td>
+                <td>
+                  Issue:
+                  <div class="text-xs">Created by someone</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    4548.00
+                  </div>
+                  <div class="my-auto">0</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    0
+                  </div>
+                  <div class="my-auto">4548.00</div>
+                </td>
+              </tr>
+              <tr>
+                <th>21 Dec 2023</th>
+                <td>X0000000</td>
+                <td>
+                  Sales Order
+                  <div class="text-xs">Sales</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    A993383
+                  </div>
+                  <div class="my-auto">A488555</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200">
+                    <div>112-some name</div>
+                    <div>address, some address, Bangladesh</div>
+                  </div>
+                  <div>
+                    <div>112-some name</div>
+                    <div>address, some address, Bangladesh</div>
+                  </div>
+                </td>
+                <td>
+                  Issue:
+                  <div class="text-xs">Created by someone</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    4548.00
+                  </div>
+                  <div class="my-auto">0</div>
+                </td>
+                <td>
+                  <div class="mb-1 pb-1 border-b border-base-200 my-auto">
+                    0
+                  </div>
+                  <div class="my-auto">4548.00</div>
+                </td>
+              </tr>
+              <!-- add more rows above this tr -->
+              <tr>
+                <td
+                  colspan="6"
+                  class="text-right border-r border-primary capitalize"
+                >
+                  balance
+                </td>
+                <td>3884.00 Tk</td>
+                <td>4958.00 Tk</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

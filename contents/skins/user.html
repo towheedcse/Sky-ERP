@@ -1,0 +1,214 @@
+<?php
+extract($data);
+//dumpVar($data);	
+$created_date = getRequest('created_date'); 
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/employee.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style>
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC; 
+}
+table, td{border-color: #999999;border-style: solid;}
+table{border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse;}
+td{margin: 0; padding: 4px; border-width: 1px 1px 0 0; font-weight:normal;}
+th{ margin: 0; padding: 4px; border-width: 1px 1px 0 0;	font-weight:bold; font-size:12px;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;font-weight:normal;text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;font-weight:normal;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; font-weight:normal;}
+img{border:none;}
+</style>
+<head>
+
+<title>General ERP: User List</title>
+</head>
+
+<body>
+<form name="frm" method="post">
+
+<table width="100%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td class="topHeader" colspan="2"><div id="tblTitle" align="left">&nbsp;<b>User List</b></div></td>
+  </tr>
+
+  <tr>
+    <td width="49%"><div align="left"><a href="?app=user&cmd=add">Add User</a></div></td>
+    <td width="51%">
+	<div class="page_link">
+		<?php
+				$from_rs=getRequest('from');
+				$to_rs=$from_rs+50;
+				if($from_rs>=50){
+                    $from_rs =$from_rs+1;
+                }
+                if($from_rs=="" || $from_rs==0){
+                    $from_rs =1;
+                }
+                if($to_rs=="" || $totalrecord<50){
+                    $to_rs =$totalrecord;
+                }else if($to_rs=="" && $totalrecord >50){
+                    $to_rs=50;
+                }
+                if($to_rs>$totalrecord){
+                    $to_rs = $totalrecord;
+                }
+            ?>
+                <span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;?></strong>
+		   </span>
+
+		<?php
+			  if($totalrecord>0){?>
+            <span style="float:right">
+			  Page:
+                <?php
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 50)
+			{
+				$res = $totalrecord/50;
+				$res=(int)$res;
+				if(($totalrecord%50)!=0)
+				{
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}
+
+			if($totalrecord >50)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 50;
+
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=user&from=$frm&to=50&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}
+
+			if($totalpage>=1)
+			{
+				$i = 1;
+				$from =0; $to=50;
+				while($i<=$totalpage)
+				{
+					if($from ==0)
+					{
+						echo "<a id='$i'";
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+						echo "href='?app=user&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'";
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+						echo "href='?app=user&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}
+
+					$i++;
+					$from =$from+50;
+					if($to >$totalrecord){ $to=$totalrecord;}
+				}
+			}
+		  	if($totalrecord >50)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=50;$page=2;}else{ $f=$f+50;}
+				$t = 50;
+				if($t >$totalrecord){ $t=$totalrecord;}
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=user&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+                }
+		  ?>
+        </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+	
+	<table width="99%" border="0" cellpadding="0" cellspacing="0">
+      <tr bgcolor="#CCCCCC">
+        <td width="3%" height="25"><span class="trHead">SL</span></td>
+        <td width="17%"><div align="left" class="trHead">Name</div></td>
+        <td width="11%" align="left"><span class="trHead">Mobile</span></td>
+        <td width="10%" align="left"><span class="trHead">Department</span></td>
+        <td width="21%"><span class="trHead">Login ID</span></td>
+        <td width="7%" align="left"><div align="left" class="trHead">User Type </div></td>
+	<td width="6%"><strong>User SL</strong></td>
+        <td width="7%" align="left"><div align="center" class="trHead">Photo</div></td>
+        <td width="7%" align="left"><div class="trHead">Status</div></td>
+        <td width="11%"><div align="center" class="trHead">Action</div></td>
+        </tr>
+	  <?
+	  $i=$from_rs;
+	  foreach($record_list as $val){
+	  $userid=$val->userid;
+	  if($val->photo_path!="" && $val->photo_path!="employee/.jpg"){
+	  $photo_path= $val->photo_path;
+	  }else{
+	  $photo_path= "photo/unknown.jpg";
+	  }
+   	  ?>
+      <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+        <td height="41" align="center" class="td" valign="top"><?echo $i;?></td>
+        <td align="left" valign="top" class="td" ><?=$val->name.'<br/>'.$val->designation?></td>
+        <td align="left" valign="top" class="td" ><?=$val->mobile?></td>
+        <td align="left" valign="top" class="td" ><?=$val->department?></td>
+        <td align="left" valign="top" class="td" ><?=$val->userid?></td>
+        <td align="left" valign="top" class="td" ><?=$val->u_type_name?></td>
+        <td align="left" valign="top" class="td"><?=$val->user_sl?></td>
+        <td align="left" valign="top" class="td" ><div align="center">
+	<img width="50" height="50" src="<?=IMAGE_DIR.'/'.$photo_path?>">
+	</div></td>
+        <td align="left" valign="top" class="td" ><?=$val->status?></td>
+		<td align="left" valign="top" class="td" >
+		  <div id="action" align="center">
+		  <a href="?app=user&cmd=block&id=<?=$userid?>">Block</a>&nbsp;
+		  <a href="?app=user&cmd=unblock&id=<?=$userid?>">Unblock</a>
+		  </div>
+		</td>
+        </tr>
+	   <?
+	  $i++;
+	  }
+	  ?>
+    </table>
+	
+	</td>
+    </tr> 
+</table>
+
+</form>
+<br>
+<div style="display:block;height:50px"></div>
+</body>
+
+</html>
+

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Production Details</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.style1 {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+
+<body>
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td>
+      <form action="" method="post">
+        <table width="100%"  border="0">
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="16%"><div align="right" class="style1">Production No. </div></td>
+            <td width="15%"><input type="text" name="production_id" value="<?=getRequest('production_id')?>"></td>
+            <td width="69%"><input type="submit" class="button" name="search" value="Search"></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+    </form></td>
+  </tr>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+</script>
+</body>
+</html>

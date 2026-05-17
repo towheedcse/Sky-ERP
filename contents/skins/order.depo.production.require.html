@@ -1,0 +1,406 @@
+<?php
+extract($data); dateIFrame(REL_EXT_DIR); 
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$catagory	= getRequest('catagory'); $subcatagory	= getRequest('subcatagory'); 
+$product	= getRequest('product');  $project_id   = getFromSession('project_id');
+$delivery_point	= getRequest('delivery_point');
+$date_from 	= getRequest('date_from');
+$date_to   	= getRequest('date_to');
+if($date_from==""){ $date_from = date("d-m-Y");}
+if($date_to==""){ $date_to = date("d-m-Y");}
+
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql)); 
+
+function getStockBalanceQty($project_id,$product_id,$stock_id,$date_to=NULL){
+	if($date_to==""){ $date_to = date("Y-m-d");} 
+	$sql = "SELECT (SUM(dr)-SUM(cr)) as balance_qty FROM ".STOCK_LEDGER_TBL." WHERE product_id = '".$product_id."' AND project_id='".$project_id."' AND store_id='$stock_id' AND create_date <= '$date_to'";
+	$res = mysql_query($sql);
+	if(mysql_num_rows($res)>0){
+	 $row = mysql_fetch_object($res);
+	 return $row->balance_qty;
+	}else{ return 0; }
+}
+function getStockName($project_id,$stock_id){
+	if($date_to==""){ $date_to = date("Y-m-d");} 
+	$sql = "SELECT delivery_point_name FROM ".DELIVERY_POINT_TBL." WHERE project_id = '".$project_id."' AND delivery_pid='$stock_id'";
+	$res = mysql_query($sql);
+	if(mysql_num_rows($res)>0){
+	 $row = mysql_fetch_object($res);
+	 return $row->delivery_point_name;
+	}else{ return ""; }
+}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=30,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE> Production Order Status</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{font-size:12px;font-weight:normal;} a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none} #tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;font-weight:normal;font-size:12px;}th{margin: 0;padding: 4px;border-width: 1px 1px 0 0;font-weight:bold; font-size:12px;}.footer{display:none;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<title>General ERP</title>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{
+    border-color: #999999;
+    border-style: solid;
+}
+table{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+.active{ color:#FFF !important; background-color:#009 !important}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1119"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+	 <table width="100%" height="61" align="center" cellpadding="4"cellspacing="0" class="addborder">
+	  <tr>
+		<td align="left" class="topbg" height="26" colspan="14"><span><strong>Search required production order</strong></span></td>
+	 </tr>
+	 <tr>
+	   <td width="4%"><div align="right">From</div></td>
+	  <td width="8%">
+            <input name="date_from" id="date_from" style="width:70px;" value="<?=$date_from?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" class="validate[required]" type="text" tabindex="1">
+            <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" width="15" height="15"> </div></td>
+          </td>
+      	  <td width="3%"><div align="left">To</div></td>
+	  <td width="8%">
+           <input name="date_to" id="date_to" style="width:70px;" value="<?=$date_to?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" class="validate[required]" type="text" tabindex="2">
+           <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" width="15" height="15"> </div></td>
+
+	   <td width="5%">Category </td>
+	   <td width="10%">
+   		<select name="catagory" id="catagory" style="width:110px" tabindex="4" onChange="javascript:getSubCatagoryList(this.value)">
+	     <option value=''>Select Category</option>
+	     <?php           
+		foreach($catagory_list as $i=>$v)
+		{
+			$catagory_code = $v->catagory_code;
+			$catagory_name = $v->catagory_name;	
+		?>
+	     <option value="<?=$catagory_code?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+	       <?=$catagory_name?>
+	       </option>
+	     <?}?>
+	     </select>
+	   </td>
+           <td width="5%">Sub Cat</td>
+           <td width="11%"><select name="subcatagory" id="subcatagory" style="width:150px" tabindex="5">
+             <option value=''>Sub Category</option>
+             <?php			
+		  $sql="SELECT subcatagory_id, subcatagory_name FROM ".SUB_CATAGORY_TBL." WHERE catagory_id='$catagory'";
+		  $res = mysql_query($sql);			  
+		  if(mysql_num_rows($res)>0){
+		  if($subcatagory !=""){					
+			while($row = mysql_fetch_object($res)){
+			?>
+             <option value="<?=$row->subcatagory_id?>"<?php if($row->subcatagory_id==$subcatagory) echo "selected";?> >
+             <?=$row->subcatagory_name?>
+             </option>
+             <?} }?>
+             <? }?>
+           </select></td>
+	   
+         <td width="7%">Depo Name </td>
+         <td width="13%">
+	  <select name="delivery_point" id="delivery_point" style="width:140px" tabindex="4" class="chosen-select-deselect">
+          <option value="">Select Depo </option>
+          <?php	 
+	 foreach($depo_list as $i=>$dv)
+	 {
+		$delivery_pid = $dv->delivery_pid;	
+		$delivery_point_name = $dv->delivery_point_name;	
+	 ?>
+          <option value="<?=$delivery_pid?>" <?php if($delivery_pid==$delivery_point) echo "selected";?> ><?=$delivery_point_name?></option>
+          <?}?>
+          </select>
+	  </td>
+	   <td width="6%">Product</td>
+	   <td width="16%"><select name="product" id="product" style="width:170px" tabindex="4">
+	     <option value="">Select Product Name</option>
+	     <?php	 
+		foreach($product_list as $i=>$v)
+		{
+			if($v->product_type=="Sales Item"){
+			$product_id = $v->product_id; $product_name = $v->product_name.", ".$v->product_desc;	
+		?>
+	     <option value="<?=$product_id?>"<?php if($product_id==$product) echo "selected";?> >
+	       <?=$product_name?>
+	       </option>
+	     <?}}?>
+	     </select></td>
+	   <td width="5%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+	 </tr>
+	</table>
+	<? 
+	if($_POST['submit']) {
+	?>
+        <br style="clear:both">
+        <!--Start Pagination -->	 
+		<div class="pagination">
+		<?	
+		$from_rs=$_REQUEST['from'];
+		$to_rs=$from_rs+500;
+		if($from_rs>=500){$from_rs =$from_rs+1;}
+		if($from_rs=="" || $from_rs==0){$from_rs =1;}
+		if($to_rs=="" || $totalrecord<500){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >500){$to_rs=500;}
+		if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+		if($totalrecord==0){ $from_rs=0;}
+		?>
+		<div style="float:left; font-size:13px;">
+			 <span>Results <strong><?=$from_rs?>-<?=$to_rs?></strong> of 
+			 <strong>
+			 <?=$totalrecord;	
+			if($totalrecord>0){?>
+			 </strong>			 </span>			</div>
+			<div style="float:right;font-size:13px;"> &nbsp;&nbsp;
+			 &nbsp;&nbsp;<span style="height:20px">Page:</span>
+			<?php	 						
+			$plink = $_REQUEST['page_no'];
+			if($plink==""){$plink=1;}
+			if($totalrecord > 500)
+			{
+				$res = $totalrecord/500;
+				$res=(int)$res;
+				if(($totalrecord%500)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+		
+			if($totalrecord >500)
+			{
+				$two = $_REQUEST['from'];
+				$pno = $_REQUEST['page_no'];
+				$pno = $pno-1;
+				$frm = $two - 500;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=sales.report&cmd=order.po.status&date_from=$date_from&date_to=$date_to&&catagory=$catagory&subcatagory=$subcatagory&delivery_point=$delivery_point&product=$product&from=$frm&to=500&page_no=$pno'><span>Prev</span></a>&nbsp;";
+				}
+			}	
+		
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=500;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "class='active'";}
+						echo "href='?app=sales.report&cmd=order.po.status&date_from=$date_from&date_to=$date_to&&catagory=$catagory&subcatagory=$subcatagory&delivery_point=$delivery_point&product=$product&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "class='active'";} 
+						echo "href='?app=sales.report&cmd=order.po.status&date_from=$date_from&date_to=$date_to&&catagory=$catagory&subcatagory=$subcatagory&delivery_point=$delivery_point&product=$product&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}			
+		
+					$i++;
+					$from =$from+500;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+			if($totalrecord >500)
+			{
+				$f = $_REQUEST['from'];
+				$page = $_REQUEST['page_no'];
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=500;$page=2;}else{ $f=$f+500;} 
+				$t = 500;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=sales.report&cmd=order.po.status&date_from=$date_from&date_to=$date_to&&catagory=$catagory&subcatagory=$subcatagory&delivery_point=$delivery_point&product=$product&from=$f&to=$t&page_no=$page'><span>Next</span></a>";
+				}
+			}
+		
+		  }?>
+&nbsp;&nbsp;&nbsp;		</div>	
+	</div>
+		<!-- End Pagenation -->	
+		<br style="clear:both">
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp;Product wise stock status and required production list </strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">
+			  <span style="font-size:20px; font-weight:bold"> <?=$row->project_name?></span><br>
+			  <span style="font-size:14px; font-weight:normal"><?=$row->location?></span><br><br>
+              		  <span style="font-size:13px; font-weight:normal; margin-top:1px; border:1px dotted; padding:2px">
+    <? echo $filter_by." Date: "; echo formatDate4Display(formatDate($date_from)). " to ".formatDate4Display(formatDate($date_to)); ?>
+    </span>
+			  <br> 
+              		</div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			<tr>
+			<td width="2%" align="left" nowrap>Sl</td>
+			<td width="22%" align="left">Product Name </td>
+			<td width="10%" align="right" nowrap>Order Qty</td>
+			<td width="10%" align="right"><?php echo getStockName($project_id,$delivery_point);?></td>
+			
+			<td width="14%" align="right" nowrap>Production Need</td>
+			</tr>
+			<?
+			  $date_to  = formatDate($date_to);
+			  $sl=0; $sl+=$from_rs; $ShowroomTotal1=0; $ShowroomTotal2=0; $ShowroomTotal3=0;
+			  $ShowroomTotal4=0; $ShowroomTotal5=0; $ShowroomTotal6=0;$TotalProductionNeed=0;
+			  $ShowroomTotal7=0; $ProductionNeed=0;
+			  $ToralOrder=0;
+
+			  foreach($record_list as $val){
+			  $Showroom1=0; $Showroom2=0; $Showroom3=0; $Showroom4=0; $Showroom5=0; $Showroom6=0; 
+			  $Showroom7=0;
+          		  $project_id = $val->project_id;
+          		  $product_id = $val->product_id;
+			  $Showroom1  = getStockBalanceQty($project_id,$product_id,$delivery_point,$date_to);
+			  $ToralOrder+= $val->order_qty;
+			  $ProductionNeed = ($val->order_qty - ($Showroom1));
+			  $ShowroomTotal1+=$Showroom1; 
+			  if($ProductionNeed >0){ $color="#FF0101";}else{$color="#34A853";$ProductionNeed=0;}
+			  $TotalProductionNeed+=$ProductionNeed;
+			  $mUnit = $val->m_unit; $unit_price =$val->unit_price;			  
+          		
+			?>
+			  <tr>
+				<td align="left" nowrap style="font-weight:normal"><?=$sl?></td>
+				<td align="left" style="font-weight:normal"><?=$val->product_name?></td>
+				<td align="right" style="font-weight:normal"><?=$val->order_qty." ".$val->m_unit?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Showroom1, 2, '.', '')." ".$val->m_unit;?></td>
+                		<td align="right" nowrap style="font-weight:normal;color:<?=$color?>">
+				<? echo number_format($ProductionNeed, 2, '.', '')." ".$val->m_unit; ?>
+				</td>
+				
+				</tr>
+			  
+			<? $sl++;} ?>
+            
+			 <tr>
+				<td colspan="2" align="left" nowrap style="border-top:1px solid #CCC">
+				<div align="right">Total </div></td>
+				<td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($ToralOrder, 2, '.', '').' '.$mUnit;?> </td>
+				<td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($ShowroomTotal1, 2, '.', '').' '.$mUnit;?> </td>
+				<td align="right" nowrap style="border-top:1px solid #CCC"><?php echo  number_format($TotalProductionNeed, 2, '.', '').' '.$mUnit;?></td>
+			  </tr>
+             
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        <p class="pageBreak"></p>
+        <p align="center">
+          <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+        </p>
+		<div style="height:20px; clear:both; display:block"></div>
+		<?}?>				
+	  </div>
+	  </form>			  </td>
+	</tr>
+  </tbody>
+</table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

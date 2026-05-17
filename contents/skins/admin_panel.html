@@ -1,0 +1,73 @@
+<?php
+	extract($data);		
+	//dumpvar($data);
+	$build= array(1=>'Ask Me','Slim','Swimmers','Athletic','Average','Muscular','Heavy Set','Bear');
+	$eye_color= array(1=>'Ask Me','Blue','Green','Brown','Black','Hazel','Grey');
+	$position= array(1=>'Ask Me','Top','Bottom','Versatile','Into Oral Only','Into JO Only','Top/Vers.','Bottom/Vers.');
+	$available= array(1=>'Ask Me',20=>'Right Now!',30=>'Later Today',35=>'Lunch Time',40=>'After Work',45=>'Weekends',47=>'Weekdays',50=>'Group',53=>'Away',99=>'Not ooking');
+	$sexwhere= array(1=>'Ask Me','At Your Place','At My Place','In ublic','Anywhere');
+		
+?>
+<html>
+<head>
+<title>DickHunt.net :: Man online</title>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/member_profile.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/all_profile.css" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+</head>
+
+<body>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr> 
+    <td colspan="3" valign="top"> 
+	  <? getRequest('msg');?>
+	   	   
+        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+          <tr> 
+            
+          <td width="2%" rowspan="4" valign="middle">&nbsp; </td>
+            <td width="98%">&nbsp;</td>
+          </tr>
+          <tr> 
+            
+          <td valign="top"> <table id="addbordr" width="100%" border="0" cellspacing="0" cellpadding="4">
+              <tr class="topBg"> 
+                <td width="14%" height="32"><font color="#FFFFFF"><strong>Name</strong></font></td>
+                <td width="24%"><font color="#FFFFFF"><strong>Email</strong></font></td>
+                <td width="24%"><font color="#FFFFFF"><strong>Country</strong></font></td>
+                <td width="16%"><font color="#FFFFFF"><strong>Date</strong></font></td>
+                <td width="9%"><font color="#FFFFFF"><strong>Status</strong></font></td>
+                <td width="13%"><font color="#FFFFFF"><strong>Option</strong></font></td>
+              </tr>
+              <?php 
+			  	foreach($member_list[0] as $v)
+			  	{ 				 				 							
+			    ?>
+              <tr> 
+                <td><?echo $v[0]->headline;?></a></td>
+                <td><?echo $v[0]->email;?></td>
+				<td><?echo $v[0]->country;?></td>
+                <td><?echo $v[0]->create_date;?></td>
+				<td><?echo $v[0]->status;?></td>
+                <td><a href="?app=admin_panel&cmd=setting&status=Inactive&id=<?echo $v[0]->userid;?>">Block</a> 
+                  | <a href="?app=admin_panel&cmd=setting&status=Active&id=<?echo $v[0]->userid;?>">Active</a></td>
+              </tr>
+              <?}?>
+            </table></td>
+          </tr>
+          <tr> 
+            
+          <td height="27">&nbsp; </td>
+          </tr>
+        </table>
+   		   
+	</td>
+    <td width="20%" valign="top"><? require_once(TEMPLATES_SKINS.'/v_authorizedmenu.html');?></td>
+  </tr>
+</table>
+
+</body>
+</html>

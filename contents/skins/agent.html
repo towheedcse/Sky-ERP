@@ -1,0 +1,375 @@
+<?php
+extract($data);
+//dumpVar($data);
+dateIFrame(REL_EXT_DIR); 
+if($message==""){ $message = getRequest('msg');}
+?>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+
+<style>
+.bangFont{
+font: 140% SutonnyMJ;
+}
+</style>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/agent.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<script>
+   var myTable = new SortTable("myTable");
+   //Add the coloums of the table as name,attribute,alignment,content type
+   myTable.AddColumn("check box",      "", "center", "");
+   myTable.AddColumn("Party Code",      "", "left", "");
+    myTable.AddColumn("Party Type",      "", "left", "");
+   myTable.AddColumn("Name",     "", "left",   "");
+   myTable.AddColumn("Phone",     "", "left",   "");
+   myTable.AddColumn("Mobile",     "", "left",   "");
+   myTable.AddColumn("Fax",     "", "left",   "");
+   myTable.AddColumn("Action",         "", "center", "");
+   var i = 1;
+   //Now populate the coloums with the user data
+<?php
+foreach($agent_list[0] as $v)
+{
+$date_of_birth = dateInputFormatDMY($v[0]->date_of_birth);
+?> 
+  myTable.AddLine("<input type=\"checkbox\" name=\"chkBox\" value=\"<?=$v[0]->party_id?>\" id=\"chkBox['<?=$v[0]->party_id?>']\">","<?=$v[0]->party_id?><input type=\"hidden\" value=\"<?=$v[0]->party_id?>\" id=\"party_id<?=$v[0]->party_id?>\"> <input type=\"hidden\" value=\"<?=$v[0]->fname?>\" id=\"fname<?=$v[0]->party_id?>\"> <input type=\"hidden\" value=\"<?=$v[0]->mname?>\" id=\"mname<?=$v[0]->party_id?>\"> <input type=\"hidden\" value=\"<?=$date_of_birth?>\" id=\"date_of_birth<?=$v[0]->party_id?>\"> <input type=\"hidden\" value=\"<?=$v[0]->address?>\" id=\"address<?=$v[0]->party_id?>\"> <input type=\"hidden\" value=\"<?=$v[0]->district?>\" id=\"district<?=$v[0]->party_id?>\">", "<?=$v[0]->party_type?> <input type=\"hidden\" value=\"<?=$v[0]->party_type?>\" id=\"party_type<?=$v[0]->party_id?>\">", "<span class=\"bangFont\"><?=$v[0]->name?></span> <input type=\"hidden\" value=\"<?=$v[0]->name?>\" id=\"name<?=$v[0]->party_id?>\">","<span class=\"bangFont\"><?=$v[0]->phone?></span> <input type=\"hidden\" value=\"<?=$v[0]->phone?>\" id=\"phone<?=$v[0]->party_id?>\">","<span class=\"bangFont\"><?=$v[0]->mobile?></span> <input type=\"hidden\" value=\"<?=$v[0]->mobile?>\" id=\"mobile<?=$v[0]->party_id?>\">",  "<span class=\"bangFont\"><?=$v[0]->fax?> </span><input type=\"hidden\" value=\"<?=$v[0]->fax?>\" id=\"fax<?=$v[0]->party_id?>\">", "<a href=javascript:editSetting('<?=$v[0]->party_id?>') target='_top'><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;"); 
+	if(i%2==0) 
+    	myTable.AddLineProperties("id='<?=$v[0]->party_id?>' name='<?=$v[0]->party_id?>' class='reportEvenRow'");
+   else
+       myTable.AddLineProperties("id='<?=$v[0]->party_id?>' name='<?=$v[0]->party_id?>' class='reportOddRow'");
+     ++i;
+<?php
+}
+?>
+</script>
+<title>Agent Information</title>
+
+<body>
+<form name="agent" method="post">
+  <table width="100%" id="tblbg" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="4" valign="top">	
+	</td>
+    <td width="985" valign="top">
+	<table width="100%" border="0" cellpadding="1" cellspacing="1" class="addBorder" id="tblbg">
+          <tbody>            
+            <tr> 
+              <td colspan="5">&nbsp;</td>
+            </tr>
+                      
+            <tr> 
+              <td colspan="5">
+			  <div id="entry" style="display:block">
+			    <table width="70%" bgcolor="#FFFFFF" align="center" cellpadding="4"cellspacing="0" style="border: 1px solid">
+                   
+				  <tr bgcolor="#CCCCCC">
+                    <td align="center" class="topbg" height="26" colspan="5"><span><strong>&nbsp;Party Information </strong></span></td>
+                  </tr>
+				  <tr>
+                    <td colspan="5" style="color:#FF6699">
+					<div align="center" id="status_msg">
+                        <?php if($message) echo $message; ?>
+                    </div>					</td>
+                    </tr>
+                  <tr>
+                    <td colspan="5">&nbsp;</td>
+                    </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left"> cvwU&copy;i  aib
+                      </div></td>
+                    <td align="left">
+					<select name="party_type">
+					<option value="Customer">Customer</option>
+					<option value="Agent">Agent</option>
+					</select>					</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left"><label id="name">cvwU&copy;i bvg</label></div></td>
+                    <td><input style="font: 140% SutonnyMJ;" type="text" name="name" id="name" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left">wcZvi bvg</div></td>
+                    <td><input type="text" style="font: 140% SutonnyMJ;" name="fname" id="fname" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left">&macr;^&Euml;vwaKvix</div></td>
+                    <td><input type="text" style="font: 140% SutonnyMJ;" name="mname" id="mname" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left">Rb&yen; ZvwiL</div></td>
+                    <td><input style="height:23px" type="text" name="date_of_birth" id="date_of_birth" size="20" 
+			onFocus="gfPop.fPopCalendar(document.agent.elements['date_of_birth']);return false;" title="calendar">
+                      <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" width="20" height="20" 
+			onclick="gfPop.fPopCalendar(document.agent.elements['date_of_birth']);return false;" title="calendar"> (dd-mm-yyyy)</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td width="13%">&nbsp;</td>
+                    <td width="20%" style="font: 140% SutonnyMJ;">
+					<div align="left">
+                      <label id="address">&macr;&rsquo;vqx wVKvbv</label>
+                    </div>					</td>
+                    <td width="45%"><textarea style="font: 140% SutonnyMJ;" name="address" id="address" cols="45" rows="1"></textarea></td>
+                    <td width="15%">&nbsp;</td>
+                    <td width="7%">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;">
+					<div align="left">
+                      <label id="district">&Dagger;Rjv</label>
+                    </div>					</td>
+                    <td>
+					 <select name="district" style="width:170px">
+						<option value='0'>Select One</option>
+						<?php
+						foreach($district_list as $i=>$v)
+						{
+							$district_name = $v->district_name;							
+						?>
+						<option value="<?=$district_name?>"<?php if($district_name==$district) echo "selected";?> >
+						<?=$district_name?>
+						</option>
+						<?}?>
+					 </select>					</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left">
+                      <label id="phone">&Dagger;dvb</label>
+                    </div></td>
+                    <td><input style="font: 140% SutonnyMJ;" type="text" name="phone" id="phone" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"> 
+					<div align="left"><label id="mobile">&Dagger;gvevBj</label></div>					</td>
+                    <td><input style="font: 140% SutonnyMJ;" type="text" name="mobile" id="mobile" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="font: 140% SutonnyMJ;"><div align="left">d&uml;vK&amp;&ordf; </div></td>
+                    <td><input style="font: 140% SutonnyMJ;" type="text" name="fax" id="fax" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td><input value="Save" name="save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" />
+                      <input name="reset" type="reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" value="Reset" />                      </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </table>
+			  </div>			  
+			  </td>
+            </tr>
+           
+            <tr> 
+              <td width="26"> <input type="hidden" name="id" id="id"></td>
+              <td width="145">&nbsp;</td>
+              <td width="588">
+				<table width="97%"  border="0" cellspacing="0" cellpadding="0">
+
+                <tr>
+
+                  <th width="26%" scope="row"><div align="right">Search&nbsp; </div></th>
+
+                  <td width="74%"><input type="text" style="font: 140% SutonnyMJ;" name="srckey" style="width:258px " value="<?=getRequest('srckey')?>">
+
+                      <input type="submit" name="Submit" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'"></td>
+
+                </tr>
+
+              </table>
+			  </td>
+              <td width="207">&nbsp;</td>
+              <td width="3">&nbsp;</td>
+            </tr>
+            <tr>
+              <td align="center" colspan="5"><div align="center" style="width:300px; background-color:FFEAEA" id="footer_status_msg"></div></td>
+            </tr>
+            <tr bgcolor="#00B9B9">
+			<td colspan="5">
+			<div align="right">
+		  <?			 			 	
+			$from_rs=getRequest('from');
+			$to_rs=$from_rs+10;
+			if($from_rs>=10){$from_rs =$from_rs+1;}
+			if($from_rs=="" || $from_rs==0){$from_rs =1;}
+			if($to_rs=="" || $totalrecord<10){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >10){$to_rs=10;}
+			if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+			?>
+			<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+			
+			  if($totalrecord>0){?>
+			 </span>
+			 <span style="float:right"> 
+			  Page:
+	 		<?php	 						
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 10)
+			{
+				$res = $totalrecord/10;
+				$res=(int)$res;
+				if(($totalrecord%10)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+
+			if($totalrecord >10)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 10;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{					
+					echo "<a id='$pno' href='?app=agent&from=$frm&to=10&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}	
+
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=10;
+				echo "<select onChange='goPage(this.value)'>";
+				while($i<=$totalpage)
+				{							
+						echo "<option  value='?app=agent&from=$from&to=$to&page_no=$i'"; 
+						if($i==$plink){ echo " selected='selected' ";} 
+						echo ">$i</option>";
+							
+
+					$i++;
+					$from =$from + 10;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+				echo "</select>";
+			}
+		  	if($totalrecord >10)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=10;$page=2;}else{ $f=$f+10;} 
+				$t = 10;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=agent&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+		   </span>
+		  </div>
+		  <?}?>
+		   </td>
+              
+            </tr>
+            <tr> 
+              <td colspan="5">		 
+			
+			  <table width="100%" style="border:1px solid;" align="center" bgcolor="#FFFFFF">
+                  <script>
+				 //This variable holds the number of click event that a user
+				 //did on the table header, it is require to find the display order
+				 var counter = 0;
+			  	</script>
+                  <tbody id="installed_systems" name="installed_systems">
+                    <tr>
+                      <td align="left" colspan="4"> </td>
+                    </tr>
+                    <tr class="tbl_header" align="center"> 
+                      <td width="21"> <input type="checkbox" name="select_all" onClick="selectAll(document.agent.select_all, document.agent.chkBox)">                      </td>
+                      <td width="98"><div align="left"><a style="font: 140% SutonnyMJ;" href="javascript:SortRows(myTable,1); onclick=toggleSort(0);">cvwU&copy;i &Dagger;KvW</a> 
+                          <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+					      <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2">
+					    </div></td>
+					  <td class="bangFont" width="135" align="left"><a href="javascript:SortRows(myTable,2); onclick=toggleSort(2);">cvwU&copy;i aib</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4"></td>
+					  <td width="141" align="left" class="bangFont"><a href="javascript:SortRows(myTable,2); onclick=toggleSort(2);">cvwU&copy;i bvg</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4">
+					</td>
+					
+					 <td width="141" align="left" class="bangFont"><a href="javascript:SortRows(myTable,3); onclick=toggleSort(4);">‡dvb</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_5"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_6">
+					</td>
+					 <td width="119" align="left" class="bangFont"><a href="javascript:SortRows(myTable,4); onclick=toggleSort(6);">&Dagger;gvevBj</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_7"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_8">
+					</td>
+					 
+					 <td width="92" align="left" class="bangFont"><a href="javascript:SortRows(myTable,6); onclick=toggleSort(10);">d&uml;vK&amp;&ordf;</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_11"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_12">
+					</td>                 
+                    
+                    <td width="61">Action</td>
+                    </tr>
+                    <script>myTable.WriteRows()</script>
+                  </tbody>
+                </table></td>
+            </tr>
+            <tr> 
+              <td colspan="5">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+	</td>
+  </tr>
+</tbody></table>
+</form>
+</body>

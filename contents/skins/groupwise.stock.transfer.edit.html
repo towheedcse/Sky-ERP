@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data); 
+$transfer_date = date("Y-m-d"); $free_qty=0;
+
+$getSql	= "SELECT transfer_from,delivery_point,transfer_date FROM ".TEMP_STOCK_TRANSFER_TBL." WHERE created_by = '".getFromSession('userid')."' 
+AND project_id='".getFromSession('project_id')."'";
+$gres 	= mysql_query($getSql);
+if(mysql_num_rows($gres)>0){
+$row = mysql_fetch_array($gres);
+extract($row);
+}  
+     
+if($message==""){ $message = getRequest('msg');} $currency=1; 
+ dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/stock_transfer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+var CANCEL_URL = "index.php?app=sales_order&cmd=list";
+
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Sales Order</title>
+<style>
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.style2 {color: #666666}
+.bangFont {font: 130% SutonnyMJ;
+}
+</style>
+<style>
+body{ font-size:12px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+.no-border{
+    border:none !important;
+}
+</style>
+</head>
+<body bgcolor="#FFFFFF" >
+
+<form name="frmbuyerorder" method="post">
+
+
+
+<table width="89%"  bgcolor="#FFFFFF" class="addBorder" cellspacing="0" cellpadding="2">
+
+	  <tr>
+
+		<td class="topHeader" colspan="9"><div id="tblTitle" align="left">Edit Stock Transfer <strong></strong></div></td> 
+	  </tr>
+	<? if(getRequest('type')=="lc"){?>
+	<?}else{?>
+	<?}?>
+	  <tr>
+	    <td class="no-border">&nbsp;</td>
+	    <td class="no-border">Transfer No</td>
+	    <td class="no-border"><input type="text" name="transfer_no" id="transfer_no" readonly style="width:190px" value="<?=$transfer_no?>">
+
+</td>
+	    <td class="no-border">&nbsp;</td>
+	    <td class="no-border">&nbsp;</td>
+	    <td align="right" class="no-border"><div align="right">
+	      <label id="transfer_date_lbl">Transfer Date</label>
+        </div></td>
+	    <td colspan="2" class="no-border"><input name="transfer_date" id="transfer_date" style="width:180px;" value="<?=dateInputFormatDMY($transfer_date)?>" size="20" title="calendar" class="validate[required]" type="text" tabindex="6">
+<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Date" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['transfer_date']);return false;"></td>
+</tr>
+	  <tr>
+	    <td width="4%" class="no-border">&nbsp;</td>
+	    <td width="13%" class="no-border"><label id="transfer_from_lbl">Transfer From</label> </td>
+	    <td width="34%" class="no-border">
+		<select name="transfer_from" id="transfer_from" style="width:190px" tabindex="1" onChange="getProductStock()">
+  <option value="">Select Transfer from Store Name</option>
+  <?php	 
+		   $transfer_from ="D0010";
+			foreach($user_depo_list as $i=>$v)
+			{
+				$delivery_pid = $v->delivery_pid;	
+				$delivery_point_name = $v->delivery_point_name;	
+			?>
+  <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$transfer_from) echo "selected";?> >
+  <?=$delivery_point_name?>
+  </option>
+  <?}?>
+</select></td>
+	    <td width="12%" class="no-border">&nbsp;</td>
+	    <td width="2%" class="no-border">&nbsp;</td>
+	    <td width="11%" align="right" class="no-border"><label id="delivery_point_lbl">Transfer To</label> </td>
+	    <td colspan="2" class="no-border">
+		<select name="delivery_point" id="delivery_point" style="width:182px" tabindex="4">
+  <option value="">Sales Delivery Point</option>
+  <?php	 
+		  	
+			foreach($depo_list as $i=>$v)
+			{
+
+				$delivery_pid = $v->delivery_pid;	
+				$delivery_point_name = $v->delivery_point_name;	
+			?>
+  <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$delivery_point) echo "selected";?> >
+  <?=$delivery_point_name?>
+  </option>
+  <?}?>
+</select>                </td>
+  </tr>
+  <tr>
+      <td colspan="10" class="no-border">
+		  <fieldset>
+			  <legend>Product Details</legend>
+			  <table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			    <tr>
+			      <td width="2%" align="left">SL.</td>
+			      <td width="3%">Option</td>
+			      <td width="20%">Description of Goods </td>
+			<?php if($product_convert){?>
+			      <td width="20%">Convert Product</td>
+			<?php } ?>
+			      <td width="10%">Stock Quantity</td>
+			      <td width="10%">Transfer Quantity</td>
+			      <td width="10%">Edit Quantity</td>
+			      <td width="10%"><div align="center">Rate</div></td>
+			      <td width="15%" align="left"><div align="center">Amount </div></td>
+		        </tr>
+	 <?
+         $i=0; $tb = 1; $sl=1; $total_order_qty =0; $total_qty=0; 
+	 $total_pending_qty=0; $total_free_qty=0;
+         foreach($item_list as $val){
+         $i++; $tb++; $currency=$val->currency;	
+         $total_qty+=$val->qty; 
+	 $stock_qty = getStoreStockQty($val->transfer_from,$val->product);
+         ?>
+			    <tr>
+			      <td align="left"><?=$sl?></td>
+			      <td align="center"><a href="?app=groupwise.stock.transfer&cmd=edit&tid=<?=$val-> 	transfer_id?>&transfer_no=<?=$transfer_no?>"><img src='<?=IMAGE_DIR?>/common/icons/delete.gif' alt="Cancel" width="20" border='0'></a></td>
+			      <td>
+          <select name="product<?=$sl?>" id="product<?=$sl?>" style="width:280px" tabindex="<?=$sl?>" onChange="javascript:getProductStockQty(this.value,<?=$sl?>)">
+            <option value="">Select One</option>
+            <?php	
+            if(getFromSession('u_type_id')!=105){												
+            foreach($product_list as $i=>$pv){
+            if($pv->product_type=="Sales Item"){
+                $product_id = $pv->product_id;	
+            ?>
+            <option value="<?=$product_id?>" <?php if($val->product==$product_id) echo "selected";?> >
+            <?=$pv->product_name?>
+            </option>
+            <? }}
+            }else{
+            foreach($product_list as $i=>$pv){		
+                $product_id = $pv->product_id;	
+            ?>
+            <option value="<?=$product_id?>" <?php if($val->product==$product_id) echo "selected";?> >
+            <?=$pv->product_name?>
+            </option>
+            <? }}?>
+            
+          </select>	
+          <input type="hidden" name="old_id<?=$sl?>" id="old_id<?=$sl?>" value="<?=$val->transfer_id?>">
+          <input type="hidden" name="catagory<?=$sl?>" id="catagory<?=$sl?>" value="<?=$val->catagory?>">	
+          <input type="hidden" name="brand<?=$sl?>" id="brand<?=$sl?>" value="<?=$val->brand_id?>">
+          <input type="hidden" name="m_unit<?=$sl?>" id="m_unit<?=$sl?>" value="<?=$val->m_unit?>">	  
+          </td>
+
+			<?php if($product_convert){?>
+			      <td>
+			  <select name="new_product_id<?=$sl?>" id="new_product_id<?=$sl?>" style="width:280px" tabindex="<?=$sl?>">
+			    <option value="">Select One</option>
+			    <?php	
+			    if(getFromSession('u_type_id')!=105){												
+			    foreach($product_list as $i=>$pv){
+			    if($pv->product_type=="Sales Item"){
+				$product_id = $pv->product_id;	
+			    ?>
+			    <option value="<?=$product_id?>" <?php if($val->new_product_id==$product_id) echo "selected";?> >
+			    <?=$pv->product_name?>
+			    </option>
+			    <? }}
+			    }else{
+			    foreach($product_list as $i=>$pv){		
+				$product_id = $pv->product_id;	
+			    ?>
+			    <option value="<?=$product_id?>" <?php if($val->new_product_id==$product_id) echo "selected";?> >
+			    <?=$pv->product_name?>
+			    </option>
+			    <? }}?>
+			    
+			  </select>	  
+          		</td>
+			<?php } ?>
+
+	  <td><input type="text" readonly name="stock_qty<?=$sl?>" id="stock_qty<?=$sl?>" value="<?=$stock_qty?>" style="width:60px" /> <span id="unit-s<?=$sl?>"><?=$val->m_unit?></span></td>
+	  <td><input type="text" readonly name="tf_qty<?=$sl?>" id="tf_qty<?=$sl?>" value="<?=$val->qty?>" style="width:70px" /> <span id="unit-t<?=$sl?>"><?=$val->m_unit?></span></td>
+			      <td align="left">
+          <div align="left">
+	  <input type="text" name="qty<?=$sl?>" id="qty<?=$sl?>" value="<?=$val->qty?>" onKeyUp="calTotal(<?=$sl?>)" style="width:70px" /> <span id="unit-e<?=$sl?>"><?=$val->m_unit?></span>
+			      </div>
+          </td>
+			      <td align="left">
+          <div align="center">
+			      <input type="text" readonly name="unit_price<?=$sl?>" id="unit_price<?=$sl?>" value="<?=$val->unit_price?>" style="width:50px"/> <?=$val->curr_symble?>
+			      </div>
+          </td>
+			      <td align="left">
+          <div align="center">
+			      <input type="text" readonly name="total<?=$sl?>" id="total<?=$sl?>" value="<?=$val->total?>" style="width:80px" /> <?=$val->curr_symble?>
+			      </div>
+          </td>
+		        </tr>
+			<?  $sl++; }?>
+
+			<tr>
+			      <td align="left"><?=$sl?></td>
+			      <td align="center"><img src='<?=IMAGE_DIR?>/common/add.gif' alt="Cancel" width="20" border='0'></td>
+			      <td>
+          <select name="product<?=$sl?>" id="product<?=$sl?>" style="width:280px" tabindex="<?=$sl?>" onChange="javascript:getProductStockQty(this.value,<?=$sl?>)">
+            <option value="">Select One</option>
+            <?php	
+            if(getFromSession('u_type_id')!=105)
+{												
+            foreach($product_list as $i=>$pv){
+            if($pv->product_type=="Sales Item"){
+                $product_id = $pv->product_id;	
+            ?>
+            <option value="<?=$product_id?>" >
+            <?=$pv->product_name?>
+            </option>
+            <? }}
+            }else{
+            foreach($product_list as $i=>$pv){		
+                $product_id = $pv->product_id;	
+            ?>
+            <option value="<?=$product_id?>">
+            <?=$pv->product_name?>
+            </option>
+            <? }}?>
+            
+          </select>	
+          <input type="hidden" name="old_id<?=$sl?>" id="old_id<?=$sl?>" value="0">
+          <input type="hidden" name="catagory<?=$sl?>" id="catagory<?=$sl?>" value="">	
+          <input type="hidden" name="brand<?=$sl?>" id="brand<?=$sl?>" value="">
+          <input type="hidden" name="m_unit<?=$sl?>" id="m_unit<?=$sl?>" value="">	  
+          </td>
+
+			<?php if($product_convert){?>
+		      <td>
+			  	<select name="new_product_id<?=$sl?>" id="new_product_id<?=$sl?>" style="width:280px" tabindex="<?=$sl?>">
+				    <option value="">Select One</option>
+				    <?php	
+				    if(getFromSession('u_type_id')!=105)
+			{												
+				    foreach($product_list as $i=>$pv){
+				    if($pv->product_type=="Sales Item"){
+					$product_id = $pv->product_id;	
+				    ?>
+				    <option value="<?=$product_id?>" >
+				    <?=$pv->product_name?>
+				    </option>
+				    <? }}
+				    }else{
+				    foreach($product_list as $i=>$pv){		
+					$product_id = $pv->product_id;	
+				    ?>
+				    <option value="<?=$product_id?>">
+				    <?=$pv->product_name?>
+				    </option>
+				    <? }}?>
+				    
+				  </select>	  
+          		</td>
+			<?php } ?>
+
+	  <td><input type="text" readonly name="stock_qty<?=$sl?>" id="stock_qty<?=$sl?>" value="0.00" style="width:60px" /> <span id="unit-s<?=$sl?>"></span></td>
+	  <td><input type="text" readonly name="tf_qty<?=$sl?>" id="tf_qty<?=$sl?>" value="0.00" style="width:70px" /> <span id="unit-t<?=$sl?>"></span></td>
+			      <td align="left">
+          <div align="left">
+		<input type="text" name="qty<?=$sl?>" id="qty<?=$sl?>" value="0.00" onKeyUp="calTotal(<?=$sl?>)" style="width:70px" /> <span id="unit-e<?=$sl?>"></span>
+			      </div>
+          </td>
+			      <td align="left">
+          <div align="center">
+		<input type="text" readonly name="unit_price<?=$sl?>" id="unit_price<?=$sl?>" value="0.00" style="width:50px"/> <?=$val->curr_symble?>
+			      </div>
+          </td>
+			      <td align="left">
+          <div align="center">
+		<input type="text" readonly name="total<?=$sl?>" id="total<?=$sl?>" value="0.00" style="width:80px" /> <?=$val->curr_symble?>
+			      </div>
+          </td>
+		        </tr>
+			<? $sl++; ?>	
+
+			 <tr>
+			<?php if($product_convert){ ?>
+			      <td align="center">&nbsp;</td>
+			<?php } ?>
+			      <td colspan="5" align="left"><div align="right"> Total</div></td>
+			      <td align="left"><div id="txttotalqty"><? echo number_format($total_qty,0).' '.$val->m_unit;?></div></td>
+			      <td align="center">&nbsp;</td>
+			      <td align="center"><div id="txttotalamount"><? echo number_format($total_amount,0).' '.$val->curr_symble;?></div></td>
+		        </tr>
+		    </table>
+</fieldset>			  
+</td>
+</tr>
+	  				
+
+	  
+<tr align="center">
+	<td align="left" class="no-border">&nbsp;</td>
+	<td align="left" class="no-border"><div align="right">Narration</div></td>
+	<td align="left" class="no-border"><textarea name="narration" id="narration" cols="50" rows="2"><?=$narration?></textarea></td>
+	<td align="left" class="no-border">&nbsp;</td>
+	<td colspan="3" align="left" class="no-border"><div align="right">Total Amount </div></td>
+	<td align="left" class="no-border">
+	  <input type="text" name="total_amount" id="total_amount" style="width:130px;" value="<?=$total_amount?>" class="validate[required]" readonly="">
+	  <input type="hidden" name="ttlfield" id="ttlfield" value="<?=$sl?>">
+	</td>
+</tr>
+
+<tr>
+
+<td class="no-border">&nbsp;</td>
+   <td colspan="5" class="no-border">
+	<input type="hidden" name="m_unit" id="m_unit" value="pc"/>
+	<input type="hidden" name="currency" value="<?=$currency?>">
+	<input type="hidden" name="transfer_no" value="<?=$transfer_no?>">
+	<input type="hidden" name="cmd" value="edit">	
+	<?php if($product_convert){ ?>
+           <input type="hidden" name="product_convert" value="<?=$product_convert?>">	
+	<?php } ?>
+   </td>
+<td width="6%" class="no-border">&nbsp;</td>
+	<td class="no-border">
+	    <div align="left">
+		<input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave();" tabindex="19">
+	    </div>				
+	</td>
+</tr>
+
+<tr>
+
+<td class="no-border">&nbsp;</td>
+
+<td colspan="6" class="no-border">&nbsp;</td>
+
+<td class="no-border">&nbsp;</td>
+
+<td class="no-border">&nbsp;</td>
+</tr>
+</table>
+
+
+
+</form>
+
+</body>
+
+</html>
+

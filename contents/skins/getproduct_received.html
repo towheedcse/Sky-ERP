@@ -1,0 +1,146 @@
+<html>
+<?php    
+	extract($data);
+	//dBug($data);	  
+ ?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_loan.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/shipment.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<style>
+table
+{
+background-color: #F7FFF0;
+}
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.bangFont{
+font: 140% SutonnyMJ;
+}
+</style>
+	<script>
+	   var myTable = new SortTable("myTable");
+	   //Add the coloums of the table as name,attribute,alignment,content type
+	   myTable.AddColumn("Recieved No.",     "", "center",   "");
+	   myTable.AddColumn("Party No.",     "", "center",   "");
+	   myTable.AddColumn("Name",     "", "left",   "");
+	   myTable.AddColumn("Father Name",     "", "left",   "");
+	   myTable.AddColumn("Address",      "", "left", "");
+	   myTable.AddColumn("Mobile",      "", "left", "");
+	   myTable.AddColumn("Total Bag",      "", "center", "");
+	   myTable.AddColumn("Bag Rent",      "", "center", "");
+	   myTable.AddColumn("Action",         "", "center", "");
+	   var i = 1;
+	   //Now populate the coloums with the user data
+	<?php
+	foreach($record_list[0] as $v)
+	{	    					
+	?> 
+	myTable.AddLine("<?=$v[0]->received_id?> <input type=\"hidden\" value=\"<?=$v[0]->received_id?>\" id=\"received_id<?=$v[0]->received_id?>\">","<span class=\"bangFont\"><?=$v[0]->party_id?></span> <input type=\"hidden\" value=\"<?=$v[0]->party_id?>\" id=\"party_id<?=$v[0]->received_id?>\"> <input type=\"hidden\" value=\"<?=$v[0]->agent_code?>\" id=\"agent_code<?=$v[0]->received_id?>\">","<span class=\"bangFont\"><?=$v[0]->name?></span> <input type=\"hidden\" value=\"<?=$v[0]->name?>\" id=\"name<?=$v[0]->received_id?>\">","<span class=\"bangFont\"><?=$v[0]->fname?></span><input type=\"hidden\" value=\"<?=$v[0]->fname?>\" id=\"fname<?=$v[0]->received_id?>\">", "<span class=\"bangFont\"><?=$v[0]->address?></span><input type=\"hidden\" value=\"<?=$v[0]->address?>\" id=\"address<?=$v[0]->received_id?>\">", "<span class=\"bangFont\"><?=$v[0]->mobile?></span><input type=\"hidden\" value=\"<?=$v[0]->mobile?>\" id=\"mobile<?=$v[0]->received_id?>\">","<span class=\"bangFont\"><?=$v[0]->received_bag_qty?></span><input type=\"hidden\" value=\"<?=$v[0]->received_bag_qty?>\" id=\"received_bag_qty<?=$v[0]->received_id?>\">", "<span class=\"bangFont\"><?=$v[0]->rent_per_bag?></span><input type=\"hidden\" value=\"<?=$v[0]->rent_per_bag?>\" id=\"rent_per_bag<?=$v[0]->received_id?>\">","<a href=javascript:getReceivedID('<?=$v[0]->received_id?>') target='_top'>OK-><a/>"); 
+		if(i%2==0) 
+			myTable.AddLineProperties("id='<?=$v[0]->received_id?>' name='<?=$v[0]->received_id?>' class='reportEvenRow'");
+	   else
+		   myTable.AddLineProperties("id='<?=$v[0]->received_id?>' name='<?=$v[0]->received_id?>' class='reportOddRow'");
+		 ++i;
+	<?php
+	}
+	?>
+	</script>
+	<body>
+	<br><br>
+	<table width="98%" align="center"  border="0" class="tableBorderBold">
+	  <tr>
+		<th scope="row" align="center">
+		 <form name = "frmsearch" method="POST">
+			 <table width="91%" bgcolor="#F9FADE" cellpadding="4" cellspacing="0" style="-moz-border-radius: 10px 0 0 0;height:25px;margin:0; padding:0; border:1px solid #999900;">
+			  <tr bgcolor="#EAE3C8">
+				<th colspan="3" style="-moz-border-radius: 10px 0 0 0;height:25px;" scope="row"><div align="left">&nbsp;Search </div></th>
+			  </tr>
+			  <tr>
+				<td width="42%" class="bangFont"><div align="right"><font size="2">eywKs bs/&Dagger;&micro;Zvi &Dagger;KvW /bvg/&Dagger;&micro;Zvi aib </font></div></td>
+				<td width="1%"><strong>:</strong></td>
+				<td width="57%">
+				<div align="left">
+				  <input type="text" name="srckey" class="bangFont" size="30" value="<?=$srckey?>">
+				  <input type="submit" name="list" class="button" value="Show">
+				</div>
+				</td>
+			  </tr>
+			  <tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			  </tr>
+		   </table>	            
+		  </form>
+				
+		  <table width="99%" border="0" align="center" bgcolor="#FFFFFF">
+			<script>
+			 //This variable holds the number of click event that a user
+			 //did on the table header, it is require to find the display order
+			 var counter = 0;
+		  </script>
+			<tbody id="installed_systems" name="installed_systems">
+			  <tr> 
+				<td align="left" colspan="8"> </td>
+			  </tr>
+			  <tr class="tbl_header" align="center">
+			    <td width="87" class="bangFont" align="center">
+				  <a href="javascript:SortRows(myTable,0); onclick=toggleSort(0);">`wjj bs</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2"> 
+				</td> 				
+				<td width="122" class="bangFont" align="center">
+				  <a href="javascript:SortRows(myTable,0); onclick=toggleSort(0);">cvwU&copy;i &Dagger;KvW</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2"> 
+				</td>	
+			    <td width="163" align="left" class="bangFont">
+				<a href="javascript:SortRows(myTable,0); onclick=toggleSort(0);">bvg</a> 
+				 <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+				 <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2"> 
+				</td>
+			    <td width="178" class="bangFont" align="left">
+				<a href="javascript:SortRows(myTable,0); onclick=toggleSort(0);">wcZvi bvg</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2"> 
+				</td>
+			    <td width="237" align="left" class="bangFont">
+				<a href="javascript:SortRows(myTable,0); onclick=toggleSort(0);">&macr;&rsquo;vqx wVKvbv</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2"> 
+				</td>			    
+			   	
+				 <td width="141" align="left" class="bangFont">
+				<a href="javascript:SortRows(myTable,1); onclick=toggleSort(2);">&Dagger;gvevBj</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4"> 
+				</td>	
+				 <td width="196" align="center" class="bangFont"> <a href="javascript:SortRows(myTable,1); onclick=toggleSort(2);"> &dagger;gvU e&macr;&mdash;vi msL&uml;v</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4"> 
+				</td>		
+				<td width="196" align="center" class="bangFont"> <a href="javascript:SortRows(myTable,1); onclick=toggleSort(2);"> c&Ouml;wZ e&macr;&mdash;vi  fvov</a> 
+			  	  <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+				  <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4"> 
+				</td>				    
+				 <td width="44">Action</td>
+			  </tr>
+			  <script>myTable.WriteRows()</script>
+			</tbody>
+		  </table> 
+		</th>
+	  </tr>
+</table>
+
+</body>
+</html>
+			
+	
+

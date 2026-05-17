@@ -1,0 +1,350 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/style.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+function show_confirm(val)
+{
+	var r=confirm("Are you sure delete this record?");
+	if (r==true)
+  	{
+  		window.location ="?app=supplier.info&cmd=delete&id="+val;
+  	}
+}
+</script>
+<title>General ERP::Supplier </title>
+
+<body>
+<div style="height:auto; margin-bottom:10px">
+  <table width="98%" id="tblbg" border="0" style="height:auto" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="4" valign="top">	
+	</td>
+    <td width="985" valign="top" style="height:auto">
+	<table width="100%" style="height:auto" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+          <tbody>            
+            <tr> 
+              <td colspan="5"><div><?php if($message) echo $message; ?></div></td>
+            </tr>                      
+            <tr> 
+              <td colspan="5">
+			  <form name="style" method="post" action="" enctype="multipart/form-data">
+			  <div id="entry" style="display:block">
+			    <table width="70%" align="center" cellpadding="4"cellspacing="0" style="border: 1px solid">
+                  <tr bgcolor="#CCCCCC">
+                    <td align="center" class="topbg" height="26" colspan="5"><span><strong>&nbsp;Supplier Information </strong></span></td>
+                  </tr>
+                  <tr>
+                    <td colspan="5">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="name">Supplier Name</label>
+                    </td>
+                    <td><input type="text" name="name" id="name" value="<?=$name?>" size="35"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td width="9%">&nbsp;</td>
+                    <td width="20%"><label id="address">Address</label>
+                    </td>
+                    <td width="49%"><textarea name="address" id="address" cols="45" rows="3"><?=$address?></textarea></td>
+                    <td width="15%">&nbsp;</td>
+                    <td width="7%">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="country">Country</label></td>
+                    <td><select name="country">
+                        <option value='0'>Select One</option>
+                        <?php
+						foreach($country_list as $i=>$v)
+						{
+							$countrycode = $v->countrycode;
+							$countryName = $v->country;	
+						?>
+                        <option value="<?=$countrycode?>" <?php if($countrycode==$country) echo "selected";?> >
+                        <?=$countryName?>
+                        </option>
+                        <?}?>
+                      </select>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="phone">Phone</label></td>
+                    <td><input type="text" name="phone" id="phone" value="<?=$phone?>" ></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="mobile">Mobile</label></td>
+                    <td><input type="text" name="mobile" id="mobile" value="<?=$mobile?>" ></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><label id="email">Email</label></td>
+                    <td><input type="text" name="email" id="email" value="<?=$email?>" ></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>Fax</td>
+                    <td><input type="text" name="fax" id="fax" value="<?=$fax?>" ></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">Contact Person </div></td>
+                    <td><div align="left">
+                        <input type="text" name="contact_person" id="contact_person" value="<?=$contact_person?>" size="35">
+                    </div></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">Designation</div></td>
+                    <td><div align="left">
+                        <input type="text" name="designation" id="designation" value="<?=$designation?>" >
+                    </div></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">
+                      <label id="type_of_business">Type of Business</label>
+                    </div></td>
+                    <td><div align="left">
+                        <select name="type_of_business">
+                          <option value='0'>Select One</option>
+                          <option value="Manufacturer" <?php if($type_of_business=="Manufacturer") echo "selected";?> >Manufacturer</option>
+                          <option value="Trader" <?php if($type_of_business=="Trader") echo "selected";?>>Trader</option>
+                          <option value="Agent" <?php if($type_of_business=="Agent") echo "selected";?>>Agent</option>
+                        </select>
+                    </div></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td><input value="Save" name="save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" />
+                        <input name="reset" type="reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" value="Reset" />
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td><input type="hidden" name="id" id="id" value="<?=$supplier_code?>">
+                        <input type="hidden" name="project_id" id="project_id" value="<?=getFromSession('project_id')?>"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </table>
+			  </div>
+			  </form>			  
+			  </td>
+            </tr>
+           
+            <tr> 
+              <td width="191">&nbsp;</td>
+              <td width="35">&nbsp;</td>
+              <td width="606"><form name="form1" method="post" action="">
+                <table width="92%"  border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <th width="26%" scope="row"><div align="right">Search&nbsp; </div></th>
+                    <td width="74%"><input  type="text" name="srckey" style="width:258px;border:1px solid  #999;
+	box-shadow: 0 0 1px 1px #F4F4F4; " value="<?=getRequest('srckey')?>" >
+                    <input type="submit" name="Submit" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'"></td>
+                  </tr>
+                </table>
+              </form></td>
+              <td width="97">&nbsp;</td>
+              <td width="190">&nbsp;</td>
+            </tr>
+            <tr>
+              <td align="center" colspan="5"><div align="center" style="width:300px; background-color:FFEAEA" id="footer_status_msg"></div></td>
+            </tr>
+            <tr>
+			<td>&nbsp;</td>
+              <td align="left" colspan="3">
+			<div class="page_link">  
+			  <?			 			 	
+				$from_rs=getRequest('from');
+				$to_rs=$from_rs+50;
+				if($from_rs>=50){$from_rs =$from_rs+1;}
+				if($from_rs=="" || $from_rs==0){$from_rs =1;}
+				if($to_rs=="" || $totalrecord<50){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >50){$to_rs=50;}
+				if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+				?>
+				<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+				
+			  if($totalrecord>0){?>
+			 </span>
+			 <span style="float:right">
+			  Page:
+	 		<?php	 						
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 50)
+			{
+				$res = $totalrecord/50;
+				$res=(int)$res;
+				if(($totalrecord%50)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+
+			if($totalrecord >50)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 50;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=supplier.info&from=$frm&to=50&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}	
+
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=50;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+						echo "href='?app=supplier.info&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";} 
+						echo "href='?app=supplier.info&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}			
+
+					$i++;
+					$from =$from+50;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+		  	if($totalrecord >50)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=50;$page=2;}else{ $f=$f+50;} 
+				$t = 50;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=supplier.info&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+		   </span>
+		  </div>
+
+		  <?}?>
+			</td>
+			<td width="190">&nbsp;</td>
+            </tr>
+            <tr> 
+              <td colspan="5" align="center">		 
+				<table width="78%"  class="addBorder" cellspacing="2" cellpadding="4">
+
+                  <tr bgcolor="#ccc" style="height:30px">
+
+                    <td width="3%" height="31" align="center">SL</td>
+
+                    <td width="10%">Supplier ID </td>
+                    <td width="32%">Supplier Name </td>
+
+                    <td width="28%">Contact Info </td>
+                    <td width="17%">Email</td>
+                    <td width="10%">Action</td>
+                  </tr>
+				  <?
+				  $i=1;
+				  foreach($supplier_list as $val){
+				  $supplier_code=$val->supplier_code;
+				  ?>
+                  <tr style="height:30px" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+                    <td height="23"><?=$i?></td>
+                    <td><?=$val->supplier_code?></td>
+                    <td><?=$val->name."<br>".$val->address?></td>
+                    <td><?=$val->contact_person."<br>Tel- ".$val->phone."<br>Mob- ".$val->mobile?></td>
+                    <td><?=$val->email?></td>
+                    <td>
+					<div align="center">
+					<a href="?app=supplier.info&cmd=edit&id=<?=$supplier_code?>"><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;&nbsp;
+					<a href="javascript:onclick=show_confirm('<?=$val->supplier_code?>')"><img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.gif'></a>					</div>					</td>
+                  </tr>
+
+				  <?$i++;}?>
+                </table>
+			  
+			  </td>
+            </tr>
+            <tr> 
+              <td colspan="5">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+	</td>
+  </tr>
+</tbody></table>
+</div>
+</body>

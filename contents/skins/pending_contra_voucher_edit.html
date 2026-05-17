@@ -1,0 +1,987 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$project_id     = getFromSession('project_id');  
+$title = $is_money_recipt == 1 ? "Money Recipt" : "Voucher";
+
+?>
+<title>Edit Pending <?=$title?></title>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/contra_voucher_edit.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+   <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+
+
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<style>
+body{ font-size:12px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+
+</style>
+
+
+    <style>
+        /* Select2 Styling & Fixes */
+        .select2-container .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding-left: 12px;
+        }
+        /* Ensure Select2 doesn't jump outside the flex container */
+        .select2-container { width: 100% !important; }
+
+        .containerDiv {
+            padding: 20px;
+        }
+
+
+	div#due_invoice_container, div#due_invoice_container_2 {
+	    position: relative;
+	}
+	span.select2-dropdown.select2-dropdown--below {
+	    top: 32px;
+	}
+ 
+	span.select2-selection.select2-selection--single {
+	    height: 30px;
+	    width: 115px;
+	}
+	.text-center {
+            text-align: center !important;
+        }
+        .text-right {
+            text-align: right !important;
+        }
+
+
+        .swal2-popup.swal2-modal.swal2-icon-warning.swal2-show {
+            flex-direction: column;
+        }
+	div#tbs td {
+	    padding: 6px 8px;
+	    border: 1px solid #95949463;
+	}
+
+        input{
+            background-color:#ffffff;
+            border: 1px solid #006699;
+        }
+        .chosen-container-single .chosen-search input[type="text"] {
+            width: 89%;
+        }
+        #due_invoice_chosen > .chosen-drop > .chosen-search input[type="text"] {
+            width: 80% !important;
+        }
+    </style>
+
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=15,top=5,width=980px,height=1300px')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Contra Voucher</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{ font-size:11px;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;font-size:11px;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmjournal" method="post" onSubmit="javascript: return checkDrCr();" enctype="multipart/form-data">
+<div id="printChallan">
+<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp;Edit Pending <?=$title?> </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:normal"> <?=$project_name?></span><br>
+      <span style="font-size:12px; font-weight:normal"><?=$location?></span>
+	</div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">	
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+<?php if($is_money_recipt == 1){?>
+	<td><div align="left"><strong>Bank Slip </strong> </div></td>
+        <td align="left">
+        <input name="mr_no" id="mr_no" style="width:145px;" value="<?=$mr_no?>" size="20" type="text">
+        </td>
+<?php }else{?>
+        <td><div align="left"><strong>Voucher Type </strong> </div></td>
+        <td align="left">
+        <select name="vouchar_type" id="vouchar_type" style="width:150px"  class="validate[required]" >
+		  <option value="">Select Voucher Type</option>
+          <option value="Payable Vouchar" <?php if($vouchar_type=="Payable Vouchar") echo "selected";?>>Payable Voucher</option>
+          <option value="Recievable Vouchar" <?php if($vouchar_type=="Recievable Vouchar") echo "selected";?>>Recievable Voucher</option>
+	  <option value="Journal Vouchar" <?php if($vouchar_type=="Journal Vouchar") echo "selected";?>>Journal Voucher</option>
+          <option value="Contra Vouchar" <?php if($vouchar_type=="Contra Vouchar") echo "selected";?>>Contra Voucher</option>
+          <option value="Others Vouchar" <?php if($vouchar_type=="Received Vouchar" || $vouchar_type=="Payment Vouchar" || $vouchar_type=="Others Vouchar") echo "selected";?>>Others Voucher</option>
+        </select>
+        </td>
+<?php }?>
+
+	<input type="hidden" name="prv_vouchartype" value="<?=$vouchar_type?>">
+        <input type="hidden" name="currency" value="<?=$currency?>">
+        <td width="12%" align="left" nowrap> <div align="right">Voucher Date </div></td>
+        <td width="24%" align="left"><input name="created_date" id="created_date" style="width:145px;" value="<?=dateInputFormatDMY($created_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['created_date']);return false;" title="calendar" class="validate[required]" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Date" width="18" height="18" title="calendar" onClick="gfPop.fPopCalendar(document.frmjournal.elements['created_date']);return false;"></td>
+      </tr>
+<?php if($is_money_recipt == 1){?>
+	<tr>
+        <td><div align="left"><strong>Payment Mode</strong> </div></td>
+        <td align="left">
+	<select name="mode_of_payment" id="mode_of_payment" style="width:150px"  class="validate[required]" >
+          <option value="Cash" <?php if($mode_of_payment=="Cash") echo "selected";?> >Cash</option>
+          <option value="Check" <?php if($mode_of_payment=="Check") echo "selected";?>>Bank</option>
+          <option value="Others" <?php if($mode_of_payment=="Others") echo "selected";?>>Others</option>
+        </select>
+
+        </td>
+        <td width="12%" align="left" nowrap> <div align="right">Bank Journal </div></td>
+        <td width="24%" align="left">
+        <input name="bank_journal" id="bank_journalY" type="radio" value="Yes" class="validate[required] text-radio" <?php if($bank_journal=="Yes") echo "checked";?>>
+Yes
+  <input name="bank_journal" id="bank_journalN" type="radio" value="No" class="validate[required] text-radio" <?php if($bank_journal=="No") echo "checked";?>>
+No
+        </td>
+        </tr>
+<?php }else{?>
+
+      <tr>
+        <td><div align="left"><strong>Cost Center </strong> </div></td>
+        <td align="left">
+	<select name="cost_center" id="cost_center" style="width:230px" class="chosen-select-deselect" tabindex="6">
+          <option value="">Select Account Head</option>
+	<optgroup label="Cost Center Account Head">	
+	  <?php	  	
+		foreach($cogsheadlist as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cost_center==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+	  <?}?>
+	</optgroup>
+	
+        </select> 
+        </td>
+        <td width="12%" align="left" nowrap> <div align="right">Payment Mode </div></td>
+        <td width="24%" align="left">
+        <select name="mode_of_payment" id="mode_of_payment" style="width:150px"  class="validate[required]" >
+          <option value="Cash" <?php if($mode_of_payment=="Cash") echo "selected";?> >Cash</option>
+          <option value="Check" <?php if($mode_of_payment=="Check") echo "selected";?>>Bank</option>
+          <option value="Others" <?php if($mode_of_payment=="Others") echo "selected";?>>Others</option>
+        </select>
+        </td>
+        </tr>
+      <tr>
+        <td>Adjustment Voucher</td>
+        <td align="left"><select name="adjustment" id="adjustment" style="width:150px"  class="validate[required]" tabindex="1" >
+          <option value="1" <?php if($adjustment=="1") echo "selected";?> >Yes</option>
+          <option value="0" <?php if($adjustment=="0") echo "selected";?>>No</option>
+        </select></td>
+        <td align="left"><div align="right">Beddebts Voucher</div></td>
+        <td align="left"><select name="beddebts" id="beddebts" style="width:150px"  class="validate[required]" tabindex="1" >
+          <option value="1" <?php if($beddebts=="1") echo "selected";?> >Yes</option>
+          <option value="0" <?php if($beddebts=="0") echo "selected";?>>No</option>
+        </select></td>
+      </tr>
+      <tr>
+        <td>Note</td>
+        <td align="left"><textarea name="details" id="details" cols="60" rows="2"><?=$description?></textarea></td>
+        <td align="left"><div align="right">Bank Journal</div></td>
+        <td align="left">
+        <input name="bank_journal" id="bank_journalY" type="radio" value="Yes" class="validate[required] text-radio" <?php if($bank_journal=="Yes") echo "checked";?>>
+Yes
+  <input name="bank_journal" id="bank_journalN" type="radio" value="No" class="validate[required] text-radio" <?php if($bank_journal=="No") echo "checked";?>>
+No
+        </td>
+        </tr>
+<?php }?>
+
+<?php if($is_money_recipt == 1){?>
+	<tr>
+<td>Note</td>
+        <td align="left"><textarea name="details" id="details" cols="60" rows="2"><?=$description?></textarea></td>
+		<td>Attachment</td>
+		<td align="left">
+<?php
+if($attachment != ""){
+  $attachmentPath = PROJECT_DIR . '/../hera/assets/attachment/' . $attachment;
+?>
+<a href="<?=$attachmentPath?>" target="_blank"><img src="<?=$attachmentPath?>" alt="Money Recipt file" class="img-responsive" alt="" width="100" border='0' /></a>
+<?php } ?>
+ </br>
+<input type="file" name="attachment" id="attachment" style="width:155px;margin: 6px 0;" />
+
+		</td>
+        </tr>
+<?php }else{?>
+	<tr>
+		<td>Attachment</td>
+		<td align="left"><input type="file" name="attachment" id="attachment" style="width:155px;margin: 6px 0;" /></td>
+		<td align="left"><div align="right">Current Attachment</div></td>
+		<td align="left">
+<?php
+if($attachment != ""){
+
+// Define the path to the file
+$filePath = IMAGE_DIR . '/voucher/' . $attachment;
+
+if(isset($is_money_recipt) && $is_money_recipt == 1){
+   $filePath = DOCUMENT_ROOT . '/../hera/assets/attachment/' . $attachment;
+}
+
+$attachmentPath = $filePath;
+
+$altName = $is_money_recipt == 1 ? "Money Recipt file" : "Voucher File";
+?>
+<a href="<?=$attachmentPath?>" target="_blank"><img src="<?=$attachmentPath?>" alt="<?=$altName?>" class="img-responsive" alt="" width="100" border='0' /></a>
+<?php } ?>
+		</td>
+        </tr>
+<?php }?>
+	
+    </table>
+    <br><br>
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="2%" align="left">SL.</td>
+	<td width="3%" align="left">Del</td>
+<?php if($is_money_recipt == 1){?>
+        <td width="20%">Account Head Name </td>
+	<td width="15%">Cheque No.</td>
+        <td width="15%">Issue Date</td>
+        <td width="15%">Details</td>
+	<td width="15%"><div align="center">Dr</div></td>
+        <td width="15%" align="left"><div align="center">Cr</div></td>
+<?php }else{ ?>
+	<td width="20%">Account Head Name </td>
+        <td width="10%">Retailer</td>
+        <td width="10%">Invoice</td>
+        <td width="10%">Bank Name</td>
+        <td width="10%">Branch Name</td>
+	<td width="8%">Cheque No.</td>
+        <td width="8%">Issue Date</td>
+        <td width="10%">Details</td>
+	<td width="7%"><div align="center">Dr</div></td>
+        <td width="7%" align="left"><div align="center">Cr</div></td>
+<?php }?>
+        
+      </tr>
+	<?
+	$sl=1; $totalDr_amount =0;  $totalCr_amount=0;
+  	foreach($item_list as $val){
+	$cr_account =$val->cr_account; 
+	if($val->headtypes=="Dr"){ 
+		$cr_account = $val->dr_account;
+	}
+
+	$consignee = $val->consignee;
+	if($val->cr_amount>0){
+		
+        if($val->headtypes=="Dr"){
+		$totalDr_amount+=$val->cr_amount; 
+        }elseif($val->headtypes=="Cr"){
+        $totalCr_amount+=$val->cr_amount; 
+        }
+	?>
+     
+      <tr>
+        <td align="left" style="font-weight:normal"><?=$sl?></td>
+	<td align="left">
+	<a href="javascript:void(0);" onclick="if(confirm('Are you sure you want to delete this?')) { window.location.href = '?app=contra.voucher.edit&cmd=delete_pending_vouchar&did=<?=$val->tmp_id?>&contra_id=<?=$tmp_grvid?>'; }"><img src="<?=IMAGE_DIR?>/common/icons/delete.gif" alt="Delete" width="20" border='0'></a> 
+	</td>
+        <td style="font-weight:normal">	
+	<input type="hidden" name="tmp_id<?=$sl?>" value="<?=$val->tmp_id?>">
+	<input type="hidden" name="headtypes<?=$sl?>" value="<?=$val->headtypes?>">
+        <select name="cr_account<?=$sl?>" id="cr_account<?=$sl?>" style="width:230px" class="chosen-select-deselect validate[required]">
+          <option value="">Select Account Head</option>
+	<optgroup label="Cash & Bank Account Head">	
+	  <?php	  	
+		foreach($headlist1 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+	  <?}?>
+	</optgroup>
+	<optgroup label="Customer Account Head">	
+	  <?php	
+		foreach($headlist2 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; ?></option>
+	  <?}?>
+	</optgroup>	
+	<optgroup label="Assets Account Head">			
+		<?php	
+		foreach($headlist3 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist4 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+	       ?>
+	</optgroup>		
+	<optgroup label="Liabilities Account Head">	
+	  	
+	  <?php	  	
+		foreach($NLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	  <?}?>	
+	  <?php	  	
+		foreach($CLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	  <?}?>
+	</optgroup>	
+	<optgroup label="Equity Account Head">			
+		<?php	
+		foreach($headlist6 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist7 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Revenue Account Head">	
+	       <?php	
+		foreach($headlist8 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist9 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Expenses Account Head">	
+	       <?php	
+		foreach($headlist10 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist11 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Others Account Head">	
+	       <?php	
+		foreach($headlist12 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}	
+		foreach($headlist13 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}				
+		foreach($headlist14 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+        </select></td>
+<?php if($is_money_recipt != 1){?>
+        <td style="font-weight:normal">
+        <select name="consignee<?=$sl?>" id="consignee<?=$sl?>" style="width:110px">
+          <option value="">Select Retailer</option>
+          <?php	 
+            foreach($retailer_list as $i=>$v){
+                $retailer_id = $v->retailer_id;	
+                $retailer_name = $v->retailer_name.", ".$v->mobile;	
+            ?>
+          <option value="<?=$retailer_id?>" <?php if($consignee == $retailer_id) echo "selected";?>><?=$retailer_name?></option>
+          <?}?>
+        </select></td>
+        <td style="font-weight:normal">
+            <div id="due_invoice_container">
+                <select name="due_invoice<?=$sl?>" class="due_invoice" data-value="<?=$val->due_invoice?>" style="width:130px">
+                    <option value="">Select one</option>
+                    <?php foreach($invoice_list as $i=>$v){ ?>
+                    <option value="<?=$v->voucher_no?>"><?=$v->voucher_no?></option>
+                    <?php } ?>
+                </select>
+            </div>
+	</td>
+        <td style="font-weight:normal">
+        <input type="text" style="width:100px;" name="bank_name<?=$sl?>" id="bank_name<?=$sl?>" value="<?=$val->bank_name?>" /></td>
+        <td style="font-weight:normal"><input type="text" style="width:100px;" name="acc_no<?=$sl?>" id="acc_no<?=$sl?>" value="<?=$val->acc_no?>"/></td>
+<?php }?>
+        <td style="font-weight:normal"><input type="text" style="width:80px;" name="check_no<?=$sl?>" id="check_no<?=$sl?>" value="<?=$val->check_no?>"/></td>
+        <td style="font-weight:normal">
+        <input name="check_issue_date<?=$sl?>" id="check_issue_date<?=$sl?>" style="width:64px;" value="<?=dateInputFormatDMY($val->check_issue_date)?>" type="text">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['check_issue_date<?=$sl?>']);return false;" title="calendar" width="18" height="18">
+        </td>
+        <td style="font-weight:normal">
+        <input type="text" name="description<?=$sl?>" id="description<?=$sl?>" style="width:120px; " value="<?=$val->description?>"/>
+		
+		</td>
+        <td align="left" style="font-weight:normal"><div align="center">
+        <? if($val->headtypes=="Dr"){ $dr_amount = $val->cr_amount; $cr_amount=0;}else{ $dr_amount=0;} ?>
+        <input type="text" name="dr_amount<?=$sl?>" id="dr_amount<?=$sl?>" value="<?=$dr_amount?>" class="validate[required]" onKeyUp="calTotalDrAmount()" style="width:90px">
+        </div></td>
+        <td align="left" style="font-weight:normal"><div align="center"> 
+        <? if($val->headtypes=="Cr"){ $cr_amount =$val->cr_amount;$dr_amount=0;}else{ $cr_amount=0;}?> 
+         <input type="text" name="cr_amount<?=$sl?>" id="cr_amount<?=$sl?>" value="<?=$cr_amount?>" class="validate[required]" onKeyUp="calTotalCrAmount()" style="width:90px">
+         <input type="hidden" name="cheque_type<?=$sl?>" id="cheque_type<?=$sl?>" value="<?=$val->cheque_type?>">
+        </div></td>
+      </tr> 
+	<? }?>
+	<? $sl++;}?>
+	<!-- Add New Dr -->
+	<tr>
+        <td align="left" style="font-weight:normal"><?=$sl?></td>
+	<td align="left"><img src='<?=IMAGE_DIR?>/common/add.gif' alt="Add" width="20" border='0'></td>
+        <td style="font-weight:normal">	
+	<input type="hidden" name="tmp_id<?=$sl?>" value="">
+	<input type="hidden" name="headtypes<?=$sl?>" value="Dr">
+        <select name="cr_account<?=$sl?>" id="cr_account<?=$sl?>" style="width:230px" class="chosen-select-deselect">
+          <option value="">Select Dr Account Head</option>
+	<optgroup label="Cash & Bank Account Head">	
+	  <?php	  	
+		foreach($headlist1 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+	  <?}?>
+	</optgroup>
+	<optgroup label="Customer Account Head">	
+	  <?php	
+		foreach($headlist2 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; ?></option>
+	  <?}?>
+	</optgroup>	
+	<optgroup label="Supplier Account Head">			
+		<?php	
+		foreach($supplier_list as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->supplier_code?>" ><? echo $v->name; ?></option>
+	       <?}?>
+	</optgroup>	
+	<optgroup label="Assets Account Head">			
+		<?php	
+		foreach($headlist3 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist4 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+	       ?>
+	</optgroup>			
+	<optgroup label="Liabilities Account Head">
+		<?php
+		foreach($NLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		<?}?>
+		<?php
+		foreach($CLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		<?}?>
+	</optgroup>
+	<optgroup label="Equity Account Head">			
+		<?php	
+		foreach($headlist6 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist7 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Revenue Account Head">	
+	       <?php	
+		foreach($headlist8 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist9 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Expenses Account Head">	
+	       <?php	
+		foreach($headlist10 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}
+		
+		foreach($headlist11 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+	<optgroup label="Others Account Head">	
+	       <?php	
+		foreach($headlist12 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}	
+		foreach($headlist13 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}				
+		foreach($headlist14 as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+	       <?}?>
+	</optgroup>
+        </select>	
+	<input type="hidden" style="width:60px;" name="prv_head<?=$sl?>" id="prv_head<?=$sl?>" value="" />
+        <input type="hidden" style="width:30px;" name="headtypes<?=$sl?>" id="headtypes<?=$sl?>" value="Dr" />
+	</td>
+<?php if($is_money_recipt != 1){?>
+        <td style="font-weight:normal">
+        <select name="consignee<?=$sl?>" id="consignee<?=$sl?>" style="width:110px">
+          <option value="">Select Retailer</option>
+          <?php	 
+            foreach($retailer_list as $i=>$v){
+                $retailer_id = $v->retailer_id;	
+                $retailer_name = $v->retailer_name.", ".$v->mobile;	
+            ?>
+          <option value="<?=$retailer_id?>"><?=$retailer_name?></option>
+          <?}?>
+        </select></td>
+        <td style="font-weight:normal">
+            <div id="due_invoice_container_2">
+                <select name="due_invoice<?=$sl?>" class="due_invoice" style="width:130px">
+                    <option value="">Select one</option>
+                    <?php foreach($invoice_list as $i=>$v){ ?>
+                    <option value="<?=$v->voucher_no?>"><?=$v->voucher_no?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </td>
+
+        <td style="font-weight:normal">
+        <input type="text" style="width:100px;" name="bank_name<?=$sl?>" id="bank_name<?=$sl?>" value="" /></td>
+        <td style="font-weight:normal"><input type="text" style="width:100px;" name="acc_no<?=$sl?>" id="acc_no<?=$sl?>" value=""/></td>
+<?php } ?>
+        <td style="font-weight:normal"><input type="text" style="width:80px;" name="check_no<?=$sl?>" id="check_no<?=$sl?>" value=""/></td>
+        <td style="font-weight:normal">
+        <input name="check_issue_date<?=$sl?>" id="check_issue_date<?=$sl?>" style="width:64px;" value="" type="text">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['check_issue_date<?=$sl?>']);return false;" title="calendar" width="18" height="18">
+        </td>
+        <td style="font-weight:normal">
+        <input type="text" name="description<?=$sl?>" id="description<?=$sl?>" style="width:110px; " value=""/>
+		
+		</td>
+        <td align="left" style="font-weight:normal"><div align="center">
+        
+        <input type="text" name="dr_amount<?=$sl?>" id="dr_amount<?=$sl?>" value="0" class="validate[required]" onKeyUp="calTotalDrAmount()" style="width:90px">
+        </div></td>
+        <td align="left" style="font-weight:normal"><div align="center"> 
+        
+         <input type="text" name="cr_amount<?=$sl?>" disabled id="cr_amount<?=$sl?>" value="0" class="validate[required]" onKeyUp="calTotalCrAmount()" style="width:90px">
+         <input type="hidden" name="cheque_type<?=$sl?>" id="cheque_type<?=$sl?>" value="Cash Deposit">
+        </div></td>
+        </tr>
+	<? $sl++;?>
+
+	<!-- Add New Cr -->
+	<tr>
+        <td align="left" style="font-weight:normal"><?=$sl?></td>
+	<td align="left"><img src='<?=IMAGE_DIR?>/common/add.gif' alt="Add" width="20" border='0'></td>
+        <td style="font-weight:normal">	
+	<input type="hidden" name="tmp_id<?=$sl?>" value="">
+	<input type="hidden" name="headtypes<?=$sl?>" value="Cr">
+        <select name="cr_account<?=$sl?>" id="cr_account<?=$sl?>" style="width:230px" class="chosen-select-deselect">
+          <option value="">Select Cr Account Head </option>
+		<optgroup label="Cash & Bank Account Head">	
+		  <?php	  	
+			foreach($headlist1 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+		  <?}?>
+		</optgroup>
+		<optgroup label="Customer Account Head">	
+		  <?php	
+			foreach($headlist2 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; ?></option>
+		  <?}?>
+		</optgroup>	
+		<optgroup label="Supplier Account Head">			
+			<?php	
+			foreach($supplier_list as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->supplier_code?>" ><? echo $v->name; ?></option>
+		       <?}?>
+		</optgroup>	
+		<optgroup label="Assets Account Head">			
+			<?php	
+			foreach($headlist3 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}
+			
+			foreach($headlist4 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}
+		       ?>
+		</optgroup>			
+		<optgroup label="Liabilities Account Head">
+		<?php
+		foreach($NLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		<?}?>
+		<?php
+		foreach($CLiabilities as $i=>$v)
+		{
+		?>
+		<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		<?}?>
+		</optgroup>
+		<optgroup label="Equity Account Head">			
+			<?php	
+			foreach($headlist6 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}
+			
+			foreach($headlist7 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}?>
+		</optgroup>
+		<optgroup label="Revenue Account Head">	
+		       <?php	
+			foreach($headlist8 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}
+			
+			foreach($headlist9 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}?>
+		</optgroup>
+		<optgroup label="Expenses Account Head">	
+		       <?php	
+			foreach($headlist10 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}
+			
+			foreach($headlist11 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}?>
+		</optgroup>
+		<optgroup label="Others Account Head">	
+		       <?php	
+			foreach($headlist12 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}	
+			foreach($headlist13 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}				
+			foreach($headlist14 as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>" ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		       <?}?>
+		</optgroup>
+        </select>	
+	<input type="hidden" style="width:60px;" name="prv_head<?=$sl?>" id="prv_head<?=$sl?>" value="" />
+        <input type="hidden" style="width:30px;" name="headtypes<?=$sl?>" id="headtypes<?=$sl?>" value="Cr" />
+	</td>
+<?php if($is_money_recipt != 1){?>
+        <td style="font-weight:normal">
+        <select name="consignee<?=$sl?>" id="consignee<?=$sl?>" style="width:110px">
+          <option value="">Select Retailer</option>
+          <?php	 
+            foreach($retailer_list as $i=>$v){
+                $retailer_id = $v->retailer_id;	
+                $retailer_name = $v->retailer_name.", ".$v->mobile;	
+            ?>
+          <option value="<?=$retailer_id?>"><?=$retailer_name?></option>
+          <?}?>
+        </select></td>
+
+        <td style="font-weight:normal">
+            <div id="due_invoice_container_2">
+                <select name="due_invoice<?=$sl?>" class="due_invoice" style="width:130px">
+                    <option value="">Select one</option>
+                    <?php foreach($invoice_list as $i=>$v){ ?>
+                    <option value="<?=$v->voucher_no?>"><?=$v->voucher_no?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </td>
+
+
+        <td style="font-weight:normal">
+        <input type="text" style="width:100px;" name="bank_name<?=$sl?>" id="bank_name<?=$sl?>" value="" /></td>
+        <td style="font-weight:normal"><input type="text" style="width:100px;" name="acc_no<?=$sl?>" id="acc_no<?=$sl?>" value=""/></td>
+<?php } ?>
+        <td style="font-weight:normal"><input type="text" style="width:80px;" name="check_no<?=$sl?>" id="check_no<?=$sl?>" value=""/></td>
+        <td style="font-weight:normal">
+        <input name="check_issue_date<?=$sl?>" id="check_issue_date<?=$sl?>" style="width:64px;" value="" type="text">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['check_issue_date<?=$sl?>']);return false;" title="calendar" width="18" height="18">
+        </td>
+        <td style="font-weight:normal">
+        <input type="text" name="description<?=$sl?>" id="description<?=$sl?>" style="width:120px; " value=""/>
+		
+		</td>
+        <td align="left" style="font-weight:normal"><div align="center">
+        
+        <input type="text" name="dr_amount<?=$sl?>" id="dr_amount<?=$sl?>" disabled value="0" class="validate[required]" onKeyUp="calTotalDrAmount()" style="width:90px">
+        </div></td>
+        <td align="left" style="font-weight:normal"><div align="center"> 
+        
+         <input type="text" name="cr_amount<?=$sl?>" id="cr_amount<?=$sl?>" value="0" class="validate[required]" onKeyUp="calTotalCrAmount()" style="width:90px">
+         <input type="hidden" name="cheque_type<?=$sl?>" id="cheque_type<?=$sl?>" value="Cash Deposit">
+        </div></td>
+        </tr>
+	<? $sl++;?>
+        <tr>
+<?php if($is_money_recipt == 1){?>
+<td colspan="6" align="left"><div align="right"> Total</div></td>
+<?php }else{?>
+<td colspan="9" align="left"><div align="right"> Total</div></td>
+<?php } ?>
+        
+	<td align="center"><input type="text" name="totaldr_amount" id="totaldr_amount" readonly style="width:90px;" value="<?=$totalDr_amount?>"></td>
+	<td align="center"><input type="text" name="totalcr_amount" id="totalcr_amount" readonly style="width:90px;" value="<?=$totalCr_amount?>"></td>
+        </tr>
+    	</table>
+	<br>
+	</div>
+	</td>
+  </tr>
+</table>
+<br>
+</div>	
+<input value="Save" name="save" class="button" type="submit" />
+<input type="hidden" name="sl" id="sl" value="<?=$sl?>"> 
+<input type="hidden" name="cmd" value="save_pending_vouchar">
+<input type="hidden" name="tmp_grvid" id="tmp_grvid" value="<?=$tmp_grvid?>">
+<input type="hidden" name="collection_source" id="collection_source" value="Others">
+<input type="hidden" name="branch_id" id="branch_id" value="<?=getFromSession('branch_id')?>"> 
+<!--Start Sales Invoice -->
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<script>
+	$(function() {
+		$('.chosen-select').chosen({
+		    search_contains: true, // allows matching in the middle of the string
+		    width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+		    allow_single_deselect: true,
+		    search_contains: true,
+		    width: "100%"
+		});
+	});
+</script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true; 
+       
+  }
+});
+</script>
+
+
+<script>
+$(document).ready(function() {
+
+	$('.due_invoice').each(function() {
+
+	    var $this = $(this);
+	    var selectedVal = $this.data('value');
+	    $this.select2({
+		dropdownParent: $this.parent(),
+		placeholder: "Search Invoice",
+		allowClear: true,
+		ajax: {
+		    url: "<?php echo PROJECT_DIR;?>/index.php?app=contra.voucher.new&cmd=get_due_voucher",
+		    type: 'POST',
+		    dataType: 'json',
+		    delay: 250,
+		    data: function (params) {
+		        return { search: params.term };
+		    },
+		    processResults: function (data) {
+		        return { results: data };
+		    }
+		}
+	    });
+	    if (selectedVal) {
+		var option = new Option(selectedVal, selectedVal, true, true);
+		$this.append(option).trigger('change');
+	    }
+	});
+
+
+
+});
+
+
+
+</script>
+
+</body>
+</html>

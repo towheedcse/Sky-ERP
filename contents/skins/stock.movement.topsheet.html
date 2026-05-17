@@ -1,0 +1,443 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR); 
+$product_type	= getRequest('product_type'); if($product_type==""){$product_type="Sales Item";}    
+$project_id     = getFromSession('project_id'); $product="";
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+$date_from 	= formatDate(getRequest('date_from')); $date_to = formatDate(getRequest('date_to')); 
+$fdate 		= dateInputFormatDMY($date_from);  $tdate = dateInputFormatDMY($date_to);
+$catagory	= getRequest('catagory'); $catagoryName ="";
+$product	= getRequest('product'); 
+$subcatagory	= getRequest('subcatagory');
+
+require_once(CLASS_DIR . '/common.list.class.php');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=30,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE> Stock Movement Status</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{font-size:12px;font-weight:normal;} a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none} #tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;font-weight:normal;font-size:12px;}th{margin: 0;padding: 4px;border-width: 1px 1px 0 0;font-weight:bold; font-size:12px;}.footer{display:none;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<title>General ERP</title>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{
+    border-color: #999999;
+    border-style: solid;
+}
+table{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+.active{ color:#FFF !important; background-color:#009 !important}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1189"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="99%" height="61" align="center" cellpadding="4"cellspacing="0" class="addborder">
+		  <tr>
+			<td align="left" class="topbg" height="26" colspan="9"><span><strong>Search Stock </strong></span></td>
+		 </tr>
+		 <tr>
+		   <td width="8%" align="right">From</td>
+		   <td width="22%"><input name="date_from" id="date_from" style="width:85px;" value="<?=dateInputFormatDMY($date_from)?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" class="validate[required]" title="calendar" type="text">
+		     <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Form" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;"></td>
+		   <td width="8%">To</td>
+		   <td width="22%"><input name="date_to" id="date_to" style="width:85px;" value="<?=dateInputFormatDMY($date_to)?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" class="validate[required]" title="calendar" type="text">
+		     <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;"></td>
+		   
+		   <td width="10%">Product Type</td>
+		   <td width="18%"><select name="product_type" id="product_type" style="width:180px">
+		     <option value="Sales Item" <?php if($product_type=="Sales Item") echo "selected";?>>Finish Goods</option>
+		     <option value="Raw Materials" <?php if($product_type=="Raw Materials") echo "selected";?>>Raw Materials</option>
+		     <option value="Invetory Item" <?php if($product_type=="Invetory Item") echo "selected";?>>Invetory Item</option>
+		     <option value="Equipment" <?php if($product_type=="Equipment") echo "selected";?>>Equipment</option>
+		     </select></td>		   
+		     <td width="12%"> &nbsp; </td>
+		 </tr>
+		 <tr>		   
+		   <td width="8%" align="right">Category</td>
+		   <td width="22%">
+           <select name="catagory" id="catagory" style="width:170px" onChange="javascript:getSubCatagoryList(this.value)">
+		     <option value=''>Select One</option>
+		     <?php
+			foreach($catagory_list as $i=>$v)
+			{
+				$catagory_code = $v->catagory_code;
+				$catagory_name = $v->catagory_name;	
+			?>
+		     <option value="<?=$catagory_code?>"<?php if($catagory==$catagory_code) echo "selected"; ?> >
+		       <?=$catagory_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="8%">Sub Category</td>
+		   <td width="22%"><select name="subcatagory" id="subcatagory" style="width:170px" tabindex="5">
+		     <option value=''>Sub Category</option>
+		     <?php			
+			  $sql="SELECT subcatagory_id, subcatagory_name FROM ".SUB_CATAGORY_TBL." WHERE catagory_id='$catagory'";
+			  $res = mysql_query($sql);			  
+			  if(mysql_num_rows($res)>0){
+			  if($subcatagory !=""){					
+				while($row = mysql_fetch_object($res)){
+				?>
+		     <option value="<?=$row->subcatagory_id?>"<?php if($row->subcatagory_id==$subcatagory) echo "selected";?> >
+		     <?=$row->subcatagory_name?>
+		     </option>
+		     <?} }?>
+		     <? }?>
+		   </select></td>
+		   <td width="10%">Product</td>
+		   <td width="18%"><select name="product" id="product" style="width:180px" tabindex="4">
+		     <option value="">Select Product Name</option>
+		     <?php	 
+			foreach($product_list as $i=>$v)
+			{
+				if($v->product_type=="Sales Item" && $v->product_name!=""){
+				$product_id = $v->product_id; $product_name = (new CommonList())->normalizeProductName($v->product_code,$v->product_name).", ".$v->product_desc;	
+			?>
+		     <option value="<?=$product_id?>"<?php if($product_id==$product) echo "selected";?> ><?=$product_name?></option>
+		     <?}}?>
+		     </select></td>
+		   <td width="12%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		   
+		 </tr>
+		</table>
+		<? 
+		if($fdate!="" && $tdate!="") {
+		?>
+		<br style="clear:both">
+             
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp; Stock Movement Top Sheet</strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">
+			  <span style="font-size:20px; font-weight:bold"> <?=$row->project_name?></span><br>
+			  <span style="font-size:14px; font-weight:normal"><?=$row->location?></span><br><br>
+              <span style="font-size:14px; font-weight:bold"><?php echo getDeliveryPointName($store_id);?></span><br>             
+              <span style="font-size:13px; font-weight:normal; margin-top:1px; padding:2px">
+              <?php echo formatDate4Display($date_from). " to ".formatDate4Display($date_to); ?><br>
+              <?php if($catagory !=""){ 
+               $csql= "SELECT * FROM ".CATAGORY_TBL." WHERE project_id='$project_id' AND catagory_code='$catagory' ";
+			   $cres = mysql_query($csql);
+			   $crow = mysql_fetch_object($cres);	
+			   echo "Filter By -".$crow->catagory_name."<br>";
+               } 
+              
+              ?>
+              </span>
+              </div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+				<td width="2%" align="left" nowrap>Sl</td>
+				<td width="11%" align="left" nowrap>Store Name</td>
+				<td width="6%" align="left" nowrap>OP Qty</td>
+				<td width="7%" align="left" nowrap>OP Balance Tk</td>
+				<td width="8%" align="left">Production in</td>
+				<td width="8%" align="right" nowrap>Physical in</td>
+				<td width="8%" align="right" nowrap>Transfer in</td>
+				<td width="7%" align="right" nowrap>Return in</td>
+				<td width="7%" align="right" nowrap>Purchase in</td>				
+				<td width="7%" align="right" nowrap>Transfer out </td>
+				<td width="8%" align="right" nowrap>Physical out</td>
+				<td width="7%" align="right" nowrap>Sales out</td>
+				<td width="8%" align="right" nowrap>Sales Value Tk</td>
+				<td width="7%" align="right" nowrap>Balance Qty</td>
+				<td width="9%" align="right" nowrap>CL Balance Tk</td>
+				</tr>
+				<?
+				  $sl=1;
+				  $totalPCOBQty=0; $Openingbalance=0; $totalFTOBQty=0; $totalKGOBQty=0; $totalMTROBQty=0;		  $TotalPCOPBL=0; $TotalFTOPBL=0; $TotalKGOPBL=0; $TotalMTOPBL=0;
+				  $totalPCProductionin=0; $totalFTProductionin=0; $totalMTRProductionin=0; 					  $totalKGProductionin=0;
+				  $totalPCPhysicalin=0; $totalFTPhysicalin=0; $totalMTRPhysicalin=0; 					  $totalKGPhysicalin=0; 
+				  $totalPCTransferin=0; $totalFTTransferin=0; $totalMTRTransferin=0; 					  $totalKGTransferin=0; 
+				  $totalPCReturnin=0; $totalFTReturnin=0; $totalMTRReturnin=0; 	 					  $totalKGReturnin=0; 
+				  $totalPCPurchasein=0; $totalFTPurchasein=0; $totalMTRPurchasein=0; 	 					  $totalKGPurchasein=0;
+				  $totalPCTransferout=0; $totalFTTransferout=0; $totalMTRTransferout=0; 				  $totalKGTransferout=0;
+				  $totalPCPhysicalout=0; $totalFTPhysicalout=0; $totalMTRPhysicalout=0; 				  $totalKGPhysicalout=0; 
+				  $totalPCSalesout=0; $totalFTSalesout=0; $totalMTRSalesout=0; 					  
+$totalKGSalesout=0;
+				  $totalPCSalesValue=0; $totalFTSalesValue=0; $totalMTRSalesValue=0; 					  $totalKGSalesValue=0; $totalSalesValue=0;
+				  $totalPCBalance = 0;  $totalFTBalance = 0; $totalMTRBalance = 0; 					  $totalKGBalance = 0;
+				  $totalPCBalanceAmount=0; $totalFTBalanceAmount=0; $totalMTRBalanceAmount=0; 					  $totalKGBalanceAmount=0;  $totalBalanceAmount=0;  				  
+				  $TotalIn=0; $TotalOut=0; $TotalBLQty=0; $TotalOPBL=0;
+				  foreach($record_list as $val){
+				  
+				  $OBQty = 0;  $instock=0; $totalAmount=0; $Purchasein=0; $SalesValue=0; 					  $balanceAmount =0; 
+				  			  
+				  $OBQty = getTotalStoreProductOBQty($project_id,$val->store_id);                  	  if($val->m_unit =="pc"){$totalPCOBQty +=$OBQty;}elseif($val->m_unit =="ft"){$totalFTOBQty +=$OBQty;}
+				  elseif($val->m_unit =="kg"){$totalKGOBQty +=$OBQty;}elseif($val->m_unit =="mtr"){$totalMTROBQty +=$OBQty;}
+				  $Openingbalance = getCurrentStockOpening($val->store_id,$project_id,"");
+				  if($val->m_unit =="pc"){$TotalPCOPBL +=$Openingbalance;}elseif($val->m_unit =="ft"){$TotalFTOPBL +=$Openingbalance;}
+				  elseif($val->m_unit =="kg"){$TotalKGOPBL +=$Openingbalance;}elseif($val->m_unit =="mtr"){$TotalMTOPBL +=$Openingbalance;}
+				  
+				  $TotalIn+=$OBQty; $TotalOPBL+=$Openingbalance;
+				  $Productionin = getTotalStoreProductInQty($project_id,"Production",$val->store_id);                  
+				  if($val->m_unit =="pc"){$totalPCProductionin +=$Productionin;}elseif($val->m_unit =="ft"){$totalFTProductionin +=$Productionin;}
+				  elseif($val->m_unit =="kg"){$totalKGProductionin +=$Productionin;}elseif($val->m_unit =="mtr"){$totalMTRProductionin +=$Productionin;}
+				  $TotalIn+=$Productionin;                  
+				  $Physicalin 	= getTotalStoreProductInQty($project_id,"Stock Dr by PV",$val->store_id);  //Stock Increase by Physical Verification                             
+				  if($val->m_unit =="pc"){$totalPCPhysicalin +=$Physicalin;}elseif($val->m_unit =="ft"){$totalFTPhysicalin +=$Physicalin;}
+				  elseif($val->m_unit =="kg"){$totalKGPhysicalin +=$Physicalin;}elseif($val->m_unit =="mtr"){$totalMTRPhysicalin +=$Physicalin;}
+				  $TotalIn+=$Physicalin; 
+				                   
+				  $Transferin 	= getTotalStoreProductInQty($project_id,"Received Stock",$val->store_id);                                    
+				  if($val->m_unit =="pc"){$totalPCTransferin +=$Transferin;}elseif($val->m_unit =="ft"){$totalFTTransferin +=$Transferin;}
+				  elseif($val->m_unit =="kg"){$totalKGTransferin +=$Transferin;}elseif($val->m_unit =="mtr"){$totalMTRTransferin +=$Transferin;}
+				  $TotalIn+=$Transferin; 
+				  $Returnin 	= getTotalStoreProductInQty($project_id,"Sales Return",$val->store_id);
+				  if($val->m_unit =="pc"){$totalPCReturnin +=$Returnin;}elseif($val->m_unit =="ft"){$totalFTReturnin +=$Returnin;}
+				  elseif($val->m_unit =="kg"){$totalKGReturnin +=$Returnin;}elseif($val->m_unit =="mtr"){$totalMTRReturnin +=$Returnin;}
+				  $TotalIn+=$Returnin; 
+				  $Purchasein 	= getTotalStoreProductInQty($project_id,"Purchase Item",$val->store_id);
+				  if($val->m_unit =="pc"){$totalPCPurchasein +=$Purchasein;}elseif($val->m_unit =="ft"){$totalFTPurchasein +=$Purchasein;}
+				  elseif($val->m_unit =="kg"){$totalKGPurchasein +=$Purchasein;}elseif($val->m_unit =="mtr"){$totalMTRPurchasein +=$Purchasein;}
+				  $TotalIn+=$Purchasein; 
+				  $Transferout 	= getTotalStoreProductOutQty($project_id,"Transfer Stock",$val->store_id);
+				  if($val->m_unit =="pc"){$totalPCTransferout +=$Transferout;}elseif($val->m_unit =="ft"){$totalFTTransferout +=$Transferout;}
+				  elseif($val->m_unit =="kg"){$totalKGTransferout +=$Transferout;}elseif($val->m_unit =="mtr"){$totalMTRTransferout +=$Transferout;}
+				  $TotalOut+=$Transferout;
+				  $Physicalout = getTotalStoreProductOutQty($project_id,"Stock out by PV",$val->store_id); // Stock out by Physical Verification
+				  if($val->m_unit =="pc"){$totalPCPhysicalout +=$Physicalout;}elseif($val->m_unit =="ft"){$totalFTPhysicalout +=$Physicalout;}
+				  elseif($val->m_unit =="kg"){$totalKGPhysicalout +=$Physicalout;}elseif($val->m_unit =="mtr"){$totalMTRPhysicalout +=$Physicalout;}
+				  $TotalOut+=$Physicalout;
+				  // $salesout = getStoreProductSalesQty($project_id,$val->store_id,"");// Actual Sales Delivery
+				  $salesout = getTotalStoreProductOutQty($project_id,"Sales Delivery",$val->store_id);
+				  
+				  if($val->m_unit =="pc"){$totalPCSalesout +=$salesout;}elseif($val->m_unit =="ft"){$totalFTSalesout +=$salesout;}
+				  elseif($val->m_unit =="kg"){$totalKGSalesout +=$salesout;}elseif($val->m_unit =="mtr"){$totalMTRSalesout +=$salesout;}
+				  $TotalOut+=$salesout;
+				  //$SalesValue = getProductSalesValue($project_id,$val->store_id,""); // Actual Sales Delivery Amount
+				  //$SalesValue = getStoreProductSalesValue($project_id,"Sales Delivery",$val->store_id,"");
+				  $SalesValue = getStoreProductDeliverySalesValue($project_id,$val->store_id,$product);
+				  $totalSalesValue +=$SalesValue;                
+				  if($val->m_unit =="pc"){$totalPCSalesValue +=$SalesValue;}elseif($val->m_unit =="ft"){$totalFTSalesValue +=$SalesValue;}
+				  elseif($val->m_unit =="kg"){$totalKGSalesValue +=$SalesValue;}elseif($val->m_unit =="mtr"){$totalMTRSalesValue +=$SalesValue;}
+				  $TotalBLQty = ($TotalIn - $TotalOut);				  
+				  if($val->m_unit =="pc"){$totalPCBalance += $TotalBLQty;}elseif($val->m_unit =="ft"){$totalFTBalance += $TotalBLQty;}
+				  elseif($val->m_unit =="kg"){$totalKGBalance += $TotalBLQty;}elseif($val->m_unit =="mtr"){$totalMTRBalance += $TotalBLQty;}
+                  
+				  $mUnit = $val->m_unit; 
+				?>
+			  <tr>
+				<td align="left" nowrap style="font-weight:normal"><?=$sl?></td>
+				<td align="left" nowrap style="font-weight:normal"><?=$val->delivery_point_name?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($OBQty, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Openingbalance, 2, '.', '');?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Productionin, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Physicalin, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Transferin, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Returnin, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Purchasein, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Transferout, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" style="font-weight:normal"><? echo number_format($Physicalout, 2, '.', '')." ".$val->m_unit;?></td>
+				<td align="right" nowrap style="font-weight:normal"><?=number_format($salesout, 2, '.', '')." ".$val->m_unit?></td>
+				<td align="right" nowrap style="font-weight:normal"><?=number_format($SalesValue, 2, '.', '');?></td>
+				<td align="right" nowrap style="font-weight:normal"><?=number_format(($TotalBLQty), 2, '.', '')." ".$val->m_unit?></td>
+				<td align="right" nowrap style="font-weight:normal">
+                <?php
+                $balanceAmount = getCurrentStockInRate($val->store_id,$project_id,"");
+                echo number_format($balanceAmount, 2, '.', '');
+                $totalAmount+=$balanceAmount;
+                $totalBalanceAmount+=$balanceAmount;
+                if($val->m_unit =="pc"){$totalPCBalanceAmount += $balanceAmount;}elseif($val->m_unit =="ft"){$totalFTBalanceAmount += $balanceAmount;}
+                elseif($val->m_unit =="kg"){$totalKGBalanceAmount += $balanceAmount;}elseif($val->m_unit =="mtr"){$totalMTRBalanceAmount += $balanceAmount;}
+                  
+                ?>
+                </td>
+				</tr>
+			  
+			<? $TotalBLQty = 0; $TotalIn =0; $TotalOut=0;	$sl++;}?>
+			 <tr>
+			   <td colspan="2" align="left" nowrap style="border-top:1px solid #CCC"><div align="right">Total (pcs)</div></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalPCOBQty, 0, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($TotalPCOPBL, 2, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCProductionin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCPhysicalin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCTransferin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCReturnin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCPurchasein;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCTransferout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCPhysicalout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalPCSalesout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalPCSalesValue, 2, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalPCBalance, 0, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalPCBalanceAmount, 2, '.', '');?></td>
+			   </tr>
+			 <tr>
+			   <td colspan="2" align="left" nowrap style="border-top:1px solid #CCC"><div align="right">Total (ft)</div></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTOBQty;?></td>
+			   <td align="right" style="font-weight:normal"><?php echo number_format($TotalFTOPBL, 2, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTProductionin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTPhysicalin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTTransferin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTReturnin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTPurchasein;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTTransferout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTPhysicalout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTSalesout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTSalesValue;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalFTBalance;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalFTBalanceAmount, 2, '.', '');?></td>
+			   </tr>
+			 <tr>
+			   <td colspan="2" align="left" nowrap style="border-top:1px solid #CCC"><div align="right">Total (mtr)</div></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTROBQty;?></td>
+			   <td align="right" style="font-weight:normal"><?php echo number_format($TotalMTOPBL, 2, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRProductionin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRPhysicalin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRTransferin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRReturnin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRPurchasein;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRTransferout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRPhysicalout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRSalesout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRSalesValue;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalMTRBalance;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalMTRBalanceAmount, 2, '.', '');?></td>
+			   </tr>
+			 
+			 <tr>
+			   <td colspan="2" align="left" nowrap style="border-top:1px solid #CCC">
+			     <div align="right">Total (kg)</div></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGOBQty;?></td>
+			   <td align="right" style="font-weight:normal"><?php echo number_format($TotalKGOPBL, 2, '.', '');?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGProductionin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGPhysicalin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGTransferin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGReturnin;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGPurchasein;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGTransferout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGPhysicalout;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGSalesout;?> </td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGSalesValue;?></td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo $totalKGBalance;?> </td>
+			   <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalKGBalanceAmount, 2, '.', '');?></td>
+			   </tr>
+               <tr>
+                 <td colspan="2" align="left" nowrap style="border-top:1px solid #CCC"><div align="right">Grand Total </div></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCOBQty+$totalFTOBQty+$totalMTROBQty+$totalKGOBQty), 2, '.', '');?></td>
+		 <td align="right" style="border-top:1px solid #CCC"><?php echo number_format(($TotalPCOPBL+$TotalFTOPBL+$TotalMTOPBL+$TotalKGOPBL), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCProductionin+$totalFTProductionin+$totalMTRProductionin+$totalKGProductionin), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCPhysicalin+$totalFTPhysicalin+$totalMTRPhysicalin+$totalKGPhysicalin), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCTransferin+$totalFTTransferin+$totalMTRTransferin+$totalKGTransferin), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCReturnin+$totalFTReturnin+$totalMTRReturnin+$totalKGReturnin), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCPurchasein+$totalFTPurchasein+$totalMTRPurchasein+$totalKGPurchasein), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCTransferout+$totalFTTransferout+$totalMTRTransferout+$totalKGTransferout), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCPhysicalout+$totalFTPhysicalout+$totalMTRPhysicalout+$totalKGPhysicalout), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCSalesout+$totalFTSalesout+$totalMTRSalesout+$totalKGSalesout), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalSalesValue, 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format(($totalPCBalance+$totalFTBalance+$totalMTRBalance+$totalKGBalance), 2, '.', '');?></td>
+                 <td align="right" nowrap style="border-top:1px solid #CCC"><?php echo number_format($totalBalanceAmount, 2, '.', '');?></td>
+               </tr>
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        <p class="pageBreak"></p>
+        <p align="center">
+          <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+        </p>
+		<div style="height:20px; clear:both; display:block"></div>
+		<?}?>				
+	  </div>
+	  </form>			  </td>
+	</tr>
+  </tbody>
+</table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

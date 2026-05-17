@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>unapprove order</title>
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="navbar bg-base-100 shadow-sm">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a href="/">Home</a></li>
+            <li><a href="./cost report.html">Cost Report</a></li>
+            <li><a href="./LC report.html">LC Report</a></li>
+            <li><a href="./unapprove order.html">Unapproved Orders</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <a class="btn btn-ghost text-xl">Dashboard</a>
+      </div>
+      <div class="navbar-end">
+        <button class="btn btn-ghost btn-circle">
+          <div class="indicator" onclick="toggleTheme()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="px-4 py-2 md:px-12 md:py-4">
+      <h1 class="text-3xl font-bold mb-3">Unapproved Orders</h1>
+      <form
+        class="px-1 py-2 md:px-7 md:py-8 shadow-lg rounded-xl flex items-end flex-wrap gap-3 ml-2"
+      >
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">From</span>
+          </div>
+          <input
+            type="date"
+            class="input input-bordered hover:bg-base-200 w-full"
+          />
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">To</span>
+          </div>
+          <input
+            type="date"
+            class="input input-ghost input-bordered hover:bg-base-200 w-full"
+          />
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Customer</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Customer</option>
+            <option>Customer</option>
+            <option>Customer</option>
+            <option>Customer</option>
+          </select>
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Depo Name</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Depo Name</option>
+            <option>Depo Name</option>
+            <option>Depo Name</option>
+            <option>Depo Name</option>
+          </select>
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Division Name</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Sales Division</option>
+            <option>Division Name</option>
+            <option>Division Name</option>
+            <option>Division Name</option>
+          </select>
+        </label>
+        <label
+          class="form-control w-full min-w-[200px] sm:min-w-[250px] flex-1"
+        >
+          <div class="label">
+            <span class="label-text font-bold">Area Name</span>
+          </div>
+          <select
+            class="select select-ghost select-bordered hover:bg-base-200 w-full"
+          >
+            <option disabled selected>Pick Sales Area</option>
+            <option>Area Name</option>
+            <option>Area Name</option>
+            <option>Area Name</option>
+          </select>
+        </label>
+        <div class="form-control mr-2">
+          <label class="label cursor-pointer">
+            <input type="checkbox" checked="checked" class="checkbox" />
+            <span class="label-text ml-2">Original Copy</span>
+          </label>
+        </div>
+        <button class="btn btn-primary rounded-lg">Submit</button>
+      </form>
+      <div class="py-3 md:py-8 px-2 md:px-5 mt-3 rounded-lg shadow-lg ml-2">
+        <div
+          class="flex items-center justify-center sm:justify-between gap-3 flex-wrap mb-3"
+        >
+          <h2 class="text-xl font-bold mb-3">Unapproved Sales List</h2>
+          <div class="join">
+            <button
+              class="join-item btn hover:bg-primary hover:text-primary-content"
+            >
+              «
+            </button>
+            <div class="dropdown join-item">
+              <div tabindex="0" role="button" class="btn rounded-none">
+                page 1
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content z-[1] menu shadow bg-base-100 p-0 w-full"
+              >
+                <li><a class="text-center">page 2</a></li>
+                <li><a class="text-center">page 3</a></li>
+                <li><a class="text-center">page 4</a></li>
+                <li><a class="text-center">page 5</a></li>
+              </ul>
+            </div>
+            <button
+              class="join-item btn hover:bg-primary hover:text-primary-content"
+            >
+              »
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="table table-zebra">
+            <!-- head -->
+            <thead>
+              <tr>
+                <th>SL</th>
+                <th>Date</th>
+                <th>Ref No.</th>
+                <th>Party Details</th>
+                <th>Order Oty</th>
+                <th>Order Amount</th>
+                <th>Delivery Amount</th>
+                <th>Undelivered Amount</th>
+                <th>Due Amount</th>
+                <th class="text-center">Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>1</th>
+                <th>
+                  <div>21 Dec 2023</div>
+                  <div>C:somthing</div>
+                  <div>T:2023-12-21 21:40:21</div>
+                </th>
+                <td>SI001183</td>
+                <td>
+                  <div>some company</div>
+                  <div>some address</div>
+                  <div>somthing more</div>
+                </td>
+                <td>40 pc</td>
+                <td>7059.49Tk</td>
+                <td>0Tk</td>
+                <td>7059.49Tk</td>
+                <td>7059.49Tk</td>
+                <td>
+                  <div class="flex items-center justify-center gap-1">
+                    <button class="btn btn-ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                        />
+                      </svg>
+                    </button>
+                    <button class="btn btn-ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-7 h-7"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>1</th>
+                <th>
+                  <div>21 Dec 2023</div>
+                  <div>C:somthing</div>
+                  <div>T:2023-12-21 21:40:21</div>
+                </th>
+                <td>SI001183</td>
+                <td>
+                  <div>some company</div>
+                  <div>some address</div>
+                  <div>somthing more</div>
+                </td>
+                <td>40 pc</td>
+                <td>7059.49Tk</td>
+                <td>0Tk</td>
+                <td>7059.49Tk</td>
+                <td>7059.49Tk</td>
+                <td>
+                  <div class="flex items-center justify-center gap-1">
+                    <button class="btn btn-ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-5 h-5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                        />
+                      </svg>
+                    </button>
+                    <button class="btn btn-ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-7 h-7"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M6 18 18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <!-- add more row above this tr -->
+              <tr>
+                <td
+                  colspan="4"
+                  class="text-right border-r border-primary capitalize"
+                >
+                  page total
+                </td>
+                <td>40 pc</td>
+                <td>3884.00 Tk</td>
+                <td>0.00 Tk</td>
+                <td>4958.00 Tk</td>
+                <td>4958.00 Tk</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td
+                  colspan="4"
+                  class="text-right border-r border-primary capitalize"
+                >
+                  grand total
+                </td>
+                <td>404 pc</td>
+                <td>388494.00 Tk</td>
+                <td>0.00 Tk</td>
+                <td>495844.00 Tk</td>
+                <td>495884.00 Tk</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

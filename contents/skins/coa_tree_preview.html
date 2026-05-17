@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chart of Accounts – Tree (Non Current Assets)</title>
+  <style>
+    :root{
+      --bg:#f7f8fa;
+      --card:#ffffff;
+      --line:#c8d1e0;
+      --text:#0e1726;
+      --accent:#d22730;
+    }
+    body{
+      margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif; 
+      color:var(--text); background:var(--bg);
+    }
+    .wrap{ max-width:1200px; margin:40px auto; padding:0 16px;padding-bottom: 40px; }
+    header{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:18px; }
+    .title-block{ display:flex; gap:16px; align-items:center; }
+    .badge{ background:var(--accent); color:#fff; font-weight:700; letter-spacing:.3px; padding:8px 12px; border-radius:999px; box-shadow:0 6px 20px rgba(210,39,48,.25); }
+    h1{ font-size:clamp(20px,2.4vw,28px); margin:0; }
+    .sub{ color:#5b6678; font-size:14px; }
+    .btn {
+    background: #0db7ff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px #1085b78a;
+    margin-left: 8px;
+}
+    .btn:hover {
+        background: #0e9dd9;
+    }
+    .tree{ overflow:auto; padding:24px; background:#fff; border-radius:16px; box-shadow:0 8px 30px rgba(16,24,40,.06); }
+    .tree ul{ position:relative; padding-left:28px; margin: 0; list-style:none; }
+    .tree ul::before{ content:""; position:absolute; top:0; left:14px; bottom:0; width:2px; background:var(--line); }
+    .tree li{ position:relative; padding:10px 0 0 0;text-align: start;}
+    .tree li::before{ content:""; position:absolute; top:34px; left:-14px; width:15px; height:2px; background:var(--line); }
+
+    .node{ display:inline-block; background:var(--card); border:1px solid #e7ecf3; color:var(--text);
+      border-radius:12px; padding:10px 12px; min-width: 220px; max-width: 480px;
+      box-shadow:0 4px 14px rgba(20,30,55,.06); cursor:pointer; }
+    .lvl-0{ font-weight:800; text-transform:uppercase; }
+    .lvl-1{ font-weight:700; }
+    .lvl-2{ font-weight:600; }
+    .muted{ color:#5b6678; font-weight:600; }
+    .leaf{ font-weight:500; cursor:default; }
+
+    .tree ul.collapsed{ display:none; }
+
+    .tree ul > li:last-child::after{ content:""; position:absolute; left:12px; bottom:0; width:2px; height:calc(100% - 18px); background:#fff; }
+
+.tree-wrapper{
+    text-align: start;
+    margin: 0 -12px;
+    position: relative;
+    margin-top: 20px;
+    cursor: pointer;
+}
+p.tree-root {
+    margin: 0 10px;
+    text-align: start;
+    font-weight: 600;
+    border: 1px solid #e7ecf3;
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 480px;
+    box-shadow: 0 4px 14px rgba(20, 30, 55, .06);
+    display: inline-block;
+}
+.tree-wrapper:before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 26px;
+    bottom: 7px;
+    width: 2px;
+    height: 20px;
+    background: var(--line);
+}
+.title-block h1 {
+    text-align: start;
+}
+.tree-wrapper:first-child::before {
+    display: none;
+}
+    @media print{
+      .btn{ display:none; }
+      body{ background:#fff; }
+      .tree{ box-shadow:none; }
+	p.tree-root {
+	    font-size: 10px;
+	}
+	.node {
+	    font-size: 9px;
+	}
+	.title-block h1 {
+	    font-size: 16px;
+	}
+
+	.title-block .sub {
+	    font-size: 12px;
+	}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title-block">
+        <div>
+          <h1>Chart of Accounts</h1>
+          <div class="sub">Collapsible view (GL Head → SL‑1 Head → SL‑2 Head → SL‑3 Head → Ledger Name)</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn" id="expandAllBtn">Expand All</button>
+        <button class="btn" id="collapseAllBtn">Collapse All</button>
+        <button class="btn" id="hideSLBtn">Hide SL</button>
+        <button class="btn" id="printBtn">Print Tree</button>
+      </div>
+    </header>
+
+    <section class="tree" aria-label="Chart of Accounts Tree">
+
+      <?php
+        // Get Ledger
+        function getLedgerName($head_type,$sub_head,$child_head,$sl_three_id){
+	    $project_id = getFromSession('project_id');
+            $info = array();
+            $info['table'] = SUB_ACC_HEAD_TBL;
+            $info['fields'] = array('sub_head_name');
+
+            $SQL = "head_type='$head_type' AND sub_headtype = '$sub_head' AND child_head = '$child_head' AND sl_three_head = '$sl_three_id' AND project_id='$project_id'";
+            $info['where'] = $SQL;
+
+            $info['orderby'] = array("sub_id ASC");
+            //$info['debug']   = true;
+            $result = select($info);
+            $data = array();
+
+            if(count($result)) {
+              foreach($result as $value)  {
+               $data[]	= $value;
+              }
+            }
+
+            foreach($data as $val){
+              $sub_head_name = $val->sub_head_name;
+        ?>
+
+        <li>
+            <div class="node leaf">Ledger Name: <?=$sub_head_name?></div>
+        </li>
+
+        <?php
+        }
+      }
+
+
+
+        // Get SL 3
+        function getSL3List($head_type,$sub_head,$child_head){
+	$project_id = getFromSession('project_id');
+        $info = array();
+        $info['table'] = SUBSIDIARY_STEP3_TBL;
+        $info['fields'] = array('sl_three_id', 'sl_three_name');
+        $SQL = "head_type='$head_type' AND sub_head = '$sub_head' AND child_id = '$child_head' AND project_id='$project_id'";
+        $info['where'] = $SQL;
+        $info['groupby'] = array("sl_three_id");
+        $info['orderby'] = array("sl_three_name ASC");
+        //$info['debug']   = true;
+        $result = select($info);
+        $data = array();
+        if (count($result)) {
+            foreach ($result as $key => $value) {
+        $data[$key][] = $value;
+        }
+        }
+        foreach ($data as $i => $v) {
+        $sl_three_id = $v[0]->sl_three_id;
+        $sl_three_name = $v[0]->sl_three_name;
+        ?>
+
+        <li>
+            <div class="node muted"><span class="sl-3">SL-3</span> Head: <?=$sl_three_name?></div>
+            <ul>
+                <?php getLedgerName($head_type,$sub_head,$child_head,$sl_three_id); ?>
+            </ul>
+        </li>
+
+        <?php
+
+        }
+        }
+
+        // Get SL 2
+        function getSL2List($head_type, $sub_head){
+	      $project_id = getFromSession('project_id');
+              $info = array();
+              $info['table'] = CHILD_HEAD_TYPE_TBL;
+              $info['fields'] = array('child_id', 'child_head_name');
+              $SQL = "head_type='$head_type' AND sub_head = '$sub_head' AND project_id='$project_id'";
+              $info['where'] = $SQL;
+              $info['groupby'] = array("child_id");
+              $info['orderby'] = array("child_head_name ASC");
+              //$info['debug']   = true;
+              $result = select($info);
+              $data = array();
+              if (count($result)) {
+                  foreach ($result as $key => $value) {
+        $data[$key][] = $value;
+        }
+        }
+        foreach ($data as $i => $v) {
+        $child_head = $v[0]->child_id;
+        $child_head_name = $v[0]->child_head_name;
+
+        ?>
+        <li>
+            <div class="node lvl-2"><span class="sl-2">SL-2</span> Head: <?=$child_head_name?></div>
+            <ul>
+                <?php getSL3List($head_type,$sub_head,$child_head); ?>
+            </ul>
+        </li>
+
+        <?php
+            }
+        }
+
+
+        // Get SL 1
+        function getSL1List($head_type){
+	    $project_id = getFromSession('project_id');
+            $info = array();
+            $info['table'] = SUB_HEAD_TYPE_TBL;
+            $info['fields'] = array('sub_htid', 'sub_head_type');
+            $SQL = "head_type='$head_type' AND project_id='$project_id' ";
+            $info['where'] = $SQL;
+            $info['groupby'] = array("sub_htid");
+            $info['orderby'] = array("sub_head_type ASC");
+
+            $result = select($info);
+            $data = array();
+            if (count($result)) {
+                foreach ($result as $key => $value) {
+        $data[$key][] = $value;
+        }
+        }
+
+        foreach ($data as $i => $v) {
+        $sub_head = $v[0]->sub_htid;
+        $subHeadTypeName = $v[0]->sub_head_type;
+        ?>
+
+        <li>
+            <div class="node lvl-1"><span class="sl-1">SL-1</span> Head: <?=$subHeadTypeName?></div>
+            <ul>
+                <?php getSL2List($head_type,$sub_head); ?>
+            </ul>
+        </li>
+
+        <?php }
+
+        }
+        ?>
+
+        <div class="tree-wrapper"><p class="tree-root">Assets</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Non Current Assets</div>
+                <ul>
+                    <?php getSL1List("Non Current Assets"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Current Assets</div>
+                <ul>
+                    <?php getSL1List("Current Assets"); ?>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tree-wrapper"><p class="tree-root">Liabilities</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Non Current Liabilities</div>
+                <ul>
+                    <?php getSL1List("Non Current Liabilities"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Current Liabilities</div>
+                <ul>
+                    <?php getSL1List("Current Liabilities"); ?>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tree-wrapper"><p class="tree-root">Equity</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Capital</div>
+                <ul>
+                    <?php getSL1List("Capital"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Retained Earnings</div>
+                <ul>
+                    <?php getSL1List("Retained earnings"); ?>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tree-wrapper"><p class="tree-root">Revenue</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Operating Revenue</div>
+                <ul>
+                    <?php getSL1List("Operating Revenue"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Non-Operating Revenue</div>
+                <ul>
+                    <?php getSL1List("Non-Operating Revenue"); ?>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tree-wrapper"><p class="tree-root">Expenses</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Direct Expenses</div>
+                <ul>
+                    <?php getSL1List("Direct Expenses"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Indirect Expenses</div>
+                <ul>
+                    <?php getSL1List("Indirect Expenses"); ?>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tree-wrapper"><p class="tree-root">Othesr Head</p></div>
+        <ul>
+            <li>
+                <div class="node lvl-0">GL Head: Opening Balance</div>
+                <ul>
+                    <?php getSL1List("Opening Balance"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Closing Balance</div>
+                <ul>
+                    <?php getSL1List("Closing Balance"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Adjustments Balance</div>
+                <ul>
+                    <?php getSL1List("Adjustments Balance"); ?>
+                </ul>
+            </li>
+            <li>
+                <div class="node lvl-0">GL Head: Cost Center</div>
+                <ul>
+                    <?php getSL1List("Cost Center"); ?>
+                </ul>
+            </li>
+        </ul>
+      
+    </section>
+  </div>
+
+  <script>
+    // Collapse/expand logic
+    document.querySelectorAll('.node').forEach(node => {
+      node.addEventListener('click', e => {
+        if(node.classList.contains('leaf')) return; // do nothing for leaves
+        const nextUl = node.parentElement.querySelector('ul');
+        if(nextUl){ nextUl.classList.toggle('collapsed'); }
+        e.stopPropagation();
+      });
+    });
+
+    // Collapse/expand logic for tree wrappers
+    document.querySelectorAll('.tree-wrapper').forEach(wrapper => {
+      wrapper.addEventListener('click', e => {
+        const nextUl = wrapper.nextElementSibling;
+
+        if (nextUl && nextUl.tagName === 'UL') {
+          nextUl.classList.toggle('collapsed');
+
+          // Also toggle the collapsed state for all child ul elements
+          const allChildUls = nextUl.querySelectorAll('ul');
+          if (nextUl.classList.contains('collapsed')) {
+            allChildUls.forEach(ul => ul.classList.add('collapsed'));
+          } else {
+            allChildUls.forEach(ul => ul.classList.remove('collapsed'));
+          }
+        }
+
+        e.stopPropagation();
+      });
+    });
+
+    // Expand all
+    document.getElementById('expandAllBtn').addEventListener('click', () => {
+      document.querySelectorAll('.tree ul').forEach(ul => ul.classList.remove('collapsed'));
+    });
+
+    // Collapse all
+    document.getElementById('collapseAllBtn').addEventListener('click', () => {
+      document.querySelectorAll('.tree ul').forEach(ul => ul.classList.add('collapsed'));
+    });
+
+    const btn = document.getElementById('hideSLBtn');
+
+btn.addEventListener('click', () => {
+
+  // Select all classes that start with "sl-"
+  const elements = document.querySelectorAll('[class^="sl-"]');
+  
+  // Check current state
+  const isHidden = elements[0].style.display === 'none';
+
+  if (isHidden) {
+    // Show all
+    elements.forEach(el => el.style.display = '');
+    btn.textContent = "Hide SL";
+  } else {
+    // Hide all
+    elements.forEach(el => el.style.display = 'none');
+    btn.textContent = "Show SL";
+  }
+});
+
+
+    // Print button
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+  </script>
+</body>
+</html>

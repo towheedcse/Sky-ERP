@@ -1,0 +1,612 @@
+<div id="Conten_right">
+
+			   <div id="content_right_inner" align="center">
+		
+			   <div class="right_block">
+
+					<h3 onclick="show_hide_menu('home')"><span style=" display:block;padding: 5px;">Home</span>
+
+					<span class="arrow_down" id="arrow_home">&nbsp;&nbsp;</span></h3>
+
+					<div id="home" class="right_block_inner" style="display:none">
+					<ul>
+					 <? if(getFromSession('u_type_id')==101){?>							
+					<li><a href="?app=user_home&cmd=mis_dashboard">Dashboard</a></li>									
+					<li><a href="?app=general_vouchar&cmd=add">General Voucher</a></li>									
+					<li><a href="?app=bank.received.voucher&cmd=add">Bank Received Voucher</a></li>
+					<li><a href="?app=contra.voucher.new&cmd=add">Contra Voucher</a></li>	
+					<li><a href="?app=advanced_payment_vouchar&cmd=add">Advanved Payment Voucher</a></li>
+					<li><a href="?app=purchase.item&cmd=add_spr">Stock Purchase Request(SPR)</a></li>
+					<li><a href="?app=purchase.item&cmd=spr_list">Stock Purchase Request List(SPR)</a></li>
+					<li><a href="?app=purchase_order&cmd=add">Purchase Order</a></li>
+			      		<li><a href="?app=purchase_order&cmd=po_list">Purchase Order List</a></li>
+					<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+					<li><a href="?app=purchase.item.grn&cmd=add">Goods Received Note(GRN)</a></li>			<li><a href="?app=purchase.item.grn&cmd=grn_order_list">Goods Received Note List (GRN)</a></li>
+					
+					<!--li><a href="?app=production">Production</a></li-->
+					<!--li><a href="?app=used4_feed">Production</a></li-->
+					<li><a href="?app=batch.production&cmd=add">Batch Wise Production</a></li>
+					<li><a href="?app=fg.production&cmd=out">Inventory Consumption</a></li>
+					<li><a href="?app=fg.production&cmd=infg">Finish Goods Production</a></li>
+					<li><a href="?app=fg.out&cmd=out">Out Finish Goods</a></li>
+					<!--li><a href="?app=fg.production&cmd=transfer">Stock Transfer</a></li-->							
+					<li><a href="?app=groupwise.stock.transfer&cmd=add">Stock Transfer</a></li>
+				<li><a href="?app=sales.report&cmd=pending_transfer_list">Unapproved Transfer List</a></li>	
+					<li><a href="?app=physical.stock.verification&cmd=verify">Physical Stock Verification</a></li>
+					<li><a href="?app=sales.item">Sales</a></li>
+					<!--li><a href="?app=sales_order">Sales Order</a></li-->
+					<li><a href="?app=sales.order">New Sales Order</a></li>
+					<li><a href="?app=sales.order&cmd=direct_invoice">Direct Invoice</a></li>
+					<li><a href="?app=delivery_challan">Sales Delivery Challan</a></li>
+					<li><a href="?app=queeck.quotation">Quick Quotation</a></li>
+					<li><a href="?app=salary.sheet&cmd=add">Create Salary Sheet</a></li>
+					<li><a href="?app=salary.sheet&cmd=list">View Salary Sheet</a></li>	
+					<li><a href="?app=sales.return.customerwise&cmd=add">Sales Return (Customer wise)</a></li>						
+					<!--li><a href="?app=sales.report&cmd=sales.return">Sales Return (Order wise)</a></li-->
+					<li><a href="?app=sales.report&cmd=order_list">Sales Order List</a></li>
+					<li><a href="?app=sales.report&cmd=pending_order_list">Unapprove Order List</a></li>
+					<li><a href="?app=sales.report&cmd=edit_order_list">Pending Edit Delivery List</a></li>		
+					<!--li><a href="?app=sales.delivery.missing&cmd=list">Sales Delivery Missing</a></li-->
+					<li><a href="?app=journal&cmd=transaction_lst">Day Book</a></li>
+					<li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+					<li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+										
+					<li><a href="?app=contra.voucher&cmd=list">Contra Voucher List</a></li>
+					<li><a href="?app=journal&cmd=due_payment_list">Payable List</a></li>
+					<li><a href="?app=journal&cmd=due_receive_list">Receivable List</a></li>
+					<li><a href="?app=voucher.edit&cmd=list">Voucher List</a></li>
+				<li><a href="?app=sales.report&cmd=pending.voucher">Pending Voucher List</a></li>
+                                <li><a href="?app=sales.report&cmd=pending.money.receipt">Pending Money Receipt List</a></li>      
+                            <!--li><a href="?app=sales.opening.by.trt&cmd=sales.opening.trt">Sales Order Opening</a></li-->	                            
+                           <?php if(userCondition()){?> 
+			   <!--  <li><a href="?app=sales.report&cmd=pending.voucher">Pending Voucher List</a></li>                         
+			    <li><a href="?app=sales.report&cmd=pending.money.receipt">Pending Money Receipt List</a></li> -->
+                            <li><a href="?app=sales.opening.by.trt&cmd=set.division">Set Customer Missing Division</a></li>                 
+			    <li><a href="?app=sales.opening.by.trt&cmd=movesales">Move Sales</a></li>                                    
+                            <li><a href="?app=sales.opening.by.trt&cmd=set.sales.division">Set Sales Missing Division</a></li>
+			    <li><a href="?app=groupwise.stock.transfer&cmd=missing_transfer">Set Missing Transfer</a></li>                           
+                            <li><a href="?app=sales.opening.by.trt&cmd=del.double.ledger">Delete Double Ledger</a></li>
+
+                           <?php }?>
+                            
+			   <?}else{
+                             if(getFromSession('u_type_id')==109){?>
+		                 <li><a href="?app=sales.report&cmd=transaction_lst">Transaction List</a></li>
+				 <li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+				 <li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+				 <li><a href="?app=sales.report&cmd=pending.voucher">Pending Voucher List</a></li>
+				 <li><a href="?app=sales.report&cmd=pending.money.receipt">Pending Money Receipt List</a></li>
+				 <li><a href="?app=contra.voucher&cmd=list">Contra Voucher List</a></li>
+				 <li><a href="?app=sales.report&cmd=due_payment_list">Payable List</a></li>
+				 <li><a href="?app=sales.report&cmd=due_receive_list">Receivable List</a></li>
+
+			<? }else if(getFromSession('u_type_id')==102){?>
+				<li><a href="?app=general_vouchar&cmd=add">General Voucher</a></li>
+				
+				<li><a href="?app=contra.voucher.new&cmd=add">Contra Voucher</a></li>
+		                 <li><a href="?app=sales.report&cmd=transaction_lst">Transaction List</a></li>
+					<li><a href="?app=voucher.edit&cmd=list">Voucher List</a></li>
+					<li><a href="?app=sales.report&cmd=order_list">Sales Order List</a></li>
+					<li><a href="?app=sales.report&cmd=pending_order_list">Unapprove Order List</a></li>
+				<li><a href="?app=purchase.item&cmd=add_spr">Stock Purchase Request(SPR)</a></li>
+				<li><a href="?app=purchase.item&cmd=spr_list">Stock Purchase Request List(SPR)</a></li>
+				<li><a href="?app=purchase_order&cmd=add">Purchase Order</a></li>
+				<li><a href="?app=purchase_order&cmd=po_list">Purchase Order List</a></li>
+				<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+				<li><a href="?app=purchase.item.grn&cmd=add">Goods Received Note(GRN)</a></li>					
+				<li><a href="?app=purchase.item.grn&cmd=grn_order_list">Goods Received Note List (GRN)</a></li>
+				 <li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+				 <li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+				 <li><a href="?app=sales.report&cmd=pending.voucher">Pending Voucher List</a></li>
+				 <li><a href="?app=sales.report&cmd=pending.money.receipt">Pending Money Receipt List</a></li>
+				 <li><a href="?app=contra.voucher&cmd=list">Contra Voucher List</a></li>
+				 <li><a href="?app=sales.report&cmd=due_payment_list">Payable List</a></li>
+				 <li><a href="?app=sales.report&cmd=due_receive_list">Receivable List</a></li>
+<? }else if(getFromSession('u_type_id')==106){?>
+<li><a href="?app=purchase.item&cmd=add_spr">Stock Purchase Request(SPR)</a></li>
+				<li><a href="?app=purchase.item&cmd=spr_list">Stock Purchase Request List(SPR)</a></li>
+				<li><a href="?app=purchase_order&cmd=add">Purchase Order</a></li>
+				<li><a href="?app=purchase_order&cmd=po_list">Purchase Order List</a></li>
+				<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+				<li><a href="?app=purchase.item.grn&cmd=add">Goods Received Note(GRN)</a></li>								
+				<li><a href="?app=purchase.item.grn&cmd=grn_order_list">Goods Received Note List (GRN)</a></li>
+                             <? }else if(getFromSession('u_type_id')==104){?>							
+				<li><a href="?app=general_vouchar&cmd=add">General Voucher</a></li>				
+				<li><a href="?app=advanced_payment&cmd=add">Payment Voucher</a></li>	
+				<li><a href="?app=advanced_received&cmd=add">Received Voucher</a></li>		
+				<li><a href="?app=bank.received.voucher&cmd=add">Bank Received Voucher</a></li>
+				<li><a href="?app=contra.voucher.new&cmd=add">Contra Voucher</a></li>
+				<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+				<li><a href="?app=salary.sheet&cmd=add">Create Salary Sheet</a></li>
+				<li><a href="?app=salary.sheet&cmd=list">View Salary Sheet</a></li>
+				<li><a href="?app=sales.report&cmd=order_list">Sales Order List</a></li>				
+				<li><a href="?app=sales.report&cmd=pending_order_list">Unapprove Order List</a></li>	
+				<li><a href="?app=sales.report&cmd=pending.voucher">Pending Voucher List</a></li>
+				<li><a href="?app=journal&cmd=transaction_lst">Day Book</a></li>
+				<li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+				<li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+				<li><a href="?app=contra.voucher&cmd=list">Contra Voucher List</a></li>
+				<li><a href="?app=journal&cmd=due_payment_list">Payable List</a></li>
+				<li><a href="?app=journal&cmd=due_receive_list">Receivable List</a></li>
+				<li><a href="?app=voucher.edit&cmd=list">Voucher List</a></li>
+                             <? }else if(getFromSession('u_type_id')==107){?>
+				<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+				<li><a href="?app=sales.order">New Sales Order</a></li>
+				<li><a href="?app=sales.order&cmd=direct_invoice">Direct Invoice</a></li>
+				<li><a href="?app=batch.production&cmd=customize.production">CustomizeProduction</a></li>
+                             	<li><a href="?app=sales.report&cmd=order_list">Sales Order List</a></li>
+				
+				<li><a href="?app=sales.report&cmd=pending_order_list">Unapprove Order List</a></li>
+				<li><a href="?app=sales.report&cmd=edit_order_list">Pending Edit Delivery List</a></li>
+				<li><a href="?app=fg.production&cmd=infg">Finish Goods Production</a></li>
+				<li><a href="?app=fg.production&cmd=out">Inventory Consumption</a></li>
+				<li><a href="?app=fg.out&cmd=out">Out Finish Goods</a></li>
+				<li><a href="?app=batch.production&cmd=add">Batch Wise Production</a></li>
+				<li><a href="?app=sales.report&cmd=transfer_list">Transaction List</a></li>
+
+				<li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+				<li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+                             <? }else{?>                         							
+				<li><a href="?app=general_vouchar&cmd=add">General Voucher</a></li>				
+				<li><a href="?app=advanced_payment&cmd=add">Payment Voucher</a></li>	
+				<li><a href="?app=advanced_received&cmd=add">Received Voucher</a></li>		
+				<li><a href="?app=bank.received.voucher&cmd=add">Bank Received Voucher</a></li>	
+				<li><a href="?app=contra.voucher.new&cmd=add">Contra Voucher</a></li>
+				<li><a href="?app=advanced_payment_vouchar&cmd=add">Advanved Payment Voucher</a></li>
+				<li><a href="?app=purchase.item&cmd=add_spr">Stock Purchase Request(SPR)</a></li>
+				<li><a href="?app=purchase.item&cmd=spr_list">Stock Purchase Request List(SPR)</a></li>
+				<li><a href="?app=purchase_order&cmd=add">Purchase Order</a></li>
+				<li><a href="?app=purchase_order&cmd=po_list">Purchase Order List</a></li>
+				<li><a href="?app=purchase.item&cmd=add">Purchase</a></li>
+				<li><a href="?app=purchase.item.grn&cmd=add">Goods Received Note(GRN)</a></li>					
+				<li><a href="?app=purchase.item.grn&cmd=grn_order_list">Goods Received Note List (GRN)</a></li>
+				<!--li><a href="?app=production">Production</a></li-->
+				<!--li><a href="?app=used4_feed">Production</a></li-->
+				<li><a href="?app=fg.production&cmd=out">Inventory Consumption</a></li>
+						<li><a href="?app=fg.production&cmd=unapproved_rwm_list">Unapproved Consumption List</a></li>
+						<li><a href="?app=fg.production&cmd=infg">Finish Goods Production</a></li>
+				<li><a href="?app=fg.out&cmd=out">Out Finish Goods</a></li>
+				<!--li><a href="?app=fg.production&cmd=transfer">Stock Transfer</a></li-->							
+				<li><a href="?app=groupwise.stock.transfer&cmd=add">Stock Transfer</a></li>
+				<li><a href="?app=sales.report&cmd=pending_transfer_list">Unapproved Transfer List</a></li>	
+				<li><a href="?app=physical.stock.verification&cmd=verify">Physical Stock Verification</a></li>
+				<li><a href="?app=sales">Sales</a></li>
+				<li><a href="?app=voucher.edit&cmd=list">LC Costcenter</a></li>
+						<li><a href="?app=batch.production&cmd=customize.production">CustomizeProduction</a></li>
+				<!--li><a href="?app=sales_order">Sales Order</a></li-->
+				<li><a href="?app=sales.order">New Sales Order</a></li>
+				<li><a href="?app=sales.order&cmd=direct_invoice">Direct Invoice</a></li>
+				<li><a href="?app=delivery_challan">Sales Delivery Challan</a></li>
+				<li><a href="?app=queeck.quotation">Quick Quotation</a></li>
+				<li><a href="?app=salary.sheet&cmd=add">Create Salary Sheet</a></li>
+				<li><a href="?app=salary.sheet&cmd=list">View Salary Sheet</a></li>	
+				<li><a href="?app=sales.return.customerwise&cmd=add">Sales Return (Customer wise)</a></li>						
+				<!--li><a href="?app=sales.report&cmd=sales.return">Sales Return (Order wise)</a></li-->
+				<li><a href="?app=sales.report&cmd=order_list">Sales Order List</a></li>
+				<li><a href="?app=sales.report&cmd=pending_order_list">Unapprove Order List</a></li>	
+				
+				<!--li><a href="?app=sales.delivery.missing&cmd=list">Sales Delivery Missing</a></li-->
+				<li><a href="?app=journal&cmd=transaction_lst">Day Book</a></li>
+				<li><a href="?app=sales.report&cmd=cashbook_list">Cash Book List</a></li>
+				<li><a href="?app=sales.report&cmd=bankbook_list">Bank Book List</a></li>
+				<li><a href="?app=contra.voucher&cmd=list">Contra Voucher List</a></li>
+				<li><a href="?app=journal&cmd=due_payment_list">Payable List</a></li>
+				<li><a href="?app=journal&cmd=due_receive_list">Receivable List</a></li>
+				<li><a href="?app=voucher.edit&cmd=list">Voucher List</a></li>
+                            <?}?>
+					 <?}?>
+
+				<?php if(getFromSession('u_type_id')==101 || getFromSession('u_type_id')==102){?>
+					<li><a href="?app=contra.voucher.new&cmd=voucher_entry">Voucher Entry</a></li>
+				<?php } ?>
+
+				<li><a href="?app=sales.order&cmd=bill_generate">Bill Generate</a></li>
+				<li><a href="?app=job_order&cmd=add">Create Job Order</a></li>
+				<li><a href="?app=job_order&cmd=list">Job Order List</a></li>
+				<li><a href="?app=batch_setup&cmd=add">Batch Setup</a></li>
+				<li><a href="?app=batch_setup&cmd=list">Batch List</a></li>
+
+					</ul>
+
+				</div>
+
+			  </div>
+		
+			  <br />
+			
+			   <div class="right_block">
+
+					<h3 onclick="show_hide_menu('setup')"><span style="display:block;padding: 5px;">Setup</span>
+
+					<span class="arrow_down" id="arrow_setup">&nbsp;&nbsp;</span></h3>
+
+					<div id="setup" class="right_block_inner" <?php if(!empty($active_main) && $active_main=='setup') echo 'style="display:block"'; else echo 'style="display:none"';?>>
+
+						<ul>
+						 <? if(getFromSession('u_type_id')==101){?>
+						 	<li><a href="?app=district&cmd=add">Area</a></li>
+							<li><a href="?app=area&cmd=add">TRT</a></li>
+							<li><a href="?app=branch&cmd=add">Branch</a></li>						
+							<li><a href="?app=factory&cmd=add">Factory</a></li>	
+							<li><a href="?app=deliverypoint&cmd=add">Unit Warehouse</a></li>
+							<li><a href="?app=customer&cmd=add">Customer</a></li>								
+							<li><a href="?app=customer.opening&cmd=add">Customer Opening</a></li>	
+							<li><a href="?app=customer.opening.march&cmd=add">Customer Opening March</a></li>	
+							<li><a href="?app=customer.opening.may16&cmd=add">Customer Opening May 16</a></li>										
+							<li><a href="?app=retailer&cmd=add">Retailer</a></li>			
+							<li><a href="?app=reference&cmd=add">Sales Reference</a></li>
+							<li><a href="?app=commission-setup&cmd=add">Commission Setup</a></li> 
+							<li><a href="?app=supplier">Supplier</a></li>
+<?php if(userCondition(true)){?>
+							<li><a href="?app=supplier.info">Supplier Old</a></li>
+<?php } ?>
+							<!--li><a href="?app=supplier.opening">Supplier Opening</a></li-->
+							<li><a href="?app=bank&cmd=add">Bank</a></li>
+							<li><a href="?app=bank_account&cmd=add">Bank Account</a></li>
+							<li><a href="?app=catagory&cmd=add_main">Main Catagory</a></li>
+							<li><a href="?app=catagory">Catagory</a></li>
+                            				<li><a href="?app=subcatagory">Sub Catagory</a></li>
+							<li><a href="?app=brand">Brand</a></li>	
+							<li><a href="?app=product_class&cmd=add">Product Class</a></li>
+							<li><a href="?app=product.group">Product Group</a></li>			
+							<li><a href="?app=product">Product</a></li>	
+                            			
+							<li><a href="?app=attach.product">Attach Product at Group</a></li>	
+							<li><a href="?app=machine&cmd=add">Machine Setup</a></li>	
+							<li><a href="?app=vehicle&cmd=add">Vehicle Setup</a></li>	
+							<li><a href="?app=po.batch.setup&cmd=add">Batch Setup</a></li>	
+							<li><a href="?app=sales.report&cmd=batchlist">Batch List</a></li>	
+							<li><a href="?app=product.opening&cmd=add">Product Opening</a></li>	
+							<li><a href="?app=product.opening&cmd=verify">Product Physical verification</a></li>
+							<li><a href="?app=sub.headtype">Subsidiary Ledger Step-1</a></li>
+							<li><a href="?app=child.head">Subsidiary Ledger Step-2</a></li>
+							<li><a href="?app=subsidiary.step3">Subsidiary Ledger Step-3</a></li>
+							<li><a href="?app=accounts.head&cmd=add">COA Setup</a></li>
+							<li><a href="?app=employee">Employee</a></li>
+							<li><a href="?app=user">User</a></li>
+							<!--li><a href="?app=agent&cmd=new_user">New User</a></li>
+							<li><a href="?app=agent&cmd=view_user">View User</a></li-->
+							<?}elseif(getFromSession('u_type_id')==111){?>
+							<li><a href="?app=district&cmd=add">Area</a></li>
+							<li><a href="?app=area&cmd=add">TRT</a></li>
+							<li><a href="?app=branch&cmd=add">Branch</a></li>						
+							<li><a href="?app=factory&cmd=add">Factory</a></li>	
+							<li><a href="?app=deliverypoint&cmd=add">Unit Warehouse</a></li>
+							<li><a href="?app=customer&cmd=add">Customer</a></li>
+							<li><a href="?app=customer.opening&cmd=add">Customer Opening</a></li>									
+							<li><a href="?app=retailer&cmd=add">Retailer</a></li>
+							<li><a href="?app=reference&cmd=add">Sales Reference</a></li>
+							<li><a href="?app=commission-setup&cmd=add">Commission Setup</a></li> 
+							<li><a href="?app=supplier">Supplier</a></li>	
+							<li><a href="?app=supplier.opening">Supplier Opening</a></li>
+							<li><a href="?app=bank&cmd=add">Bank</a></li>
+							<li><a href="?app=bank_account&cmd=add">Bank Account</a></li>
+							<li><a href="?app=catagory&cmd=add_main">Main Catagory</a></li>
+							<li><a href="?app=catagory">Catagory</a></li>
+                            				<li><a href="?app=subcatagory">Sub Catagory</a></li>		
+							<li><a href="?app=brand">Brand</a></li>
+							<!--li><a href="?app=catagory&cmd=add">Product Catagory</a></li-->									
+							<li><a href="?app=product_class&cmd=add">Product Class</a></li>		
+							<li><a href="?app=product">Product</a></li>
+							<li><a href="?app=product.opening&cmd=add">Product Opening</a></li>
+							<li><a href="?app=product.opening&cmd=verify">Product Physical verification</a></li>		
+							<li><a href="?app=sub.headtype">Sub Head Type</a></li>							<li><a href="?app=child.head">Child Head</a></li>		
+							<li><a href="?app=accounts.head&cmd=add">Account Head</a></li>
+							<li><a href="?app=employee">Employee</a></li>
+							<li><a href="?app=user">User</a></li>
+                            
+                            				<?}elseif(getFromSession('u_type_id')==102){?> 
+							<li><a href="?app=po.batch.setup&cmd=add">Batch Setup</a></li>							<li><a href="?app=sales.report&cmd=batchlist">Batch List</a></li>	
+							<li><a href="?app=customer&cmd=add">Customer</a></li>
+							<li><a href="?app=sub.headtype">Sub Head Type</a></li>
+							<li><a href="?app=child.head">Child Head</a></li>
+		
+							<li><a href="?app=accounts.head&cmd=add">Account Head</a></li>
+							<li><a href="?app=product">Product</a></li>	
+							<?}elseif(getFromSession('u_type_id')==107){?>
+            						<li><a href="?app=district&cmd=add">Area</a></li>
+							<li><a href="?app=area&cmd=add">TRT</a></li>                           
+							<li><a href="?app=customer&cmd=add">Customer</a></li>		
+							<li><a href="?app=accounts.head&cmd=add">Account Head</a></li>		
+							<li><a href="?app=po.batch.setup&cmd=add">Batch Setup</a></li>	
+							<li><a href="?app=retailer&cmd=add">Retailer</a></li>
+							<li><a href="?app=supplier">Supplier</a></li>
+							<li><a href="?app=bank&cmd=add">Bank</a></li>
+							<li><a href="?app=bank_account&cmd=add">Bank Account</a></li>
+							<li><a href="?app=catagory&cmd=add_main">Main Catagory</a></li>
+							<li><a href="?app=catagory">Catagory</a></li>
+                            				<li><a href="?app=subcatagory">Sub Catagory</a></li>
+
+							<li><a href="?app=product">Product</a></li>
+														
+							<li><a href="?app=sub.headtype">Subsidiary Ledger Step-1</a></li>
+							<li><a href="?app=child.head">Subsidiary Ledger Step-2</a></li>
+							<li><a href="?app=subsidiary.step3">Subsidiary Ledger Step-3</a></li>
+							<li><a href="?app=accounts.head&cmd=add">COA Setup</a></li>	
+							<?}?>
+						</ul>					
+
+					</div>
+
+				</div>
+				<br />				
+
+				<div class="right_block" >
+
+					<h3 onclick="show_hide_menu('sample')"><span style=" display:block;padding: 5px;">LC</span>
+
+					<span class="arrow_down" id="arrow_sample">&nbsp;&nbsp;</span></h3>
+
+					<div id="sample" class="right_block_inner" style="display:none">
+
+						<ul>			
+							<li><a href="?app=purchase&cmd=lcForm">LC Form</a></li>
+							<li><a href="?app=purchase&cmd=addlc">LC Opening</a></li>
+							<li><a href="?app=journal&cmd=addpv&type=lc">LC Payment Vouchar</a></li>
+							<li><a href="?app=sales&type=lc">LC Wise Sales</a></li>
+						</ul>
+
+					</div>
+
+				</div>
+
+				<br />
+
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('order')"><span style="display:block;padding: 5px;">Reports</span>
+
+					<span class="arrow_down" id="arrow_order">&nbsp;&nbsp;</span></h3>
+
+					<div id="order" class="right_block_inner" style="display:none">
+
+						<ul>
+						<? if(getFromSession('u_type_id')==101 || getFromSession('u_type_id')==102){?>
+						<li><a href="?app=journal&cmd=vouchar_print">Search Voucher</a></li>	
+						<li><a href="?app=purchase&cmd=print_vouchar">Purchase Invoice</a></li>	<li><a href="?app=sales.report&cmd=show_lc_report">LC Cost Details</a></li>							
+						
+<li><a href="?app=sales.report&cmd=customer.status.by.trt">Sundry Debtors Sales List</a></li>																	
+						<li><a href="?app=sales.report&cmd=monthly_trt_status" target="_blank">Sundry Debtors Monthly Summary</a></li>
+						<li><a href="?app=purchase&cmd=pur_dtl">Purchase Summary List</a></li>
+                            			<li><a href="?app=sales.report&cmd=sales.delivery.order">OD Summary</a></li>
+						<li><a href="?app=sales.report&cmd=sal_dtl">Sales Summary List</a></li>	
+					        
+					        <li><a href="?app=sales.report&cmd=sales.status.topsheet">Sales Status Topsheet </a></li>	
+						<li><a href="?app=sales.report&cmd=sales.status_by_cat">Sales Target Status</a></li>
+						<li><a href="?app=sales.report&cmd=sales.status_by_cat">Sales Catagory Target Status</a></li>	
+					        <li><a href="?app=sales.report&cmd=sales.status_by_trt">Sales Status</a></li>
+						<li><a href="?app=sales.report&cmd=sales_details">Sales Details List</a></li>		
+						<li><a href="?app=sales.report&cmd=undelivered_list">Undelivered Sales List</a></li>		
+						<li><a href="?app=sales.report&cmd=sales_delivery_list">Delivery Sales List</a></li>	
+						<li><a href="?app=sales.report&cmd=custom_invoice_list">Custom Invoice List</a></li>														
+						<li><a href="?app=sales.report&cmd=salesreturn_list">Sales Return List</a></li>																
+						<li><a href="?app=sales.report&cmd=transfer_list">Stock Transfer List</a></li>	
+														
+						<li><a href="?app=sales.report&cmd=verify_list">Physical Stock Verification List</a></li>								
+						<li><a href="?app=sales.report&cmd=sales_ststus">Product Wise Sales Sammary</a></li>							
+						<li><a href="?app=sales.report&cmd=product_wise_sl_list">Product Wise Sales List</a></li>	
+						<li><a href="?app=sales.report&cmd=customer_sales_status">Customer Wise Sales Status</a></li>
+						<!--li><a href="?app=sales.report&cmd=running_production">Running Production</a></li-->
+						<li><a href="?app=fg.production&cmd=pro_dtl">Finish Production List</a></li>					<li><a href="?app=sales.report&cmd=show.batch.po.list">Batch Production List</a></li>	
+						<li><a href="?app=sales.report&cmd=order.po.status">Require Production List</a></li>					
+						<!--li><a href="?app=production&cmd=pro_dtl">Finish Production List</a></li-->	
+						<li><a href="?app=sales&cmd=com_list">Sales Commission List</a></li><li><a href="?app=sales.report&cmd=customer_list">Customer List</a></li>
+						<!--li><a href="?app=balance_sheet&cmd=view">Balance Sheet V1</a></li-->
+	 					<?php if(userCondition(false, ["f.rahman","waliur","nasrin","aminul-acc","moshiur"])){?>
+						<li><a href="?app=trial.balance&cmd=tbview1">Trial Balance</a></li>
+						<li><a href="?app=balance_sheet&cmd=view2">Balance Sheet</a></li>
+						<li><a href="?app=balance_sheet&cmd=inst">Income Statement</a></li>
+						<li><a href="?app=balance_sheet&cmd=cogs">COGS Statement</a></li>
+                                                <li><a href="?app=voucher.edit&cmd=list">LC Costcenter</a></li>
+						<li><a href="?app=batch.production&cmd=customize.production">CustomizeProduction</a></li>
+						<li><a href="?app=sales.report&cmd=customer.status_by_trt">Sundry Debtors Summary</a></li>
+						<?php }else{?>
+						<li><a href="?app=sales.report&cmd=customer.status_by_trt">Sundry Debtors Summary</a></li>
+						<?php }?>
+						<li><a href="?app=sales.report&cmd=stock.status_by_date">Stock Status By Date</a></li>
+						<li><a href="?app=sales.report&cmd=stock_status">Stock Status</a></li>
+						<li><a href="?app=sales.report&cmd=stock_movement_topsheet">Stock Movement Topsheet</a></li>
+						<li><a href="?app=sales.report&cmd=stock_movement_status">Stock Movement Status</a></li>
+						<li><a href="?app=show_ledger&cmd=show_gl_summary">Group Ledger</a></li>
+					        <li><a href="?app=show_ledger&cmd=show_sl1_summary">SL Step-1 Ledger</a></li>
+					        <li><a href="?app=show_ledger&cmd=show_sl2_summary">SL Step-2 Ledger</a></li>
+					        <li><a href="?app=show_ledger&cmd=show_sl3_summary">SL Step-3 Ledger</a></li>	
+						<li><a href="?app=show_ledger&cmd=show_sl4_summary">SL Step-4 Ledger</a></li>				
+						<li><a href="?app=show_ledger&cmd=show">Ledger</a></li>
+						<li><a href="?app=show_ledger&cmd=inventory_day_book">Inventory Day Book</a></li>
+						
+						<!--li><a href="?app=show_ledger&cmd=show_summary">Account Ledger Summary</a></li-->
+						<li><a href="?app=used_item&cmd=show_pro_ledger">Product Ledger</a></li>
+						<li><a href="?app=used_item&cmd=stock_ledger">Stock Ledger</a></li>
+						<li><a href="?app=queeck.quotation&cmd=qqt_list">Quotation List</a></li>
+						<li><a href="?app=used4_feed&cmd=print_report">Production Report</a></li>
+						<li><a href="?app=sales.report&cmd=aging_report">Accounts Receivable and Aging</a></li>
+						<li><a href="?app=sales.report&cmd=bill_list">Bill List</a></li>
+						<!--	
+						<li><a href="?app=used4_feed&cmd=pro_dtl">Production Details</a></li>
+						<li><a href="?app=used4_feed&cmd=print_report">Production Report</a></li>
+						-->	
+						<?}elseif(getFromSession('u_type_id')==107){?>
+									
+					<li><a href="?app=sales.report&cmd=customer_list">Customer List</a></li>	
+					<li><a href="?app=sales.report&cmd=customer.status_by_trt">Sundry Debtors Summary</a></li>
+					<li><a href="?app=sales.report&cmd=customer.status.by.trt">Sundry Debtors Sales List</a></li>																	
+					<li><a href="?app=sales.report&cmd=monthly_trt_status" target="_blank">Sundry Debtors Monthly Summary</a></li>
+					<li><a href="?app=purchase&cmd=pur_dtl">Purchase Summary List</a></li>
+					<li><a href="?app=sales.report&cmd=sales.delivery.order">OD Summary</a></li>
+					<li><a href="?app=sales.report&cmd=sal_dtl">Sales Summary List</a></li>	
+					
+					<li><a href="?app=sales.report&cmd=sales.status.topsheet">Sales Status Topsheet </a></li>	
+					<li><a href="?app=sales.report&cmd=sales.status_by_cat">Sales Target Status</a></li>	
+					<li><a href="?app=sales.report&cmd=sales.status_by_trt">Sales Status</a></li>
+					<li><a href="?app=sales.report&cmd=sales_details">Sales Details List</a></li>		
+					<li><a href="?app=sales.report&cmd=undelivered_list">Undelivered Sales List</a></li>		
+					<li><a href="?app=sales.report&cmd=sales_delivery_list">Delivery Sales List</a></li>		
+					<li><a href="?app=sales.report&cmd=custom_invoice_list">Custom Invoice List</a></li>													
+					<li><a href="?app=sales.report&cmd=salesreturn_list">Sales Return List</a></li>																
+					<li><a href="?app=sales.report&cmd=transfer_list">Stock Transfer List</a></li>		
+													
+					<!--li><a href="?app=sales.report&cmd=verify_list">Physical Stock Verification List</a></li-->								
+					<li><a href="?app=sales.report&cmd=sales_ststus">Product Wise Sales Sammary</a></li>							
+					<li><a href="?app=sales.report&cmd=product_wise_sl_list">Product Wise Sales List</a></li>	
+					<li><a href="?app=sales.report&cmd=customer_sales_status">Customer Wise Sales Status</a></li>
+					<!--li><a href="?app=sales.report&cmd=running_production">Running Production</a></li-->
+					<li><a href="?app=fg.production&cmd=pro_dtl">Finish Production List</a></li>					<li><a href="?app=sales.report&cmd=show.batch.po.list">Batch Production List</a></li>
+					<li><a href="?app=sales.report&cmd=order.po.status">Require Production List</a></li>				
+					<!--li><a href="?app=production&cmd=pro_dtl">Finish Production List</a></li-->	
+					<!--li><a href="?app=balance_sheet&cmd=view">Balance Sheet</a></li>
+					<li><a href="?app=balance_sheet&cmd=inst">Income Statement</a></li-->
+					<li><a href="?app=sales.report&cmd=stock.status_by_date">Stock Status By Date</a></li>
+					<li><a href="?app=sales.report&cmd=stock_status">Stock Status</a></li>
+					<li><a href="?app=sales.report&cmd=stock_movement_topsheet">Stock Movement Topsheet</a></li>
+					<li><a href="?app=sales.report&cmd=stock_movement_status">Stock Movement Status</a></li>															
+                            
+						<?}elseif(getFromSession('u_type_id')==109){?>
+						<li><a href="?app=sales.report&cmd=customer_list">Customer List</a></li>
+							<!--li><a href="?app=balance_sheet&cmd=view">Balance Sheet</a></li>
+							<li><a href="?app=balance_sheet&cmd=inst">Income Statement</a></li-->								
+							<li><a href="?app=sales.report&cmd=customer.status_by_trt">Sundry Debtors Summary</a></li>
+                            <li><a href="?app=sales.report&cmd=monthly_trt_status" target="_blank">Sundry Debtors Monthly Summary</a></li>
+							<li><a href="?app=purchase&cmd=pur_dtl">Purchase Summary List</a></li>
+                            
+<li><a href="?app=sales.report&cmd=sales.status.topsheet">Sales Status Topsheet </a></li>
+<li><a href="?app=sales.report&cmd=sales.status_by_cat">Sales Target Status</a></li>	
+                            <li><a href="?app=sales.report&cmd=sales.status_by_trt">Sales Status</a></li>
+							<li><a href="?app=sales.report&cmd=sal_dtl">Sales Summary List</a></li>	
+							<li><a href="?app=sales.report&cmd=sales_details">Sales Details List</a></li>		
+							<li><a href="?app=sales.report&cmd=undelivered_list">Undelivered Sales List</a></li>			
+							<li><a href="?app=sales.report&cmd=sales_delivery_list">Delivery Sales List</a></li>				
+							<li><a href="?app=sales.report&cmd=custom_invoice_list">Custom Invoice List</a></li>										
+							<li><a href="?app=sales.report&cmd=salesreturn_list">Sales Return List</a></li>																	
+							<li><a href="?app=sales.report&cmd=transfer_list">Stock Transfer List</a></li>			
+													
+							<li><a href="?app=sales.report&cmd=verify_list">Physical Stock Verification List</a></li>						
+							<li><a href="?app=sales.report&cmd=sales_ststus">Product Wise Sales Sammary</a></li>							
+							<li><a href="?app=sales.report&cmd=product_wise_sl_list">Product Wise Sales List</a></li>	
+							<li><a href="?app=sales.report&cmd=customer_sales_status">Customer Wise Sales Status</a></li>
+							<li><a href="?app=fg.production&cmd=pro_dtl">Finish Production List</a></li>		
+							<li><a href="?app=sales&cmd=com_list">Sales Commission List</a></li>
+							<li><a href="?app=sales.report&cmd=stock.status_by_cat">Stock Status By Catagory</a></li>
+							<li><a href="?app=sales.report&cmd=stock_status">Stock Status</a></li>
+							<li><a href="?app=sales.report&cmd=stock_movement_topsheet">Stock Movement Topsheet</a></li>
+							<li><a href="?app=sales.report&cmd=stock_movement_status">Stock Movement Status</a></li>
+							<li><a href="?app=show_ledger&cmd=show">Ledger</a></li>
+							<li><a href="?app=show_ledger&cmd=inventory_day_book">Inventory Day Book</a></li>
+							
+						    <li><a href="?app=show_ledger&cmd=show_gl_summary">Group Ledger</a></li>
+						    <li><a href="?app=show_ledger&cmd=show_sl1_summary">SL Step-1 Ledger</a></li>
+						    <li><a href="?app=show_ledger&cmd=show_sl2_summary">SL Step-2 Ledger</a></li>
+						    <li><a href="?app=show_ledger&cmd=show_sl3_summary">SL Step-3 Ledger</a></li>
+						    <li><a href="?app=show_ledger&cmd=show_sl4_summary">SL Step-4 Ledger</a></li>
+
+							<!--li><a href="?app=show_ledger&cmd=show_summary">Account Ledger Summary</a></li-->
+							<li><a href="?app=used_item&cmd=show_pro_ledger">Product Ledger</a></li>
+							<li><a href="?app=used_item&cmd=stock_ledger">Stock Ledger</a></li>
+							<li><a href="?app=used4_feed&cmd=print_report">Production Report</a></li>
+						<li><a href="?app=sales.report&cmd=aging_report">Accounts Receivable and Aging</a></li>
+						<li><a href="?app=sales.report&cmd=bill_list">Bill List</a></li>
+                            <li><a href="?app=journal&cmd=vouchar_print">Search Voucher</a></li>	
+							<li><a href="?app=purchase&cmd=print_vouchar">Purchase Invoice</a></li>	
+                            
+						<?}else{?>		
+							<li><a href="?app=journal&cmd=vouchar_print">Search Voucher</a></li>	
+							<li><a href="?app=purchase&cmd=print_vouchar">Purchase Invoice</a></li>	
+							<li><a href="?app=sales.report&cmd=customer_list">Customer List</a></li>								
+							
+							<li><a href="?app=purchase&cmd=pur_dtl">Purchase Summary List</a></li>
+							<li><a href="?app=sales.report&cmd=sal_dtl">Sales Summary List</a></li>	
+							<li><a href="?app=sales.report&cmd=sales_details">Sales Details List</a></li>		
+							<li><a href="?app=sales.report&cmd=undelivered_list">Undelivered Sales List</a></li>			
+							<li><a href="?app=sales.report&cmd=sales_delivery_list">Delivery Sales List</a></li>						
+							<li><a href="?app=sales.report&cmd=custom_invoice_list">Custom Invoice List</a></li>								
+							<li><a href="?app=sales.report&cmd=salesreturn_list">Sales Return List</a></li>																	
+							<li><a href="?app=sales.report&cmd=transfer_list">Stock Transfer List</a></li>															
+							<li><a href="?app=sales.report&cmd=verify_list">Physical Stock Verification List</a></li>						
+							<li><a href="?app=sales.report&cmd=sales_ststus">Product Wise Sales Sammary</a></li>							
+							<li><a href="?app=sales.report&cmd=product_wise_sl_list">Product Wise Sales List</a></li>	
+							<li><a href="?app=sales.report&cmd=customer_sales_status">Customer Wise Sales Status</a></li>	
+							<!--li><a href="?app=sales.report&cmd=running_production">Running Production</a></li-->
+							<li><a href="?app=fg.production&cmd=pro_dtl">Finish Production List</a></li>	<li><a href="?app=sales.report&cmd=show.batch.po.list">Batch Production List</a></li>
+							<!--li><a href="?app=production&cmd=pro_dtl">Finish Production List</a></li-->		
+							<li><a href="?app=sales&cmd=com_list">Sales Commission List</a></li>
+							<li><a href="?app=sales.report&cmd=stock.status_by_cat">Stock Status By Catagory</a></li>
+							<li><a href="?app=sales.report&cmd=stock_status">Stock Status</a></li>
+							<li><a href="?app=show_ledger&cmd=show_gl_summary">Group Ledger</a></li>
+							<li><a href="?app=show_ledger&cmd=show_sl1_summary">SL Step-1 Ledger</a></li>
+							<li><a href="?app=show_ledger&cmd=show_sl2_summary">SL Step-2 Ledger</a></li>
+							<li><a href="?app=show_ledger&cmd=show_sl3_summary">SL Step-3 Ledger</a></li>
+						    <li><a href="?app=show_ledger&cmd=show_sl4_summary">SL Step-4 Ledger</a></li>					<li><a href="?app=show_ledger&cmd=show">Ledger</a></li>
+							<li><a href="?app=show_ledger&cmd=inventory_day_book">Inventory Day Book</a></li>
+							<li><a href="?app=used_item&cmd=show_pro_ledger">Product Ledger</a></li>
+							<li><a href="?app=used_item&cmd=stock_ledger">Stock Ledger</a></li>
+							<li><a href="?app=queeck.quotation&cmd=qqt_list">Quotation List</a></li>
+							<li><a href="?app=used4_feed&cmd=print_report">Production Report</a></li>
+						<li><a href="?app=sales.report&cmd=aging_report">Accounts Receivable and Aging</a></li>
+						<li><a href="?app=sales.report&cmd=bill_list">Bill List</a></li>
+							<!--
+							<li><a href="?app=used4_feed&cmd=pro_dtl">Production Details</a></li>
+							<li><a href="?app=used4_feed&cmd=print_report">Production Report</a></li>	
+							-->
+						<?}?>
+
+						</ul>
+
+					</div>
+
+				</div>
+
+				<br />
+			   
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('my_account')"><span style=" display:block;padding: 5px;">Bank Status</span>
+
+					<span class="arrow_down" id="arrow_my_account">&nbsp;&nbsp;</span></h3>
+
+					<div id="my_account" class="right_block_inner" <?php if(!empty($active_main) && $active_main=='my_account') echo 'style="display:block"'; else echo 'style="display:none"';?>>
+
+						<ul>
+						<?if(getFromSession('u_type_id')==103||getFromSession('u_type_id')==101){?>
+							<li><a href="?app=journal&cmd=rbl_check">Bank Deposit</a></li>
+							<li><a href="?app=journal&cmd=pbl_check">Bank Withdrawal</a></li>
+						<?}?>
+						</ul>
+
+					</div>
+
+				</div>
+			
+				<br />
+
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('buddies')"><span style=" display:block;padding: 5px;">Marketting</span>
+
+					<span class="arrow_down" id="arrow_buddies">&nbsp;&nbsp;</span></h3>
+
+					<div id="buddies" class="right_block_inner" style="display:none">
+
+						
+						<ul>
+						<?if(getFromSession('u_type_id')==102 || getFromSession('u_type_id')==101 || getFromSession('userid')=="sajibadmin1"){?>
+						<!--li><a href="?app=product.group">Product Group</a></li>	                            			
+						<li><a href="?app=attach.product">Attach Product at Group</a></li>	
+						<li><a href="?app=sales_target&cmd=add">Set Sales Target</a></li>	
+						<li><a href="?app=sales.report&cmd=sales.status_by_date">Sales Target Status</a></li-->
+						<li><a href="?app=sales_target&cmd=amount_target">Amount Wise Target</a></li>
+						<li><a href="?app=sales_target&cmd=catagory_tagget">Product Wise Target</a></li>	
+						<li><a href="?app=sales_target&cmd=copy">Copy Sales Target</a></li>
+						<li><a href="?app=sales.report&cmd=sales.status_by_amount">Amount Wise Sales Target</a></li>
+						<li><a href="?app=sales.report&cmd=sales.status_by_cat">Product Wise Sales Target</a></li>
+						<?}?>
+						</ul>
+
+					</div>
+
+				</div>
+
+				</div>
+
+			   <div style="width:100%; height:15px">&nbsp;</div>
+ 
+			   </div>

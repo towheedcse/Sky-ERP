@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Sales List</title>
+<?php
+extract($data); dateIFrame(REL_EXT_DIR); 
+$due=0;
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+$project_id     = getFromSession('project_id');  
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Contra Voucher List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="report" method="post">
+  <table width="65%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+    <tr>
+      <td align="left" class="topbg" height="26" colspan="8"><span><strong>Search &nbsp;Contra Voucher</strong></span></td>
+    </tr>
+    <tr>
+      <td width="10%">&nbsp;</td>
+      <td width="14%">From</td>
+      <td width="24%"><input name="date_from" id="date_from" style="width:140px;" value="<?=$_REQUEST['date_from']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" tabindex="4" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;"> </td>
+      <td width="12%">To</td>
+      <td width="20%"><input name="date_to" id="date_to" style="width:140px;" value="<?=$_REQUEST['date_to']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" tabindex="4" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="From" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;"> </td>
+     
+      <td width="20%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+    </tr>
+  </table>
+  <br>
+<div id="printdiv">
+<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp;Contra Voucher   List </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:bold"> <?=$row->project_name?></span><br>
+      <span style="font-size:16px; font-weight:normal"><?=$row->location?></span></div>	<br>
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	  <table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+        <tr>
+          <td width="2%" align="left" nowrap>Sl</td>
+          <td width="7%" align="left" nowrap>Voucher  No.</td>
+          <td width="9%" align="left" nowrap><div align="left">Voucher Date</div></td>
+          <td width="31%" align="left" nowrap> Account Head </td>
+          <td width="11%" align="left" nowrap><div align="left"><strong>Voucher Type</strong></div></td>
+          <td width="10%" align="left" nowrap>Payment Mode</td>
+          <td width="11%" align="left" nowrap><div align="right">Dr Amount </div></td>
+          <td width="11%" align="left" nowrap><div align="right">Cr Amount </div></td>
+          <td width="8%" align="left" nowrap><div align="center">Print</div></td>
+        </tr>
+        <?
+ 		  $total_amount = 0; $i=0;
+		  foreach($voucher_list as $val){		  
+		  $contra_id= $val->contra_id;			  
+		  $total_amount+= $val->dr_amount; 
+		  $dr_account = $val->dr_account;
+		  $i++;
+		?>
+        <tr>
+          <td align="left" nowrap style="font-weight:normal"><?=$i?></td>
+          <td align="left" nowrap style="font-weight:normal"><?=$val->contra_id?></td>
+          <td align="left" style="font-weight:normal"><?=$val->created_date?></td>
+          <td align="left" nowrap style="font-weight:normal">
+            <?
+		//======== Dr Head Name ========	
+		$acsql= "SELECT sub_head_name ,head_details FROM ".SUB_ACC_HEAD_TBL." WHERE BINARY sub_id  = '".$dr_account."' AND project_id = '$project_id'";
+		$acres = mysql_query($acsql);
+		$acnum = mysql_num_rows($acres);
+		if($acnum>0){
+			$row = mysql_fetch_object($acres);
+			 echo $row->sub_head_name;
+			 if($row->head_details!=""){
+				 echo "<br>".$row->head_details;
+			}
+		}else{
+			$sql= "SELECT name ,address FROM ".SUPPLIER_TBL." WHERE BINARY supplier_code = '".$val->dr_account."' AND project_id = '$project_id'";
+			$res = mysql_query($sql);
+			$num = mysql_num_rows($res);
+			if($num>0){
+				$row = mysql_fetch_object($res);
+				echo $row->name;
+				 if($row->address!=""){
+					 echo "<br>".$row->address;
+				}
+			}else{
+				$sql= "SELECT product_name,product_desc FROM ".PRODUCT_TBL." WHERE BINARY product_id = '".$val->dr_account."' AND project_id = '$project_id'";
+				$res = mysql_query($sql);
+				$num = mysql_num_rows($res);
+				if($num>0){
+					$row = mysql_fetch_object($res);
+					echo $row->product_name;
+					 if($row->product_desc!=""){
+						 echo "<br>".$row->product_desc;
+					}
+				}else{
+					$asql= "SELECT b.bank_name, c.bank_account_no FROM ".BANK_TBL." b, ".BANK_ACCOUNT_TBL." c WHERE b.bank_id=c.bank_code AND BINARY c.bank_account_no ='".$val->dr_account."' 
+					AND b.project_id = '$project_id'";
+					$ares = mysql_query($asql);
+					$anum = mysql_num_rows($ares);
+					if($anum>0){
+					$arow=mysql_fetch_object($ares);
+					echo $arow->bank_name.", Acc No. ".$arow->bank_account_no;
+					}
+				}
+			}
+
+		}
+		echo " - $val->headtypes";
+		?>
+          </td>
+          <td align="left" style="font-weight:normal"><?=$val->vouchar_type?></td>
+		 
+          <td align="left" nowrap style="font-weight:normal"><? if($val->mode_of_payment=="Check"){ echo "Cheque";}else{ echo $val->mode_of_payment;}?></td>
+          <td align="right" nowrap style="font-weight:normal"><? echo number_format($val->dr_amount,2).' '.$val->curr_symble;?></td>
+          <td align="right" nowrap style="font-weight:normal"><? echo number_format($val->dr_amount,2).' '.$val->curr_symble;?></td>
+          <td align="center" nowrap ><a target="_blank" href="?app=contra.voucher.new&cmd=print_vouchar&contra_id=<?=$contra_id?>"><img src='<?=IMAGE_DIR?>/common/icons/preview.jpg' alt="View" border='0'></a></td>
+        </tr>
+        <?}?>
+      </table>
+	</div>
+	<div style="display:block; height:50px;"></div>
+	</td>
+  </tr>
+</table>
+</div>	
+
+</form>
+</body>
+</html>

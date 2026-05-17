@@ -1,0 +1,309 @@
+<?php
+extract($data);
+//dumpVar($data);	
+$created_date = getRequest('created_date');  
+$project_id     = getFromSession('project_id');  
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=auto')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Customer Journal</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 126% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+</script>
+<style type="text/css">
+<!--
+.trHead{
+color:#FFFFFF;
+font-size:12px;
+font-weight:bold;
+font: 130% SutonnyMJ;
+}
+
+.td{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+font: 130% SutonnyMJ;
+}
+.tdCode{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+}
+a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a:hover{ color:#CCCCCC;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:hover{ color:#333333;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+.bngFont{
+font: 126% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;   
+}
+-->
+</style>
+<head>
+
+<title>Customer Journal List</title>
+<style>
+img{
+border:none;
+}
+</style></head>
+
+<body>
+<form name="frm" method="post">
+
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td class="topHeader" colspan="2"><div id="tblTitle" align="left">&nbsp;<b>Received Journal </b></div></td>
+  </tr>
+
+  <tr>
+    <th width="49%" scope="row">&nbsp;</th>
+    <td width="51%"><table width="100%" border="0">
+      <tr>
+        <td width="47%"><div align="right" style="color:#FFFFFF; font-size:14px; font-weight:bold">Search by party code:</div></td>
+        <td width="22%"><label>
+          <input type="text" style="height:25px; font-size:14px" name="srckey" value="<?=getRequest('srckey')?>">
+        </label></td>
+        <td width="31%"><label>
+          <input type="submit" name="Submit" value="GO" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+        </label></td>
+      </tr>
+    </table></td>
+  </tr>
+  <?
+  if(getRequest('srckey')!=""){
+  ?>
+  <tr>
+    <td colspan="2">
+	<div id="printdiv" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:100%;visibility:visible;height:340px;overflow:auto">
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="12%" class="bngFont"><div align="left">cvwU&copy;i bvg</div></td>
+        <td width="27%" align="left" class="bngFont"><?=$name?></td>
+        <td width="9%" class="bngFont" align="left">wcZvi bvg</td>
+        <td width="24%" align="left" class="bngFont"><?=$fname?></td>
+        <td width="8%" align="left" class="bngFont">&macr;^&Euml;vwaKvix</td>
+        <td width="20%" class="bngFont" align="left" ><?=$mname?></td>
+      </tr>
+      <tr>
+        <td class="bngFont"><div align="left">&macr;&rsquo;vqx wVKvbv</div></td>
+        <td colspan="3" align="left" class="bngFont"><?=$address?></td>
+        <td align="left" class="bngFont">&Dagger;gvevBj</td>
+        <td align="left"><span class="bngFont">
+          <?=$mobile?>
+        </span></td>
+      </tr>
+    </table>
+	
+      <fieldset>
+      <legend style="color:#FFFFFF; font-weight:bold">Product Information</legend>
+        <table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="1"cellspacing="0">
+		
+		<tr>
+          <td width="4%" class="bngFont"><div align="center">`wjj bs</div></td>
+          <td width="8%" class="bngFont"><div align="center">weeiY</div></td>
+          <td width="7%" class="bngFont"><div align="center">e&macr;&mdash;vi msL&uml;v</div></td>
+          <td width="5%" class="bngFont"><div align="center">G&Dagger;R&rsaquo;U</div></td>
+          <td width="6%" class="bngFont"><div align="center">c&Ouml;wZ e&macr;&mdash;vi fvov</div></td>
+          <td width="8%" class="bngFont"><div align="center">&Dagger;gvU fvov</div></td>
+          <td width="6%" class="bngFont"><div align="center">Lvwj e&macr;&mdash;vi UvKv</div></td>
+          <td width="6%" class="bngFont"><div align="center">&Dagger;gvU &Dagger;Kwis</div></td>
+          <td width="6%" class="bngFont"><div align="center">&Dagger;gvU &Dagger;Kwis B&rsaquo;Uv&Dagger;i&divide;</div></td>
+          <td width="8%" class="bngFont"><div align="center">&Dagger;gvU &dagger;jv&Dagger;bi UvKv</div></td>
+          <td width="6%" class="bngFont"><div align="center">&Dagger;gvU &dagger;jvb B&rsaquo;Uv&Dagger;i&divide;</div></td>
+          <td width="9%" class="bngFont"><div align="center">me&copy; &Dagger;gvU cvIbv </div></td>
+          <td width="6%" class="bngFont"><div align="center">eywKs Gi UvKv</div></td>
+          <td width="8%" class="bngFont"><div align="center">&Dagger;gvU Rgv </div></td>
+          <td width="7%" class="bngFont"><div align="center">Aewk&oacute; cvIbv</div></td>
+        </tr>
+	  <?
+	   $i=1;
+	   
+	   $grandTotal =0;
+	   foreach($record_list as $val){
+	   $payble = 0;$total_payble = 0;
+	   $rent = 0; $total_empty_bag_cost =0; $total_carring_cost =0; $carring_interest =0; $total_loan =0; $loan_interest=0;
+	   $received_id  = $val->received_id;
+       $booking_id  = $val->booking_id;
+	   $booking_date = $val->booking_date;
+	   
+	   $brow = mysql_fetch_object(mysql_query("SELECT ( to_days( curdate( )) - to_days('".$booking_date."')) AS `total_carring_days`"));
+	   $total_carring_days = $brow->total_carring_days;
+	   $total_carring_days = $total_carring_days+3;
+	   
+	   
+	   $sql = "SELECT received_bag_qty,loan_per_bag,interest_per_bag,service_charge,loan_date,est_return_date FROM ".CS_LOAN_DISTRIBUTE_TBL;
+	   $sql .= " WHERE received_id ='".$received_id."' AND project_id = '$project_id'";
+	   $res = mysql_query($sql);
+	   $total_loan = 0;
+	   $loan_interest = 0;
+	   while($row = mysql_fetch_array($res)){
+	   	$recieved_bag = $row['received_bag_qty'];
+	   	$loan_per_bag = $row['loan_per_bag'];
+	   	$loan_date = $row['loan_date'];
+		$loan = $recieved_bag * $loan_per_bag;
+		
+		$row1 = mysql_fetch_object(mysql_query("SELECT ( to_days( curdate( )) - to_days('".$loan_date."')) AS `total_days`"));	
+		$total_load_days = $row1->total_days+3;   
+		$loan_interest += number_format (((($loan*($row['interest_per_bag']/100))/365)*$total_load_days),2);
+		$total_loan = $total_loan+$loan;		
+	   }
+
+	   
+       //============== calculation ==========
+	    $sql = " SELECT sum( `credit` ) AS total_cr, sum(delivery_bag_qty) as total_delivery_bag FROM ".CS_DELIVERY_PRODUCT_TBL." WHERE `received_id` = '".$val->received_id."' AND project_id = '$project_id'";
+		$row = mysql_fetch_object(mysql_query($sql));
+		$total_cr 			= $row->total_cr;
+		$total_delivery_bag = $row->total_delivery_bag;
+		if($total_cr==""){$total_cr = 0;}
+		if($total_delivery_bag==""){$total_delivery_bag = 0;}
+        $balanceQty = $val->received_bag_qty - $total_delivery_bag;
+
+	    $total_empty_bag_cost = (($val->total_empty_bag_cost/$val->received_bag_qty) *$balanceQty);	  
+	    $total_carring_cost = (($val->total_carring_cost/$val->received_bag_qty)*$balanceQty); 
+
+	    $rent = ($val->received_bag_qty-$total_delivery_bag)*$val->rent_per_bag;
+	    $carring_interest = number_format (((($total_carring_cost*($val->carring_interest/100))/365)*$total_carring_days),2);
+
+		$loansql = " SELECT sum( `credit` ) AS total_loan_cr FROM ".CS_LOAN_RECEIVED_TBL." WHERE `received_id` = '".$val->received_id."' AND project_id = '$project_id'";
+		$loanrow = mysql_fetch_object(mysql_query($loansql));
+		$total_loan_cr 			= $loanrow->total_loan_cr;
+		
+
+       $total_loan = (($total_loan/$val->received_bag_qty)* $balanceQty);
+	   $loan_interest = number_format ((($loan_interest/$val->received_bag_qty)* $balanceQty),2);
+	    if($total_loan_cr==""){ $total_loan_cr = 0;}
+	   
+	   if($total_loan_cr > $total_loan){
+ 	    $total_loan = 0;	   
+ 	    $loan_interest = 0;
+
+	   }else{
+		$total_loan =$total_loan - $total_loan_cr;
+	   }
+	   $payble = $rent + $total_empty_bag_cost + $total_carring_cost + $carring_interest + $total_loan + $loan_interest;
+	   //$grandPayble = $rent + $total_empty_bag_cost + $val->total_carring_cost + $carring_interest + $total_loan + $loan_interest;
+	   $total_payble = ($total_payble+ $payble+$total_cr);
+	   $grandTotal +=$payble-$val->booking_amount;
+       //========== end ==============
+		
+   	   ?>
+        <tr>
+          <td align="center"><a href="?app=cs_delivery_product&cmd=add&id=<?=$val->received_id?>" title="Delivery Bag"><?=$val->received_id?></a></td>
+          <td class="bngFont" align="center"><?=$val->product_details?></td>
+          <td class="bngFont" align="center"><?=$val->posting_sr.'/'.$balanceQty?></td>
+          <td align="center"><?=$val->agent_code?></td>
+          <td align="center" class="bngFont"><?=$val->rent_per_bag?></td>
+          <td align="center" class="bngFont"><?=$rent?></td>
+          <td align="center" class="bngFont"><?=$total_empty_bag_cost?></td>
+          <td align="center" class="bngFont"><?=$total_carring_cost?></td>
+          <td align="center" class="bngFont"><?=$carring_interest?></td>
+          <td align="center" class="bngFont"><?=$total_loan?></td>
+          <td align="center" class="bngFont"><?=$loan_interest?></td>
+          <td align="center" class="bngFont"><?=round($total_payble,2)?></td>
+          <td align="center" class="bngFont"><?=$val->booking_amount?> </td>
+          <td align="center" class="bngFont"><?=$total_cr?></td>
+          <td align="center" class="bngFont"> <?=round($payble-$val->booking_amount,2)?></td>
+        </tr>
+		 <?
+		  $i++;
+		  }
+		 ?>
+        <tr>
+          <td class="bngFont" align="left">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">me&copy; &Dagger;gvU:</td>
+          <td align="center" class="bngFont"><?=round($grandTotal,2)?>/=</td>
+        </tr>        
+     	 
+	  </table>
+     </fieldset>
+	</div>	
+	<p align="center">
+	  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+	</p>
+	</td>
+   </tr> 
+	<?}?>
+</table>
+
+</form>
+<br>
+</body>
+
+</html>
+

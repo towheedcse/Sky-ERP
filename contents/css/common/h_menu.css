@@ -1,0 +1,38 @@
+/* CSS Document */
+
+
+body{
+margin-top: 0px;
+padding:0px;
+margin:0px;
+}
+
+.txtcolor{
+
+font:Arial, Helvetica, sans-serif;
+font-size:14px;
+font-weight:bold;
+}
+a{
+text-decoration:underline;
+}
+.header
+{
+background-image: url(/images/repeat.gif)
+}
+img
+{  border-style: none;
+}
+.h_on
+{
+     COLOR:#990000;	
+	 font-size: 16px;
+	 font-weight: bold;
+}
+.h_off
+{   
+     TEXT-DECORATION: none
+	 color:#000000;
+	 font-size: 16px;
+	 font-weight: bold;
+}

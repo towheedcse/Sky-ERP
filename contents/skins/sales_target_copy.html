@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+dateIFrame(REL_EXT_DIR);
+//dumpVar($data); 
+$mode_of_payment = "Cash"; $discount=0; $service_charge=0;  $store_id="D0001";
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+$sales_date = date("Y-m-d"); $customer="A000043";
+dateIFrame(REL_EXT_DIR); $currency=1; $free_qty=0; 
+$date_from 		= getRequest('date_from');
+$date_to 		= getRequest('date_to');
+     
+if($message==""){ $message = getRequest('msg');} $currency=1; $general_discount_percent=0; $general_discount_amount=0; $exclusive_discount_amount=0; $additional_discount=0; $exclusive_discount_percent=0;
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/sales_category_target.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+var CANCEL_URL = "index.php?app=sales_order&cmd=list";
+
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Sales Order</title>
+<style>
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.style2 {color: #666666}
+.bangFont {font: 130% SutonnyMJ;
+}
+</style>
+</head>
+<body>
+
+<form name="frmbuyerorder" method="post">
+
+<table width="100%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="322" align="center" valign="top">
+
+		<table width="96%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+			  <tr>
+
+				<td class="topHeader" colspan="11"><div id="tblTitle" align="left">Copy Sales Target From Previous Month</div></td> 
+			  </tr>
+			
+			<tr bgcolor="#CCCCCC">
+
+			    <td width="0%">&nbsp;</td>
+
+			    <td width="1%">&nbsp;</td>
+
+			    <td width="11%">&nbsp;</td>
+
+			    <td width="18%">&nbsp;</td>
+
+			    <td width="10%">&nbsp;</td>
+			    <td width="26%">&nbsp;</td>
+			    <td width="12%">&nbsp;</td>
+
+			    <td width="15%">&nbsp;</td>
+
+			    <td width="7%" colspan="2">&nbsp;</td>
+          	</tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td><label id="targetfrm_lbl">Load Date From</label></td>
+			    <td><input name="date_from" id="date_from" style="width:120px;" value="<?=dateInputFormatDMY($date_from)?>" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['date_from']);return false;" title="calendar" type="text" class="validate[required]">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Form" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['date_from']);return false;"></td>
+			    <td>&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+			    <td align="left"><label id="targetto_lbl">Load Date To</label></td>
+			    <td align="left"><input name="date_to" id="date_to" style="width:120px;" value="<?=dateInputFormatDMY($date_to)?>" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['date_to']);return false;" title="calendar" type="text" class="validate[required]">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['date_to']);return false;"></td>
+			    <td colspan="2"><input name="load" id="load" type="button" class="button"  onClick="getCatSalesTargetGride();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Load" tabindex="15"> </td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>Target Date From</td>
+			    <td><input name="copy_date_from" id="copy_date_from" style="width:120px;" value="<?=dateInputFormatDMY($copy_date_from)?>" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['copy_date_from']);return false;" title="calendar" type="text" class="validate[required]">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Form" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['copy_date_from']);return false;"></td>
+			    <td>&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+			    <td align="left">Target Date To</td>
+			    <td align="left"><input name="copy_date_to" id="copy_date_to" style="width:120px;" value="<?=dateInputFormatDMY($copy_date_to)?>" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['copy_date_to']);return false;" title="calendar" type="text" class="validate[required]">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['copy_date_to']);return false;"></td>
+			    <td colspan="2"><input name="copy" id="copy" type="button" class="button"  onClick="copySalesTarget();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Copy" tabindex="15"></td>
+	      </tr>
+			  
+			 				
+
+			  <tr align="center">
+
+			    <td colspan="10" align="left">
+               
+                </td>
+	      	</tr>
+			  
+			  <tr>
+
+				<td>&nbsp;</td>
+				<td colspan="7">
+                <input type="hidden" name="catagory" id="catagory" value=""> 				
+                <input type="hidden" name="id" id="id" value="0"> 
+                </td>
+
+				<td colspan="2">&nbsp;
+				  
+				 </td>
+		      </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td colspan="9">
+                <div id="tbs">
+				<? 
+				echo $group_items;
+				?>
+                </div>
+                </td>
+			  </tr>
+		</table>
+
+      </td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+</body>
+
+</html>
+

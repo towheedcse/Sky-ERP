@@ -1,0 +1,631 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Balance Sheet</title>
+<?php
+$credit=0.00;
+$cr=0.00;
+$debit=0.00;
+$dr=0.00;
+extract($data);
+//dumpVar($data);
+ function getTotalCreditAmount($acc_head,$project_id){
+   		$sql = "SELECT sum(`cr`) as credit_amount FROM ".ACCOUNT_JOURNAL_TBL." WHERE BINARY sub_id = '$acc_head' AND project_id = '$project_id'";
+		$row = mysql_fetch_object(mysql_query($sql));
+		$credit_amount = $row->credit_amount;
+		if(empty($credit_amount)){
+			$credit_amount = 0;
+		}
+		return $credit_amount;
+   }
+  
+   function getTotalDebitAmount($acc_head,$project_id){
+   		$sql = "SELECT sum(`dr`) as debit_amount FROM ".ACCOUNT_JOURNAL_TBL." WHERE BINARY sub_id = '$acc_head' AND project_id = '$project_id'";
+		$row = mysql_fetch_object(mysql_query($sql));
+		$debit_amount = $row->debit_amount;
+		if(empty($debit_amount)){
+			$debit_amount = 0;
+		}
+		return $debit_amount;
+   } 
+   //========= Stock ==========
+   
+	function getTotalCreditStock($acc_head,$project_id){
+
+   		$sql = "SELECT sum(`cr`) as credit_amount FROM ".STOCK_LEDGER_TBL." WHERE product_id = '$acc_head' AND project_id = '$project_id'";
+		$row = mysql_fetch_object(mysql_query($sql));
+		$credit_amount = $row->credit_amount;
+		if(empty($credit_amount)){
+			$credit_amount = 0;
+		}
+		return $credit_amount;
+   }
+  
+   function getTotalDebitStock($acc_head,$project_id){
+   		$sql = "SELECT sum(`dr`) as debit_amount FROM ".STOCK_LEDGER_TBL." WHERE product_id = '$acc_head' AND project_id = '$project_id'";
+		$row = mysql_fetch_object(mysql_query($sql));
+		$debit_amount = $row->debit_amount;
+		if(empty($debit_amount)){
+			$debit_amount = 0;
+		}
+		return $debit_amount;
+   }
+   $project_id  = getFromSession('project_id');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Received Product</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmbooking" method="post">
+<div id="printdiv">
+<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>Balance Sheet </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<?  $project_id = getFromSession('project_id');
+		$psql= "SELECT project_name,location AS address FROM ".PROJECT_TBL." WHERE project_id = '".$project_id."'";
+		$prow = mysql_fetch_object(mysql_query($psql));	
+	?>
+	<div align="center">
+      <span style="font-size:24px; font-weight:bold"> <?=$prow->project_name?></span><br>
+      <span style="font-size:12px; font-weight:bold"><?=$prow->address?></span>
+	</div>		
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset>
+	<legend>Balance Sheet </legend>	
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td colspan="9" align="left" style="font-size:18px " nowrap><div align="center">Assets</div></td>
+        </tr>
+      <tr align="center">
+        <td width="11%" nowrap>Cash</td>
+        <td width="12%">Bank</td>
+        <td width="10%" nowrap>Current Assets</td>
+        <td width="10%" nowrap>Fixed Assets</td>
+        <td width="11%" nowrap>Used Equipments</td>
+        <td width="14%" nowrap>Stock Value </td>
+        <td width="13%" nowrap>Accounts Recievable</td>
+        <td width="11%" nowrap>Advanced Paid</td>
+        <td width="8%" nowrap>WAP</td>
+      </tr>
+      <tr>
+        <td align="left" nowrap>
+		<div align="center">
+		  <?
+		$leftTotal =0;
+		$rightTotal =0;
+		$cashBalance = 0;
+		$cashsql = "SELECT sub_id FROM ".SUB_ACC_HEAD_TBL." WHERE head_type = 'Cash' AND project_id = '$project_id'";
+		$cash_res = mysql_query($cashsql);
+		
+		$cash_num = mysql_num_rows($cash_res);
+		if($cash_num>0){
+		$cashrow = mysql_fetch_object($cash_res);
+		$cash_id = $cashrow->sub_id;
+		$cashCr = getTotalCreditAmount($cash_id,$project_id);
+		$cashDr = getTotalDebitAmount($cash_id,$project_id);
+		$cashBalance = $cashDr - $cashCr;
+		}
+		$leftTotal+=$cashBalance;
+		echo $cashBalance;
+		?>
+		</div></td>
+        <td align="center" nowrap>
+		<?
+		$totalBank			= 0;
+		$accSql 			= "SELECT `bank_account_no` FROM `bank_account` WHERE project_id = '$project_id'";
+		$acc_res 			= mysql_query($accSql);
+		$acc_num = mysql_num_rows($acc_res);
+		if($acc_num>0){
+			while($accrow = mysql_fetch_object($acc_res)){
+				$accCr 	=0; $acchDr =0;
+				$bank_account_no 	= $accrow->bank_account_no;
+				$accCr 	= getTotalCreditAmount($bank_account_no,$project_id);
+				$acchDr = getTotalDebitAmount($bank_account_no,$project_id);
+				$accBalance = $acchDr - $accCr;
+				$totalBank+=$accBalance;
+			}
+		}
+		$leftTotal+=$totalBank;
+		echo $totalBank;
+		?>		</td>
+        <td align="center" nowrap>
+		<?
+		$totalCurrAssets	= 0;
+		$currSql 			= "SELECT `sub_id` FROM ".SUB_ACC_HEAD_TBL." WHERE `head_type`='Current Assets' AND project_id = '$project_id'";
+		$curr_res 			= mysql_query($currSql);
+		
+		$curr_num = mysql_num_rows($curr_res);
+		if($curr_num>0){
+			while($currrow = mysql_fetch_object($curr_res)){
+				$currCr =0; $currDr =0;
+				$sub_id = $currrow->sub_id;
+				$currCr = getTotalCreditAmount($sub_id,$project_id);
+				$currDr = getTotalDebitAmount($sub_id,$project_id);
+				$currBalance = $currDr - $currCr;
+				$totalCurrAssets+=$currBalance;
+			}
+		}
+		$leftTotal+=$totalCurrAssets;
+		echo $totalCurrAssets;
+		?>		</td>
+        <td align="center" nowrap>
+		<?
+		$totalFixAssets	= 0;
+		$fixSql 			= "SELECT `sub_id` FROM ".SUB_ACC_HEAD_TBL." WHERE `head_type`='Fixed Assets' AND project_id = '$project_id'";
+		$fix_res 			= mysql_query($fixSql);
+		
+		$fix_num = mysql_num_rows($fix_res);
+		if($fix_num>0){
+			while($fixrow = mysql_fetch_object($fix_res)){
+				$fixCr =0; $fixDr =0;
+				$sub_id = $fixrow->sub_id;
+				$fixCr = getTotalCreditAmount($sub_id,$project_id);
+				$fixDr = getTotalDebitAmount($sub_id,$project_id);
+				$fixBalance = $fixDr - $fixCr;
+				$totalFixAssets+=$fixBalance;
+			}
+		}
+		$leftTotal+=$totalFixAssets;
+		echo $totalFixAssets;
+		?>		</td>
+        <td align="center" nowrap>
+		<?
+		$totalEquipment	= 0;
+		$eqipSql 			= "SELECT `sub_id` FROM ".SUB_ACC_HEAD_TBL." WHERE `head_type`='Equipments' AND project_id = '$project_id'";
+		$eqip_res 			= mysql_query($eqipSql);
+		
+		$eqip_num = mysql_num_rows($eqip_res);
+		if($eqip_num>0){
+			while($eqiprow = mysql_fetch_object($eqip_res)){
+				$eqipCr =0; $eqipDr =0;
+				$sub_id = $eqiprow->sub_id;
+				$eqipCr = getTotalCreditAmount($sub_id,$project_id);
+				$eqipDr = getTotalDebitAmount($sub_id,$project_id);
+				$eqipBalance = $eqipDr - $eqipCr;
+				$totalEquipment+=$eqipBalance;
+			}
+		}
+		$leftTotal+=$totalEquipment;
+		echo $totalEquipment;
+		?>		</td>
+        <td align="center" nowrap>
+		<? 
+		$totalSupplies = 0; 
+		/*
+		$total_profit = 0;
+		$pro_sql = "SELECT product_id FROM ".STOCK_LEDGER_TBL." WHERE `project_id` = '$project_id' AND (product_type = 'Sales Item' OR product_type = 'Raw Materials') group by product_id ORDER BY product_id ASC";
+		$pro_res = mysql_query($pro_sql);		
+		$pro_num = mysql_num_rows($pro_res);
+		if($pro_num>0){
+			$amount = 0; $unit_price =0; $proCr =0; $proDr =0;
+			while($pro_row = mysql_fetch_object($pro_res)){
+				$product_id = $pro_row->product_id;
+				$drSql = "SELECT unit_price as stock_price, dr as stockdr FROM ".STOCK_LEDGER_TBL." WHERE `product_id` = '".$product_id."' AND dr>0";
+				$drRes = mysql_query($drSql);
+				while($drRow = mysql_fetch_object($drRes)){
+				$stock_price = $drRow->stock_price;
+				$proDr+= ($drRow->stockdr*$stock_price);
+				}
+				
+				$crSql = "SELECT cr as stockcr FROM ".STOCK_LEDGER_TBL." WHERE `product_id` = '".$product_id."' AND cr>0";  
+				$crRes = mysql_query($crSql);
+				while($crRow = mysql_fetch_object($crRes)){
+				$stockcr = $crRow->stockcr;
+				if($stockcr==""){ $stockcr=0;}
+				$proCr+= ($stockcr*$stock_price);	
+				}								
+			} // end while
+			$proBalance = $proDr-$proCr; 
+			$totalSupplies+=$proBalance;
+		} // end if
+		*/
+		$totalSupplies = getStockBalance($product_id,"FY001");
+			
+		$leftTotal+=$totalSupplies;
+		echo $totalSupplies;
+		?>		</td>
+        <td align="center" nowrap>
+		<?			
+		$totalRecievable = 0;
+		$rec_sql = "SELECT SUM(due) as receivable FROM ".DEVIT_VOUCHAR_TBL." WHERE `project_id` = '$project_id' AND vouchar_type ='Recievable Vouchar' AND status = 0 AND due >0";
+		$rec_res = mysql_query($rec_sql);
+		
+		$rec_num = mysql_num_rows($rec_res);
+		if($rec_num>0){
+			
+			while($rec_row = mysql_fetch_object($rec_res)){
+				$totalRecievable +=$rec_row->receivable;
+			}
+		}
+		$sales_sql = "SELECT SUM(due) as receivable_due FROM ".SALES_MASTER_TBL." WHERE `project_id` = '$project_id' AND due >0";
+		$sales_res = mysql_query($sales_sql);
+		
+		$sales_num = mysql_num_rows($sales_res);
+		if($sales_num>0){
+			
+			while($sales_row = mysql_fetch_object($sales_res)){
+				$totalRecievable +=$sales_row->receivable_due;
+			}
+		}
+		// ===== Recievable Check =======
+		$totalChkRecievable=0;
+		$rblchkSql = "SELECT SUM(paid_amount) as payable FROM ".PAYABLE_CHECK_TBL." WHERE `project_id` = '$project_id' AND status =0 AND transaction_type = 'Received'";
+		$rblchkRes = mysql_query($rblchkSql);
+		
+		$rblchk_num = mysql_num_rows($rblchkRes);
+		if($rblchk_num>0){			
+			while($rblchk_row = mysql_fetch_object($rblchkRes)){
+				$totalChkRecievable +=$rblchk_row->payable;
+			}
+		}
+		$totalRecievable+=$totalChkRecievable;
+		$leftTotal+=$totalRecievable;		
+		echo $totalRecievable;
+		?>		</td>
+        <td align="center" nowrap>
+		<?
+		$totalAdvanced_Paid = 0;	
+		// ===== total Advanced Paid =======
+		$advPaysql = "SELECT SUM(due) as advancedPayment FROM ".PURCHASE_RETURN_RECEIBAVLE_TBL." WHERE `project_id` = '$project_id' AND due>0 AND fyear='FY001' 
+		AND (payment_source='Advanced Payment' OR payment_source='Advanced Payment Against Salary' OR payment_source='Advanced Payment Against Commission')";
+		$advPayres = mysql_query($advPaysql);		
+		$advPaynum = mysql_num_rows($advPayres);
+		if($advPaynum>0){			
+			while($sr_row = mysql_fetch_object($advPayres)){
+				$totalAdvanced_Paid +=$sr_row->advancedPayment;
+			}
+		}
+		//=======================================
+		$pblchk_sql = "SELECT SUM(due) as advanced_paid FROM ".DEVIT_VOUCHAR_TBL." WHERE `project_id`='$project_id' AND status=0 AND 
+		vouchar_type = 'Advanced Payment Vouchar' AND fyear='FY001' AND due>0";
+		$pblchk_res = mysql_query($pblchk_sql);		
+		$pblchk_num = mysql_num_rows($pblchk_res);
+		if($pblchk_num>0){			
+			while($pblchk_row = mysql_fetch_object($pblchk_res)){
+				$totalAdvanced_Paid +=$pblchk_row->advanced_paid;
+			}
+		}
+	
+		$totalAdvancedPaidBalance = $totalAdvanced_Paid;
+		echo $totalAdvancedPaidBalance = abs($totalAdvancedPaidBalance);
+		$leftTotal +=$totalAdvancedPaidBalance;
+	   ?></td>
+        <td align="center" nowrap>
+		<?
+		//====== Pending Administrative Cost (WAP)=========
+		$totalPAC = 0;
+		// ===== Total Pending Payble from Sales Commission =======
+		$scaps_sql = "SELECT SUM(commission_total_due) as cpayable FROM ".SALES_MASTER_TBL." WHERE `project_id` = '$project_id' AND commission_total_due>0 AND commission_status=1";
+		$scaps_res = mysql_query($scaps_sql);		
+		$scaps_num = mysql_num_rows($scaps_res);
+		if($scaps_num>0){			
+			while($scaps_row = mysql_fetch_object($scaps_res)){
+				$totalPAC +=$scaps_row->cpayable;
+			}
+		}
+		// ===== Total Pending Payble from Employee Salary =======
+		$seaps_sql = "SELECT SUM(total_due) as spayable FROM ".SALARY_MASTER_TBL." WHERE `project_id` = '$project_id' AND 
+		total_due>0 AND status='Approved'";
+		$seaps_res = mysql_query($seaps_sql);		
+		$seaps_num = mysql_num_rows($seaps_res);
+		if($seaps_num>0){			
+			while($seaps_row = mysql_fetch_object($seaps_res)){
+				$totalPAC +=$seaps_row->spayable;
+			}
+		}
+		
+		// ===== Total Pending Production Amount =======
+		//$totalPAC += getRunningProductionAmount($project_id);
+		$totalPAC +=getFinishProductionAmount($project_id);
+		echo abs($totalPAC);
+		$leftTotal +=$totalPAC; // $leftTotal +=round($totalPAC);
+		?>
+		</td>
+      </tr>
+      <tr>
+        <td colspan="9" align="left" nowrap><div align="center"><? echo number_format($leftTotal,2); ?></div></td>
+        </tr>
+    </table>
+	<br><br>
+	<? $rightTotal=0;?>
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td colspan="5" align="left" nowrap style="font-size:18px "><div align="center">Liabilities &amp; Owners Equity</div></td>
+      </tr>
+      <tr align="center">
+        <td width="19%" nowrap>Accounts Payable</td>
+        <td width="19%" nowrap>Note Payable</td>
+        <td width="21%" nowrap>Loan</td>
+        <td width="19%" nowrap>Advanced Recieved </td>
+        <td width="22%" nowrap>
+          <div align="center">Capital</div></td>
+      </tr>
+      <tr>
+        <td align="center" nowrap>
+		<?			
+		$totalPayable = 0;
+		$pay_sql = "SELECT SUM(due) as payable FROM ".DEVIT_VOUCHAR_TBL." WHERE `project_id` = '$project_id' AND vouchar_type ='Payable Vouchar' AND fyear='FY001' AND status = 0 AND due >0";
+		$pay_res = mysql_query($pay_sql);		
+		$pay_num = mysql_num_rows($pay_res);
+		if($pay_num>0){			
+			while($pay_row = mysql_fetch_object($pay_res)){
+				$totalPayable +=$pay_row->payable;
+			}
+		}
+		// ===== total Payble from Purchase =======
+		$pur_sql = "SELECT SUM(due) as payable FROM ".PURCHASE_MASTER_TBL." WHERE `project_id` = '$project_id' AND due>0 AND fyear='FY001'";
+		$pur_res = mysql_query($pur_sql);		
+		$pur_num = mysql_num_rows($pur_res);
+		if($pur_num>0){			
+			while($pur_row = mysql_fetch_object($pur_res)){
+				$totalPayable +=$pur_row->payable;
+			}
+		}
+		
+		$totalScpayable = 0;
+		// ===== total Payble from Sales Commission =======
+		$sc_sql = "SELECT SUM(commission_total_due) as scpayable FROM ".SALES_MASTER_TBL." WHERE `project_id` = '$project_id' AND commission_total_due>0 AND commission_status=1 AND
+		 fyear='FY001'";
+		$sc_res = mysql_query($sc_sql);		
+		$sc_num = mysql_num_rows($sc_res);
+		if($sc_num>0){			
+			while($sc_row = mysql_fetch_object($sc_res)){
+				$totalScpayable +=$sc_row->scpayable;
+			}
+		}
+		$totalPayable +=$totalScpayable;
+		$totalESPayable =0;
+		// ===== Total Pending Payble from Employee Salary =======
+		$se_sql = "SELECT SUM(total_due) as espayable FROM ".SALARY_MASTER_TBL." WHERE `project_id` = '$project_id' AND 
+		total_due>0 AND status='Approved' AND fyear='FY001'";
+		$se_res = mysql_query($se_sql);		
+		$se_num = mysql_num_rows($se_res);
+		if($se_num>0){			
+			while($se_row = mysql_fetch_object($se_res)){
+				$totalESPayable +=$se_row->espayable;
+			}
+		}
+		$totalPayable +=$totalESPayable;	
+		// ===== Payable Check ======= 
+		$pblchk_sql = "SELECT SUM(paid_amount) as payable FROM ".PAYABLE_CHECK_TBL." WHERE `project_id` = '$project_id' AND status =0 AND transaction_type = 'Payment' AND fyear='FY001'";
+		$pblchk_res = mysql_query($pblchk_sql);		
+		$pblchk_num = mysql_num_rows($pblchk_res);
+		if($pblchk_num>0){			
+			while($pblchk_row = mysql_fetch_object($pblchk_res)){
+				$totalPayable +=$pblchk_row->payable;
+			}
+		}		
+		// ===== Total Pending Payble from Customer Sales Return & Beddebs -> when beddebs entry in this time Capital will be Cr  =======
+		$csr_sql = "SELECT SUM(due) as srpayable FROM ".SALES_RETURN_PAYBLE_TBL." WHERE `project_id` = '$project_id' AND due>0 AND fyear='FY001' AND payble_source!='Advanced Received'";
+		$csr_res = mysql_query($csr_sql);		
+		$csr_num = mysql_num_rows($csr_res);
+		if($csr_num>0){			
+			while($csr_row = mysql_fetch_object($csr_res)){
+				$totalPayable +=$csr_row->srpayable;
+			}
+		}
+		$rightTotal +=$totalPayable;
+		echo number_format($totalPayable,2);
+		?>
+        </td>
+        <td align="center" nowrap>
+        <?
+		$totalNote	= 0;
+		$noteSql 	= "SELECT `sub_id` FROM ".SUB_ACC_HEAD_TBL." WHERE `head_type`='Note Payable' AND project_id = '$project_id'";
+		$note_res 	= mysql_query($noteSql);		
+		$note_num = mysql_num_rows($note_res);
+		if($note_num>0){
+			while($noterow = mysql_fetch_object($note_res)){
+				$noteCr =0; $noteDr =0;
+				$sub_id = $noterow->sub_id;
+				$noteCr = getTotalCreditAmount($sub_id,$project_id);
+				$noteDr = getTotalDebitAmount($sub_id,$project_id);
+				$noteBalance = $noteDr - $noteCr;
+				$totalNote+=$noteBalance;
+			}
+		}
+		$totalNote = abs($totalNote);
+		$rightTotal +=$totalNote;
+		echo $totalNote;
+		?>
+        </td>
+        <td align="center" nowrap>
+        <?
+		$totalLoan	= 0;
+		$loanSql 	= "SELECT `sub_id` FROM ".SUB_ACC_HEAD_TBL." WHERE `head_type`='Loan' AND project_id = '$project_id'";
+		$loan_res 	= mysql_query($loanSql);
+		
+		$loan_num = mysql_num_rows($loan_res);
+		if($loan_num>0){
+			while($loanrow = mysql_fetch_object($loan_res)){
+				$loanCr =0; $loanDr =0;
+				$sub_id = $loanrow->sub_id;
+				$loanCr = getTotalCreditAmount($sub_id,$project_id);
+				$loanDr = getTotalDebitAmount($sub_id,$project_id);
+				$loanBalance = $loanDr - $loanCr;
+				$totalLoan+=$loanBalance;
+			}
+		}		
+		$totalLoan = abs($totalLoan);
+		$rightTotal +=$totalLoan;
+		echo $totalLoan;
+		?>
+        </td>
+        <td align="center" nowrap>
+         <?
+		$totalAdvanced_Received = 0;
+		// ===== Advanced Received Vouchar=======
+		$pblchk_sql = "SELECT SUM(debit) as payable FROM ".DEVIT_VOUCHAR_TBL." WHERE `project_id`='$project_id' AND status=0 AND 
+		vouchar_type = 'Advanced Received Vouchar' AND fyear='FY001'";
+		$pblchk_res = mysql_query($pblchk_sql);		
+		$pblchk_num = mysql_num_rows($pblchk_res);
+		if($pblchk_num>0){			
+			while($pblchk_row = mysql_fetch_object($pblchk_res)){
+				$totalAdvanced_Received +=$pblchk_row->payable;
+			}
+		}
+		// ===== total Advanced Received Amount from sales return =======
+		$advsql = "SELECT SUM(due) as advancedReceived FROM ".SALES_RETURN_PAYBLE_TBL." WHERE `project_id` = '$project_id' AND due>0 AND fyear='FY001' AND payble_source='Advanced Received'";
+		$advres = mysql_query($advsql);		
+		$advnum = mysql_num_rows($advres);
+		if($advnum>0){			
+			while($sr_row = mysql_fetch_object($advres)){
+				$totalAdvanced_Received +=$sr_row->advancedReceived;
+			}
+		}
+		$rightTotal +=$totalAdvanced_Received;
+		echo $totalAdvanced_Received;
+	   ?>
+</td>
+        <td align="center" nowrap>
+        <?
+		//======= get Total Direct Incomes ======
+        $directProductIncome = getTotalDirectIncome($project_id,"FY001");	
+        //======= get Total Capital ======
+		$capBalance = 0;
+		$capsql = "SELECT sub_id FROM ".SUB_ACC_HEAD_TBL." WHERE head_type = 'Capital' AND project_id = '$project_id'";
+		$cap_res = mysql_query($capsql);
+		
+		$cap_num = mysql_num_rows($cap_res);
+		if($cap_num>0){
+		$caprow = mysql_fetch_object($cap_res);
+		$cap_id = $caprow->sub_id;
+		$capCr = getTotalCreditAmount($cap_id,$project_id);
+		$capDr = getTotalDebitAmount($cap_id,$project_id);
+		$capBalance = $capDr - $capCr;
+		}		
+		$capBalance = abs($capBalance);		
+		$rightTotal +=$capBalance;
+		//echo ($capBalance+$totalProfit+$totaldiscount);
+		echo ($capBalance+$directProductIncome+$totaldiscount);
+		?>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" align="left" nowrap><div align="center">
+            <? echo number_format(($rightTotal+$directProductIncome+$totaldiscount),2);?>
+        </div></td>
+      </tr>
+      
+    </table>
+	<p>&nbsp;</p>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+</div>	
+<p align="center">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+</form>
+<br><br><br>
+</body>
+</html>

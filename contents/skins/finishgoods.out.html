@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+
+extract($data);
+//dumpVar($data);
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR);
+require_once(CLASS_DIR . '/common.list.class.php');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/fg.out.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+var CANCEL_URL = "index.php?app=buyerorder&cmd=list";
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Finishgoods Out</title>
+<style>
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.bangFont {font: 130% SutonnyMJ;}
+</style>
+</head>
+<body>
+<form name="frmbuyerorder" method="post">
+<table width="98%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="322" align="center" valign="top">
+		<table width="97%"  class="addBorder" cellspacing="0" cellpadding="2">
+			  <tr>
+				<td class="topHeader" colspan="9"><div id="tblTitle" align="left">&nbsp;<strong>Finish Goods </strong></div></td> 
+			  </tr>			
+			<tr>
+			  <td width="4%" align="left">&nbsp;</td>
+			  <td width="16%" align="left"><label id="currency_lbl">Shift Number </label></td>
+			  <td width="23%" align="left">
+			    <select name="version_no" id="version_no" style="width:150px" class="validate[required]">
+                  <option value="" >Select Shift</option>
+                  <option value="A" <? if($version_no=="A"){ echo "selected";} ?> >A</option>
+                  <option value="B" <? if($version_no=="B"){ echo "selected";} ?> >B</option>
+                  <option value="C" <? if($version_no=="C"){ echo "selected";} ?> >C</option>
+                  <option value="D" <? if($version_no=="D"){ echo "selected";} ?> >D</option>
+              </select></td>
+			  <td width="17%" align="left">&nbsp;</td>
+			  <td colspan="3" align="left"><div align="right">Batch Number </div></td>
+			  <td><input type="text" name="batch_no" id="batch_no" value="<?=$batch_no?>" class="validate[required]" readonly=""></td>
+			</tr>
+			<tr>
+			  <td align="left">&nbsp;</td>
+			  <td align="left">Out Factory </td>
+			  <td align="left">
+              <select name="factory_id" id="factory_id" style="width:180px" class="validate[required]">
+                <option value=''>Select One</option>
+                <?php												
+                foreach($factory_list as $i=>$v)
+                {
+                    $factory_code = $v->factory_id;
+                    $factory_name = $v->factory_name;	
+                ?>
+                <option value="<?=$factory_code?>"<?php if($factory_id==$factory_code) echo "selected";?> >
+                <?=$factory_name?>
+                </option>
+                <?}?>
+              </select></td>
+			  <td align="left">&nbsp;</td>
+			  <td colspan="3" align="left"><div align="right"><label id="production_qty"></label>
+			    Finishgoods Out Store</div></td>
+			  <td><select name="out_store_id" id="out_store_id" style="width:180px" tabindex="1">
+		          <option value="">Select Store Name</option>
+		         <?php	 
+				  	
+			foreach($depo_list as $i=>$v)
+			{
+
+				$delivery_pid = $v->delivery_pid;	
+				$delivery_point_name = $v->delivery_point_name;	
+			?>
+                	<option value="<?=$delivery_pid?>"<?php if($delivery_pid==$out_store_id) echo "selected";?> >
+                	<?=$delivery_point_name?>
+                	</option>
+                	<?}?>
+              	</select></td>
+		  </tr>
+			<tr>
+		       <td colspan="8">
+				   <fieldset>
+				   <legend>Used Finishgoods</legend>
+					   <table width="100%"  cellspacing="0" cellpadding="2">
+					     <tr>
+						   <td width="0%"><div align="left">
+								
+						   </div></td>
+						   <td width="13%"><div align="left"><label id="product_lbl">Item Name </label></td>
+						   <td width="14%"><label id="catagory_lbl">Catagory</label></td>
+						   <td width="14%"><label id="brand_lbl">Brand</label></td>
+						   <td width="7%"><label id="m_unit_lbl"> Unit</label></td>
+						   <td width="11%">Stock Qty </td>
+						   <td width="17%"><label id="out_qty_lbl">Out Qty (<em>pcs </em>)</label></td>
+						   <td width="14%">
+					       <div align="left">
+					         <label id="qty_lbl">Total Out Qty (<em>Pcs</em>) <span id="qty_m"> </span></label>
+					       </div>						   </td>
+						   <td width="10%"><div align="left">
+							   <label id="amount_lbl"></label>
+						   </div></td>
+					     </tr>
+					     <tr>
+						   <td>
+						     <div align="left"> </div></td>
+						   <td>
+						     <div align="left">
+							   <select name="product" id="product" style="width:160px" onChange="javascript:getProductDtl(this.value)" >
+                                <option value="">Select One</option>
+								<?php												
+								foreach($finish_list as $i=>$v)
+								{
+								$product_id = $v->product_id;
+								$product_name = $v->product_name;
+								$product_code = $v->product_code;
+			    					$product_name = (new CommonList())->normalizeProductName($product_code,$product_name);	
+								?>
+								<option value="<?=$product_id.'###'.$product_name?>"<?php if($product==$product_id) echo "selected";?> >
+								<?=$product_name?>
+								</option>
+								<?}?>
+                               </select>
+							   </div></td>
+						   <td><select name="catagory" id="catagory" style="width:150px">
+                             <option value=''>Select One</option>
+                             <?php												
+								 foreach($cat_list as $i=>$v)
+								 {
+									$catagory_code = $v->catagory_code;
+									$catagory_name = $v->catagory_name;
+										
+								 ?>
+                             <option value="<?=$catagory_code.'###'.$catagory_name?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+                             <?=$catagory_name?>
+                             </option>
+                             <?
+								 	
+								 }?>
+                           </select>						     </td>
+						   <td><select name="brand" id="brand" style="width:150px"  tabindex="7">
+                             <option value="">Select One</option>
+                             <?php						
+                                    foreach($brand_list as $i=>$v){
+                                        $brand_id = $v->brand_id;
+                                        $brand_name = $v->brand_name;	
+                                  ?>
+                             <option value="<?=$brand_id.'###'.$brand_name?>" <?php if($brand==$brand_id) echo "selected";?> >
+                             <?=$brand_name?>
+                             </option>
+                             <?}?>
+                           </select></td>
+						   <td><select name="m_unit" id="m_unit" style="width:60px" onChange="checkUnit(this.value)">
+							   <option value="" >Select</option>
+							   <option value="kg" <? if($m_unit=="kg"){ echo "selected";} ?> >kg</option>
+							   <option value="g" <? if($m_unit=="g"){ echo "selected";} ?> >g</option>
+							   <option value="pc" <? if($m_unit=="pc"){ echo "selected";} ?> >pc</option>
+							   <option value="ltr" <? if($m_unit=="ltr"){ echo "selected";} ?> >ltr</option>
+							   <option value="ream" <? if($m_unit=="ream"){ echo "selected";} ?> >ream</option>
+						   </select></td>
+						   <td><input type="text" style="width:100px; " name="stock_qty" id="stock_qty" readonly=""> 
+						   </td>
+						   <td><input type="text" style="width:120px; " name="out_qty" id="out_qty" value="<?=$out_qty?>"  class="validate[required]" onKeyUp="calTotalQty()"> </td>
+						   <td><div align="left">
+						     <input type="text" style="width:120px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]">
+						   </div></td>
+						   <td><div align="left"><input type="hidden" style="width:130px; " name="amount" id="amount" value="<?=$amount?>"  class="validate[required]" readonly="">
+						   </div></td>
+					     </tr>
+					     <tr>
+					       <td height="28">&nbsp;</td>
+					       <td>&nbsp;</td>
+					       <td><input type="hidden" name="total_unit" id="total_unit" value="kg"/>
+                             <input type="hidden" name="total_bag" id="total_bag" value="0"/>
+                           <input type="hidden" name="currency" id="currency" value="1"/></td>
+					       <td>&nbsp;</td>
+					       <td>&nbsp;</td>
+					       <td>&nbsp;</td>
+					       <td> </td>
+					       <td><input name="button" type="button" class="button"  onClick="purchaseProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Add">
+                             <input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=buyerorder';"></td>
+					       <td>&nbsp;</td>
+				         </tr>
+					   </table>
+			     </fieldset>			   </td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td width="1%">&nbsp;</td>
+			    <td width="7%">&nbsp;</td>
+			    <td width="8%">&nbsp;</td>
+			    <td width="24%">&nbsp;</td>
+	      	</tr>						
+
+			  <tr align="center">
+
+			    <td colspan="8" align="left">
+
+				<table width="100%" align="center" bgcolor="#3399CC">
+
+					<tr>
+					  <td width="13%" nowrap>Catagory</td> 
+
+					  <td width="13%" nowrap>Brand </td>
+					  <td width="19%" nowrap>Item Name </td>
+
+					  <td width="11%" nowrap>Measurment Unit</td>
+
+					  <td width="10%" nowrap><div align="left">Out Qty</div></td>
+
+					  <td width="10%" nowrap><div align="left">Currency</div></td>
+					</tr>
+
+					<tbody id="tbs" bgcolor="#CCCC99">
+					</tbody>
+				  </table>				</td>
+	      </tr>
+			  <td align="left"><div align="right">  </div></td>
+
+				<td align="left"><div align="left">Out Date</div></td>
+
+				<td align="left"><div align="left">
+				  <input name="used_date" id="used_date" style="width:140px;" value="<?=$_REQUEST['used_date']?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['used_date']);return false;" title="calendar" class="validate[required]" type="text">
+                  <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Date" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['used_date']);return false;"></div></td>
+
+				<td align="left"><div align="right">
+				  <input type="hidden" name="cmd" value="<?=getRequest('cmd')?>">
+                  <input type="hidden" name="production_type" value="Running">
+</div></td>
+
+				<td colspan="3" align="left"><div align="right">Total Out Qty </div></td>
+
+				<td>
+				<input type="text" style="width:110px; " name="total_qty" id="total_qty" value="<?=$total_qty?>" class="validate[required]" readonly="">
+				Pcs
+				<input type="hidden" style="width:147px; " name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="">
+				</td> 
+
+			  </tr><tr>
+			    <td align="left">&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+			    <td align="left">&nbsp;</td>
+			    <td colspan="3" align="left">&nbsp;</td>
+			    <td><input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave();"></td>
+			  </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td colspan="5">&nbsp;</td>
+
+				<td>&nbsp;</td>
+
+			    <td>&nbsp;</td>
+			  </tr>
+		</table>
+
+      </td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+</body>
+
+</html>
+

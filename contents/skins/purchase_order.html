@@ -1,0 +1,985 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<?php
+extract($data);
+//dumpVar($data);
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+ if($message==""){ $message = getRequest('msg');} $currency=1;
+ dateIFrame(REL_EXT_DIR);
+
+$total_vat_percent = 0;
+$total_vat_amount = 0;
+$additional_cost = 0;
+$total_tds_percent = 0;
+$total_tds_amount = 0;
+
+require_once(CLASS_DIR.'/common.list.class.php');
+
+?>
+
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/purchase_order.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+	<!-- Select2 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var J = jQuery.noConflict();
+	</script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+	<script language="javascript1.3">
+		J("[class^=validate]").validationEngine({
+        inlineValidation: false,
+        success :  false,
+        failure : function() { callFailFunction()  }
+        })
+  var CANCEL_URL = "index.php?app=purchase_order&cmd=list";
+	</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Purchase Item</title>
+	<style>
+		/* Select2 Styling & Fixes */
+		.select2-container .select2-selection--single {
+			height: 38px;
+			border: 1px solid #ccc;
+			display: flex;
+			align-items: center;
+		}
+		.select2-container--default .select2-selection--single .select2-selection__rendered {
+			padding-left: 12px;
+		}
+		/* Ensure Select2 doesn't jump outside the flex container */
+		.select2-container { width: 100% !important; }
+
+		.containerDiv {
+			padding: 20px;
+		}
+
+
+		div#lc_container {
+			position: relative;
+		}
+		div#payable_container {
+			position: relative;
+		}
+		span.select2-dropdown.select2-dropdown--below {
+			top: 32px;
+		}
+
+		span.select2-selection.select2-selection--single {
+			height: 30px;
+			width: 100%;
+		}
+		.text-center {
+			text-align: center !important;
+		}
+		.text-right {
+			text-align: right !important;
+		}
+
+
+		.swal2-popup.swal2-modal.swal2-icon-warning.swal2-show {
+			flex-direction: column;
+		}
+		div#tbs td {
+			padding: 6px 8px;
+			border: 1px solid #95949463;
+		}
+
+		input{
+			background-color:#ffffff;
+			border: 1px solid #006699;
+		}
+		.chosen-container-single .chosen-search input[type="text"] {
+			width: 89%;
+		}
+		#product_chosen > .chosen-drop > .chosen-search input[type="text"] {
+			width: 80% !important;
+		}
+
+		/* Import LC row: completely hidden (no space) until Import selected */
+		#import_row {
+			display: none;
+		}
+
+		p#head_code_error {
+			color: red;
+			margin-top: 3px;
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+<form name="frmbuyerorder" id="frmbuyerorder" method="post">
+	<table width="100%" align="center" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td height="322" align="center" valign="top">
+				<table width="97%"  class="addBorder" cellspacing="0" cellpadding="2">
+					<tr>
+						<td class="topHeader" colspan="9"><div id="tblTitle" align="left">&nbsp;<strong>Purchase Order </strong></div></td>
+					</tr>
+					<!--tr>
+                      <td width="3%">&nbsp;</td>
+                      <td width="13%">PO No. </td>
+                      <td width="21%"><input type="text" name="po_no" id="po_no" style="width:160px;" value="<?=$po_no?>"></td>
+                      <td width="11%">&nbsp;</td>
+                      <td width="12%">&nbsp;</td>
+                      <td width="8%">LC No. </td>
+                      <td colspan="2"><div align="left"><input type="text" name="lc_no" id="lc_no" style="width:160px;" value="<?=$lc_no?>"></div></td>
+                   </tr-->
+
+					<tr>
+						<td width="1%">&nbsp;</td>
+						<td width="18%"><label id="supplier_lbl">Supplier</label></td>
+						<td width="33%"><div style="width:280px"><select name="supplier" id="supplier" class="chosen-select-deselect" style="width:180px" class="validate[required]">
+							<option value="">Select Supplier</option>
+							<?php
+				  	require_once(CLASS_DIR . '/common.list.class.php');	  
+					foreach($supplier_list as $i=>$v)
+							{
+
+							$sub_id = $v->sub_id;
+							$sub_head_name = $v->sub_head_name;
+							$code = $v->code;
+							?>
+							<option value="<?=$sub_id?>"<?php if($sub_id==$supplier) echo "selected";?> >
+							<?=(new CommonList())->normalizeUserName($code,$sub_head_name)?>
+							</option>
+							<?}?>
+						</select></div></td>
+						<td width="1%">&nbsp;</td>
+						<td width="1%">&nbsp;</td>
+						<td width="15%">SPR No. </td>
+						<td colspan="2">
+							<div align="left" style="width:230px">
+								<input type="hidden" name="spr_no_value" id="spr_no_value" value="" />
+								<select name="spr_no" id="spr_no" style="width:180px" class="chosen-select-deselect" onchange="getSPRDetails()">
+									<option value="">Select SPR</option>
+									<?php
+				  	
+					foreach($spr_list as $i=>$v)
+									{
+									?>
+									<option value="<?=$v->voucher_no?>"<?php if($v->voucher_no==$spr_no) echo "selected";?> >
+									<?=$v->voucher_no?>
+									</option>
+									<?}?>
+								</select>
+								<p id="showSprNo" style="margin-top: 2px; margin-bottom: 5px;"></p>
+							</div>
+						</td>
+					</tr>
+					<!-- Import LC Row: shown only when Purchase Type = Import -->
+					<tr id="import_row">
+						<td>&nbsp;</td>
+						<td>LC No.</td>
+						<td>
+							<div id="lc_container" style="width:280px">
+								<select name="lc_no" id="lc_no" style="width:180px">
+									<option value="">Select LC No</option>
+									<?php
+									foreach($lc_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+
+									$headName = "";
+									if($v->code!=""){
+									$headName .= $v->code."::";
+									}
+									$headName .= $v->sub_head_name;
+									if($v->head_details!=""){
+									$headName .= ", ".$v->head_details;
+									}
+									?>
+									<option value="<?=$sub_id?>" <?php if($lc_no==$sub_id) echo "selected";?> ><?=$headName?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Payable</td>
+						<td colspan="2">
+							<div id="payable_container" style="width:280px">
+								<select name="payable_id" id="payable_id" style="width:180px">
+									<option value="">Select Payable</option>
+									<?php
+									foreach($payable_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+
+									$headName = "";
+									if($v->code!=""){
+										$headName .= $v->code."::";
+									}
+									$headName .= $v->sub_head_name;
+									if($v->head_details!=""){
+										$headName .= ", ".$v->head_details;
+									}
+									?>
+									<option value="<?=$sub_id?>" <?php if($payable_id==$sub_id) echo "selected";?> ><?=$headName?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td>&nbsp;</td>
+						<td><label id="purchase_type_lbl">Purchase Type</label></td>
+						<td>
+							<select name="purchase_type" id="purchase_type" style="width:180px" class="validate[required]">
+								<option value=''>Select One</option>
+								<option value='import'>Import Purchase</option>
+								<option value='local'>Local Purchase</option>
+								<option value='other'>Other Service</option>
+							</select>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Manual SPR No. </td>
+						<td colspan="2"><input type="text" name="manual_spr_no" id="manual_spr_no" style="width:160px;" value="<?=$manual_spr_no?>"  oninput="checkSRNo(this.value)"/>
+							<p id="head_code_error" class="textDanger" style="display: none">SPR No Already Exists</p>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><div align="left">
+							<label id="cost_center_lbl">Cost Center</label>
+						</div></td>
+						<td><div align="left" style="width:230px">
+							<select name="cost_center" id="cost_center" style="width:230px" class="chosen-select-deselect" tabindex="6">
+								<option value="">Select Account Head</option>
+								<optgroup label="Cost Center Account Head">
+									<?php
+			foreach($cost_center_list as $i=>$v)
+									{
+									?>
+									<option value="<?=$v->sub_id?>"<?php if($cost_center==$v->sub_id) echo "selected";?> ><?php if($v->code!=""){ echo $v->code."::";}echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;} ?></option>
+									<?}?>
+								</optgroup>
+							</select>
+						</div></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="15%">Quotation No. </td>
+						<td colspan="2"><input type="text" name="quotation_no" id="quotation_no" style="width:160px;" value="<?=$quotation_no?>"/></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><label id="currency_lbl">Currency</label></td>
+						<td><select name="currency" id="currency" style="width:180px" class="validate[required]">
+							<option value=''>Select One</option>
+							<?php
+
+									$countryid =$country;
+									foreach($currency_list as $i=>$v)
+							{
+							$currency_id = $v->currency_id;
+							$currency_name = $v->currency_name;
+							$currency_des = $v->currency_des;
+
+							?>
+							<option value="<?=$currency_id.'###'.$currency_name?>"<?php if($currency==$currency_id) echo "selected";?> >
+							<?=$currency_des?>
+							</option>
+							<?}?>
+						</select></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Truck No. </td>
+						<td colspan="2"><input type="text" name="track_no" id="track_no" style="width:160px;" value="<?=$track_no?>"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Order Date</td>
+						<td><input name="order_date" id="order_date" style="width:160px;" value="<?=date('d-m-Y')?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['order_date']);return false;" title="calendar" type="text">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['order_date']);return false;" title="calendar" width="15" height="15"></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Van No.</td>
+						<td colspan="2"><input type="text" name="van_no" id="van_no" style="width:160px;" value="<?=$van_no?>"></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Delivery Date</td>
+						<td><input name="delivery_date" id="delivery_date" style="width:160px;" value="<?=date('d-m-Y')?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" type="text">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" width="15" height="15"></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>Delivery Address</td>
+						<td colspan="2"><textarea name="delivery_note" id="delivery_note" cols="50" rows="2"><?=$delivery_note?></textarea></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Payment Note</td>
+						<td>
+							<textarea name="payment_note" id="payment_note" cols="50" rows="2"><?=$payment_note?></textarea>
+						</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="8">
+							<fieldset><legend>Item Details</legend>
+								<table width="100%"  cellspacing="0" cellpadding="2">
+									<tr>
+										<td width="1%"><div align="left">
+
+										</div>
+										</td>
+										<td width="13%"><label id="product_lbl">Product</label></td>
+
+										<td width="10%">Brand</td>
+										<td width="21%">Details</td>
+										<td width="10%"><div align="left"><label id="qty_lbl">Quantity<span id="qty_m">(Pc)</span></label></div></td>
+										<td width="10%"><div align="left"><label id="unit_price_lbl">Unit Price<span id="uprice_m">(per Pc)</span></label>
+
+										</div></td>
+										<td width="10%" style="display:none;"><div align="left"><label id="unit_price_lbl">Vat (%)</label>
+										</div></td>
+										<td width="10%">
+											<div align="left">
+												<label id="totalvalue_lbl">Total Value </label>
+											</div>
+										</td>
+										<td width="21%">
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div align="left">
+												<input type="hidden" name="catagory" id="catagory" value="<?=$catagory?>">
+												<input type="hidden" name="brand" id="brand" value="<?=$brand?>">
+											</div></td>
+										<td>
+											<select name="product" id="product" style="width:165px" onChange="javascript:getProductDtl(this.value)" class="chosen-select-deselect">
+												<option value="">Select One</option>
+												<?php
+		foreach($product_list as $i=>$v){
+												$product_id = $v->product_id;
+												$productIdANDName = $product_id."###".$v->product_name;
+												?>
+												<option value='<?=$productIdANDName?>' <?php if($product==$product_id) echo "selected";?> >
+												<?=(new CommonList())->normalizeProductName($v->product_code, $v->product_name)?>
+												</option>
+												<?}?>
+											</select>
+										</td>
+										<td><input type="text" name="custom_brand" id="custom_brand" style="width:260px"/></td>
+										<td><input type="text" name="details" id="details" style="width:260px"/></td>
+										<td><div align="left">
+											<input type="text" style="width:110px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()">
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:110px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()">
+										</div></td>
+										<td style="display:none;"><div align="left">
+											<input type="hidden" style="width:110px; " name="vat_percent" id="vat_percent" value="<?=$vat_percent?>"  class="validate[required]" onKeyUp="calVatAmount()">
+											<input type="hidden" name="vat_amount" id="vat_amount" value="<?=$vat_amount?>">
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:120px; " name="total" id="total" value="<?=$total?>"  class="validate[required]">
+										</div></td>
+										<td>
+											<input type="hidden" name="m_unit" id="m_unit" value="pc"/>
+											<input type="hidden" name="total_unit" id="total_unit" value="pc"/>
+											<input type="hidden" name="total_bag" id="total_bag" value="0"/>
+
+											<input type="hidden" name="edit_spr_voucher_no" id="edit_spr_voucher_no" value=""/>
+											<input type="hidden" name="edit_spd_id" id="edit_spd_id" value=""/>
+											<input type="hidden" name="edit_product_id" id="edit_product_id" value=""/>
+											<input type="hidden" name="edit_max_qty" id="edit_max_qty" value=""/>
+
+											<input name="button" type="button" class="button"  onClick="purchaseProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Next">
+											<input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=purchase_order&cmd=add';"></td>
+									</tr>
+								</table>
+							</fieldset>				</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="10%">&nbsp;</td>
+						<td width="21%">&nbsp;</td>
+					</tr>
+
+					<tr align="center">
+
+						<td colspan="8" align="left">
+
+							<table width="100%" align="center" bgcolor="#3399CC">
+
+								<tr>
+									<td width="10%" nowrap>Catagory</td>
+									<td width="10%" nowrap>Brand</td>
+									<td width="26%" nowrap>Product</td>
+									<td width="5%" nowrap>Unit</td>
+									<td width="8%" nowrap><div align="left">Quantity</div></td>
+									<td width="7%" nowrap><div align="left">Unit Price</div></td>
+									<!-- <td width="5%" nowrap><div align="left">Vat (%)</div></td>
+                                    <td width="7%" nowrap><div align="left">Vat Amount</div></td> -->
+									<td width="7%" nowrap>Total Value</td>
+									<td width="10%" nowrap>Option</td>
+								</tr>
+
+								<tbody id="tbs" bgcolor="#CCCC99">
+								</tbody>
+							</table>				</td>
+					</tr>
+					<tr>
+						<td align="left"><div align="right">  </div></td>
+
+						<td align="left">
+							<div align="right" style="display:none">Mode of Payment</div>
+							<div align="right">Discount</div>
+						</td>
+
+						<td align="left"><div align="left" style="display:none">
+							<input name="mode_of_payment" id="radio" type="radio"  value="Payable" onClick="showhideCashCheck('Recievable')" <?php if($mode_of_payment=="Payable"){ echo "checked";}else{echo "checked";}?> >
+							Due
+						</div>
+							<input type="text" name="discount" id="discount" style="width:130px;" oninput="calNetPayable()" value="<?=$discount?>" class="validate[required]">
+						</td>
+
+						<td align="left"><div align="right"></div></td>
+
+						<td colspan="3" align="left"><div align="right">Grand Total</div></td>
+
+						<td>
+
+							<div align="left">
+
+								<input type="text" style="width:130px;" name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="">
+							</div>				</td>
+					</tr>
+					<tr align="center">
+						<td align="left"></td>
+						<td align="left"><div align="right">Remark</div></td>
+						<td align="left"><input type="text" name="remark" id="remark" style="width:130px;" value="<?=$remark?>"></td>
+						<td align="left">&nbsp;</td>
+						<!-- <td colspan="3" align="left"><div align="right">Vat (%) <input type="text" name="total_vat_percent" id="total_vat_percent" style="width:50px;" value="<?=$total_vat_percent?>" oninput="calTotalVat()"></div></td> -->
+						<td colspan="3" align="left"><div align="right">Additional Cost </div></td>
+						<td><div align="left">
+							<input type="text" name="additional_cost" id="additional_cost" style="width:130px;" value="<?=$additional_cost?>" oninput="calNetPayable()">
+						</div></td>
+
+					</tr>
+					<tr align="center">
+						<td align="left">&nbsp;</td>
+						<td align="left"></td>
+						<td align="left"></td>
+						<td align="left">&nbsp;</td>
+						<td colspan="3" align="left">
+							<div align="right">
+								VAT Type
+								<select name="vat_type" id="vat_type" onchange="calTotalVat()" style="width:90px;">
+									<option value="percent">Percentage (%)</option>
+									<option value="fixed">Fixed</option>
+								</select>
+								VAT
+								<input type="text" name="total_vat_percent" id="total_vat_percent" style="width:50px;" value="<?=$total_vat_percent?>" oninput="calTotalVat()">
+							</div>
+						</td>
+						<td><div align="left">
+							<input type="text" name="total_vat_amount" id="total_vat_amount" style="width:130px;" value="<?=$total_vat_amount?>" readonly>
+						</div></td>
+					</tr>
+					<tr align="center">
+						<td align="left">&nbsp;</td>
+						<td align="left"></td>
+						<td align="left"></td>
+						<td align="left">&nbsp;</td>
+						<td colspan="3" align="left">
+							<div align="right">
+								TDS Type
+								<select name="tds_type" id="tds_type" onchange="calTotalTDS()" style="width:90px;">
+									<option value="percent">Percentage (%)</option>
+									<option value="fixed">Fixed</option>
+								</select>
+
+								TDS
+								<input type="text" name="total_tds_percent" id="total_tds_percent" style="width:50px;" value="<?=$total_tds_percent?>" oninput="calTotalTDS()">
+							</div>
+						</td>
+						<td><div align="left">
+							<input type="text" name="total_tds_amount" id="total_tds_amount" style="width:130px;" value="<?=$total_tds_amount?>" readonly>
+						</div></td>
+					</tr>
+					<tr align="center">
+						<td align="left">&nbsp;</td>
+						<td align="left"></td>
+						<td align="left"></td>
+						<td align="left">&nbsp;</td>
+						<td colspan="3" align="left"><div align="right">Total Amount </div></td>
+						<td><div align="left">
+							<input type="hidden" name="net_payble" id="net_payble" style="width:130px;" value="<?=$net_payble?>" class="validate[required]">
+							<input type="text" name="grand_total" id="grand_total" style="width:130px;" value="<?=$net_payble?>" class="validate[required]">
+						</div></td>
+					</tr>
+					<tr>
+
+						<td>&nbsp;</td>
+
+						<td colspan="5">
+
+							<div style="margin-top:10px;">
+								<ul style="list-style: none; padding-left: 0;">
+									<?php
+							foreach($terms_list as $val){
+
+						?>
+									<li>
+										<label for="terms_condition<?= $val->id ?>">
+											<input type="checkbox"
+												   name="terms_condition[]"
+												   id="terms_condition<?= $val->id ?>"
+												   value="<?= $val->id ?>" />
+											<?= htmlspecialchars($val->name) ?>
+										</label>
+									</li>
+									<?php
+
+						}
+						?>
+								</ul>
+							</div>
+						</td>
+						<td>
+							<input type="hidden" name="cmd" value="savePurchaseOrder">
+							<input name="transaction_type" id="transaction_type" type="hidden" value="Payment">
+							<input type="hidden" name="transaction_name" value="Purchase">
+						</td>
+
+						<td>
+
+							<div align="left">
+
+								<input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" id="btnSave" onClick="wantToSave(event);">
+							</div>				</td>
+					</tr>
+
+					<tr>
+
+						<td>&nbsp;</td>
+
+						<td colspan="5">&nbsp;				</td>
+
+						<td>&nbsp;</td>
+
+						<td>&nbsp;</td>
+					</tr>
+				</table>
+
+			</td>
+
+		</tr>
+
+		<tr>
+
+			<td>&nbsp;</td>
+
+		</tr>
+
+	</table>
+
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/bootstrap.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+
+<script>
+	$(function() {
+		$('.chosen-select').chosen({
+			search_contains: true, // allows matching in the middle of the string
+			width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+			allow_single_deselect: true,
+			search_contains: true,
+			width: "100%"
+		});
+	});
+
+	function getSPRDetails(){
+		var voucher_no = $("#spr_no").val();
+
+		if(voucher_no != "") {
+			if (confirm("Sure want to add product???")) {
+				$.ajax({
+					url: '?app=purchase.item&cmd=getSPRData',
+					type: 'POST',
+					data: JSON.stringify({voucher_no: voucher_no}),
+					contentType: 'application/json',
+					dataType: 'json',
+					success: function (response) {
+						if (response.status) {
+							processSPRDataGrid(response.data);
+						} else {
+							alert("Data not found!");
+						}
+					},
+					error: function (xhr, status, error) {
+						alert('AJAX request failed: ' + error, 'error');
+					}
+				});
+			} else {
+				$("#spr_no").val("").trigger("change");
+				return false;
+			}
+		}
+	}
+
+	function processSPRDataGrid(responseData) {
+		if(responseData.length>0){
+
+			var currentSPRValue = document.getElementById('spr_no_value').value
+			var sprNoArray = currentSPRValue.split(',').filter(v => v.trim() !== '');
+
+			var totalValue = 0;
+			var store_id = "";
+			responseData.forEach((data) => {
+				var catagoryid = data.catagory;
+				var catagoryname = data.catagory_name;
+				var brandid = data.brand_id;
+				var brandname = data.brand_name;
+				var productid = data.product;
+				var productname = data.product_name;
+				var m_unit = data.m_unit;
+				var unit_price = parseFloat(data.unit_price);
+				var qty = parseFloat(data.qty);
+
+				store_id = data.store_id;
+				var vat_percent = "";
+				var vat_amount = "";
+
+				var total_value = qty * unit_price;
+				var catagory_product_id = catagoryid + "###" + productid;
+
+				var pdetails = "";
+				var total_bag = "0";
+				var total_unit = "pc";
+				var spr_voucher_no = data.voucher_no;
+				var spd_id = data.id;
+				totalValue += unit_price * qty;
+
+				var custom_brand = "";
+
+				if (!sprNoArray.includes(spr_voucher_no)) {
+					sprNoArray.push(spr_voucher_no);
+				}
+
+				var productNameInput = `<input type=hidden name=input_pro_name[] id=input_pro_name['${catagory_product_id}'] value='${productname}'>`;
+
+				obj = document.getElementById('tbs');
+				tr = document.createElement('tr');
+				tr.appendChild(addCol(catagoryname + '<input type=hidden name=input_catagory_product_id[] id=catagory_product_id[] value=' + catagory_product_id + '>'));
+				tr.appendChild(addCol('<span class="display_brand" data-id="' + catagory_product_id + '">' + brandname + '</span><input type=hidden name=input_brandid[] id=input_brandid[' + catagory_product_id + '] value=' + brandid + '><input type=hidden name=input_brand[] id=input_brand[' + catagory_product_id + '] value="' + brandname + '"><input type=hidden name=input_custom_brand[] id=input_custom_brand[' + catagory_product_id + '] value="' + custom_brand + '">'));
+				tr.appendChild(addCol(productname + productNameInput + '<input type=hidden name=input_product[] id=input_product[' + catagory_product_id + '] value=' + productid + '><input type="hidden" name="input_pdetails[' + catagory_product_id + ']" id="input_pdetails[' + catagory_product_id + ']" value="' + pdetails + '"><input type="hidden" name="spr_voucher_no[' + catagory_product_id + ']" id="spr_voucher_no[' + catagory_product_id + ']" value="' + spr_voucher_no + '"><input type="hidden" name="spd_id[' + catagory_product_id + ']" id="spd_id[' + catagory_product_id + ']" value="' + spd_id + '">'));
+				tr.appendChild(addCol(m_unit));
+				tr.appendChild(addCol('<span class="display_qty" data-id="' + catagory_product_id + '">' + qty + '</span><input type=hidden name=input_qty[' + catagory_product_id + '] id=input_qty[' + catagory_product_id + '] value="' + qty + '"><input type=hidden name=input_max_qty[' + catagory_product_id + '] id=input_max_qty[' + catagory_product_id + '] value="' + qty + '"><input type=hidden name=input_total_bag[' + catagory_product_id + '] id=input_total_bag[' + catagory_product_id + '] value="' + total_bag + '"><input type=hidden name=input_m_unit[' + catagory_product_id + '] id=input_m_unit[' + catagory_product_id + '] value=' + m_unit + '><input type=hidden name=input_total_unit[' + catagory_product_id + '] id=input_total_unit[' + catagory_product_id + '] value=' + total_unit + '>'));
+				tr.appendChild(addCol('<span class="display_unit_price" data-id="' + catagory_product_id + '">' + unit_price + '</span><input type=hidden name=input_unit_price[' + catagory_product_id + '] id=input_unit_price[' + catagory_product_id + '] value=' + unit_price + '>'));
+
+				//tr.appendChild(addCol('<span class="display_vat_percent" data-id="' + catagory_product_id + '">' + vat_percent + '</span><input type=hidden name=input_vat_percent[' + catagory_product_id + '] id=input_vat_percent[' + catagory_product_id + '] value=' + vat_percent + '>'));
+
+				//tr.appendChild(addCol('<span class="display_vat_amount" data-id="' + catagory_product_id + '">' + vat_amount + '</span><input type=hidden name=input_vat_amount[' + catagory_product_id + '] id=input_vat_amount[' + catagory_product_id + '] value=' + vat_amount + '>'));
+
+
+				var inputString ='<span class="display_vat_percent d-none" data-id="' + catagory_product_id + '">' + vat_percent + '</span><input type=hidden name=input_vat_percent[' + catagory_product_id + '] id=input_vat_percent[' + catagory_product_id + '] value=' + vat_percent + '><span class="display_vat_amount  d-none" data-id="' + catagory_product_id + '">' + vat_amount + '</span><input type=hidden name=input_vat_amount[' + catagory_product_id + '] id=input_vat_amount[' + catagory_product_id + '] value=' + vat_amount + '>';
+
+				tr.appendChild(addCol('<span class="display_total_value" data-id="' + catagory_product_id + '">' + total_value + '</span><input type=hidden name=input_total_value[' + catagory_product_id + '] id=input_total_value[' + catagory_product_id + '] value=' + total_value + '>' + inputString));
+
+				tr.appendChild(addCol('<div class="table-option"><a href="javascript:void(0)" onclick=editTr(this) style="margin-left: 10px;"><img src="images/common/icons/edit.gif" style="padding: 5px;"></a><a href="javascript:void(0)" onclick=removeTr(this) style="margin-left: 10px;"><img src="images/common/icons/delete.gif" style="padding: 5px;"></a></div>'));
+
+				obj.appendChild(tr);
+				rsFound = false;
+				needSave = true;
+
+				if (!rsArr.includes(catagory_product_id)) {
+					rsArr.push(catagory_product_id);
+				}
+			});
+
+			document.getElementById('showSprNo').innerHTML = sprNoArray.join(',');
+			document.getElementById('spr_no_value').value = sprNoArray.join(',');
+
+			var total_cost = document.getElementById('total_value').value;
+			if (total_cost != "") {
+				total_cost = parseFloat(total_cost);
+			} else {
+				total_cost = 0;
+			}
+
+			totalValue = totalValue.toFixed(11);
+			total_cost = total_cost + parseFloat(totalValue);
+			document.getElementById('total_value').value = total_cost;
+
+			purchaseType(store_id);
+			calAllValue();
+			calTotalVat();
+			calTotalTDS();
+		}
+
+	}
+
+	function checkSRNo(spr_voucher_no){
+		if(spr_voucher_no != "") {
+			$.ajax({
+				url: '?app=purchase.item&cmd=checkSPRVoucherNo',
+				type: 'POST',
+				data: JSON.stringify({spr_voucher_no: spr_voucher_no}),
+				contentType: 'application/json',
+				dataType: 'json',
+				success: function (response) {
+					if (response.status) {
+						$("#btnSave").prop('disabled', true);
+						$("#head_code_error").show();
+					} else {
+						$("#btnSave").prop('disabled', false);
+						$("#head_code_error").hide();
+					}
+				},
+				error: function (xhr, status, error) {
+					alert('AJAX request failed: ' + error);
+				}
+			});
+		}
+	}
+
+
+	function editTr(element) {
+		var tr = element.closest('tr');
+
+		if (tr && tr.parentNode) {
+			// Get the voucher_no value from this row
+			var spr_voucher_no = tr.querySelector('input[name^="spr_voucher_no"]').value;
+			var input_product = tr.querySelector('input[name^="input_product"]').value;
+			var input_pro_name = tr.querySelector('input[name^="input_pro_name"]').value;
+			var input_custom_brand = tr.querySelector('input[name^="input_custom_brand"]').value;
+			var input_pdetails = tr.querySelector('input[name^="input_pdetails"]').value;
+			var spd_id = tr.querySelector('input[name^="spd_id"]').value;
+			var input_qty = tr.querySelector('input[name^="input_qty"]').value;
+			var input_max_qty = tr.querySelector('input[name^="input_max_qty"]').value;
+			var input_m_unit = tr.querySelector('input[name^="input_m_unit"]').value;
+			var input_unit_price = tr.querySelector('input[name^="input_unit_price"]').value;
+			var input_vat_percent = tr.querySelector('input[name^="input_vat_percent"]').value;
+			var input_vat_amount = tr.querySelector('input[name^="input_vat_amount"]').value;
+			var input_total_value = tr.querySelector('input[name^="input_total_value"]').value;
+			var input_catagory_product_id = tr.querySelector('input[name^="input_catagory_product_id"]').value;
+
+			document.getElementById('custom_brand').value=input_custom_brand;
+			document.getElementById('details').value=input_pdetails;
+			document.getElementById('unit_price').value=input_unit_price;
+			document.getElementById('vat_percent').value=input_vat_percent;
+			document.getElementById('vat_amount').value=input_vat_amount;
+			document.getElementById('qty').value=input_qty;
+			document.getElementById('total').value=input_total_value;
+			document.getElementById('catagory').value=input_catagory_product_id;
+
+			var productIDName = input_product + "###" + input_pro_name;
+			$("#product").val(productIDName);
+			$('#product').trigger('chosen:updated');
+
+
+			document.getElementById('qty_m').value=input_m_unit;
+
+			document.getElementById('uprice_m').value=input_m_unit;
+			document.getElementById('edit_spr_voucher_no').value=spr_voucher_no;
+			document.getElementById('edit_spd_id').value=spd_id;
+			document.getElementById('edit_product_id').value=input_product;
+			if(spr_voucher_no != "" && spd_id != ""){
+				document.getElementById('edit_max_qty').value=input_max_qty;
+			}
+
+		}
+	}
+
+
+	function resetAddFrom(){
+		document.getElementById('catagory').value="";
+		document.getElementById('brand').value="";
+		document.getElementById('custom_brand').value="";
+		document.getElementById('product').value="";
+		document.getElementById('details').value="";
+		document.getElementById('unit_price').value="";
+		document.getElementById('vat_percent').value="";
+		document.getElementById('vat_amount').value="";
+		document.getElementById('qty').value="";
+		document.getElementById('total').value="";
+		$("#product").val("").trigger('chosen:updated');
+
+		document.getElementById('edit_max_qty').value="";
+		document.getElementById('edit_spr_voucher_no').value="";
+		document.getElementById('edit_spd_id').value="";
+		document.getElementById('edit_product_id').value="";
+
+		rsFound = false;
+		needSave = true;
+	}
+
+
+	function calTotalVat() {
+		var total_amount = parseFloat(document.getElementById('total_value').value) || 0;
+		var vat_type = document.getElementById('vat_type').value; // percent | fixed
+		var vat_input = parseFloat(document.getElementById('total_vat_percent').value) || 0;
+
+		if (vat_input < 0) vat_input = 0;
+		var total_vat_amount = 0;
+
+		if (vat_type === 'percent') {
+			// limit percentage
+			if (vat_input > 100) vat_input = 100;
+			document.getElementById('total_vat_percent').value = vat_input;
+			// calculate % VAT
+			total_vat_amount = (vat_input / 100) * total_amount;
+		} else {
+			// fixed VAT amount
+			total_vat_amount = vat_input;
+		}
+
+		document.getElementById('total_vat_amount').value = total_vat_amount.toFixed(9);
+		calNetPayable();
+	}
+
+	function calTotalTDS() {
+		var total_amount = parseFloat(document.getElementById('total_value').value) || 0;
+		var tds_type = document.getElementById('tds_type').value; // percent | fixed
+		var tds_input = parseFloat(document.getElementById('total_tds_percent').value) || 0;
+
+		if (tds_input < 0) tds_input = 0;
+		var total_tds_amount = 0;
+
+		if (tds_type === 'percent') {
+			// limit percentage
+			if (tds_input > 100) tds_input = 100;
+			document.getElementById('total_tds_percent').value = tds_input;
+			// calculate % VAT
+			total_tds_amount = (tds_input / 100) * total_amount;
+		} else {
+			// fixed VAT amount
+			total_tds_amount = tds_input;
+		}
+
+		document.getElementById('total_tds_amount').value = total_tds_amount.toFixed(9);
+		calNetPayable();
+	}
+
+
+
+	function calNetPayable(){
+		var total_amount = parseFloat(document.getElementById('total_value').value);
+		var total_vat_amount = parseFloat(document.getElementById('total_vat_amount').value);
+		var total_tds_amount = parseFloat(document.getElementById('total_tds_amount').value);
+		var additional_cost = parseFloat(document.getElementById('additional_cost').value);
+		var discount = parseFloat(document.getElementById('discount').value);
+
+		if(isNaN(total_amount) || total_amount==""){total_amount = 0}
+		if(isNaN(total_vat_amount) || total_vat_amount==""){total_vat_amount = 0}
+		if(isNaN(total_tds_amount) || total_tds_amount==""){total_tds_amount = 0}
+		if(isNaN(additional_cost) || additional_cost==""){additional_cost = 0}
+		if(isNaN(discount) || discount==""){discount = 0}
+
+		var netPayable = (total_amount + additional_cost) - (total_tds_amount + discount);
+		var netPayableWithVat = netPayable + total_vat_amount;
+		document.getElementById('net_payble').value = netPayable.toFixed(9);
+		document.getElementById('grand_total').value = netPayableWithVat.toFixed(9);
+	}
+
+	const supplierData = <?=$supplierData;?>;
+
+	function purchaseType(store_id) {
+		let purchase_type = "";
+
+		const vatMap = {
+			"A002589" : "import",
+			"A004030" : "local",
+			"A004031" : "other"
+		};
+
+		if (store_id && store_id != "" && Array.isArray(supplierData)) {
+			const match = supplierData.find(item => item.point_id === store_id);
+
+			if (match && match.vat_ledger != null && match.vat_ledger != "") {
+				const vatLedger = match.vat_ledger.toString().trim();
+				if (vatLedger && vatMap[vatLedger]) {
+					purchase_type = vatMap[vatLedger];
+				}
+			}
+		}
+
+		$('#purchase_type').val(purchase_type).trigger('change');
+	}
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script>
+
+	$(function() {
+		$('#lc_no').select2({
+			dropdownParent: $('#lc_container'),
+			placeholder: "Select LC No",
+			allowClear: true,
+		});
+		$('#payable_id').select2({
+			dropdownParent: $('#payable_container'),
+			placeholder: "Select Payable",
+			allowClear: true,
+		});
+
+		// Show/hide import row based on Purchase Type selection
+		$('#purchase_type').on('change', function() {
+			toggleImportRow($(this).val());
+		});
+
+		// On page load: show if already set to import
+		toggleImportRow($('#purchase_type').val());
+	});
+
+	function toggleImportRow(val) {
+		var row = $('#import_row');
+		if (val === 'import') {
+			row.slideDown(300);
+		} else {
+			row.slideUp(100);
+			// Reset selections when hidden
+			$('#lc_no').val(null).trigger('change');
+			$('#payable_id').val(null).trigger('change');
+		}
+	}
+</script>
+</body>
+
+</html>
+
+
+

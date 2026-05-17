@@ -1,0 +1,1443 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$project_id  = getFromSession('project_id');  
+$division_id	= getRequest('division_id');  
+$district_id	= getRequest('district');  
+$trt_id			= getRequest('area');  
+$areaid			= getRequest('area'); 
+
+$Jan 			= getRequest('Jan'); 
+$Feb 			= getRequest('Feb');  
+$Mar 			= getRequest('Mar'); 
+$Apr 			= getRequest('Apr'); 
+$May 			= getRequest('May'); 
+$Jun 			= getRequest('Jun'); 
+$Jul 			= getRequest('Jul'); 
+$Aug 			= getRequest('Aug');
+$Sep 			= getRequest('Sep'); 
+$Oct 			= getRequest('Oct'); 
+$Nov 			= getRequest('Nov'); 
+$Dec 			= getRequest('Dec');
+
+$date_from 	  	= formatDate(getRequest('date_from')); $date_to = formatDate(getRequest('date_to')); 
+dateIFrame(REL_EXT_DIR);
+                 
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/print.css" media="all" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<title>General ERP</title>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Sundry Debtors Monthly Summary List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+</style>
+<body>
+  <table width="160%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1648"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="99%" align="center" cellpadding="4"cellspacing="0" class="addborder" id="viewScreen">
+		  <tr>
+			<td align="left" class="topbg" height="26" colspan="9"><span><strong>Search Sundry Debtors Summary </strong></span></td>
+		 </tr>
+		 <tr>
+		   <td width="5%" align="right">Division</td>
+		   <td width="7%">
+           <select name="division_id" id="division_id" style="width:95px" class="validate[required]" onChange="javascript:getDistrictList(this.value)">
+		     <?php
+				$sql = "SELECT * FROM ".DIVISION_TBL;
+				$result=mysql_query($sql);
+				while($row=mysql_fetch_array($result)){
+				?>
+		     <option value="<?=$row['division_id']?>" <? if($row['division_id']==$division_id){ echo 'selected';} ?>  >
+		       <?=$row['division_name_eng']?>
+		       </option>
+		     <?php } ?>
+		     </select></td>
+		   <td width="3%">Area</td>
+		   <td width="10%">
+           <select name="district" id="district" style="width:135px"  class="validate[required]" tabindex="1" onChange="javascript:getAreaList(this.value)" >
+		     <option value="">Select Area</option>
+		     <?php	
+			$DISsql = "SELECT * FROM ".DISTRICT_TBL." WHERE division_id='$division_id'";            
+            $DISsql.=" ORDER BY district_name";
+            $Dresult=mysql_query($DISsql);
+            while($Drow=mysql_fetch_object($Dresult)){
+				$district_name = $Drow->district_name;	
+			?>
+		     <option value="<?=$Drow->district_id?>"<?php if($Drow->district_id==$district_id) echo "selected";?> >
+		       <?=$district_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="3%"> &nbsp; TRT</td>
+		   <td width="10%">
+           <select name="area" id="area" style="width:145px" tabindex="2"  >
+		     <option value="">Select TRT Area</option>
+		     <?php	
+			 $Asql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id'";			
+             $Asql.=" ORDER BY area_name";
+             $Aresult=mysql_query($Asql);
+             while($av=mysql_fetch_object($Aresult)){			
+				$area_id = $av->area_id;	
+				$area_name = $av->area_name;	
+			  ?>
+		     <option value="<?=$area_id?>"<?php if($area_id==$trt_id) echo "selected";?> >
+		       <?=$area_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="4%">Month</td>
+		   <td width="43%">
+           <input type="checkbox" name="Jan" id="Jan" value="Jan" <? if($Jan=="Jan"){ echo "checked";}?> > Jan. &nbsp;
+           <input type="checkbox" name="Feb" id="Feb" value="Feb" <? if($Feb=="Feb"){ echo "checked";}?>> Feb. &nbsp;
+           <input type="checkbox" name="Mar" id="Mar" value="Mar" <? if($Mar=="Mar"){ echo "checked";}?>> Mar. &nbsp;
+           <input type="checkbox" name="Apr" id="Apr" value="Apr" <? if($Apr=="Apr"){ echo "checked";}?>> Apr. &nbsp;
+           <input type="checkbox" name="May" id="May" value="May" <? if($May=="May"){ echo "checked";}?>> May &nbsp;
+           <input type="checkbox" name="Jun" id="Jun" value="Jun" <? if($Jun=="Jun"){ echo "checked";}?>> June &nbsp;
+           <input type="checkbox" name="Jul" id="Jul" value="Jul" <? if($Jul=="Jul"){ echo "checked";}?>> July &nbsp;
+           <input type="checkbox" name="Aug" id="Aug" value="Aug" <? if($Aug=="Aug"){ echo "checked";}?>> Aug &nbsp;
+           <input type="checkbox" name="Sep" id="Sep" value="Sep" <? if($Sep=="Sep"){ echo "checked";}?>> Sept. &nbsp;
+           <input type="checkbox" name="Oct" id="Oct" value="Oct" <? if($Oct=="Oct"){ echo "checked";}?>> Oct. &nbsp;
+           <input type="checkbox" name="Nov" id="Nov" value="Nov" <? if($Nov=="Nov"){ echo "checked";}?>> Nov. &nbsp;
+           <input type="checkbox" name="Dec" id="Dec" value="Dec" <? if($Dec=="Dec"){ echo "checked";}?>> Dec. &nbsp;
+		   </td>
+		   <td width="15%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		 </tr>
+		</table>
+		<? if($division_id!=""){ ?>
+		<br>		
+		<!--Start Pagination -->	 
+		<div class="pagination">
+		 <?	
+		$sql2 = "SELECT * FROM ".DISTRICT_TBL." WHERE project_id='$project_id' AND division_id='$division_id'";	
+        if($district_id!=""){
+        $sql2.=" AND district_id='$district_id'";
+        }		
+		$tres 	= mysql_query($sql2);
+		$totalrecord = mysql_num_rows($tres);
+		$fdate= dateInputFormatDMY($date_from);	 $tdate= dateInputFormatDMY($date_to);					
+		$from_rs=$_REQUEST['from'];
+		$to_rs=$from_rs+12;
+		if($from_rs>=12){$from_rs =$from_rs+1;}
+		if($from_rs=="" || $from_rs==0){$from_rs =1;}
+		if($to_rs=="" || $totalrecord<12){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >12){$to_rs=12;}
+		if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+		if($totalrecord==0){ $from_rs=0;}
+		?>
+		<div style="float:left; font-size:13px;">
+			 <span>Results <strong><?=$from_rs?>-<?=$to_rs?></strong> of 
+			 <strong>
+			 <?=$totalrecord;	
+			if($totalrecord>0){?>
+			 </strong>			 </span>			</div>
+			<div style="float:right;font-size:13px;"> &nbsp;&nbsp;
+			 &nbsp;&nbsp;<span style="height:20px">Page:</span>
+			<?php	 						
+			$plink = $_REQUEST['page_no'];
+			if($plink==""){$plink=1;}
+			if($totalrecord > 12)
+			{
+				$res = $totalrecord/12;
+				$res=(int)$res;
+				if(($totalrecord%12)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+		
+			if($totalrecord >12)
+			{
+				$two = $_REQUEST['from'];
+				$pno = $_REQUEST['page_no'];
+				$pno = $pno-1;
+				$frm = $two - 12;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+				echo "<a id='$pno' href='?app=sales.report&cmd=customer.status_by_trt&division_id=$division_id&district=$district&date_from=$fdate&date_to=$tdate&from=$frm&to=12&page_no=$pno'><span>Prev</span></a>&nbsp;";
+				}
+			}	
+		
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=12;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "class='selected'";}
+						echo "href='?app=sales.report&cmd=customer.status_by_trt&division_id=$division_id&district=$district&date_from=$fdate&date_to=$tdate&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "class='selected'";} 
+						echo "href='?app=sales.report&cmd=customer.status_by_trt&division_id=$division_id&district=$district&date_from=$fdate&date_to=$tdate&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}			
+		
+					$i++;
+					$from =$from+12;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+			if($totalrecord >12)
+			{
+				$f = $_REQUEST['from'];
+				$page = $_REQUEST['page_no'];
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=12;$page=2;}else{ $f=$f+12;} 
+				$t = 12;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=sales.report&cmd=customer.status_by_trt&division_id=$division_id&district=$district&date_from=$fdate&date_to=$tdate&from=$f&to=$t&page_no=$page'><span>Next</span></a>";
+				}
+			}
+		
+		  }?>
+&nbsp;&nbsp;&nbsp;		</div>	
+	</div>
+		<!-- End Pagenation -->	
+		<br style="clear:both">
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp;Sundry Debtors Monthly Summary  List </strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+            <?  $project_id = getFromSession('project_id');
+                $psql= "SELECT project_name,location AS address FROM ".PROJECT_TBL." WHERE project_id = '".$project_id."'";
+                $prow = mysql_fetch_object(mysql_query($psql));	
+				
+				$divsql= "SELECT * FROM ".DIVISION_TBL." WHERE project_id='$project_id' AND division_id='$division_id' ";				 
+				$divres = mysql_query($divsql);
+				$divrow = mysql_fetch_object($divres);
+								
+                if($district_id!=""){
+       			$disrow = mysql_fetch_object($tres);
+                }
+				if($areaid!=""){
+				$arsql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id' AND area_id='$areaid'";			
+                $areaRes=mysql_query($arsql);
+				$arrow = mysql_fetch_object($areaRes);
+				}			 
+            ?>
+			<div align="center">
+			  <span style="font-size:20px; font-weight:bold"> <?=$prow->project_name?></span><br>
+			  <span style="font-size:13px; font-weight:normal"><?=$prow->address?></span>
+              <br>
+			  <span style="font-size:16px; font-weight:bold; text-decoration:underline">
+			  <? 
+              echo $divrow->division_name_eng;            
+              ?>
+			  </span>
+              <span style="font-size:14px; font-weight:bold; text-decoration:underline;">
+			  <?                          
+              if($district_id!=""){
+       			echo "<br><div  style='margin-top:4px'></div> Area-".$disrow->district_name;
+              }
+              ?>  
+			  </span>  
+			  <? if($areaid!=""){ ?>
+			  <span style="font-size:13px; font-weight:bold; text-decoration:underline;">
+			  <?  echo "<br><div  style='margin-top:4px'></div> ".$arrow->area_name; ?>  
+			  </span> 
+			  <? }?>			  				
+			  <br>
+              <span style="font-size:13px; font-weight:normal">
+              <? echo formatDate4Display($date_from). " to ".formatDate4Display($date_to); ?>
+              </span>
+            </div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+			    <td colspan="2" align="left" nowrap>Month  Name</td>
+                <?php if($Jan !=""){?>  
+			    <td colspan="4" align="center" nowrap>January</td>
+                <?php } if($Feb !=""){?>  
+			    <td colspan="4" align="center" nowrap>February</td>
+                <?php } if($Mar !=""){?>  
+			    <td colspan="4" align="center" nowrap>March</td>                
+                <?php } if($Apr !=""){?>  
+			    <td colspan="4" align="center" nowrap>April</td>
+                <?php } if($May !=""){?>  
+			    <td colspan="4" align="center" nowrap>May</td>
+                <?php } if($Jun !=""){?>  
+			    <td colspan="4" align="center" nowrap>June</td>
+                <?php } if($Jul !=""){?>  
+			    <td colspan="4" align="center" nowrap>July</td>
+                <?php } if($Aug !=""){?>  
+			    <td colspan="4" align="center" nowrap>August</td>
+                <?php } if($Sep !=""){?>  
+			    <td colspan="4" align="center" nowrap>September</td>
+                <?php } if($Oct !=""){?>  
+			    <td colspan="4" align="center" nowrap>October</td>
+                <?php } if($Nov !=""){?>  
+			    <td colspan="4" align="center" nowrap>November</td>
+                <?php } if($Dec !=""){?>  
+			    <td colspan="4" align="center" nowrap>December</td>
+                <?php }?>
+			    </tr>
+			  <tr>
+			    <td width="1%" align="left" nowrap>Sl</td>
+			    <td width="13%" align="left" nowrap>Particulars</td>
+                <?php if($Jan !=""){?>
+			    <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Feb !=""){?>
+			    <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Mar !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Apr !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($May !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Jun !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Jul !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Aug !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Sep !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Oct !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Nov !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } if($Dec !=""){?>
+                <td width="3%" align="left" nowrap>OB </td>
+			    <td width="3%" align="left" nowrap>Dr</td>
+			    <td width="3%" align="left" nowrap>Cr</td>
+			    <td width="3%" align="right" nowrap>CB </td>
+                <?php } ?>
+			    </tr>
+				<!-- Start Area -->
+				<?
+				  				  
+				  $asl=1;
+				  $from = getRequest('from');   $to = getRequest('to'); 
+				  if($from == "" && $to == ""){$from=0; $to=12;}
+				  $totalOBAmount =0; $totalJanDrAmount = 0; $totalJanCrAmount = 0; $totalJanCBAmount=0; 
+                  $totalFebOBAmount =0; $totalFebDrAmount = 0; $totalFebCrAmount = 0; $totalFebCBAmount=0; 
+                  $totalMarOBAmount =0; $totalMarDrAmount = 0; $totalMarCrAmount = 0; $totalMarCBAmount=0;
+                  $totalAprOBAmount =0; $totalAprDrAmount = 0; $totalAprCrAmount = 0; $totalAprCBAmount=0;
+                  $totalMayOBAmount =0; $totalMayDrAmount = 0; $totalMayCrAmount = 0; $totalMayCBAmount=0; 
+                  $totalJunOBAmount =0; $totalJunDrAmount = 0; $totalJunCrAmount = 0; $totalJunCBAmount=0;
+                  $totalJulOBAmount =0; $totalJulDrAmount = 0; $totalJulCrAmount = 0; $totalJulCBAmount=0;  
+                  $totalAugOBAmount =0; $totalAugDrAmount = 0; $totalAugCrAmount = 0; $totalAugCBAmount=0;   
+                  $totalSepOBAmount =0; $totalSepDrAmount = 0; $totalSepCrAmount = 0; $totalSepCBAmount=0;    
+                  $totalOctOBAmount =0; $totalOctDrAmount = 0; $totalOctCrAmount = 0; $totalOctCBAmount=0;   
+                  $totalNovOBAmount =0; $totalNovDrAmount = 0; $totalNovCrAmount = 0; $totalNovCBAmount=0;  
+                  $totalDecOBAmount =0; $totalDecDrAmount = 0; $totalDecCrAmount = 0; $totalDecCBAmount=0;
+				  
+				  $csql= "SELECT * FROM ".DISTRICT_TBL." WHERE project_id='$project_id' AND division_id='$division_id' ";
+				  if($district_id!=""){                  
+				  $csql.=" AND district_id='$district_id'";
+				  }
+				  $csql.="ORDER BY district_name ASC LIMIT $from,$to";					
+				  
+				  $cres = mysql_query($csql);
+				  while($crow = mysql_fetch_object($cres)){	
+				  $district_id = $crow->district_id;
+                  //=== Area Jan ==========
+                  $AreaOB = getTotalMonthlyOB($project_id,"",$district_id,"","Area"); 
+                  $AreaJanDr = getMonthlyAmount($project_id,"",$district_id,"","JanDr","Area"); 
+                  $AreaJanCr = getMonthlyAmount($project_id,"",$district_id,"","JanCr","Area"); 
+                  if($AreaOB >= 0){
+                  $AreaJanCB = (($AreaJanDr+$AreaOB)-$AreaJanCr);}else{ $AreaJanCB = ($AreaJanDr-($AreaJanCr+abs($AreaOB)));
+                  } 
+                  
+                  //====== Area Feb =======
+                  $AreaFebOB = $AreaJanCB; 
+                  $AreaFebDr = getMonthlyAmount($project_id,"",$district_id,"","FebDr","Area"); 
+                  $AreaFebCr = getMonthlyAmount($project_id,"",$district_id,"","FebCr","Area"); 
+                  if($AreaFebOB >= 0){
+                  $AreaFebCB = (($AreaFebDr+$AreaFebOB)-$AreaFebCr);}else{ $AreaFebCB = ($AreaFebDr-($AreaFebCr+abs($AreaFebOB)));
+                  } 
+                         
+                  //====== Area Mar =======
+                  $AreaMarOB = $AreaFebCB; 
+                  $AreaMarDr = getMonthlyAmount($project_id,"",$district_id,"","MarDr","Area"); 
+                  $AreaMarCr = getMonthlyAmount($project_id,"",$district_id,"","MarCr","Area"); 
+                  if($AreaMarOB >= 0){ 
+                  $AreaMarCB = (($AreaMarDr+$AreaMarOB)-$AreaMarCr);}else{ $AreaMarCB = ($AreaMarDr-($AreaMarCr+abs($AreaMarOB)));
+                  } 
+                  
+                  //====== Area Apr =======
+                  $AreaAprOB = $AreaMarCB; 
+                  $AreaAprDr = getMonthlyAmount($project_id,"",$district_id,"","AprDr","Area"); 
+                  $AreaAprCr = getMonthlyAmount($project_id,"",$district_id,"","AprCr","Area"); 
+                  if($AreaAprOB >= 0){ 
+                  $AreaAprCB = (($AreaAprDr+$AreaAprOB)-$AreaAprCr);}else{ $AreaAprCB = ($AreaAprDr-($AreaAprCr+abs($AreaAprOB)));
+                  } 
+                  
+                  //====== Area May =======
+                  $AreaMayOB = $AreaAprCB; 
+                  $AreaMayDr = getMonthlyAmount($project_id,"",$district_id,"","MayDr","Area"); 
+                  $AreaMayCr = getMonthlyAmount($project_id,"",$district_id,"","MayCr","Area"); 
+                  if($AreaMayOB >= 0){ 
+                  $AreaMayCB = (($AreaMayDr+$AreaMayOB)-$AreaMayCr);}else{ $AreaMayCB = ($AreaMayDr-($AreaMayCr+abs($AreaMayOB)));
+                  } 
+                  
+                  //====== Area Jun =======
+                  $AreaJunOB = $AreaMayCB; 
+                  $AreaJunDr = getMonthlyAmount($project_id,"",$district_id,"","JunDr","Area"); 
+                  $AreaJunCr = getMonthlyAmount($project_id,"",$district_id,"","JunCr","Area"); 
+                  if($AreaJunOB >= 0){ 
+                  $AreaJunCB = (($AreaJunDr+$AreaJunOB)-$AreaJunCr);}else{ $AreaJunCB = ($AreaJunDr-($AreaJunCr+abs($AreaJunOB)));
+                  }
+                  
+                  //====== Area Jul =======
+                  $AreaJulOB = $AreaJunCB; 
+                  $AreaJulDr = getMonthlyAmount($project_id,"",$district_id,"","JulDr","Area"); 
+                  $AreaJulCr = getMonthlyAmount($project_id,"",$district_id,"","JulCr","Area"); 
+                  if($AreaJulOB >= 0){ 
+                  $AreaJulCB = (($AreaJulDr+$AreaJulOB)-$AreaJulCr);}else{ $AreaJulCB = ($AreaJulDr-($AreaJulCr+abs($AreaJulOB)));
+                  }
+                  
+                  //====== Area Aug =======
+                  $AreaAugOB = $AreaJulCB; 
+                  $AreaAugDr = getMonthlyAmount($project_id,"",$district_id,"","AugDr","Area"); 
+                  $AreaAugCr = getMonthlyAmount($project_id,"",$district_id,"","AugCr","Area"); 
+                  if($AreaAugOB >= 0){ 
+                  $AreaAugCB = (($AreaAugDr+$AreaAugOB)-$AreaAugCr);}else{ $AreaAugCB = ($AreaAugDr-($AreaAugCr+abs($AreaAugOB)));
+                  }
+                  
+                  //====== Area Sep =======
+                  $AreaSepOB = $AreaAugCB; 
+                  $AreaSepDr = getMonthlyAmount($project_id,"",$district_id,"","SepDr","Area"); 
+                  $AreaSepCr = getMonthlyAmount($project_id,"",$district_id,"","SepCr","Area"); 
+                  if($AreaSepOB >= 0){ 
+                  $AreaSepCB = (($AreaSepDr+$AreaSepOB)-$AreaSepCr);}else{ $AreaSepCB = ($AreaSepDr-($AreaSepCr+abs($AreaSepOB)));
+                  }
+                  
+                  //====== Area Oct =======
+                  $AreaOctOB = $AreaSepCB; 
+                  $AreaOctDr = getMonthlyAmount($project_id,"",$district_id,"","OctDr","Area"); 
+                  $AreaOctCr = getMonthlyAmount($project_id,"",$district_id,"","OctCr","Area"); 
+                  if($AreaOctOB >= 0){ 
+                  $AreaOctCB = (($AreaOctDr+$AreaOctOB)-$AreaOctCr);}else{ $AreaOctCB = ($AreaOctDr-($AreaOctCr+abs($AreaOctOB)));
+                  }
+                  
+                  //====== Area Nov =======
+                  $AreaNovOB = $AreaOctCB; 
+                  $AreaNovDr = getMonthlyAmount($project_id,"",$district_id,"","NovDr","Area"); 
+                  $AreaNovCr = getMonthlyAmount($project_id,"",$district_id,"","NovCr","Area"); 
+                  if($AreaNovOB >= 0){ 
+                  $AreaNovCB = (($AreaNovDr+$AreaNovOB)-$AreaNovCr);}else{ $AreaNovCB = ($AreaNovDr-($AreaNovCr+abs($AreaNovOB)));
+                  }
+                  
+                  //====== Area Dec =======
+                  $AreaDecOB = $AreaNovCB; 
+                  $AreaDecDr = getMonthlyAmount($project_id,"",$district_id,"","DecDr","Area"); 
+                  $AreaDecCr = getMonthlyAmount($project_id,"",$district_id,"","DecCr","Area"); 
+                  if($AreaDecOB >= 0){ 
+                  $AreaDecCB = (($AreaDecDr+$AreaDecOB)-$AreaDecCr);}else{ $AreaDecCB = ($AreaDecDr-($AreaDecCr+abs($AreaDecOB)));
+                  }
+				?>
+			   <tr bgcolor="#F3F3F3">
+				<td align="left" nowrap><?=$asl?></td>
+				<td align="left" nowrap style="font-style:oblique">Area-<?=$crow->district_name?></td>
+				<!-- Start Area Jan -->
+                <?php if($Jan !=""){?>
+                <td align="left" nowrap>
+                <?php 
+                echo number_format(abs($AreaOB), 2, '.', '');           
+                if($AreaOB>0){ echo " Dr"; }else{ echo " Cr";} $totalOBAmount+=$AreaOB;
+                ?>                
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaJanDr, 2, '.', '');                
+                 $totalJanDrAmount+=$AreaJanDr;
+                ?>				
+                </td>
+				<td align="left">
+				<?php 
+                echo number_format($AreaJanCr, 2, '.', '');                
+                $totalJanCrAmount+=$AreaJanCr;
+                ?>				
+                </td>
+				<td align="right">
+                <?php                 
+                echo number_format(abs($AreaJanCB), 2, '.', ''); $totalJanCBAmount+=$AreaJanCB;
+				if($AreaJanCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Jan -->
+                <?php } if($Feb !=""){?>                
+                <!--Start Area Feb -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaFebOB), 2, '.', ''); 
+                if($AreaFebOB>0){ echo " Dr"; }else{ echo " Cr";} $totalFebOBAmount+=$AreaFebOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaFebDr, 2, '.', '');
+                 $totalFebDrAmount+=$AreaFebDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaFebCr, 2, '.', ''); 
+                $totalFebCrAmount+=$AreaFebCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaFebCB), 2, '.', ''); $totalFebCBAmount+=$AreaFebCB;
+				if($AreaFebCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Feb -->
+                <?php } if($Mar !=""){?>   
+                <!--Start Area Mar -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaMarOB), 2, '.', ''); 
+                if($AreaMarOB>0){ echo " Dr"; }else{ echo " Cr";} $totalMarOBAmount+=$AreaMarOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaMarDr, 2, '.', '');
+                 $totalMarDrAmount+=$AreaMarDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaMarCr, 2, '.', ''); 
+                $totalMarCrAmount+=$AreaMarCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaMarCB), 2, '.', ''); $totalMarCBAmount+=$AreaMarCB;
+				if($AreaMarCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Mar -->
+                <?php } if($Apr !=""){?>   
+                <!--Start Area Apr -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaAprOB), 2, '.', ''); 
+                if($AreaAprOB>0){ echo " Dr"; }else{ echo " Cr";} $totalAprOBAmount+=$AreaAprOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaAprDr, 2, '.', '');
+                 $totalAprDrAmount+=$AreaAprDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaAprCr, 2, '.', ''); 
+                $totalAprCrAmount+=$AreaAprCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaAprCB), 2, '.', ''); $totalAprCBAmount+=$AreaAprCB;
+				if($AreaAprCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Apr -->                
+                <?php } if($May !=""){?>   
+                <!--Start Area May -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaMayOB), 2, '.', ''); 
+                if($AreaMayOB>0){ echo " Dr"; }else{ echo " Cr";} $totalMayOBAmount+=$AreaMayOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaMayDr, 2, '.', '');
+                 $totalMayDrAmount+=$AreaMayDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaMayCr, 2, '.', ''); 
+                $totalMayCrAmount+=$AreaMayCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaMayCB), 2, '.', ''); $totalMayCBAmount+=$AreaMayCB;
+				if($AreaMayCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area May -->
+                <?php } if($Jun !=""){?>   
+                <!--Start Area Jun -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaJunOB), 2, '.', ''); 
+                if($AreaJunOB>0){ echo " Dr"; }else{ echo " Cr";} $totalJunOBAmount+=$AreaJunOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaJunDr, 2, '.', '');
+                 $totalJunDrAmount+=$AreaJunDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaJunCr, 2, '.', ''); 
+                $totalJunCrAmount+=$AreaJunCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaJunCB), 2, '.', ''); $totalJunCBAmount+=$AreaJunCB;
+				if($AreaJunCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Jun -->
+                <?php } if($Jul !=""){?>   
+                <!--Start Area Jul -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaJulOB), 2, '.', ''); 
+                if($AreaJulOB>0){ echo " Dr"; }else{ echo " Cr";} $totalJulOBAmount+=$AreaJulOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaJulDr, 2, '.', '');
+                 $totalJulDrAmount+=$AreaJulDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaJulCr, 2, '.', ''); 
+                $totalJulCrAmount+=$AreaJulCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaJulCB), 2, '.', ''); $totalJulCBAmount+=$AreaJulCB;
+				if($AreaJulCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Jul -->
+                <?php } if($Aug !=""){?>   
+                <!--Start Area Aug -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaAugOB), 2, '.', ''); 
+                if($AreaAugOB>0){ echo " Dr"; }else{ echo " Cr";} $totalAugOBAmount+=$AreaAugOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaAugDr, 2, '.', '');
+                 $totalAugDrAmount+=$AreaAugDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaAugCr, 2, '.', ''); 
+                $totalAugCrAmount+=$AreaAugCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaAugCB), 2, '.', ''); $totalAugCBAmount+=$AreaAugCB;
+				if($AreaAugCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Aug -->
+                <?php } if($Sep !=""){?>   
+                <!--Start Area Sep -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaSepOB), 2, '.', ''); 
+                if($AreaSepOB>0){ echo " Dr"; }else{ echo " Cr";} $totalSepOBAmount+=$AreaSepOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaSepDr, 2, '.', '');
+                 $totalSepDrAmount+=$AreaSepDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaSepCr, 2, '.', ''); 
+                $totalSepCrAmount+=$AreaSepCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaSepCB), 2, '.', ''); $totalSepCBAmount+=$AreaSepCB;
+				if($AreaSepCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Sep -->                
+                <?php } if($Oct !=""){?>   
+                <!--Start Area Oct -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaOctOB), 2, '.', ''); 
+                if($AreaOctOB>0){ echo " Dr"; }else{ echo " Cr";} $totalOctOBAmount+=$AreaOctOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaOctDr, 2, '.', '');
+                 $totalOctDrAmount+=$AreaOctDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaOctCr, 2, '.', ''); 
+                $totalOctCrAmount+=$AreaOctCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaOctCB), 2, '.', ''); $totalOctCBAmount+=$AreaOctCB;
+				if($AreaOctCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Oct -->
+                <?php } if($Nov !=""){?>   
+                <!--Start Area Nov -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaNovOB), 2, '.', ''); 
+                if($AreaNovOB>0){ echo " Dr"; }else{ echo " Cr";} $totalNovOBAmount+=$AreaNovOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaNovDr, 2, '.', '');
+                 $totalNovDrAmount+=$AreaNovDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaNovCr, 2, '.', ''); 
+                $totalNovCrAmount+=$AreaNovCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaNovCB), 2, '.', ''); $totalNovCBAmount+=$AreaNovCB;
+				if($AreaNovCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Nov -->
+                <?php } if($Dec !=""){?>   
+                <!--Start Area Dec -->
+				<td align="left" nowrap>
+                <?php                
+                echo number_format(abs($AreaDecOB), 2, '.', ''); 
+                if($AreaDecOB>0){ echo " Dr"; }else{ echo " Cr";} $totalDecOBAmount+=$AreaDecOB;
+                ?>
+                </td>
+				<td align="left" nowrap>
+                <?php
+                 echo number_format($AreaDecDr, 2, '.', '');
+                 $totalDecDrAmount+=$AreaDecDr;
+                ?>
+                </td>
+				<td align="left">
+                <?php 
+                echo number_format($AreaDecCr, 2, '.', ''); 
+                $totalDecCrAmount+=$AreaDecCr;
+                ?>
+                </td>
+				<td align="right">
+                <?php               
+                echo number_format(abs($AreaDecCB), 2, '.', ''); $totalDecCBAmount+=$AreaDecCB;
+				if($AreaDecCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <!-- End Area Dec -->
+                <?php } ?>
+				</tr>
+			 	<!-- Start TRT -->
+				<?php
+				  $tsl=1;			  
+				  $project_id  = getFromSession('project_id');  
+				  $trtsql= "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id' ";
+				  if($areaid!=""){
+				  $trtsql.=" AND `area_id`='$areaid'";
+				  } 
+				  $trtsql.="ORDER BY area_name ASC";
+				  $trtres = mysql_query($trtsql);
+				  while($trtrow = mysql_fetch_object($trtres)){	
+				  $trt_id 		= $trtrow->area_id;
+                 //======= TRT Jan ======
+                  $TrtOB 	= getTotalMonthlyOB($project_id,"","",$trt_id,"TRT"); 
+                  $TrtJanDr = getMonthlyAmount($project_id,"","",$trt_id,"JanDr","TRT");
+                  $TrtJanCr = getMonthlyAmount($project_id,"","",$trt_id,"JanCr","TRT");
+                  if($TrtOB >= 0){                   
+                  $TrtJanCB = (($TrtJanDr+$TrtOB)-$TrtJanCr);}else{ $TrtJanCB = ($TrtJanDr-($TrtJanCr+abs($TrtOB)));
+                  } 
+                  
+                  //======= TRT Feb ======
+                  $TrtFebOB = $TrtJanCB;  
+                  $TrtFebDr = getMonthlyAmount($project_id,"","",$trt_id,"FebDr","TRT");
+                  $TrtFebCr = getMonthlyAmount($project_id,"","",$trt_id,"FebCr","TRT");
+                  if($TrtFebOB >= 0){
+                  $TrtFebCB = (($TrtFebDr+$TrtFebOB)-$TrtFebCr);}else{ $TrtFebCB = ($TrtFebDr-($TrtFebCr+abs($TrtFebOB)));
+                  } 
+                 
+                  //======= TRT Mar ======
+                  $TrtMarOB = $TrtFebCB;  
+                  $TrtMarDr = getMonthlyAmount($project_id,"","",$trt_id,"MarDr","TRT");
+                  $TrtMarCr = getMonthlyAmount($project_id,"","",$trt_id,"MarCr","TRT");
+                  if($TrtMarOB >= 0){
+                  $TrtMarCB = (($TrtMarDr+$TrtMarOB)-$TrtMarCr);}else{ $TrtMarCB = ($TrtMarDr-($TrtMarCr+abs($TrtMarOB)));
+                  } 
+                                    
+                  //======= TRT Apr ======
+                  if($Apr =="Apr"){
+                      $TrtAprOB = $TrtMarCB;  
+                      $TrtAprDr = getMonthlyAmount($project_id,"","",$trt_id,"AprDr","TRT");
+                      $TrtAprCr = getMonthlyAmount($project_id,"","",$trt_id,"AprCr","TRT");
+                      if($TrtAprOB >= 0){
+                      $TrtAprCB = (($TrtAprDr+$TrtAprOB)-$TrtAprCr);}else{ $TrtAprCB = ($TrtAprDr-($TrtAprCr+abs($TrtAprOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT May ======
+                  if($May =="May"){
+                      $TrtMayOB = $TrtAprCB;  
+                      $TrtMayDr = getMonthlyAmount($project_id,"","",$trt_id,"MayDr","TRT");
+                      $TrtMayCr = getMonthlyAmount($project_id,"","",$trt_id,"MayCr","TRT");
+                      if($TrtMayOB >= 0){
+                      $TrtMayCB = (($TrtMayDr+$TrtMayOB)-$TrtMayCr);}else{ $TrtMayCB = ($TrtMayDr-($TrtMayCr+abs($TrtMayOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Jun ======
+                  if($Jun =="Jun"){
+                      $TrtJunOB = $TrtMayCB;  
+                      $TrtJunDr = getMonthlyAmount($project_id,"","",$trt_id,"JunDr","TRT");
+                      $TrtJunCr = getMonthlyAmount($project_id,"","",$trt_id,"JunCr","TRT");
+                      if($TrtJunOB >= 0){
+                      $TrtJunCB = (($TrtJunDr+$TrtJunOB)-$TrtJunCr);}else{ $TrtJunCB = ($TrtJunDr-($TrtJunCr+abs($TrtJunOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Jul ======
+                  if($Jul =="Jul"){
+                      $TrtJulOB = $TrtJunCB;  
+                      $TrtJulDr = getMonthlyAmount($project_id,"","",$trt_id,"JulDr","TRT");
+                      $TrtJulCr = getMonthlyAmount($project_id,"","",$trt_id,"JulCr","TRT");
+                      if($TrtJulOB >= 0){
+                      $TrtJulCB = (($TrtJulDr+$TrtJulOB)-$TrtJulCr);}else{ $TrtJulCB = ($TrtJulDr-($TrtJulCr+abs($TrtJulOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Aug ======
+                  if($Aug =="Aug"){
+                      $TrtAugOB = $TrtJulCB;  
+                      $TrtAugDr = getMonthlyAmount($project_id,"","",$trt_id,"AugDr","TRT");
+                      $TrtAugCr = getMonthlyAmount($project_id,"","",$trt_id,"AugCr","TRT");
+                      if($TrtAugOB >= 0){
+                      $TrtAugCB = (($TrtAugDr+$TrtAugOB)-$TrtAugCr);}else{ $TrtAugCB = ($TrtAugDr-($TrtAugCr+abs($TrtAugOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Sep ======
+                  if($Sep =="Sep"){
+                      $TrtSepOB = $TrtAugCB;  
+                      $TrtSepDr = getMonthlyAmount($project_id,"","",$trt_id,"SepDr","TRT");
+                      $TrtSepCr = getMonthlyAmount($project_id,"","",$trt_id,"SepCr","TRT");
+                      if($TrtSepOB >= 0){
+                      $TrtSepCB = (($TrtSepDr+$TrtSepOB)-$TrtSepCr);}else{ $TrtSepCB = ($TrtSepDr-($TrtSepCr+abs($TrtSepOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Oct ======
+                  if($Oct =="Oct"){
+                      $TrtOctOB = $TrtSepCB;  
+                      $TrtOctDr = getMonthlyAmount($project_id,"","",$trt_id,"OctDr","TRT");
+                      $TrtOctCr = getMonthlyAmount($project_id,"","",$trt_id,"OctCr","TRT");
+                      if($TrtOctOB >= 0){
+                      $TrtOctCB = (($TrtOctDr+$TrtOctOB)-$TrtOctCr);}else{ $TrtOctCB = ($TrtOctDr-($TrtOctCr+abs($TrtOctOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Nov ======
+                  if($Nov =="Nov"){
+                      $TrtNovOB = $TrtOctCB;  
+                      $TrtNovDr = getMonthlyAmount($project_id,"","",$trt_id,"NovDr","TRT");
+                      $TrtNovCr = getMonthlyAmount($project_id,"","",$trt_id,"NovCr","TRT");
+                      if($TrtNovOB >= 0){
+                      $TrtNovCB = (($TrtNovDr+$TrtNovOB)-$TrtNovCr);}else{ $TrtNovCB = ($TrtNovDr-($TrtNovCr+abs($TrtNovOB)));
+                      }                  
+                  }
+                  
+                  //======= TRT Dec ======
+                  if($Dec =="Dec"){
+                      $TrtDecOB = $TrtNovCB;  
+                      $TrtDecDr = getMonthlyAmount($project_id,"","",$trt_id,"DecDr","TRT");
+                      $TrtDecCr = getMonthlyAmount($project_id,"","",$trt_id,"DecCr","TRT");
+                      if($TrtDecOB >= 0){
+                      $TrtDecCB = (($TrtDecDr+$TrtDecOB)-$TrtDecCr);}else{ $TrtDecCB = ($TrtDecDr-($TrtDecCr+abs($TrtDecOB)));
+                      }                  
+                  }
+				?>
+				<tr bgcolor="#F3F3F3">
+				<td align="left" nowrap><?=$tsl?></td>
+				<td align="left" nowrap style="font-style:oblique"><?=$trtrow->area_name?></td>
+                <?php if($Jan !=""){?>   
+                <!-- Start TRT Jan -->
+				<td align="left" nowrap>
+                <? echo number_format(abs($TrtOB), 2, '.', ''); if($TrtOB>0){ echo " Dr"; }else{ echo " Cr";}?>				
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtJanDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtJanCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtJanCB), 2, '.', ''); if($TrtJanCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Feb !=""){?>   
+                <!-- Start TRT Feb -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtFebOB), 2, '.', ''); 
+				if($TrtFebOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtFebDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtFebCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtFebCB), 2, '.', ''); if($TrtFebCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Mar !=""){?>   
+                <!-- Start TRT Mar -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtMarOB), 2, '.', ''); 
+				if($TrtMarOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtMarDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtMarCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtMarCB), 2, '.', ''); if($TrtMarCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>   
+                <?php } if($Apr !=""){?>   
+                <!-- Start TRT Apr -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtAprOB), 2, '.', ''); 
+				if($TrtAprOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtAprDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtAprCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtAprCB), 2, '.', ''); if($TrtAprCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($May !=""){?>   
+                <!-- Start TRT May -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtMayOB), 2, '.', ''); 
+				if($TrtMayOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtMayDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtMayCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtMayCB), 2, '.', ''); if($TrtMayCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Jun !=""){?>   
+                <!-- Start TRT Jun -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtJunOB), 2, '.', ''); 
+				if($TrtJunOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtJunDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtJunCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtJunCB), 2, '.', ''); if($TrtJunCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Jul !=""){?>   
+                <!-- Start TRT Jul -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtJulOB), 2, '.', ''); 
+				if($TrtJulOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtJulDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtJulCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtJulCB), 2, '.', ''); if($TrtJulCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Aug !=""){?>   
+                <!-- Start TRT Aug -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtAugOB), 2, '.', ''); 
+				if($TrtAugOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtAugDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtAugCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtAugCB), 2, '.', ''); if($TrtAugCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Sep !=""){?>   
+                <!-- Start TRT Sep -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtSepOB), 2, '.', ''); 
+				if($TrtSepOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtSepDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtSepCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtSepCB), 2, '.', ''); if($TrtSepCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Oct !=""){?>   
+                <!-- Start TRT Oct -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtOctOB), 2, '.', ''); 
+				if($TrtOctOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtOctDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtOctCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtOctCB), 2, '.', ''); if($TrtOctCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Nov !=""){?>   
+                <!-- Start TRT Nov -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtNovOB), 2, '.', ''); 
+				if($TrtNovOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtNovDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtNovCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtNovCB), 2, '.', ''); if($TrtNovCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Dec !=""){?>   
+                <!-- Start TRT Dec -->
+				<td align="left" nowrap>
+                <? 
+                echo number_format(abs($TrtDecOB), 2, '.', ''); 
+				if($TrtDecOB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+				<td align="left" nowrap><?php echo number_format($TrtDecDr, 2, '.', ''); ?></td>
+				<td align="left"><?php echo number_format($TrtDecCr, 2, '.', ''); ?></td>
+				<td align="right"><?php echo number_format(abs($TrtDecCB), 2, '.', ''); if($TrtDecCB>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php }?>
+				</tr>	
+				<!-- Start Customer -->
+				<?php
+				  $csl=1;			  
+				  $project_id  = getFromSession('project_id');  
+				  $cosql= "SELECT * FROM ".MONTHLY_CUSTOMER_STATUS_VIEW." WHERE project_id='$project_id' AND trt_id='$trt_id' ";
+				  $cosql.="ORDER BY sub_head_name ASC";
+				  $cores = mysql_query($cosql);
+				  while($corow = mysql_fetch_object($cores)){	
+				  $sub_id 	   = $corow->sub_id;
+                  $myOB = $corow->OB; 
+                  $JanDr = $corow->JanDr; $JanCr = $corow->JanCr; 
+                  if($myOB >= 0){ $JanCB = (($JanDr+$myOB)-$JanCr);}else{ $JanCB = ($JanDr-($JanCr+abs($myOB)));} 
+                  
+                  $FebDr = $corow->FebDr; $FebCr = $corow->FebCr; 
+                  if($JanCB >= 0){ $FebCB = (($FebDr+$JanCB)-$FebCr);}else{ $FebCB = ($FebDr-($FebCr+abs($JanCB)));} 
+                  
+                  $MarDr = $corow->MarDr; $MarCr = $corow->MarCr; 
+                  if($FebCB >= 0){  $MarCB = (($MarDr+$FebCB)-$MarCr);}else{ $MarCB = ($MarDr-($MarCr+abs($FebCB)));}                  
+                  
+                  $AprDr = $corow->AprDr; $AprCr = $corow->AprCr; 
+                  if($MarCB >= 0){ $AprCB = (($AprDr+$MarCB)-$AprCr);}else{ $AprCB = ($AprDr-($AprCr+abs($MarCB)));} 
+                  
+                  $MayDr = $corow->MayDr; $MayCr = $corow->MayCr; 
+                  if($AprCB >= 0){ $MayCB = (($MayDr+$AprCB)-$MayCr);}else{ $MayCB = ($MayDr-($MayCr+abs($AprCB)));}  
+                  
+                  $JunDr = $corow->JunDr; $JunCr = $corow->JunCr; 
+                  if($MayCB >= 0){ $JunCB = (($JunDr+$MayCB)-$JunCr);}else{ $JunCB = ($JunDr-($JunCr+abs($MayCB)));}
+                  
+                  $JulDr = $corow->JulDr; $JulCr = $corow->JulCr; 
+                  if($JunCB >= 0){ $JulCB = (($JulDr+$JunCB)-$JulCr);}else{ $JulCB = ($JulDr-($JulCr+abs($JunCB)));} 
+                  
+                  $AugDr = $corow->AugDr; $AugCr = $corow->AugCr; 
+                  if($JulCB >= 0){ $AguCB = (($AugDr+$JulCB)-$AugCr);}else{ $AugCB = ($AugDr-($AugCr+abs($JulCB)));} 
+                  
+                  $SepDr = $corow->SepDr; $SepCr = $corow->SepCr; 
+                  if($AguCB >= 0){ $SepCB = (($SepDr+$AguCB)-$SepCr);}else{ $SepCB = ($SepDr-($SepCr+abs($AguCB)));} 
+                  
+                  $OctDr = $corow->OctDr; $OctCr = $corow->OctCr; 
+                  if($SepCB >= 0){ $OctCB = (($OctDr+$SepCB)-$OctCr);}else{ $OctCB = ($OctDr-($OctCr+abs($SepCB)));}
+                  
+                  $NovDr = $corow->NovDr; $NovCr = $corow->NovCr; 
+                  if($OctCB >= 0){ $NovCB = (($NovDr+$OctCB)-$NovCr);}else{ $NovCB = ($NovDr-($NovCr+abs($OctCB)));} 
+                  
+                  $DecDr = $corow->DecDr; $DecCr = $corow->DecCr; 
+                  if($NovCB >= 0){ $DecCB = (($DecDr+$NovCB)-$DecCr);}else{ $DecCB = ($DecDr-($DecCr+abs($NovCB)));}
+                  
+				?>				
+				<tr bgcolor="#fff">
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><?=$csl?></td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><?=$corow->sub_head_name?></td>
+                <?php if($Jan !=""){?>   
+                <!-- Start Jan -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($myOB), 2, '.', '');	if($myOB>0){ echo " Dr"; }else{ echo " Cr";}?>				
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <? echo number_format($JanDr, 2, '.', ''); ?>             	
+                </td>
+				<td align="left" style="font-size:11px; font-weight:normal">
+				  <? echo number_format($JanCr, 2, '.', ''); ?>				
+				  </td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                  echo number_format(abs($JanCB), 2, '.', '');  if($JanCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Feb !=""){?>   
+                <!-- Start Feb -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($JanCB), 2, '.', '');	if($JanCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($FebDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($FebCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($FebCB), 2, '.', '');  if($FebCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Mar !=""){?>   
+                <!-- Start Mar -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($FebCB), 2, '.', '');	if($FebCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($MarDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($MarCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($MarCB), 2, '.', '');  if($MarCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Apr !=""){?>   
+                <!-- Start Apr -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($MarCB), 2, '.', '');	if($MarCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($AprDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($AprCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($AprCB), 2, '.', '');  if($AprCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($May !=""){?>   
+                <!-- Start May -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($AprCB), 2, '.', '');	if($AprCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($MayDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($MayCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($MayCB), 2, '.', '');  if($MayCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Jun !=""){?>   
+                <!-- Start Jun -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($MayCB), 2, '.', '');	if($MayCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($JunDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($JunCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($JunCB), 2, '.', '');  if($JunCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Jul !=""){?>   
+                <!-- Start Jul -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($JunCB), 2, '.', '');	if($JunCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($JulDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($JulCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($JulCB), 2, '.', '');  if($JulCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Aug !=""){?>   
+                <!-- Start Aug -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($JulCB), 2, '.', '');	if($JulCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($AugDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($AugCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($AugCB), 2, '.', '');  if($AugCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+               <?php } if($Sep !=""){?>   
+                <!-- Start Aug -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($AugCB), 2, '.', '');	if($AugCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($SepDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($SepCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($SepCB), 2, '.', '');  if($SepCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Oct !=""){?>   
+                <!-- Start Oct -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($SepCB), 2, '.', '');	if($SepCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($OctDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($OctCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($OctCB), 2, '.', '');  if($OctCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Nov !=""){?>   
+                <!-- Start Nov -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($OctCB), 2, '.', '');	if($OctCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($NovDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($NovCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($NovCB), 2, '.', '');  if($NovCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php } if($Dec !=""){?>   
+                <!-- Start Dec -->
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+                <?  echo number_format(abs($NovCB), 2, '.', '');	if($NovCB>0){ echo " Dr"; }else{ echo " Cr";}?>
+                </td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($DecDr, 2, '.', ''); ?></td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? echo number_format($DecCr, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+                <?php 
+                echo number_format(abs($DecCB), 2, '.', '');  if($DecCB>0){ echo " Dr"; }else{ echo " Cr";}
+                ?>
+                </td>
+                <?php }?>
+                
+				</tr>
+				
+				<?php $csl++;} ?>				
+				<!-- End Customer -->			
+				<?php $tsl++;}?>
+				<!-- End TRT -->				
+			<? $asl++;}?> 
+			<!-- End Area -->
+			 <tr>
+				<td colspan="2" align="left" nowrap>
+				<div align="right"><?if($trt_id!=""){?> Area <?}?> Total </div></td>
+                <?php if($Jan !=""){?>   
+				<td align="right" nowrap>
+                <? echo number_format(abs($totalOBAmount), 2, '.', ''); if($totalOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?> 
+                </td>
+				<td align="right" nowrap><? echo number_format($totalJanDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalJanCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalJanCBAmount), 2, '.', ''); if($totalJanCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Feb !=""){?>   
+				<td align="right" nowrap><? echo number_format(abs($totalFebOBAmount), 2, '.', ''); if($totalFebOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalFebDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalFebCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalFebCBAmount), 2, '.', ''); if($totalFebCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Mar !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalMarOBAmount), 2, '.', ''); if($totalMarOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalMarDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalMarCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalMarCBAmount), 2, '.', ''); if($totalMarCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Apr !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalAprOBAmount), 2, '.', ''); if($totalAprOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalAprDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalAprCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalAprCBAmount), 2, '.', ''); if($totalAprCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($May !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalMayOBAmount), 2, '.', ''); if($totalMayOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalMayDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalMayCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalMayCBAmount), 2, '.', ''); if($totalMayCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>                
+                <?php } if($Jun !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalJunOBAmount), 2, '.', ''); if($totalJunOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalJunDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalJunCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalJunCBAmount), 2, '.', ''); if($totalJunCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>                                
+                <?php } if($Jul !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalJulOBAmount), 2, '.', ''); if($totalJulOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalJulDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalJulCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalJulCBAmount), 2, '.', ''); if($totalJulCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Aug !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalAugOBAmount), 2, '.', ''); if($totalAugOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalAugDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalAugCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalAugCBAmount), 2, '.', ''); if($totalAugCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Sep !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalSepOBAmount), 2, '.', ''); if($totalSepOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalSepDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalSepCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalSepCBAmount), 2, '.', ''); if($totalSepCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Oct !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalOctOBAmount), 2, '.', ''); if($totalOctOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalOctDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalOctCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalOctCBAmount), 2, '.', ''); if($totalOctCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Nov !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalNovOBAmount), 2, '.', ''); if($totalNovOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalNovDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalNovCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalNovCBAmount), 2, '.', ''); if($totalNovCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php } if($Dec !=""){?>   
+                <td align="right" nowrap><? echo number_format(abs($totalDecOBAmount), 2, '.', ''); if($totalDecOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+				<td align="right" nowrap><? echo number_format($totalDecDrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalDecCrAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format(abs($totalDecCBAmount), 2, '.', ''); if($totalDecCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?></td>
+                <?php }?>
+				</tr>
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        <p class="pageBreak"></p>
+        
+        <p align="center">
+          <input value="Print" onClick="printContent('printdiv')" name="save" class="button" id="viewScreen" type="submit" />
+        </p>
+        <div style="height:45px; display:block"></div>
+		 <?php }?>			
+	  </div>
+	  
+	 
+	  </form>			  
+	  </td>
+	</tr>
+  </tbody>
+</table>
+
+<div style="height:50px; display:block; clear:both"></div>
+</body>

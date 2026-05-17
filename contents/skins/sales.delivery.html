@@ -1,0 +1,630 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Sales Delivery Challan</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');} 
+mt_srand(make_seed());
+$challan_no = mt_rand(); 
+		
+dateIFrame(REL_EXT_DIR); 
+
+function make_seed(){
+	list($usec, $sec) = explode(' ', microtime());
+	return (float) $sec + ((float) $usec * 100000);
+}
+
+$vat_percent = $additional_vat_percent;
+$vat_amount = $additional_vat_amount;
+
+if($additional_vat_percent == 0 && $additional_vat_amount == 0){
+    $vat_percent = 0;
+}
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/sales.delivery.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<style>
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{ border-color: #999999;  border-style: solid; }
+table { border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse;}
+td { margin: 0; padding: 4px; border-width: 1px 1px 0 0; font-weight:bold; }
+
+
+.custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.custom-modal-content {
+    background: #fff;
+    width: 80%;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 5px;
+    max-height: 80%;
+    overflow-y: auto;
+    padding-top: 0;
+}
+.custom-modal-content table {
+    border-width: 1px 1px 1px 1px;
+}
+.custom-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+}
+div#overdueContent table {
+    width: 100%;
+}
+div#overdueContent table td {
+    border: 1px solid #818080;
+}
+
+div#overdueContent table th {
+    border: 1px solid #818080;
+}
+.disable {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Custom Modal -->
+<div id="overdueModal" class="custom-modal">
+    <div class="custom-modal-content">
+        
+        <div class="custom-modal-header">
+            <h3>Undelivery Work Order (Previous Undelivery Pending)</h3>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+
+        <div class="custom-modal-body" id="overdueContent">
+	     <table border='1' cellpadding='5' cellspacing='0'>
+                 <tr>
+                    <th>Invoice No</th>
+                    <th>W.O No</th>
+                    <th>Date And Time</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                 </tr>
+		<?php if($old_wo_status){ foreach ($old_wo_list as $row) {?>
+            	  <tr>
+                        <td><?=$row->voucher_no;?></td>
+                        <td><?=$row->ref_voucher;?></td>
+                        <td><?=date("Y-m-d h:i", strtotime($row->created_date));?></td>
+                        <td><?=$row->customer;?></td>
+                        <td><?=$row->product;?></td>
+                  </tr>
+	        <?php } } ?>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<form name="frmbooking" method="post">
+<div id="printdiv">
+<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp; Sales Order </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:26px; font-weight:bold"> <?=$project_name?></span><br>
+      <span style="font-size:16px; font-weight:bold"><?=$location?></span>
+	</div>
+    <?php if($message!=""){?>
+    <div align="center" style="margin-top:5px; color:#F00"><?php echo $message;?></div>
+    <?php }?>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset style="width:98%">
+	<legend>Sales Order  Details</legend>	
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="11%" align="left" nowrap>Vouchar No. </td>
+        <td width="38%" align="left"><?=$voucher_no?></td>
+        <td width="12%" align="left" nowrap><div align="right">W.O. No.</div></td>
+        <td width="12%" align="left" nowrap>
+	   <input type="text" name="ref_voucher" id="ref_voucher" value="<?=$ref_voucher?>" style="width:180px">
+	</td>
+        <td width="14%" align="left" nowrap> <div align="right">Order Date </div></td>
+        <td width="13%" align="left"><?=$sales_date?></td>
+      </tr>
+      <? if($delivery_date==""){?>
+      <tr>
+        <td><div align="left">Customer Name </div></td>
+        <td colspan="5" align="left"><?=$sub_head_name?></td>
+      </tr>      
+	  <? }else{?>
+	  <tr>
+        <td align="left" nowrap><div align="left">Customer Name </div></td>
+        <td align="left"><?=$sub_head_name?></td>
+        <td align="left" nowrap><div align="right">Challan No.</div></td>
+        <td align="left" nowrap><input type="text" name="challan_no" id="challan_no" style="width:130px;" value="<?=$challan_no?>" class="validate[required]" tabindex="1" ></td>
+        <td align="left" nowrap><div align="right">Item Delivery Date </div></td>
+        <td align="left"><?=$delivery_date?></td>
+      </tr>
+	  <? }?>
+      <tr>
+        <td align="left">Contact Person </td>
+        <td>
+<?php
+$parts = [];
+
+if (!empty($att_name1)) {
+    $parts[] = $att_name1;
+}
+
+if (!empty($att_designation1)) {
+    $parts[] = $att_designation1;
+}
+
+if (!empty($att_mobile1)) {
+    $parts[] = "Mobile: " . $att_mobile1;
+}
+
+$customer_contact = implode(", ", $parts);
+
+if(!empty($contact_person)){
+    $customer_contact = $contact_person;
+}
+
+?>
+<input type="text" name="contact_person" id="contact_person" value="<?=$customer_contact?>" style="width:100%">
+
+	</td>
+		 <td align="left" nowrap><div align="right">Retailer </div></td>
+        <td align="left" nowrap>
+		<select name="consignee" id="consignee" style="width:130px">
+          <option value="">Select Retailer</option>
+          <?php	 
+	    if($consignee == ""){
+		$consignee = $retailer_id;
+	    }
+            foreach($retailer_list as $i=>$v){
+                $retailer_id = $v->retailer_id;	
+                $retailer_name = $v->retailer_name.", ".$v->mobile;	
+            ?>
+          <option value="<?=$retailer_id?>" <?php if($retailer_id==$consignee) echo "selected";?> >
+          <?=$retailer_name?>
+          </option>
+          <?}?>
+        </select></td>
+		<td><div align="right" style="vertical-align:top">Value Date</div></td>
+		<td>
+		<?php echo $value_date;?>
+		<? if($reference!=""){ 
+		//echo getSalesRefName($reference);
+		}?>
+		</td>
+      </tr>
+      <tr>
+		<td align="left">Delivery Address</td>
+		<td><div align="left">
+<input type="text" name="delivery_address" id="delivery_address" value="<?=$delivery_address?>" style="width:100%">
+		  </div></td>
+		<td><div align="right">Delivery Point </div></td>
+        <td><? echo getDeliveryPointName($delivery_point);?></td>
+        <td><div align="right">Delivery Date   </div></td>
+		
+		<td>
+	<?php 
+	$delivery_date=dateInputFormatDMY($edit_value_date);
+	if(empty($edit_value_date)){
+		$delivery_date=date('d-m-Y');
+	}
+	?>
+		<input name="delivery_date" id="delivery_date" style="width:80px;" value="<?=$delivery_date?>" size="18" onFocus="gfPop.fPopCalendar(document.frmbooking.elements['delivery_date']);return false;" class="validate[required]" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbooking.elements['delivery_date']);return false;" title="calendar" width="15" height="15"> </td>
+        </tr>
+	<tr>
+	<td>Remark</td>
+	<td><input type="text" name="terms" id="terms" value="<?=$description?>" style="width:500px"></td>
+	<td align="right">VAT Challan No</td>
+	<td><input type="text" name="vat_no" id="vat_no" value="<?=$vat_no?>" style="width:180px"></td>
+	<td><div align="right">Aging Date</div></td>
+		
+	<td>
+	<?php
+	if (!empty($aging_date) && $aging_date !== "0000-00-00") {
+	    $aging_date = date('d-m-Y', strtotime($aging_date));
+	} else {
+	    $aging_date = "";
+	}
+	?>
+		<input name="aging_date" id="aging_date" style="width:80px;" value="<?=$aging_date?>" size="18" onFocus="gfPop.fPopCalendar(document.frmbooking.elements['aging_date']);return false;" class="validate[required]" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbooking.elements['aging_date']);return false;" title="calendar" width="15" height="15"> </td>
+
+	<input type="hidden" name="sms_text" id="sms_text" value="">
+	</tr>
+	<tr>
+	<td>Vehicle No</td>
+	<td colspan=2><input type="text" name="vehicle_no" id="vehicle_no" value="<?=$vehicle_no?>" style="width:100%"></td>
+	<td align="right">Driver Name</td>
+	<td colspan=2><input type="text" name="driver_name" id="driver_name" value="<?=$driver_name?>" style="width:100%"></td>
+	</tr>
+    </table>
+   <br><br>
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="3%" align="left">SL.</td>
+        <td width="15%">Product Name </td>
+        <!-- <td width="8%">Brand</td> -->
+        <td width="17%">Product Details </td>
+        <td width="7%" align="right">Stock Qty </td>
+        <td width="8%" align="right">Order Qty</td>
+        <td width="9%" align="right">Undelivery Qty</td>
+        <td width="7%" align="center">Delivery Qty </td>
+        <td width="7%" align="right">Free Qty </td>
+        <td width="7%" align="right">Unite Price</td>
+        <td width="5%" align="left"><div align="center">Discount%</div></td>
+        <td width="5%" align="left"><div align="center">VAT%</div></td>
+        <td width="10%" align="right">Order Amount </td>
+        </tr>
+		<?
+		$i=0; $tb = 1;
+	  	foreach($item_list as $val){ $i++; $tb++; $currency=$val->currency;
+
+		$hideTr = false;
+		if($val->qty == 0 && $val->delivery_qty == 0 && $val->is_order_complete == 1){
+			$hideTr = true;
+		}
+
+		?>
+      <tr style="<?=$hideTr==true? 'display:none': ''?>">
+        <td align="left"><?=$i?></td>
+        <td>
+		<?=$val->product_name?>
+		<input type="hidden" name="details_id<?=$i?>" id="details_id<?=$i?>" value="<?=$val->sal_detail_id?>">
+		<input type="hidden" name="catagory<?=$i?>" id="catagory<?=$i?>" value="<?=$val->catagory?>">
+		<input type="hidden" name="brand_id<?=$i?>" id="brand_id<?=$i?>" value="<?=$val->brand_id?>">
+		<input type="hidden" name="product<?=$i?>" id="product<?=$i?>" value="<?=$val->product?>">		
+		<input type="hidden" name="m_unit<?=$i?>" id="m_unit<?=$i?>" value="<?=$val->m_unit?>">		</td>
+        <!-- <td><?=$val->brand_name?></td> -->
+        <td>
+	<?php
+	 $detailsText = '';
+	 if($val->details!=""){
+	   $detailsText = $val->details;
+	 }else{ 
+	   $detailsText = $val->product_desc;
+	 }
+
+	?>
+<div style="display: flex;flex-direction: column; gap: 4px;">
+	<div style="display: flex;align-items: center;">
+		<span>Details: </span>		
+		<input type="text" name="details_text<?=$i?>" id="details_text<?=$i?>" onKeyUp="calDeliveryAmount()" value="<?=$detailsText?>" style="margin-left: 8px;" onMouseOut="calDeliveryAmount()">
+	</div>
+	<div style="display: flex;align-items: center;">
+	<span>Gross Weight: </span><input type="number" name="gross_weight<?=$i?>" id="gross_weight<?=$i?>" onKeyUp="calDeliveryAmount()" value="<?=$val->gross_weight?>" style="min-width:50px;max-width: 100px;height: 25px; border-radius: 5px; border: 1px solid #c7c7c7;margin-left: 8px;" onMouseOut="calDeliveryAmount()" min="0">
+	</div>
+	<div style="display: flex;align-items: center;">
+	<span>Net Weight: </span><input type="number" name="net_weight<?=$i?>" id="net_weight<?=$i?>" onKeyUp="calDeliveryAmount()" value="<?=$val->net_weight?>" style="min-width:50px;max-width: 100px;height: 25px; border-radius: 5px; border: 1px solid #c7c7c7;margin-left: 8px;" onMouseOut="calDeliveryAmount()" min="0">
+	</div>
+</div>
+
+	</td>
+		
+        
+        <td align="right">
+		<? 
+		//echo $stock_qty = getStockQty($val->brand_id,$val->product); // => overall stock
+		$pending_qty=($val->qty-$val->delivery_qty);
+		$stock_qty = getStoreStockQty($delivery_point,$val->product); // => only delivery store stock
+		if($stock_qty>=($pending_qty+$val->free_qty)){
+		$nowdelivery_qty = $pending_qty; $stockColor = "color:#009900";
+		}else{ $nowdelivery_qty = $stock_qty; $stockColor="color:#FF0000";}
+
+		?>
+		<span style="<?=$stockColor?>"> <? echo number_format($stock_qty,2); ?> </span>
+		<input type="hidden" name="stock_qty<?=$i?>" id="stock_qty<?=$i?>" style="width:85px" value="<?=$stock_qty?>"> 
+		<input type="hidden" name="Prvpvoucher_no<?=$i?>" id="Prvpvoucher_no<?=$i?>" style="width:85px" value="<?=$val->pvoucher_no?>">		
+        </td>
+        <td align="right">
+          <?=$val->qty.' '.$val->m_unit?>        
+          <input type="hidden" name="order_qty<?=$i?>" id="order_qty<?=$i?>" style="width:85px" value="<?=$val->qty?>">	
+          <input type="hidden" name="main_order_qty<?=$i?>" id="main_order_qty<?=$i?>" style="width:85px" value="<?=$val->qty?>">		 	  
+        </td>
+        <td align="right">
+          <input type="text" readonly name="undelivery_qty<?=$i?>" id="undelivery_qty<?=$i?>" style="width:60px" value="<?=$val->undelivery_qty?>"> <?=$val->m_unit?>
+          <input type="hidden" name="prv_undelivery_qty<?=$i?>" id="prv_undelivery_qty<?=$i?>" style="width:60px" value="<?=$val->undelivery_qty?>">
+		  <input type="hidden" name="pending_qty<?=$i?>" id="pending_qty<?=$i?>" style="width:85px" value="<?=$pending_qty?>">        
+          </td>
+        <td align="center">
+		
+		<input type="text" name="delivery_qty<?=$i?>" id="delivery_qty<?=$i?>" onKeyUp="calDeliveryAmount()" value="<?=$nowdelivery_qty?>" style="width:60px" class="validate[required]" onMouseOut="calDeliveryAmount()" tabindex="<?=$tb?>">
+        <?=$val->m_unit?>
+		</td>
+        <td align="right">
+		<input type="text" name="free_qty<?=$i?>" id="free_qty<?=$i?>" value="<?=$val->free_qty?>" style="width:45px" class="validate[required]"> <?=$val->m_unit?>		  
+		  <input type="hidden" name="Prvfree_qty<?=$i?>" id="Prvfree_qty<?=$i?>" style="width:85px" value="<?=$val->free_qty?>">		</td>
+        <td align="right">
+			<?=number_format($val->unit_price,2).' '.$val->curr_symble?>
+            <input type="hidden" name="unit_price<?=$i?>" id="unit_price<?=$i?>" style="width:85px" value="<?=$val->unit_price?>">        </td>
+        <td align="left"><div align="center">
+          <? echo number_format($val->discount_per_qty,2)." %";?>
+        </div>
+          <input type="hidden" name="discount_per_qty<?=$i?>" id="discount_per_qty<?=$i?>" style="width:85px" value="<?=$val->discount_per_qty?>">
+		  <input type="hidden" name="discount_amount<?=$i?>" id="discount_amount<?=$i?>" style="width:85px" value="<?=number_format($val->discount_amount,4)?>">		  </td>
+
+        <td align="left">
+	   <div align="center">
+            <? echo number_format($val->vat,2)." %";?>
+           </div>
+          <input type="hidden" name="vat_per_qty<?=$i?>" id="vat_per_qty<?=$i?>" style="width:85px" value="<?=$val->vat?>">
+		  <input type="hidden" name="vat_amount<?=$i?>" id="vat_amount<?=$i?>" style="width:85px" value="<?=number_format($val->vat_amount,4)?>">		  
+	</td>
+
+        <td align="right"> <div id="product_price<?=$i?>" align="right"><?=number_format($val->total,2)." ".$val->curr_symble?></div></td>
+        </tr>
+		<? }?>
+        <tr>
+          <td colspan="11" align="right">Total Order Amount </td>
+          <td align="right">
+            <?php
+            $order_value = $total_value; 
+            ?>
+            <div id="order_value"><?php echo number_format($order_value,2).' '.$curr_symble;?></div>
+        </td>
+        </tr>
+        <tr>
+          <td colspan="11" align="right"> DD Commission (
+            <?=number_format($general_discount_percent,2)?> %) </td>
+          <td align="right"><div id="general_discount"><? echo number_format($general_discount_amount,2).' '.$curr_symble;?></div></td>
+        </tr>
+        <tr>
+          <td colspan="11" align="right"> Exclusive Discount (
+              <?=number_format($exclusive_discount_percent,2)?>
+            %) </td>
+          <td align="right"><div id="exclusive_discount"><? echo number_format($exclusive_discount_amount,2).' '.$curr_symble;?></div></td>
+        </tr>
+
+        <tr>
+          <td colspan="11" align="right"> 
+           <?php if($additional_discount_percent >0){?>
+           <div align="right">Additional Discount (<?php echo number_format($additional_discount_percent,2); ?> %) </div>
+           <?php }else{?>
+           <div align="right">Additional Discount Amount </div>
+           <?php }?>
+          </td>
+          <td align="right"><div id="additional_discount_amount"><? echo number_format($additional_discount,2).' '.$curr_symble;?></div></td>
+        </tr>
+
+      <tr>
+          <td colspan="11" align="right"> Additional Cost </td>
+	  <td align="right"><div id="additional_cost_amount"><? echo number_format($additional_cost,2).' '.$curr_symble;?></div>
+	<input type="hidden" name="additional_cost" id="additional_cost" value="<?=$additional_cost?>"> 
+	</td>
+        </tr>
+
+
+	<tr>
+	     <input type="hidden" id="total_amount" value="<?=$order_value?>">
+
+	<td colspan="11" align="right">
+		<div align="right">
+		    VAT Type
+		    <select name="vat_type" id="vat_type" onchange="calVat()" style="width:90px;">
+			<option value="percent" <?php if($vat_type == 'percent'){echo 'selected';}?>>Percentage (%)</option>
+			<option value="fixed" <?php if($vat_type == 'fixed'){echo 'selected';}?>>Fixed</option>
+		    </select>
+
+		    VAT <input type="number" name="vat_percent" id="vat_percent" oninput="calVat()" value="<?=$vat_percent?>" style="width:65px;height: 22px;">
+		<input type="hidden" name="vatAmount" id="vatAmount" value="<?=$vat_amount;?>">
+                
+		</div>
+ </td>
+            <td align="right"><div id="vat_amount"><? echo $vat_amount.' '.$curr_symble;?></div></td>
+        </tr>
+
+        <tr>
+		<td colspan="11" align="right">Net Order Amount </td>
+		<td align="left">
+		
+		<input type="hidden" name="total_sales_price" id="total_sales_price" value="<?=$total_value?>">
+		<?php 
+		$total_value = (($total_value + $additional_cost + $additional_vat_amount)-($general_discount_amount+$exclusive_discount_amount+$additional_discount));
+		$total_value = number_format($net_payble, 2, '.', '');   
+        ?>
+        <input type="hidden" name="netOrderAmount" id="netOrderAmount" value="<?=$total_value?>"> 
+       
+           <div id="netOrderValue" align="right"><?=$total_value.' '.$curr_symble;?></div>
+        </td>
+        </tr>
+        <tr>
+          <td colspan="11" align="right">Total Delivery Amount</td>
+          <td align="right"><div id="TotalDeliveryAmount"><?=$total_value.' '.$curr_symble;?></div>
+            <input type="hidden" name="total_delivery_amount" id="total_delivery_amount" style="width:85px" value="<?=$total_value?>"></td>
+        </tr>  
+    </table>
+	</fieldset>	
+	<input type="hidden" name="ttlfields" id="ttlfields" value="<?=$i?>"> 
+    <input type="hidden" name="curr_symble" id="curr_symble" value="<?=$curr_symble?>">     
+    <input type="hidden" name="voucher_no" id="voucher_no" value="<?=$voucher_no?>">  
+    <input type="hidden" name="customer" id="customer" value="<?=$customer?>">  
+    <input type="hidden" name="product_discount" id="product_discount" value="<?=$product_discount?>">   
+    <input type="hidden" name="general_discount_percent" id="general_discount_percent" value="<?=$general_discount_percent?>">   
+    <input type="hidden" name="general_discount_amount" id="general_discount_amount" value="<?=$general_discount_amount?>"> 
+    
+    <input type="hidden" name="exclusive_discount_percent" id="exclusive_discount_percent" value="<?=$exclusive_discount_percent?>">   
+    <input type="hidden" name="exclusive_discount_amount" id="exclusive_discount_amount" value="<?=$exclusive_discount_amount?>">
+    
+    <input type="hidden" name="additional_discount_percent" id="additional_discount_percent" value="<?=$additional_discount_percent?>">   
+    <input type="hidden" name="additional_discount" id="additional_discount" value="<?=$additional_discount?>"> 
+     
+    <input type="hidden" name="discount" id="discount" value="<?=$discount?>"> 
+    <input type="hidden" name="delivery_point" id="delivery_point" value="<?=$delivery_point?>"> 
+    <input type="hidden" name="currency" id="currency" value="<?=$currency?>">
+	</div>
+	</td>
+  </tr>
+</table>
+<br>
+<table width="99%">
+<tr>
+<td width="50%">
+<?php 
+if(getRequest('msg') !=""){
+	echo getRequest('msg');
+}else{
+?>
+<p align="center" id="btnUpdate"> <input value="Do Update" onClick="UpdateDeliveryOrder()" name="Update" class="button" id="btnDoUpdate" type="button"/></p>
+<div align="center" id="btnUpdateMsg"></div>
+<?php }?>
+
+</td>
+<td width="50%">
+<?php if(getRequest('msg') ==""){?>
+<p align="center" id="btnNoNeed">     
+   <input value="No Update" onClick="ShowDeliveryBtn()"  id="btnNoUpdate" name="button" class="button" type="button"/> 
+</p>
+<p align="center" style="display:none" id="btnPrint">     
+   <input value="Save" onClick="DeliveryOrder()" onMouseOut="calDeliveryAmount()" onMouseOver="calDeliveryAmount()" name="submit" class="button" type="submit" tabindex="<?=$tb?>"/> 
+</p>
+<div align="center" id="btnDeliveryMsg"></div>
+<?php }else{?>
+<p align="center" id="btnPrint">     
+   <input value="Save" onClick="DeliveryOrder()" onMouseOut="calDeliveryAmount()" onMouseOver="calDeliveryAmount()" name="submit" class="button" type="submit" tabindex="<?=$tb?>"/> 
+</p>
+<div align="center" id="btnDeliveryMsg"></div>
+<?php }?>
+</td>
+</tr>
+</table>
+</div>	
+<div style="height:42px; clear:both; display:block"></div>
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true; 
+       
+  }
+});
+
+//calVat();
+calDeliveryAmount();
+
+var credit_days = "<?=$credit_days?>";
+
+function handleAgingDate(){
+    var delivery_date = $("#delivery_date").val();
+    var date;
+
+    if(!delivery_date){
+        date = new Date(); // use current date
+    }else{
+        // convert dd-mm-yyyy to Date
+        var parts = delivery_date.split("-");
+        date = new Date(parts[2], parts[1]-1, parts[0]);
+    }
+
+    date.setDate(date.getDate() + Number(credit_days));
+
+    var day   = ("0" + date.getDate()).slice(-2);
+    var month = ("0" + (date.getMonth()+1)).slice(-2);
+    var year  = date.getFullYear().toString().slice(-2);
+
+    var aging_date = day + "-" + month + "-" + year;
+
+    $("#aging_date").val(aging_date);
+}
+
+$(document).ready(function(){
+    handleAgingDate();
+    showOldWorkOrder();
+
+    var lastDate = $("#delivery_date").val();
+    setInterval(function(){
+        var currentDate = $("#delivery_date").val();
+        if(currentDate !== lastDate){
+            lastDate = currentDate;
+            handleAgingDate();
+        }
+    }, 500);
+});
+
+
+function showOldWorkOrder(){
+    var status = "<?=$old_wo_status?>";
+    if(status == "true"){
+        document.getElementById("overdueModal").style.display = "block";
+	$('#btnDoUpdate').prop('disabled', true).addClass('disable');
+	$('#btnNoUpdate').prop('disabled', true).addClass('disable');
+    }else{
+	$('#btnDoUpdate').prop('disabled', false).removeClass('disable');
+	$('#btnNoUpdate').prop('disabled', false).addClass('disable');
+    }
+}
+
+function closeModal()
+{
+    document.getElementById("overdueModal").style.display = "none";
+}
+
+
+
+</script>
+</body>
+</html>

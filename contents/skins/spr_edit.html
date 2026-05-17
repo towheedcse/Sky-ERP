@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<?php
+extract($data);
+//dumpVar($data);
+
+	if($message==""){ $message = getRequest('msg');}
+	$currency=1;
+	dateIFrame(REL_EXT_DIR);
+
+	
+
+	?>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/spr.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap.css" type="text/css">
+
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		var J = jQuery.noConflict();
+	</script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+	<script language="javascript1.3">
+		J("[class^=validate]").validationEngine({
+        inlineValidation: false,
+        success :  false,
+        failure : function() { callFailFunction()  }
+        })
+  var CANCEL_URL = "index.php?app=sales_order&cmd=list";
+
+	</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Stock Purchase Request Edit</title>
+	<style>
+		input{
+			background-color:#ffffff;
+			border: 1px solid #006699;
+		}
+		.style2 {color: #666666}
+		.bangFont {font: 130% SutonnyMJ;
+		}
+
+		p#challan_no_error {
+			color: red;
+			margin-top: 3px;
+			display: none;
+		}
+		.chosen-container-single .chosen-search input[type="text"] {
+			width: 89%;
+		}
+	</style>
+</head>
+<body>
+
+<form name="frmbuyerorder" id="frmbuyerorder" method="post">
+
+	<table width="100%" align="center" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td height="322" align="center" valign="top">
+
+				<table width="95%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+					<tr>
+
+						<td class="topHeader" colspan="9"><div id="tblTitle" align="left">Stock Purchase Request Edit<strong></strong></div></td>
+					</tr>
+
+					<tr>
+
+						<td width="2%">&nbsp;</td>
+
+						<td width="10%">&nbsp;</td>
+
+						<td width="22%">&nbsp;</td>
+
+						<td width="3%">&nbsp;</td>
+
+						<td width="22%">&nbsp;</td>
+
+						<td width="7%">&nbsp;</td>
+
+						<td colspan="2">&nbsp;</td>
+					</tr>
+					
+					<tr>
+						<td>&nbsp;</td>
+						<td> Store </td>
+						<td colspan="3">
+							<select name="store_id" id="store_id" style="width:270px" tabindex="1" class="validate[required]">
+								<option value="">Select Store Name</option>
+								<?php
+
+			foreach($depo_list as $i=>$v)
+								{
+
+								$delivery_pid = $v->delivery_pid;
+								$delivery_point_name = $v->delivery_point_name;
+								?>
+								<option value="<?=$delivery_pid?>"<?php if($delivery_pid==$store_id) echo "selected";?> >
+								<?=$delivery_point_name?>
+								</option>
+								<?}?>
+							</select></td>
+					
+						<td  align="right">Purchase Date</td>
+						<td colspan="2">
+							<input name="purchase_date" id="purchase_date" style="width:160px;" value="<?=dateInputFormatDMY($purchase_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" type="text">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" width="15" height="15"></td>
+					</tr>
+
+					<tr>
+						<td>&nbsp;</td>
+						<td> Unit </td>
+						<td colspan="3">
+							<input type="text" name="unit" id="unit" value="<?=$unit?>" /></td>
+						<td align="right">Department</td>
+						<td colspan="2">
+							<input type="text" name="department" id="department" value="<?=$department?>" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>Narration Note</td>
+						<td colspan="3">
+							<textarea name="warranty_note" id="warranty_note" cols="50" rows="2"><?=$warranty_note?></textarea></td>
+						<td  align="right" nowrap> </td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="8">
+							<fieldset>
+
+								<legend>Product Details</legend>
+								<table width="100%"  cellspacing="0" cellpadding="2">
+									<tr>
+										<td width="0%"><div align="left"> </div></td>
+										<td width="6%"><div align="left"><label id="product_lbl">Product</label></div></td>
+										<td width="6%"><div align="left"><label id="present_stock_lbl"> Brand</label></div></td>
+										<td width="6%"><div align="left"><label id="present_stock_lbl"> Present Stock</label></div></td>
+										<td width="6%"><div align="left"><label id="qty_lbl"> Quantity<span id="qty_m"></span></label></div></td>
+										<!-- <td width="7%"><div align="left"><label id="unit_price_lbl">Rate</label></div></td>
+										<td width="17%"><div align="left"><label id="amount_lbl">Amount </label></div></td> -->
+									</tr>
+									<tr>
+										<td><div align="left"> </div></td>
+										<td><div align="left" style="width:280px">
+											<select name="product" id="product" style="width:150px" tabindex="9" onChange="javascript:getProductDtl(this.value)" class="chosen-select-deselect">
+												<option value="">Select One</option>
+												<?php
+							foreach($product_list as $i=>$v)
+												{
+												$product_id = $v->product_id;
+												$productCode = isset($v->product_code) && $v->product_code != "" ? $v->product_code . "::" : "";
+												$product_name = $productCode . $v->product_name;
+												?>
+												<option value="<?=$product_id?>"<?php if($product==$product_id) echo "selected";?> >
+												<?=$product_name?>
+												</option>
+												<?}?>
+											</select>
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:180px; " name="custom_brand" id="custom_brand" value="<?=$custom_brand?>">
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:80px; " readonly disabled name="present_stock" id="present_stock" value="<?=$present_stock?>">
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:80px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="10">
+										</div></td>
+
+										<td style="display:none;"><div align="left">
+											<input type="hidden" style="width:80px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="12">
+										</div></td>
+
+										<td style="display:none;">
+											<input type="hidden" style="width:80px;" name="total" id="total" value="<?=$total?>" readonly disabled>
+											<input type="hidden" name="id" id="id" value="<?=$id?>" readonly disabled>
+										<input type="hidden" name="m_unit" id="m_unit" value="pc"/></td>
+<input type="hidden" name="catagory" id="catagory" value="" readonly disabled>
+<input type="hidden" name="brand_id" id="brand_id" value="" readonly disabled>
+<input type="hidden" name="last_purchase_amount" id="last_purchase_amount" value="<?=$last_purchase_amount?>" disabled>
+<input type="hidden" name="last_purchase_date" id="last_purchase_date" value="<?=$last_purchase_date?>" disabled>
+										<td nowrap><input name="button" type="button" class="button"  onClick="addSPRItem();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Add" tabindex="15">
+											<input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" value="Cancel" onClick="resetValue()">
+										</td>
+
+									</tr>
+								</table>
+							</fieldset>			  </td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="12%">&nbsp;</td>
+						<td width="22%">&nbsp;</td>
+					</tr>
+
+					<tr align="center">
+
+						<td colspan="8" align="left">
+							<div id="tbs">
+						<?php
+							echo $itemList;
+						?>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+
+						<td>&nbsp;</td>
+						<td>
+							<input type="hidden" name="voucher_no" id="voucher_no" value="<?=$voucher_no?>">
+							<input type="hidden" name="cmd" value="updateSPR">
+
+
+							<div align="left">
+
+								<input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" id="btnSubmit" value="Save" onClick="wantToUpdate(event);" tabindex="19">
+							</div>				</td>
+					</tr>
+					<tr>
+
+						<td>&nbsp;</td>
+						<td colspan="7"></td>
+					</tr>
+
+				</table>
+
+			</td>
+
+		</tr>
+
+		<tr>
+
+			<td>&nbsp;</td>
+
+		</tr>
+
+	</table>
+
+</form>
+
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/bootstrap.min.js"></script>
+<!--script src="<?=REL_CONTENT_DIR?>/js/bootbox.min.js"></script-->
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+<script>
+	$(function() {
+		$('.chosen-select').chosen({
+			search_contains: true, // allows matching in the middle of the string
+			width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+			allow_single_deselect: true,
+			search_contains: true,
+			width: "100%"
+		});
+	});
+	$(document).ready(function () {
+		$('#supplier').trigger('chosen:activate');
+		var productID = "<?=$product?>";
+		resetValue(productID);
+	});
+
+	function resetValue(productID=""){
+		$('#product').val(productID);             // 1. Set value
+		$('#product').trigger("chosen:updated");  // 2. Update Chosen UI
+		$('#product').trigger("change");
+	}
+
+	function calPurchasePrice(total_price){
+		var total_qty  = parseInt($('#qty').val());
+		var unit_price = (total_price/total_qty);
+		$('#unit_price').val(unit_price);
+	}
+	function setNextFocus(val){
+		if(val!=""){
+			$('#product').trigger('chosen:activate');
+			$('#product').trigger('chosen:hiding_dropdown');
+			// $('#inventory_id').val(val);
+		}
+	}
+
+	function addSPRItem(){
+		var product = $('#product').val();
+		var custom_brand = $('#custom_brand').val();
+		var present_stock = $('#present_stock').val();
+		var qty = $('#qty').val();
+		var id = $('#id').val();
+		var m_unit = $('#m_unit').val();
+		var unit_price = $('#unit_price').val();
+		var total = $('#total').val();
+		var catagory = $('#catagory').val();
+		var brand_id = $('#brand_id').val();
+		var voucher_no = $('#voucher_no').val();
+		var last_purchase_amount = $('#last_purchase_amount').val();
+		var last_purchase_date = $('#last_purchase_date').val();
+
+		if(product =="" || present_stock =="" || qty ==""){
+			alert("Please input product data");
+			return false;
+		}
+
+		if(voucher_no ==""){
+			alert("Voucher No missing");
+			return false;
+		}
+
+		const data = {
+			product: product,
+			custom_brand: custom_brand,
+			present_stock: present_stock,
+			qty: qty,
+			id: id,
+			m_unit: m_unit,
+			unit_price: unit_price,
+			total: total,
+			catagory: catagory,
+			brand_id: brand_id,
+			voucher_no: voucher_no,
+			last_purchase_amount: last_purchase_amount,
+			last_purchase_date: last_purchase_date,
+		}
+
+		$.ajax({
+			url: '?app=purchase.item&cmd=addSPRItem',
+			type: 'POST',
+			data: JSON.stringify(data),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function (response) {
+				if (response.status) {
+					resetValue();
+					$('#tbs').html(response.data);
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function (xhr, status, error) {
+				alert('AJAX request failed: ' + error);
+			}
+		});
+	}
+
+	function editSPR(voucher_no,id){
+		$.ajax({
+			url: '?app=purchase.item&cmd=getEditSPRItem',
+			type: 'POST',
+			data: JSON.stringify({voucher_no:voucher_no,id:id}),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function (response) {
+				if (response.status) {
+					const data = response.data || {};
+					$('#product').val(data.product).trigger('chosen:updated');
+					$('#custom_brand').val(data.custom_brand);
+					$('#present_stock').val(parseFloat(data.stock_qty));
+					$('#qty').val(parseFloat(data.qty));
+					$('#id').val(data.id);
+					$('#m_unit').val(data.m_unit);
+					$('#unit_price').val(parseFloat(data.unit_price));
+					$('#total').val(parseFloat(data.total));
+					$('#catagory').val(data.catagory);
+					$('#brand_id').val(data.brand_id);
+					$('#last_purchase_amount').val(data.last_purchase_amount);
+					$('#last_purchase_date').val(data.last_purchase_date);
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function (xhr, status, error) {
+				alert('AJAX request failed: ' + error);
+			}
+		});
+	}
+
+	function resetValue(){
+	        $('#product').val("").trigger('chosen:updated');
+		$('#custom_brand').val("");
+		$('#present_stock').val("");
+		$('#qty').val("");
+		$('#id').val("");
+		$('#m_unit').val("");
+		$('#unit_price').val("");
+		$('#total').val("");
+		$('#catagory').val("");
+		$('#brand_id').val("");
+		$('#last_purchase_date').val("");
+	}
+
+	function deleteSPR(voucher_no,id){
+		$.ajax({
+			url: '?app=purchase.item&cmd=deleteSPRItem',
+			type: 'POST',
+			data: JSON.stringify({voucher_no:voucher_no,id:id}),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function (response) {
+				if (response.status) {
+					$('#tbs').html(response.data);
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function (xhr, status, error) {
+				alert('AJAX request failed: ' + error);
+			}
+		});
+	}
+
+	
+
+</script>
+</body>
+
+</html>
+
+

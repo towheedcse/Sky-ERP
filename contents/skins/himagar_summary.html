@@ -1,0 +1,171 @@
+<?php
+extract($data);
+//dumpVar($data);	
+$sql = "SELECT sum(received_bag_qty) as received_bag_qty  FROM ".CS_PRODUCT_RECEIVED_TBL;
+$res = mysql_query($sql);
+$rrow = mysql_fetch_object($res);
+$received_bag_qty = $rrow->received_bag_qty;
+
+$sql2 = "SELECT sum(delivery_bag_qty) as delivery_bag_qty  FROM ".CS_DELIVERY_PRODUCT_TBL;
+$res2 = mysql_query($sql2);
+$rrow2 = mysql_fetch_object($res2);
+$delivery_bag_qty  = $rrow2->delivery_bag_qty;
+
+$balance_qty = $received_bag_qty - $delivery_bag_qty;
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_delivery_product.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style type="text/css">
+<!--
+.trHead{
+color:#000000;
+font-size:12px;
+font-weight:bold;
+border-bottom:1px solid #CCCCCC;
+border-right:1px solid #CCCCCC;
+}
+table{
+background-color:#FFFFFF;
+}
+#btmBorder{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid #CCCCCC;
+border-right:1px solid #CCCCCC;
+font: 130% SutonnyMJ;
+}
+#btmBorderEng{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid #CCCCCC;
+border-right:1px solid #CCCCCC;
+}
+.tdCode{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+}
+a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a:hover{ color:#CCCCCC;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:hover{ color:#333333;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+.bngFont{
+font: 125% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+</script>
+<head>
+
+<title>Delivery Vouchar</title>
+<style>
+img{
+border:none;
+}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=25,width=500,height=460')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Himagar Summary</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 126% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<div id="printdiv" style="display:block;border:1px solid #003366; margin-top:0px;margin-bottom:0px;width:100%;visibility:visible;height:auto;overflow:auto" >
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff" cellpadding="4" cellspacing="4"> 
+  <tr>
+    <td style="font: 125% SutonnyMJ; ">
+	<div align="center">
+      <span style="font-size:28px; font-weight:bold"> kvn&amp; myjZvb exR wngvMvi  </span><br>
+      <span style="font-size:20px; font-weight:bold">Pzno,(&circ;eivMxM&Auml;) cvqive&rsaquo;`, wgVvcyKzi, iscyi| &dagger;gvevt 01717 016105</span>
+	</div>	
+	</td>
+  </tr>
+  <tr>
+    <td width="100%">
+      <div align="center"><h2>Himmagar Summary</h2></div>
+	 <hr>
+   </td>
+  </tr>
+  <tr>
+    <td align="center"><div align="center" id="divTrim" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:60%;visibility:visible;height:auto;overflow:auto">
+      <table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="4" cellspacing="0" border="0">
+        <tr>
+          <td width="39%" class="trHead"><div align="right"><strong>Total Received Bags:</strong></div></td>
+          <td width="61%"  class="trHead" align="left"><?=$received_bag_qty?>
+    &nbsp; </td>
+        </tr>
+        <tr>
+          <td class="trHead"><div align="right"><strong>Total Delivared Bags:</strong></div></td>
+          <td align="left" class="trHead"><?=$delivery_bag_qty?>
+    &nbsp;</td>
+        </tr>
+        <tr>
+          <td class="trHead"><div align="right" ><strong>Total Balance: </strong></div></td>
+          <td align="left" class="trHead"><?=$balance_qty?>
+    &nbsp;</td>
+        </tr>
+      </table>
+<br>
+    </div>	</td>
+   </tr>
+</table>	
+</div>
+<p align="center">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+
+</html>
+

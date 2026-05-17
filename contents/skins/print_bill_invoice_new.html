@@ -1,0 +1,729 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>INVOICE</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+function lineBreak($str){
+	$addressArr = explode("\r\n",$str); 
+	foreach($addressArr as $p1val){
+		$address.=$p1val."<br />";
+	}
+	return $address;
+}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+body{ font-size:11px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+    font-weight:bold;	
+}
+
+</style>
+
+<!-- Second Start-->
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    margin: 0;
+    padding: 20px;
+    color: #000;
+  }
+  .po-container {
+    max-width: 900px;
+    margin: auto;
+    border: 1px solid #000;
+    padding: 30px;
+  }
+  .po-header {
+    display: block !important;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+  }
+  .po-header img {
+    height: 80px;
+  }
+  .po-header h2 {
+    margin: 0;
+    text-align: center;
+    flex: 1;
+  }
+  .po-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  .to-info {
+    width: 57%;
+  }
+.right-table {
+    width: 43%;
+}
+
+  
+.to-info {
+    text-align: start;
+    font-size: 14px;
+}
+
+.to-info strong {
+    font-size: 14px;
+}
+
+p.head-to-bottom {
+    text-align: start;
+    font-size: 14px;
+}
+
+.po-info td {
+    padding: 4px;
+    font-size: 13px;
+    text-align: justify;
+    font-weight: 500;
+    border-right: none;
+    border-style: hidden;
+    border: 1px solid #00000000 !important;
+    padding: 2px;
+}
+
+.po-info tr {
+    border-style: hidden;
+}
+div#old-printdiv {
+    display: none;
+}
+
+.po-header h2 {
+    width: 100%;
+    float: left;
+    margin-top: 25px;
+    font-weight: 600;
+    font-size: 15px;
+}
+.po-header div {
+    max-width: 10%;
+    float: left;
+}
+
+.po-info {
+    clear: both;
+}
+.po-header {
+    height: 55px;
+}
+.right{
+    text-align:right;
+}
+.left{
+    text-align:left;
+}
+.pdfLogo{
+   display:none;
+}
+.mailSendMessage {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-weight: bold;
+    display: none; /* Hidden by default */
+}
+
+/* Success message style */
+.mailSendMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Error message style */
+.mailSendMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+p.to-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+p#btnPrint {
+    padding-bottom: 50px;
+}
+.po-header {position: relative;}.img-div{position: absolute;top: -25px;left: 0;}
+
+
+.po-header h1, .po-header .img-div {
+    display: none !important;
+}
+.po-div {
+    margin-top: -25px;
+}
+
+img.printLogo, img.pdfLogo {
+    width: 100%;
+}
+.footer-section { margin-top: 20px; font-weight: normal; text-align: center; font-size: 13px; }
+table.sign-div,table.sign-div td {
+    border: none !important;
+}
+</style>
+
+<?php
+ $printStyle = "<style>.po-container { max-width: 900px; margin: auto; border: 1px solid #000 !important; padding: 30px; } .po-header { display: block !important; justify-content: space-between; align-items: center; border-bottom: 1px solid #000; padding-bottom: 20px; } .po-header img { height: 80px; } .po-header h2 { margin: 0; text-align: center; flex: 1;font-weight: 600; font-size: 15px; } .po-info { display: flex !important; justify-content: space-between; margin-top: 20px;width: 100%;} .to-info { width: 50%;  float:left} .right-table { width: 45%; }.to-info { text-align: start; font-size: 13px; } .to-info strong { font-size: 13px; } p.head-to-bottom { text-align: start; font-size: 13px; } .right-table td { padding: 4px; font-size: 13px; text-align: justify; font-weight: 500; border-right: none; border-style: hidden; border: 1px solid #00000000 !important;} .right-table tr { border-style: hidden; } div#old-printdiv { display: none; }.po-header h2 { width: 100%; float: left; margin-top: 70px; } .po-header div { max-width: 10%; float: left; }.po-info { clear: both; } .po-header { height: 70px; margin-top:22px;font-weight: 600; font-size: 18px; }.right{text-align:right;}.left{text-align:left;}.po-header {position: relative;}.img-div{position: absolute;top: -25px;left: 0;}.po-header h1, .po-header .img-div { display: none !important; }.po-div { margin-top: 5px; width: 100%; height: 20px; }.po-div img{width: 100%;height:50px;}.po-info p { font-size: 17px !important; margin: 0 !important; } .right-table td { font-size: 17px !important; margin: 0px !important; }.po-header h2 { font-weight: 600; font-size: 15px; }.pdfLogo{display:none !important;}.printLogo{margin:20px;}.footer-section { margin-top: 15px; font-weight: normal; text-align: center; font-size: 15px; }table.sign-div,table.sign-div td { border: none !important; }.text_amount{ font-size: 15px;}.logo{width:100px !important;height:100px !important;}.to-title{font-size: 22px !important;font-weight: bold; }.po-info td{padding: 0px;}</style>";
+?>
+
+
+
+<!-- Second end-->
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=15,top=5,width=100%,height=1200px')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>INVOICE</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{ font-size:11px;}.bngFont{font: 120% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}h1.company_name { font-size: 20px !important; margin: 0 !important; } p.company_address { font-size: 14px !important; font-weight:normal; margin:0px !important; } p.company_address-2 { font-size: 14px !important; font-weight:normal; margin:0px !important; }td.customer-info p { margin: 0 !important; font-weight: normal; }</style>")
+newwin.document.write("<?=$printStyle?>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<!-- Second Start -->
+
+
+<div class="po-container" id="printdiv">
+	<div class="po-div">
+		<div style="display:flex; gap:20px;align-items: center;">
+		<img src="<?=$bill['project_logo'];?>" class="logo" style="width:100px;">
+		<div style="display:flex;flex-direction:column;align-items: center; justify-content: center; flex-grow: 1;"><h1 style="font-size: 16px;font-size: 20px; font-weight: 600;" class="company_name"><?=COMPANY_NAME?></h1>
+		<p style="font-size:12px; font-weight:normal" class="company_address">Corporate Office: 57-57A, Uday Tower (2nd Floor), Gulshan-1, Dhaka-1212</p>
+	  	<p style="padding-bottom: 4px;font-size:12px; font-weight:normal" class="company_address-2">Reg. Office: City Heart (12th Floor), Suite # 13/5,67, Naya Paltan, Dhaka-1000</p>
+		</div>
+		</div>
+	</div>
+
+    <div class="po-header">
+      	<h2>INVOICE</h2>
+    </div> 
+
+    <div class="po-info">
+      <div class="to-info">
+        <p class="to-title">Customer Information:</p>
+      <p>Customer :<?=$bill['sub_head_name'];?></p>
+    <p>
+        Address:
+        <?php 
+	   if($bill['head_details']!="") {echo $bill['head_details'];} 
+	   if($bill['att_name2']!="") {echo ", N.I.D No.: ".$bill['att_name2'];}
+	?>
+    </p>
+    <?php if(!empty($bill['phone'])){ ?>
+        <p>Phone: <?=$bill['phone']; ?></p>
+    <?php } ?>
+
+    <?php if(!empty($bill['att_mobile1'])){ ?>
+        <p>Phone: <?=$bill['att_mobile1']; ?></p>
+    <?php } ?>
+
+    <?php if(!empty($bill['email'])){ ?>
+        <p>Email: <?=$bill['email']; ?></p>
+    <?php } ?>
+      </div>
+      <div class="right-table">
+	<table>
+	<tr>
+		<td colspan="2"><strong>Bill Details</strong></td>
+	</tr>
+	<tr>
+		<td>Invoice No</td>
+		<td>:<?=$bill['voucher_no']; ?></td>
+	</tr>
+	<tr>
+		<td>Invoice Date</td>
+		<td>: <?=date('j F y', strtotime($bill['bill_date']))?></td>
+	</tr>
+	<tr>
+		<td style="display: block;"><div>Delivery Note</div></td>
+		<td>:<div style="display: inline; text-align:left;white-space: normal; word-break: break-all;"><?php 
+		     $BillInvoices = [];
+		    foreach($bill_invoices as $item){ $BillInvoices[] = $item['voucher_no']; }
+		    echo implode(", ", $BillInvoices);
+		?></div></td>
+	</tr>
+	<tr>
+		<td>Mode/Terms of Payment</td>
+		<td>: <?=$credit_days." Days"; ?></td>
+	</tr>
+
+	<tr>
+		<td style="display: block;">Buyer's Order No</td>
+		<td>:<div style="display: inline; text-align:left;white-space: normal; word-break: break-all;"><?php
+			if(!empty($bill['und_no'])){
+			   echo $bill['und_no'];
+			}else{
+			   echo implode(", ", $workOrderArray);
+			}
+		?></div></td>
+	</tr>
+	<tr>
+		<td style="display: block;">Date</td>
+		<td>:<div style="display: inline; text-align:left;white-space: normal; word-break: break-all;"><?=implode(", ", $workOrderDate); ?></div></td>
+	</tr>
+	</table>
+      </div>
+    </div>
+
+<!-- Second End-->
+
+<form name="frmbooking" method="post">
+<div id="printdiv">
+
+   <br>
+   <table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+     <tr>
+       <td width="2%" align="left">SL.</td>
+       <td width="22%">Description of Goods </td>
+       <!-- <td width="5%">Brand</td>
+       <td width="7%"><div align="center">Order Qty </div></td>
+       <td width="8%" align="left"><div align="center">Order  Amount </div></td>
+       <td width="8%"><div align="center">Undelivery Qty </div></td> -->
+       <td width="8%" align="left"><div align="center">UOM </div></td>
+       <td width="8%" align="left"><div align="center">Quantity </div></td>
+       <!-- <td width="5%" align="left"><div align="center">Free Qty</div></td> -->
+       <td width="8%" align="left"><div align="center">Rate </div></td>
+       <td width="8%" align="left"><div align="center">Amount </div></td>
+       <!-- <td width="5%" align="left"><div align="center">Discount/ Pcs % </div></td> -->
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+       <td width="8%" align="left"><div align="center">VAT % </div></td>
+       <td width="8%" align="left"><div align="center">VAT Amount </div></td>
+<?php //} ?>
+       <td width="12%" align="left"><div align="center">Total Amount </div></td>
+     </tr>
+     <?php
+
+	$i=1; 
+	$totalDeliveryAmountBefoureDiscount=0; 
+	$total_order_qty =0; 
+	$total_order_amount=0; 
+	$total_delivery_qty=0; 
+	$total_pending_qty=0;
+	$total_free_qty=0; 
+
+
+$dataArray = array();
+
+foreach ($bill_invoices as $billItem) {
+
+    $voucherNo = $billItem['voucher_no'];
+
+    if (empty($billItem['details'][$voucherNo])) {
+        continue;
+    }
+
+      if (empty($billItem['details'][$voucherNo]['invoice_snap_short'])) {
+          continue;
+      }
+
+    $json = $billItem['details'][$voucherNo]['invoice_snap_short'];
+    $json = preg_replace('/\((\d+)"\)/', '($1\")', $json);
+
+    $json_array = json_decode($json, true);
+    if (!is_array($json_array)) continue;
+
+foreach($json_array as $val){
+     $val = (object)$val;
+        $product_id = $val->product;
+
+        // =========================
+        // PRODUCT MASTER DATA
+        // =========================
+        if (empty($val->product_name) && !empty($product_id)) {
+
+            $proSql = "SELECT product_name, product_desc, product_code 
+                       FROM " . PRODUCT_TBL . " 
+                       WHERE product_id = '$product_id'";
+
+            $productDetails = mysql_fetch_assoc(mysql_query($proSql));
+
+            if (!empty($productDetails['product_name'])) {
+                $val->product_name = $productDetails['product_name'];
+                $val->product_desc = $productDetails['product_desc'];
+                $val->product_code = $productDetails['product_code'];
+            }
+        }
+
+        $order_qty = (float) $val->qty;
+        $delivery_qty = (float) $val->delivery_qty;
+
+        $unit_discount = (($val->unit_price / 100) * $val->discount_per_qty);
+        $unitDiscountAmount = $unit_discount * $order_qty;
+
+        $orderPrice = (float)$val->unit_price * $order_qty;
+        $vatAmount = (($orderPrice * (float)$val->vat) / 100);
+
+        $orderAmount = ($orderPrice - $unitDiscountAmount + $vatAmount);
+
+	$total_delivery_qty += $delivery_qty;
+	$total_order_qty += $order_qty;
+	$total_order_amount += $orderAmount;
+	$total_free_qty += $val->free_qty;
+        
+        $dataArray[] = array(
+            // MASTER INFO
+            "voucher_no" => $voucherNo,
+            "wo_no" => $billItem['master']['wo_no'],
+            "bill_id" => $detail['bill_id'],
+
+            // PRODUCT INFO
+            "product_id" => $product_id,
+            "product_name" => isset($val->product_name) ? $val->product_name : '',
+            "product_desc" => isset($val->product_desc) ? $val->product_desc : '',
+            "product_code" => isset($val->product_code) ? $val->product_code : '',
+            "m_unit" => isset($val->m_unit) ? $val->m_unit : '',
+
+
+            // QUANTITY INFO
+            "qty" => $order_qty,
+            "delivery_qty" => $delivery_qty,
+            "free_qty" => isset($val->free_qty) ? $val->free_qty : 0,
+            "undelivery_qty" => isset($val->undelivery_qty) ? $val->undelivery_qty : 0,
+
+            // PRICE INFO
+            "unit_price" => isset($val->unit_price) ? $val->unit_price : 0,
+            "discount_per_qty" => isset($val->discount_per_qty) ? $val->discount_per_qty : 0,
+            "discount_amount" => isset($val->discount_amount) ? $val->discount_amount : 0,
+            "vat" => isset($val->vat) ? $val->vat : 0,
+
+            // CALCULATED
+            "orderPrice" => $orderPrice,
+            "order_amount" => $orderAmount,
+            "vat_amount" => $vatAmount,
+            "discount_total" => $unitDiscountAmount
+        );
+    }
+    
+}
+	    //dd($dataArray);
+	foreach($dataArray as $val){
+	    $val = (object)$val;
+	   
+    ?>
+     <tr>
+       <td align="left"><?=$i?></td>
+       <td><?=$val->product_name?>
+         <? if($val->details!=""){echo ", ".$val->details;}elseif($val->product_desc!=""){ echo ", ".$val->product_desc;}?></td>
+       <!-- <td><?=$val->brand_name?></td>
+       <td align="left"><div align="center">
+           <?=number_format($order_qty,0).' '.$val->m_unit?>
+       </div></td>
+       <td align="left"><div align="center">
+        <?
+	echo number_format($orderAmount,2);
+        ?>
+       </div></td>
+       <td align="left"><div align="center">
+           <?php 
+           //$pending_qty = ($val->qty-$val->totaldelivery_qty);
+           $pending_qty = ($undelivery_qty); 
+           $total_pending_qty+=$pending_qty; echo $pending_qty.' '.$val->m_unit;
+           ?>
+       </div></td> -->
+       <td align="left"><div align="center">
+           <?=$val->m_unit?>
+       </div></td>
+       <td align="left"><div align="center">
+           <?=number_format($val->delivery_qty,2)?>
+       </div></td>
+       <!-- <td align="center"><?=number_format($val->free_qty,0).' '.$val->m_unit?></td> -->
+       <td><div align="center">
+           <?=number_format($val->unit_price,2)?>
+       </div></td>
+       <td><div align="center">
+           <?=number_format($val->orderPrice,2)?>
+       </div></td>
+       <!-- <td><div align="center">
+           <? echo $val->discount_amount.'('.$val->discount_per_qty . '%)';?>
+       </div></td> -->
+	<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+	       <td><div align="center">
+		   <?=number_format($val->vat,2);?>
+	       </div></td>
+	       <td><div align="center">
+		   <?=number_format($val->vat_amount,2);?>
+	       </div></td>
+	<?php //} ?>
+
+       <td align="right"><div align="right">
+           <?php
+           	$totalDeliveryAmountBefoureDiscount+=$val->order_amount;
+		echo number_format($val->order_amount,2);
+	   ?>
+       </div></td>
+     </tr>
+ 
+     <?$i++;}?>
+
+     <?php
+ //$colSpan = 10;
+ //if(isset($direct_invoice) && $direct_invoice){
+    $colSpan = 8;
+ //}
+?>
+     <tr>
+       <!-- <td colspan="<?=$colSpan?>" align="left"><div align="right">DD Commission (<?=number_format($general_discount_percent,2)?> %)</div></td> -->
+	
+	<?php $GDiscountAmount=(($totalDeliveryAmountBefoureDiscount/100)*$bill['general_discount_percentage']);?>
+       <!-- <td align="right">
+	   <?php echo number_format($GDiscountAmount,2);?>	   
+	</td> -->
+     </tr>
+     <tr>
+	   <?php
+	   $deliveryAmountAfterDiscount = ($totalDeliveryAmountBefoureDiscount - $GDiscountAmount);
+	   $EDiscountAmount = (($deliveryAmountAfterDiscount/100)*$bill['exclusive_discount_percentage']);
+       $orderValueAfterDiscount = ($total_order_amount-($GDiscountAmount+$EDiscountAmount));
+	   ?>
+       <!-- <td colspan="<?=$colSpan?>" align="left"><div align="right">Exclusive Discount (<?=number_format($bill['exclusive_discount_percentage'],2)?> %)</div></td>
+       <td align="right">
+	   <?php echo number_format($EDiscountAmount,2);?>	  
+       </td> -->
+     </tr>
+     <tr>
+       <!-- <td colspan="<?=$colSpan?>" align="left">
+       <?php if($bill['additional_discount_percentage'] >0){?>
+       <div align="right">Additional Discount (<?php echo number_format($bill['additional_discount_percentage'],2); ?> %) </div>
+       <?php }else{?>
+       <div align="right">Additional Discount </div>
+       <?php }?>
+       </td>
+ 	<?php
+
+        if($delivery_amount>0){
+	   $additional_discount = (($bill['additional_discount']/$orderValueAfterDiscount)*$orderValueAfterDiscount);
+	}else{
+	   $order_amount=($order_amount-($GDiscountAmount+$EDiscountAmount+$product_discount));
+	   $additional_discount = (($bill['additional_discount']/$order_amount)*$order_amount);
+	}
+	   ?>
+       <td align="right">
+	   <?=number_format($bill['additional_discount_amount'],2);?>	   </td> -->
+     </tr>
+<!-- 
+<?php if(isset($additional_cost) && $additional_cost > 0){ ?>
+     <tr>
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Additional Cost</div></td>
+<?php //} ?>
+       <td align="right"><?=number_format($additional_cost,2);?></td>
+     </tr>
+<?php } ?> -->
+
+<?php 
+//if(isset($direct_invoice) && $direct_invoice){ 
+if(!empty($bill['vat_amount']) && $bill['vat_amount'] > 0){
+?>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left">       
+       <?php if(isset($bill['vat_type']) && $bill['vat_type'] == "percent"){?>
+       <div align="right">VAT (<?php echo number_format($bill['vat_percentage'],9); ?> %) </div>
+       <?php }else{?>
+       <div align="right">VAT </div>
+       <?php }?>
+       </td>
+       <td align="right"><?=number_format($bill['vat_amount'],9);?></td>
+     </tr>
+<?php } ?>
+
+       <?php
+            $additional_cost = $bill['additional_cost'];
+            if($additional_cost>0){
+        ?>
+	 <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Sub Total </div></td>
+       <td align="right"><?php
+$totalDiscountAmount = ($GDiscountAmount+$EDiscountAmount+$bill['additional_discount_amount']);
+$delivery_amount = (($total_order_amount + $bill['vat_amount']) - $totalDiscountAmount);
+
+ echo number_format($delivery_amount,2);?></td>
+     </tr>
+       <tr>
+           <td colspan="<?=$colSpan?>" align="left"><div align="right">Additional Cost </div></td>
+           <td align="right"><?php
+
+            echo number_format($additional_cost,2);?></td>
+       </tr>
+       <?php } ?>
+
+       <tr>
+           <td colspan="<?=$colSpan?>" align="left"><div align="right">Total Amount </div></td>
+           <td align="right"><?php
+$totalDiscountAmount = ($GDiscountAmount+$EDiscountAmount+$bill['additional_discount_amount']);
+$delivery_amount = (($total_order_amount + $bill['additional_cost'] + $bill['vat_amount']) - $totalDiscountAmount);
+
+ echo number_format($delivery_amount,2);?></td>
+       </tr>
+ 
+  
+   </table>
+   <br>
+	<?php 
+	    $numberArr = explode(".",format_amount_exact($delivery_amount));
+	    $number1 = $numberArr[0];
+	    $number2 = $numberArr[1];
+		
+	    $inwords = convert_number($number1);
+	    if($number2>0){
+	    $inwords2 = convert_number($number2);
+	    $inwords.= " Taka ".$inwords2." paisa ";
+	    }else{ $inwords.=" Taka ";} 
+	    
+	   ?>
+  <div style="display:block; height:3px"></div>
+   <div align="left" style="font-weight:normal; margin-left:15px" class="text_amount">
+   <b>In words:</b> <?=$inwords." Only";?> 
+   </div>
+
+   <div align="left" style="font-weight:normal; margin-left:15px;margin-top: 10px;" class="text_amount">
+   <b>Remark:</b> <?=$bill['bill_note']?> 
+   </div>
+   <br>
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1" class="sign-div">     
+   
+ 	<tr>
+        <td width="33%" height="84" align="center">
+		<div style="width:260px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:260px; border-top:1px dashed #000; margin-top:25px">Prepared By</div>
+	</td>
+        <td width="33%" align="center">
+		<div style="width:260px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:260px; border-top:1px dashed #000; margin-top:25px">Checked By</div>
+	</td>
+	<td width="33%" align="center">
+		<div style="width:260px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:260px; border-top:1px dashed #000; margin-top:25px">Approved By</div>
+	</td>
+      </tr>
+    </table>
+	<br>
+
+	</div>
+	</td>
+  </tr>
+</table>
+<br/>
+</div>	
+<p align="center" id="btnPrint">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+</script>
+</body>
+</html>

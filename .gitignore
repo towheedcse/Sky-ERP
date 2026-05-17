@@ -1,0 +1,40 @@
+# ============================================================
+#  Thai Project — .gitignore
+# ============================================================
+
+# --- Credentials & config (never commit) ---
+.env
+.env.*
+!.env.example
+tools/generate_secrets.php
+license/license_key.txt
+
+# --- Cache & runtime ---
+/cache/
+/classes/backup/
+/dbbackup/backups/
+/dbbackup/backup_system.log
+/dbbackup/license.cache
+
+# --- Database dumps (sensitive) ---
+/DB/
+
+# --- Uploaded / generated files ---
+/docs/
+/images/
+/classes/up/
+
+# --- Third-party libraries ---
+externals/
+
+# --- Obfuscator tool output ---
+tools/yakpro-po/PHP-Parser/vendor/
+
+# --- OS & editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*.bak
+*.tmp

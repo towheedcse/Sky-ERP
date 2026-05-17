@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Booking</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;   
+}
+
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Received Product</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmbooking" method="post">
+<div id="printdiv">
+<table width="97%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp;Received Invoice </strong></span></td>
+  </tr>
+  <tr>
+    <td class="bngFont">
+	<div align="center">
+      <span style="font-size:28px; font-weight:bold"> kvn&amp; myjZvb exR wngvMvi  </span><br>
+      <span style="font-size:20px; font-weight:bold">Pzno,(&circ;eivMxM&Auml;) cvqive&rsaquo;`, wgVvcyKzi, iscyi| &dagger;gvevt 01717 016105</span></div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset><legend>Customer Information</legend>	
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="12%" align="left" nowrap class="bngFont">Gm. Avi. bs</td>
+        <td align="left" class="bngFont" ><?=$posting_sr?>/<?=$received_bag_qty?></td>
+        <td align="left" nowrap class="bngFont">`wjj bs </td>
+        <td align="left"><?=$received_id?></td>
+        <td align="left" nowrap class="bngFont"> cvwU&copy;i &Dagger;KvW&copy;</td>
+        <td align="left"><span><?=$customer_code?></span></td>
+      </tr>
+      <tr>
+        <td class="bngFont"><div align="left">eywKs bs</div></td>
+        <td width="32%" align="left"><?=$booking_id?></td>
+        <td width="9%" class="bngFont" align="left">cvwU&copy;i bvg</td>
+        <td width="20%" align="left" class="bngFont"><?=$name?></td>
+        <td width="10%" align="left" class="bngFont">G&Dagger;R&rsaquo;U</td>
+        <td width="17%" align="left" ><?=$agent_code?></td>
+      </tr>
+      <tr>
+        <td class="bngFont"><div align="left">wcZvi bvg</div></td>
+        <td class="bngFont" align="left"><?=$fname?></td>
+        <td class="bngFont"><div align="left">&Dagger;gvevBj</div></td>
+        <td  align="left"class="bngFont"><?=$mobile?></td>
+        <td align="left" class="bngFont">ZvwiL</td>
+        <td align="left"><?=$created_date?></td>
+      </tr>
+      <tr>
+        <td class="bngFont"><div align="left" >&macr;&rsquo;vqx wVKvbv</div></td>
+        <td colspan="5" valign="top" class="bngFont"><div align="left"><?=$address?></div></td>
+		</tr>
+    </table>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset>
+	<legend>Product Information</legend>
+	
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="1"cellspacing="0">
+      <tr>
+        <td width="19%" class="bngFont"><div align="left">weeiY</div></td>
+        <td width="11%" class="bngFont"><div align="center">e&macr;&mdash;vi msL&uml;v</div></td>
+        <td width="13%" class="bngFont"><div align="left">IRb (&Dagger;KwR)</div></td>
+		<td width="11%" class="bngFont"><div align="center">c&Ouml;wZ e&macr;&mdash;vi fvov</div></td>
+        <td width="14%" class="bngFont"><div align="center">Lvwj e&macr;&mdash;vi UvKv</div></td>
+        <td width="10%" class="bngFont"><div align="center">&Dagger;gvU &Dagger;Kwis</div></td>
+        <td width="10%" class="bngFont"><div align="center">&Dagger;gvU fvov</div></td>
+        <td width="12%" class="bngFont"><div align="center">eywKs Gi UvKv</div></td>
+      </tr>
+      <tr>
+        <td class="bngFont" align="left"><?=$product_details?></td>
+        <td class="bngFont" align="center"><?=$received_bag_qty?></td>
+        <td align="left" class="bngFont"><?=$weight?></td>
+        <td align="center" class="bngFont"><?=$rent_per_bag?></td>
+        <td align="center" class="bngFont"><?=$total_empty_bag_cost?></td>
+        <td align="center" class="bngFont"><?=$total_carring_cost?></td>
+        <td align="left" class="bngFont">&nbsp;</td>
+        <td align="center" class="bngFont"><?=$booking_amount?></td>
+      </tr>
+      <tr>
+        <td height="32" class="bngFont"><div align="left">cvwU&copy;i &macr;^v&para;i </div></td>
+        <td colspan="3" class="bngFont">&nbsp;</td>
+        <td class="bngFont"><div align="left">c&Dagger;&para;-</div></td>
+        <td class="bngFont">&nbsp;</td>
+        <td colspan="2" class="bngFont">&nbsp;</td>
+        </tr>
+    </table>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+  <tr>
+    <td class="bngFont">
+	<strong><em> kZ&copy;vejx </em></strong>    
+      <ol>
+        <li> gvj wngvMv&Dagger;i msi&para;&Dagger;Yi mgqKvj &dagger;mB erm&Dagger;ii gv&Dagger;P&copy;i 1g m&szlig;vn nB&Dagger;Z 15B b&Dagger;f&curren;^i ch&copy;&scaron;&mdash; nB&Dagger;e| </li>
+        <li> cvwU&copy;&Dagger;K &dagger;Kv&curren;&uacute;vbxi mgy`q cvIbv cwi&Dagger;kva c~e&copy;K gvj GK wKw&macr;&mdash;&Dagger;Z A_ev me&copy;vwaK `yB wKw&macr;&mdash;&Dagger;Z &dagger;Wwjfvix wb&Dagger;Z nB&Dagger;e| GB iwm`/`wjj Qvov gvj &dagger;Kvbfv&Dagger;eB c&Ouml;`vb Kiv nB&Dagger;e bv| </li>
+        <li> c&Ouml;wZwU e&macr;&mdash;vi Avjyi IRb (e&macr;&mdash;vi IRb mn) &dagger;Kvbfv&Dagger;e 84 &dagger;KwRi &Dagger;ewk nB&Dagger;Z cvwi&Dagger;e bv| wK&scaron;&lsquo; Avjyi IRb Kg nB&Dagger;jI 84 &dagger;KwRi fvov cwi&Dagger;kva Kwi&Dagger;Z nB&Dagger;e| </li>
+        <li> bZzb e&macr;&mdash;v Qvov &para;vihy&sup3;, AvUv, gq`v, ZvgvK, PvDj, wPwb ev wfRv e&macr;&mdash;v&Dagger;Z Avjy ivLvi Kvi&Dagger;b &dagger;Kvbi&fnof;c &para;q&para;wZ nB&Dagger;j ev Bu`yi KvwU&Dagger;j &dagger;Kv&curren;&uacute;vbx `vqx _vwK&Dagger;e bv| </li>
+        <li> &Dagger;Kv&curren;&uacute;vbx gvj i&para;Yv&Dagger;e&para;Y Kwi&Dagger;eb wK&scaron;&lsquo; &dagger;Kv&curren;&uacute;vbxi Avq&Dagger;Z&iexcl;i evwn&Dagger;i Ggb &dagger;Kvb KviY, c&Ouml;vK&hellip;wZK-Ac&Ouml;vK&hellip;wZK `y&Dagger;h&copy;vM, gv&Dagger;ji wbR&macr;^ &dagger;`vl, &circ;e`y&uml;wZK &dagger;Mvj&Dagger;hvM, Pzwi, `vsMv-nvsMvgv, we&Dagger;`&ordf;vn, ag&copy;NU, ivR&permil;bwZK Afy&uml;&Igrave;vb, &dagger;Kvb `~N&copy;Ubv, miKvix wewa wb&Dagger;la, `ywe&copy;cvK, hy&times; A_ev Ab&uml; &dagger;Kvb A&Aacute;vZ Kvi&Dagger;Y gv&Dagger;ji &dagger;Kvb &para;wZmvab nB&Dagger;j Bnvi Rb&uml; &dagger;Kv&curren;&uacute;vbx `vqx _vwK&Dagger;e bv| </li>
+        <li> &Dagger;Kv&curren;&uacute;vbx wba&copy;vwiZ mgq 15B b&Dagger;f&curren;^i Gi c~&Dagger;e&copy; &dagger;h &dagger;Kvb mgq `iKvi ekZt cvwU&copy;&Dagger;K Zuvnvi wbR gvj DVvBqv jBevi wb&Dagger;`&copy;k w`&Dagger;Z cvwi&Dagger;eb| wb&Dagger;`&copy;k ev we&Aacute;w&szlig; gvwdK cvwU&copy; gvj D&Dagger;&Euml;vj&Dagger;b e&uml;_&copy; nB&Dagger;j D&sup3; gv&Dagger;ji `vq-`vwqZ&iexcl; &dagger;Kv&curren;&uacute;vbx enb Kwi&Dagger;eb bv| </li>
+        <li> wngvMvi nB&Dagger;Z gvj Lvjvm Kwi&Dagger;Z PvB&Dagger;j cvwU&copy; mvZ w`b c~&Dagger;e&copy; we&Aacute;w&szlig; gvidZ &dagger;Kv&curren;&uacute;vbx&Dagger;K AewnZ Kwi&Dagger;eb Ab&uml;_vq &dagger;Kv&curren;&uacute;vbx wb&Dagger;Ri myweav gvwdK gvj Lvjvm Kwiqv w`&Dagger;eb| </li>
+        <li> cvwU&copy; hw` wba&copy;vwiZ w`&Dagger;b A_ev wba&copy;vwiZ mvZ w`&Dagger;bi g&Dagger;a&uml; gvj &dagger;Wwjfvix wb&Dagger;Z e&uml;_&copy; nb Zvnv nB&Dagger;j &dagger;Kv&curren;&uacute;vbx cvwU&copy;&Dagger;K cybivq we&Aacute;w&szlig; bv w`qv wngvMv&Dagger;i msiw&para;Z gvj we&micro;q Kwiqv cvIbv Av`vq Kwi&Dagger;Z cvwi&Dagger;e| hw` gvj we&micro;&Dagger;qi c&Dagger;iI &dagger;Kv&curren;&uacute;vbxi cvIbv cyivcywi mg&scaron;^q bv nq Zvnv nB&Dagger;j cvwU&copy;&Dagger;K &dagger;Kv&curren;&uacute;vbxi euvKx cvIbv Aek&uml;B cwi&Dagger;kva Kwi&Dagger;Z nB&Dagger;e| </li>
+        <li> wba&copy;vwiZ w`&Dagger;b cvwU&copy;i gvj &dagger;Wwjfvix bv &dagger;bIqvi d&Dagger;j hw` gvj AvswkK A_ev m&curren;&uacute;~b&copy; cuwPqv hvq, Zvnvi Rb&uml; &dagger;Kv&curren;&uacute;vbx &dagger;Kvb c&Ouml;Kvi `vqx _vwK&Dagger;e bv| </li>
+		<li>GB `wjj &micro;q-we&micro;q ev n&macr;&mdash;v&scaron;&mdash;i &Dagger;hvM&uml; bq| </li>
+      </ol>
+      GB Pzw&sup3;i mKj c&Ouml;Kvi weev&Dagger;`i wm&times;v&scaron;&mdash; &dagger;Kv&curren;&uacute;vbxi g&uml;v&Dagger;bwRs wW&Dagger;i&plusmn;i ev &Dagger;Kv&curren;&uacute;vbxi c&Ouml;wZwbwa msi&para;Y K&Dagger;i| </td>
+  </tr>
+</table>
+</div>	
+<p align="center">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+</form>
+</body>
+</html>

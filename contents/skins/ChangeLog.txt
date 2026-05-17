@@ -1,0 +1,548 @@
+regedit
+
+
+print_purchase_item_received_invoice.html
+print_purchase_order_invoice.html
+print_purchase_voucher.html
+print_sales_voucher.html
+print_sales_order_invoice.html
+print_delivery_challan_invoice.html
+
+purchase.html
+purchase_order.html
+purchase_item_received.html
+sales.html
+delivery_challan.html
+sales_order.html
+branch.html - FULL
+fm_content_right.html
+commission-setup.html
+balance_sheet.html
+sales_commission_list.html
+sales.commission.html
+accounts_ledger.html
+show_ledger.html
+due_payble_list.html
+payable_check_list.html
+employee_add_edit.html
+
+sales_order.php
+sales.commission.php
+
+purchase.class.php-
+purchase_order.class.php-
+purchase_item_received.class.php-
+salse.class.php-
+sales_order.class.php-
+delivery_challan.class.php-
+journal.class.php-
+salary.sheet.class.php - all-
+warranty.class.php-
+employee.class.php-
+
+common.list.class.php-
+sales.commission.class.php-
+
+purchase.js
+purchase_order.js
+purchase_item_recieved.js
+salse.js
+sales_order.js
+sales_delivery_item.js
+commission.js
+
+style.css
+2 image icom
+
+ALTER TABLE `sales_master` ADD `commission_status` INT NOT NULL DEFAULT '0' AFTER `commission_total_due`;
+ALTER TABLE `payable_check` ADD `adv_cost` INT( 1 ) NOT NULL DEFAULT '0' COMMENT '0 is Administrative No, 1 is Administrative Yes' AFTER `customer`;
+ALTER TABLE `employee` ADD `weekend` VARCHAR( 15 ) NOT NULL AFTER `department` ,
+ADD `gross_salary` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `weekend` ;
+ALTER TABLE `employee` ADD UNIQUE (`employee_id`);
+ALTER TABLE `employee` ADD `resign_date` DATE NULL DEFAULT NULL AFTER `gross_salary`;
+ 
+Salary Master TBL & Details TBL
+==================================
+ALTER TABLE `salary_details` ADD `remarks` VARCHAR( 350 ) NOT NULL AFTER `total_due`;
+ALTER TABLE `production_master` ADD `unit_price` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `sold_cost` ,
+ADD `sales_price` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `unit_price`; 
+
+ALTER TABLE `account_journal` ADD `transaction_type` VARCHAR( 20 ) NOT NULL AFTER `head_type`;
+ALTER TABLE `account_journal` CHANGE `head_type` `head_type` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `sales_details` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `project_id`;
+ALTER TABLE `salary_master` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `project_id`;
+ALTER TABLE `purchase_details` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `project_id`;
+ALTER TABLE `purchase_master` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `project_id`;
+ALTER TABLE `cs_delivery_product` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `project_id`;
+======================================
+Tech Vision
+
+ALTER TABLE `sales_master` ADD `area` VARCHAR( 5 ) NOT NULL AFTER `project_id`;
+ALTER TABLE `sales_master` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `voucher_no`;
+ALTER TABLE `sales_details` ADD `area` VARCHAR( 5 ) NOT NULL AFTER `total`;
+
+sales.class.php
+sales_order.class.php
+delivery_challan.class.php
+customer.class.php
+area.class.php
+common.list.class.php
+
+sales.html +js
+sales_order.html+js
+delivery_challan.html+js
+
+balance_sheet.html
+
+ALTER TABLE `sub_acc_head` ADD `sales_type` VARCHAR( 30 ) NOT NULL AFTER `head_details` ;
+ALTER TABLE `sub_acc_head` ADD `district` INT NOT NULL AFTER `head_details` ,
+ADD `area` VARCHAR( 5 ) NOT NULL AFTER `district` 
+=======23 Feb 2014=============
+
+ALTER TABLE `sales_delivery_item` ADD `delivery_master_id` INT NOT NULL AFTER `sales_delivery_id`;
+
+delivery_challan.class.php
+advanced_received.class.php
+sales_delivery_item.js 
+print_delivery_challan_invoice.html
+delivery_challan.html
+general_vouchar.html
+advanced_received.html
+advanced_received_voucher.html
+fm_content_right.html
+sales.report.class.php-all
+sales.report.html
+sales.class.php
+sales_order.class.php
+=======27 Feb 2014=============
+ALTER TABLE `sales_details` ADD `discount_per_qty` INT NOT NULL DEFAULT '0' AFTER `purchase_price` ,
+ADD `discount_amount` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `discount_per_qty`;
+
+ALTER TABLE `sales_master` ADD `delivery_note` VARCHAR( 300 ) NOT NULL AFTER `due` ,
+ADD `terms_of_payment` VARCHAR( 200 ) NOT NULL AFTER `delivery_note` ,
+ADD `despatch_document_no` VARCHAR( 80 ) NOT NULL AFTER `terms_of_payment` ,
+ADD `destination` VARCHAR( 120 ) NOT NULL AFTER `despatch_document_no`;
+
+ALTER TABLE `sales_delivery_item` ADD `discount_per_qty` INT NOT NULL DEFAULT '0' AFTER `unit_price` ,
+ADD `discount_amount` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `discount_per_qty`; 
+ALTER TABLE `stock_ledger` CHANGE `unit_price` `unit_price` DECIMAL( 10, 4 ) NOT NULL DEFAULT '0.00'; 
+ALTER TABLE `purchase_details` CHANGE `unit_price` `unit_price` DECIMAL( 10, 4 ) NOT NULL DEFAULT '0.00';
+ALTER TABLE `purchase_details` CHANGE `total` `total` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00';
+ALTER TABLE `purchase_master` CHANGE `total_value` `total_value` DECIMAL( 14, 4 ) NOT NULL;
+ALTER TABLE `purchase_master` CHANGE `net_payble` `net_payble` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `paid_amount` `paid_amount` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `due` `due` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `item_received_amount` `item_received_amount` DECIMAL( 14, 4 ) NOT NULL;
+ALTER TABLE `sales_details` CHANGE `unit_price` `unit_price` DECIMAL( 10, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `purchase_price` `purchase_price` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `unit_profit` `unit_profit` DECIMAL( 18, 4 ) NOT NULL DEFAULT '0.00';
+ALTER TABLE `sales_master` CHANGE `total_value` `total_value` DECIMAL( 14, 4 ) NOT NULL ,
+CHANGE `net_payble` `net_payble` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `paid_amount` `paid_amount` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00' COMMENT 'received_amount',
+CHANGE `return_amount` `return_amount` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `item_delivery_amount` `item_delivery_amount` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00',
+CHANGE `due` `due` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0.00';
+ALTER TABLE `sales_details` ADD `free_qty` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0' AFTER `delivery_qty`; 
+
+======= March 07 2014=======
+ALTER TABLE `sales_delivery_item_master` ADD `customer` VARCHAR( 9 ) NOT NULL AFTER `project_id`;
+ALTER TABLE `sales_delivery_item_master` ADD `fyear` VARCHAR( 5 ) NOT NULL DEFAULT 'FY001' AFTER `sales_delivery_master_id`;
+ALTER TABLE `sales_delivery_item_master` ADD `total_value` DECIMAL( 14, 4 ) NOT NULL DEFAULT '0' AFTER `delivery_date`;   
+   
+ALTER TABLE `sales_master` ADD `delivery_point` VARCHAR( 5 ) NOT NULL AFTER `area`;   
+ALTER TABLE `sales_delivery_item_master` ADD `delivery_point` VARCHAR( 5 ) NOT NULL AFTER `consignee`; 
+ALTER TABLE `sales_delivery_item` ADD `delivery_point` VARCHAR( 5 ) NOT NULL AFTER `pvoucher_no` ,
+ADD `consignee` VARCHAR( 6 ) NOT NULL AFTER `delivery_point`;
+
+=========================================
+======= March 11 2014=======
+ALTER TABLE `sales_master` ADD `baddebt_amount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `return_amount` ;
+ALTER TABLE `sales_master` ADD `adjust` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `baddebt_amount`; 
+=========================================
+ALTER TABLE `project` ADD `project_logo` VARCHAR( 50 ) NOT NULL
+ 
+========== March 14 2014 ================
+sales.class.php
+sales.delivery.class.php [ adjust]
+delivery_challan.class.php
+advanced_received.class.php
+
+delivery_challan.conf.php
+
+balance_sheet.html --
+sales.delivery.challan.list.html --
+sales_details_list.html --
+print_delivery_challan_invoice.html --
+print_sales_invoice.html --
+general.lib.php -> [inwords] --
+advanced_received_voucher.html --
+
+fg.production.class.php -- stock transfer
+sales.report.class.php
+sales.delivery.html
+fg.production.php --[app edit for stock transfer]
+fg.production.conf.php
+sales.report.conf.php -- stock  status
+production.js --[edit for stock transfer]
+stock.transfer.html
+store.stock.status.html
+general.lib.php --[getStoreStockQty($store_id,$product)] 
+print_delivery_challan_invoice.html
+
+customer.opening.class.php
+transaction_list.html
+voucher_print.html
+sales.return.class.php
+
+
+ALTER TABLE `sales_details` ADD `missing_qty` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0' AFTER `return_qty`; 
+ALTER TABLE `sales_delivery_item` ADD `missing_qty` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0' AFTER `delivery_qty`;
+ALTER TABLE `sales_delivery_item_master` ADD `previour_balance` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `total_value`;  
+===========================================================
+
+general.lib.php
+database.conf.php
+advanced_received.class.php
+advanced_payment.class.php
+sales.class.php -> techpro moto khobe not replace
+purchase.class.php -> techpro moto khobe not replace
+balance_sheet.html
+print_sales_voucher.html
+print_purchase_voucher.html
+ALTER TABLE `purchase_master` ADD `previour_balance` DECIMAL( 16, 2 ) NOT NULL DEFAULT '0' AFTER `paid_amount`; 
+
+==28March ===
+
+sales.class.php-
+sales_order.class.php-
+delivery_challan.class.php
+sales.delivery.class.php-
+sales.delivery.js-
+sales_order.js-
+sales_order_list.html-
+sales_order.html-
+print_sales_invoice.html-
+sales.delivery.html-
+
+ALTER TABLE `sales_master` ADD `general_discount_percent` DECIMAL( 5, 2 ) NOT NULL DEFAULT '0' AFTER `ref_no` ,
+ADD `general_discount_amount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `general_discount_percent` ,
+ADD `exclusive_discount_percent` DECIMAL( 5, 2 ) NOT NULL DEFAULT '0' AFTER `general_discount_amount` ,
+ADD `exclusive_discount_amount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `exclusive_discount_percent` ,
+ADD `additional_discount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `exclusive_discount_amount` ,
+ADD `product_discount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `additional_discount`;
+
+ALTER TABLE `sales_delivery_item` ADD `overall_discount` DECIMAL( 5, 2 ) NOT NULL DEFAULT '0' AFTER `discount_amount` ,
+ADD `overall_discount_amount` DECIMAL( 14, 2 ) NOT NULL DEFAULT '0' AFTER `overall_discount`;
+==== Done=== 
+
+deliverypoint.html-
+groupwise.stock.transfer.html-
+groupwise.stock.transfer.class.php-
+groupwise.stock.transfer.conf.php-
+print_stock_transfer_challan.html-
+database.conf.php-
+
+ALTER TABLE `deliverypoint` ADD `details` MEDIUMTEXT NOT NULL AFTER `delivery_point_name`;
+ALTER TABLE `stock_transfer_details` CHANGE `transfer_id` `transfer_id` INT( 11 ) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `stock_transfer_details` CHANGE `transfer_date` `transfer_date` DATE NOT NULL;
+ALTER TABLE `stock_transfer_master` CHANGE `transfer_date` `transfer_date` DATE NOT NULL;
+==== Done===     
+ALTER TABLE `sales_return` CHANGE `voucher_no` `voucher_no` VARCHAR( 10 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ;
+ALTER TABLE `sales_return` CHANGE `sales_unit_price` `unit_price` DECIMAL( 12, 2 ) NOT NULL DEFAULT '0.00';
+ALTER TABLE `sales_return` DROP `currency_rate`;
+ALTER TABLE `sales_return` ADD `m_unit` VARCHAR( 5 ) NOT NULL AFTER `product_id`;
+==============================
+
+advanced_received.html--
+advanced_payment.html--
+general_vouchar.html--
+accounts_ledger.html--
+bank.received.voucher.html--
+
+bank.received.voucher.class.php--
+advanced_received.class.php--
+advanced_payment.class.php--
+general_vouchar.class.php--
+journal.class.php-- 
+common.list.class.php--
+fg.production.class.php--
+groupwise.stock.transfer.class.php--
+sales.return.customerwise.class.php--
+sales.delivery.class.php--
+
+=============================
+physical.stock.verification.class.php-
+purchase.class.php-
+sales.report.class.php  - 
+physical.stock.verification.php-
+physical.stock.verification.html-
+print_stock_verification.html-
+stock.verification.list.html-
+sales.delivery.challan.list.html-
+sales_undelivered_list.html-
+sales_order_list.html-
+fm_content_right.html-
+physical.stock.verification.js-
+physical.stock.verification.conf.php-
+
+CREATE TABLE IF NOT EXISTS `temp_stock_verify` (
+  `tmp_id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` varchar(5) NOT NULL DEFAULT 'P0005',
+  `delivery_point` varchar(5) NOT NULL,
+  `verification_date` date NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `currencyName` varchar(5) NOT NULL DEFAULT 'Tk',
+  `productid` varchar(7) NOT NULL,
+  `product_name` varchar(150) NOT NULL,
+  `catagory` varchar(7) NOT NULL,
+  `catagoryname` varchar(60) NOT NULL,
+  `brand_id` varchar(5) NOT NULL,
+  `brandname` varchar(70) NOT NULL,
+  `details` varchar(100) NOT NULL,
+  `munit` varchar(4) NOT NULL DEFAULT 'Pcs',
+  `qty` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `stock_qty` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `variation` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `unit_price` decimal(18,2) NOT NULL DEFAULT '0.00',
+  `total` decimal(18,2) NOT NULL DEFAULT '0.00',
+  `created_by` varchar(30) NOT NULL,
+  PRIMARY KEY (`tmp_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `stock_verify_master` (
+  `verify_no` varchar(9) NOT NULL,
+  `project_id` varchar(5) NOT NULL,
+  `delivery_point` varchar(5) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `total_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `verification_date` date NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  `created_date` datetime NOT NULL,
+  PRIMARY KEY (`verify_no`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `stock_verify_details` (
+  `details_id` int(11) NOT NULL AUTO_INCREMENT,
+  `verify_no` varchar(9) NOT NULL,
+  `project_id` varchar(5) NOT NULL,
+  `delivery_point` varchar(5) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `catagory` varchar(7) NOT NULL,
+  `brand_id` varchar(5) NOT NULL,
+  `product` varchar(7) NOT NULL,
+  `m_unit` varchar(4) NOT NULL,
+  `unit_price` decimal(14,2) NOT NULL DEFAULT '0.00',
+  `qty` decimal(14,2) NOT NULL DEFAULT '0.00',
+  `stock_qty` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `variation` decimal(14,2) NOT NULL DEFAULT '0.00',
+  `total` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `verification_date` date NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  `created_date` datetime NOT NULL,
+  PRIMARY KEY (`details_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+===================May 09 14====================
+accounts_ledger.html
+general.lib.php
+common.list.class.php
+
+===========16 May 14 ==========
+index
+common.list.class   **-
+contra.voucher.php -
+contra.voucher.class.php-
+contra.voucher.html -
+contra.voucher.list.html -
+contra.voucher.conf -
+contra.voucher.js -
+database.conf.php
+general_vouchar.class   **-
+advanced_payment.class   **-
+print_contra_voucher -
+fm_content_right       **-
+
+voucher.edit.class -
+voucher.edit.conf -
+voucher_list -
+voucher.edit -
+
+--
+-- Table structure for table `adjust_voucher_history`
+--
+
+CREATE TABLE IF NOT EXISTS `adjust_voucher_history` (
+  `adjust_id` int(11) NOT NULL AUTO_INCREMENT,
+  `voucher_no` varchar(12) NOT NULL,
+  `project_id` varchar(5) NOT NULL,
+  `adjust_tbl` varchar(60) NOT NULL,
+  `adjust_ref` varchar(12) NOT NULL,
+  `adjust_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `adjust_type` varchar(16) NOT NULL COMMENT '+ or -',
+  PRIMARY KEY (`adjust_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contra_details`
+--
+
+CREATE TABLE IF NOT EXISTS `contra_details` (
+  `details_id` bigint(22) NOT NULL AUTO_INCREMENT,
+  `contra_id` int(11) NOT NULL,
+  `project_id` varchar(5) NOT NULL,
+  `headtypes` varchar(2) NOT NULL DEFAULT 'Cr',
+  `dr_account` varchar(24) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `cr_account` varchar(24) NOT NULL,
+  `cr_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `bank_name` varchar(80) NOT NULL,
+  `acc_no` varchar(24) NOT NULL,
+  `check_no` varchar(22) NOT NULL,
+  `check_issue_date` date NOT NULL,
+  `cheque_type` varchar(16) NOT NULL DEFAULT 'Cash Deposit',
+  `vouchar_type` varchar(20) NOT NULL,
+  `description` varchar(220) NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  PRIMARY KEY (`details_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contra_master`
+--
+
+CREATE TABLE IF NOT EXISTS `contra_master` (
+  `contra_id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` varchar(5) NOT NULL,
+  `headtypes` varchar(2) NOT NULL DEFAULT 'Dr',
+  `dr_account` varchar(24) NOT NULL,
+  `dr_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `mode_of_payment` varchar(10) NOT NULL,
+  `vouchar_type` varchar(20) NOT NULL,
+  `transaction_type` varchar(25) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `description` varchar(220) NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  `created_date` date NOT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`contra_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmp_grv_details`
+--
+
+CREATE TABLE IF NOT EXISTS `tmp_grv_details` (
+  `tmp_id` bigint(22) NOT NULL AUTO_INCREMENT,
+  `tmp_grvid` int(11) NOT NULL,
+  `project_id` varchar(5) NOT NULL,
+  `headtypes` varchar(2) NOT NULL DEFAULT 'Cr',
+  `dr_account` varchar(24) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `currencyName` varchar(5) NOT NULL DEFAULT 'BDT',
+  `cr_account` varchar(24) NOT NULL,
+  `cr_acname` varchar(220) NOT NULL,
+  `cr_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `bank_name` varchar(80) NOT NULL,
+  `acc_no` varchar(24) NOT NULL,
+  `check_no` varchar(22) NOT NULL,
+  `check_issue_date` date NOT NULL,
+  `cheque_type` varchar(16) NOT NULL DEFAULT 'Cash Deposit',
+  `vouchar_type` varchar(20) NOT NULL,
+  `description` varchar(220) NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  PRIMARY KEY (`tmp_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmp_grv_master`
+--
+
+CREATE TABLE IF NOT EXISTS `tmp_grv_master` (
+  `tmp_grvid` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` varchar(5) NOT NULL,
+  `headtypes` varchar(2) NOT NULL DEFAULT 'Dr',
+  `dr_account` varchar(24) NOT NULL,
+  `dr_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `mode_of_payment` varchar(10) NOT NULL,
+  `vouchar_type` varchar(20) NOT NULL,
+  `transaction_type` varchar(25) NOT NULL,
+  `currency` int(11) NOT NULL DEFAULT '1',
+  `currencyName` varchar(6) NOT NULL DEFAULT 'BDT',
+  `description` varchar(220) NOT NULL,
+  `created_by` varchar(30) NOT NULL,
+  `created_date` date NOT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`tmp_grvid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+======= Done ============
+
+========Start 25 May 2014 ==============
+
+common.list.class.php--
+sales.delivery.class.php--
+sales.delivery.edit.class.php--
+sales_order.class.php--
+
+database.conf.php
+index.php
+
+sales.delivery.edit.php--
+
+sales.delivery.challan.list.html--
+sales_order_edit.html--
+
+
+CREATE TABLE IF NOT EXISTS `adjust_invoice_history` (
+  `adjust_id` bigint(18) NOT NULL AUTO_INCREMENT,
+  `voucher_no` varchar(12) NOT NULL,
+  `delivery_id` bigint(18) NOT NULL DEFAULT '0',
+  `project_id` varchar(5) NOT NULL,
+  `adjust_tbl` varchar(60) NOT NULL,
+  `adjust_ref` varchar(12) NOT NULL,
+  `adjust_amount` decimal(16,2) NOT NULL DEFAULT '0.00',
+  `adjust_type` varchar(25) NOT NULL COMMENT '+ or -',
+  PRIMARY KEY (`adjust_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+ALTER TABLE `stock_ledger` ADD `delivery_id` BIGINT( 18 ) NOT NULL DEFAULT '0' AFTER `store_id`; 
+ALTER TABLE `account_journal` ADD `delivery_id` BIGINT( 18 ) NOT NULL DEFAULT '0' AFTER `voucher_no`;
+
+ALTER TABLE `stock_ledger` CHANGE `stock_id` `stock_id` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `account_journal` CHANGE `id` `id` BIGINT NOT NULL AUTO_INCREMENT; 
+
+ALTER TABLE `sales_delivery_item_master` ADD `roa` DECIMAL( 18, 2 ) NOT NULL DEFAULT '0' COMMENT 'rest of amount' AFTER `previour_balance`;
+ALTER TABLE `sales_delivery_item` CHANGE `pvoucher_no` `pvoucher_no` VARCHAR( 12 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'purchase voucher';
+ALTER TABLE `sales_delivery_item` ADD `sal_detail_id` BIGINT NOT NULL DEFAULT '0' AFTER `pvoucher_no`;   
+ 
+sales.report.libs.php
+
+=== Done ====
+======== July 06 2014 ========
+contra.voucher.html
+general_vouchar.html
+cash_book_list.html
+bank_book_list.html
+sales.report.class.php
+
+
+add branch_id at user TBL
+
+ALTER TABLE `credit_vouchar` ADD `branch_id` VARCHAR( 5 ) NOT NULL AFTER `project_id`;
+ALTER TABLE `cs_delivery_product` ADD `branch_id` VARCHAR( 5 ) NOT NULL AFTER `project_id`;
+  
+
+
+=======================================
+ALTER TABLE `stock_ledger` ADD `note` VARCHAR(50) NOT NULL AFTER `product_type`;
+balance_sheet.html========= 4 bangla tech
+advanced_payment.class.php ========= 4 bangla tech
+advanced_received.class.php ========= 4 bangla tech

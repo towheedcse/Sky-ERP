@@ -1,0 +1,1510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<?php
+extract($data);
+//dumpVar($data); 
+$verification_date = date("Y-m-d"); $free_qty=0;
+
+$getSql	= "SELECT delivery_point,verification_date FROM ".TEMP_STOCK_VERIFY_TBL." WHERE created_by = '".getFromSession('userid')."' 
+AND project_id='".getFromSession('project_id')."' GROUP BY  delivery_point";
+$gres 	= mysql_query($getSql);
+if(mysql_num_rows($gres)>0){
+	$row = mysql_fetch_array($gres);
+	extract($row);
+	}
+
+	if($message==""){ $message = getRequest('msg');} $currency=1;
+	dateIFrame(REL_EXT_DIR);
+
+	$inventory_type = "A000017";
+	$inventory_id_label= "display:block;";
+	$other_head = "display:none;";
+	if($inventory_type=="S126"){
+	$InvMode = "display:block;";
+	$RawMode = "display:none;";
+	$FgMode = "display:none;";
+	$MantMode = "display:none;";
+	}elseif($inventory_type=="A000017"){
+	$InvMode = "display:none;";
+	$RawMode = "display:block;";
+	$FgMode = "display:none;";
+	$MantMode = "display:none;";
+	}elseif($inventory_type=="A000036"){
+	$InvMode = "display:none;";
+	$RawMode = "display:none;";
+	$FgMode = "display:block;";
+	$MantMode = "display:none;";
+	}elseif($inventory_type=="A007758"){
+	$InvMode = "display:none;";
+	$RawMode = "display:none;";
+	$FgMode = "display:none;";
+	$MantMode = "display:block;";
+	}else{
+	$inventory_id_label= "display:none;";
+	$InvMode = "display:none;";
+	$RawMode = "display:none;";
+	$FgMode = "display:none;";
+	$MantMode = "display:none;";
+	}
+
+	?>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/physical.stock.verification.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+	<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+	<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var J = jQuery.noConflict();
+	</script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+	<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+	<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+	<script language="javascript1.3">
+		J("[class^=validate]").validationEngine({
+        inlineValidation: false,
+        success :  false,
+        failure : function() { callFailFunction()  }
+        })
+  var CANCEL_URL = "index.php?app=sales_order&cmd=list";
+
+	</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Physical Stock Verification </title>
+	<style>
+		input{
+			background-color:#ffffff;
+			border: 1px solid #006699;
+		}
+		.style2 {color: #666666}
+		.bangFont {font: 130% SutonnyMJ;
+		}
+	</style>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.css">
+	<style>
+		.filelabel {
+			border: 2px solid #ccc;
+			display: inline-block;
+			padding: 6px 12px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+		.filelabel:hover {
+			background-color: #f8f9fa;
+		}
+		[contenteditable="true"] {
+			border: 1px solid #ddd;
+			padding: 2px 5px;
+			min-width: 50px;
+		}
+		[contenteditable="true"]:focus {
+			outline: 1px solid #86b7fe;
+			background-color: #fff;
+		}
+		.swal-like-alert {
+			padding: 15px;
+			background: #d4edda;
+			color: #155724;
+			border-radius: 4px;
+			margin-bottom: 15px;
+		}
+		#previewModal .btn{
+			width: inherit;
+			padding-bottom: 29px !important;
+		}
+		p#product_code_error {
+			color: red;
+			margin-top: 3px;
+			display: none;
+		}
+
+		#importProgress #progressBar {
+			height: 12px;
+		}
+	</style>
+</head>
+<body>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h5 class="modal-title" id="previewModalLabel"><i class="fas fa-table"></i> Product Import Preview</h5>
+				<button type="button" class="btn-close btn-close-white" onclick="modalClose()" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="d-none" id="importProgress" style="margin-bottom: 10px;">
+					<div class="progress" style="background: #e6f4ff;padding: 15px; color: green;">
+						<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="progressBar">0%</div>
+					</div>
+				</div>
+				<div id="showMessage"></div>
+				<div class="table-responsive" id="importTableContainer">
+					<table class="table table-bordered table-hover" id="previewTable">
+						<thead class="table-dark">
+						<tr>
+							<th>SL</th>
+							<th>Verification ID</th>
+							<th>Depo</th>
+							<th>Date</th>
+							<th>Inventory Head</th>
+							<th>Product ID</th>
+							<th>Product Code</th>
+							<th>Product Name</th>
+							<th>Category</th>
+							<th>Brand</th>
+							<th>Stock Qty</th>
+							<th>Verified Qty</th>
+							<th>Rate</th>
+							<th>Amount</th>
+							<th>Upload Status</th>
+							<th>Action</th>
+						</tr>
+						</thead>
+						<tbody>
+						<!-- Rows will be injected by JavaScript -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer d-flex justify-content-between align-items-center">
+				<div id="paginationControls" class="d-flex"></div>
+				<div>
+					<button type="button" class="btn btn-secondary" onclick="modalClose()" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-success" id="startImport">Start Import</button>
+					<button type="button" class="btn btn-danger d-none" id="retryAll">Retry All Failed</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form name="frmbuyerorder" id="frmbuyerorder" method="post">
+
+	<table width="100%" align="center" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td height="322" align="center" valign="top">
+
+				<table width="89%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+					<tr>
+
+						<td class="topHeader" colspan="9"><div id="tblTitle" align="left">Physical  Stock Verification <strong></strong></div></td>
+					</tr>
+
+					<tr>
+						<td width="4%">&nbsp;</td>
+						<td width="13%"><label id="delivery_point_lbl">Verification Depo </label></td>
+						<td width="34%">
+							<select name="delivery_point" id="delivery_point" style="width:190px" tabindex="1" onChange="handleStoreChange(this.value)">
+								<option value="">Select Verify  Depo Name</option>
+								<?php
+					foreach($depo_list as $i=>$v)
+								{
+								$delivery_pid = $v->delivery_pid;
+								$delivery_point_name = $v->delivery_point_name;
+								?>
+								<option value="<?=$delivery_pid?>"<?php if($delivery_pid==$delivery_point) echo "selected";?> >
+								<?=$delivery_point_name?>
+								</option>
+								<?}?>
+							</select></td>
+						<td width="11%">&nbsp;</td>
+						<td width="2%">&nbsp;</td>
+						<td width="11%" align="right"><div align="right">
+							<label id="verification_date_lbl">Verification Date</label>
+						</div></td>
+						<td colspan="2"><input name="verification_date" id="verification_date" style="width:180px;" value="<?=dateInputFormatDMY($verification_date)?>" size="20" title="calendar" class="validate[required]" type="text" tabindex="6">
+							<img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Date" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['verification_date']);return false;"> </td>
+					</tr>
+
+					<tr>
+						<td align="left">&nbsp;</td>
+						<td align="left">Inventory Type </td>
+						<td align="left">
+							<select name="inventory_type" id="inventory_type" style="width:180px" class="validate[required]" onChange="showhideEquipment(this.value)">
+								<option value="">Select Inventory Type</option>
+								<option value='A000017' <?php if($inventory_type=="A000017") echo "selected";?> >Raw Materials</option>
+								<!--option value='A000024' <?php if($inventory_type=="A000024") echo "selected";?> >Packing Materials</option-->
+								<option value='A000036' <?php if($inventory_type=="A000036") echo "selected";?> >Finished Goods</option>
+								<option value='S126' <?php if($inventory_type=="S126") echo "selected";?> >Assets</option>
+								<option value='A007758' <?php if($inventory_type=="A007758") echo "selected";?> >Maintanance Stock</option>
+								<!-- <option value='others_head' <?php //if($inventory_type=="others_head") echo "selected";?> >Others Head</option> -->
+							</select>
+						</td>
+						<td colspan="3" align="left">
+							<div align="right" id="inventory_id_label" style="<?=$inventory_id_label?>">
+								Inventory Head
+							</div>
+						</td>
+						<td>
+							<input type="hidden" name="inventory_id" id="inventory_id" value="">
+							<div id="Equipment" style="<?=$InvMode?>">
+								<select id="equipment_id" style="width:245px" onChange="setNextFocus(this.value)" >
+									<option value="">Select Property, Plant and Equipment</option>
+									<?php
+			  foreach($equipment_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+								</select>
+							</div>
+
+							<div id="raw_material" style="<?=$RawMode?>">
+								<select id="raw_material_id" style="width:245px" onChange="setNextFocus(this.value)" >
+									<option value="">Select Raw Material</option>
+									<?php
+			  foreach($raw_material_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+								</select>
+							</div>
+
+							<div id="fg" style="<?=$FgMode?>">
+								<select id="fg_id" style="width:245px" onChange="setNextFocus(this.value)" >
+									<option value="">Select Finish Goods</option>
+									<?php
+			  foreach($fg_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+								</select>
+							</div>
+
+							<div id="maintanance" style="<?=$MantMode?>">
+								<select id="maintanance_id" style="width:245px" onChange="setNextFocus(this.value)" >
+									<option value="">Select Maintanance</option>
+									<?php
+			  foreach($maintanance_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+								</select>
+							</div>
+
+							<div id="other_head" style="<?=$other_head?>">
+								<select id="other_head_id" style="width:245px" onChange="setNextFocus(this.value)" >
+									<option value="">Select Others Head</option>
+
+									<?php
+			  			foreach($opening_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+
+									<?php
+			  			foreach($closing_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+
+									<?php
+			  			foreach($adjustments_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+
+
+									<?php
+			  			foreach($cost_list as $i=>$v)
+									{
+									$sub_id = $v->sub_id;
+									$sub_head_name = $v->sub_head_name;
+									?>
+									<option value="<?=$sub_id?>" <?php if($sub_id==$inventory_id) echo "selected";?>><?=$sub_head_name?></option>
+									<?}?>
+								</select>
+							</div>
+
+						</td>
+					</tr>
+
+
+					<tr>
+						<td>&nbsp;</td>
+						<td><label id="currency_lbl"></label></td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td colspan="2">&nbsp;</td>
+					<tr>
+						<td colspan="8">
+							<fieldset>
+								<legend>Product Details</legend>
+								<table width="100%"  cellspacing="0" cellpadding="2">
+									<tr>
+										<td width="4%"><div align="left"> </div></td>
+										<td width="30%"><div align="left"><label id="product_lbl">Product</label></div></td>
+										<td width="15%">Stock Quantity </td>
+										<td width="15%"><div align="left">
+											<label id="qty_lbl">Verified  Quantity</label>
+										</div></td>
+										<td width="17%"><div align="left"><label id="unit_price_lbl">Rate</label></div></td>
+										<td width="19%"><div align="left"><label id="amount_lbl">Amount </label></div></td>
+									</tr>
+									<tr>
+										<td><div align="left"> </div></td>
+										<td><div align="left">
+											<select name="product" id="product" style="width:280px" tabindex="9" onChange="javascript:getProductStock()" class="chosen-select-deselect">
+												<option value="">Select Product</option>
+												<?php
+				foreach($product_list as $i=>$v)
+												{
+												//if($v->product_type=="Sales Item"){
+												$product_id = $v->product_id;
+												$productCode = isset($v->product_code) && $v->product_code != "" ? $v->product_code . "::" : "";
+												$product_name = $productCode . $v->product_name;
+												?>
+
+												<option value="<?=$product_id?>"<?php if($product==$product_id) echo "selected";?> >
+												<?=$product_name?>
+												</option>
+												<?}?>
+											</select>
+										</div></td>
+										<td><input type="text" style="width:100px; " name="stock_qty" id="stock_qty" value="<?=$stock_qty?>" readonly="" tabindex="10">
+											<span id="qty_s"></span></td>
+										<td><div align="left">
+											<input type="text" style="width:100px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="10"> <span id="qty_t"></span>
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:100px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="12">
+										</div></td>
+										<td><div align="left">
+											<input type="text" style="width:140px;" name="total" id="total" value="<?=$total?>"  class="validate[required]" tabindex="14">
+										</div></td>
+									</tr>
+									<tr>
+										<td height="28">&nbsp;</td>
+										<td><input type="hidden" name="m_unit" id="m_unit" value="pc"/><input type="hidden" name="currency" id="currency" value="1###Tk"/></td>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+										<td><input name="button" type="button" class="button"  onClick="salesProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Next" tabindex="15">
+											<input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=user_home';"></td>
+									</tr>
+								</table>
+							</fieldset>			  </td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td width="8%">&nbsp;</td>
+						<td width="17%">&nbsp;</td>
+					</tr>
+
+					<tr align="center">
+
+						<td colspan="8" align="left">
+							<div id="tbs">
+								<?
+				$salesArr = explode("####-@@@@",$tmp_sales); echo $salesArr[0]; $total_amount = $salesArr[1]; 
+				$discount=$salesArr[2]; $total_value = ($total_amount+$discount);
+				?>
+							</div>                </td>
+					</tr>
+					<tr align="center">
+						<td colspan="2" align="left"><div align="right">Bulk Upload</div></td>
+						<td align="left"><input class="FileUpload1" type="file" name="import_file" id="import_file" style="width:155px;" /></td>
+						<td align="left">&nbsp;</td>
+						<td colspan="3" align="left"><div align="right">Total Amount </div></td>
+						<td align="left">
+							<input type="text" name="total_amount" id="total_amount" style="width:110px;" value="<?=$total_amount?>" class="validate[required]" readonly=""></td>
+					</tr>
+
+					<tr>
+
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td><div style="padding: 11px 0px;">
+							<a href="<?=REL_EXT_DIR."/demofile/physical_stock_verification.xlsx"?>" class="btn demoFileDownload" target="_blank">Download Demo File</a>
+						</div></td>
+						<td colspan="3">
+
+							<input type="hidden" name="cmd" value="save_transfer">	</td>
+
+						<td width="8%">&nbsp;</td>
+
+						<td>
+
+							<div align="left">
+
+								<input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave(event);" tabindex="19">
+							</div>				</td>
+					</tr>
+
+					<tr>
+
+						<td>&nbsp;</td>
+
+						<td colspan="5">&nbsp;				</td>
+
+						<td>&nbsp;</td>
+
+						<td>&nbsp;</td>
+					</tr>
+				</table>
+
+			</td>
+
+		</tr>
+
+		<tr>
+
+			<td>&nbsp;</td>
+
+		</tr>
+
+	</table>
+
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+
+<script>
+	$(function() {
+		$('.chosen-select').chosen({
+			search_contains: true, // allows matching in the middle of the string
+			width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+			allow_single_deselect: true,
+			search_contains: true,
+			width: "100%"
+		});
+	});
+
+	function setNextFocus(val){
+		if(val!=""){
+			$('#inventory_id').val(val);
+		}
+	}
+	function showhideEquipment(val){
+		$("#inventory_id_label").show();
+		if(val=="S126"){
+			$("#Equipment").show();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$("#other_head").hide();
+			$('#equipment_id').trigger('chosen:activate');
+			$('#equipment_id').trigger('chosen:hiding_dropdown');
+		}else if(val=="A000017"){
+			$("#Equipment").hide();
+			$("#raw_material").show();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$("#other_head").hide();
+			$('#raw_material_id').trigger('chosen:activate');
+			$('#raw_material_id').trigger('chosen:hiding_dropdown');
+		}else if(val=="A000036"){
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").show();
+			$("#maintanance").hide();
+			$("#other_head").hide();
+			$('#fg_id').trigger('chosen:activate');
+			$('#fg_id').trigger('chosen:hiding_dropdown');
+		}else if(val=="A007758"){
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").show();
+			$("#other_head").hide();
+			$('#maintanance_id').trigger('chosen:activate');
+			$('#maintanance_id').trigger('chosen:hiding_dropdown');
+		}else if(val=="others_head"){
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$("#other_head").show();
+			$('#other_head_id').trigger('chosen:activate');
+			$('#other_head_id').trigger('chosen:hiding_dropdown');
+		}else{
+			$("#inventory_id_label").hide();
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$("#other_head").hide();
+
+			$('#equipment_id').val("").trigger('change');
+			$('#raw_material_id').val("").trigger('change');
+			$('#fg_id').val("").trigger('change');
+			$('#maintanance_id').val("").trigger('change');
+		}
+	}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.7/dist/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+
+	// Global variables
+	let excelData = [];
+	const rowsPerPage = 1000;
+	let currentPage = 1;
+	let lastFailedRows = [];
+	var productData = [];
+
+	// File input change handler
+	$("#import_file").on('change', function(e) {
+		const file = this.files[0];
+		if (!file) return;
+
+		// Update UI
+		$(".filelabel .title").text(file.name.length > 15 ?
+				file.name.substring(0, 10) + '...' + file.name.split('.').pop() : file.name);
+
+		handlePreview(file);
+	});
+
+	// Handle file preview
+	function handlePreview(file) {
+		if (typeof XLSX === 'undefined') {
+			Swal.fire('Error', 'XLSX library not loaded', 'error');
+			return;
+		}
+		const reader = new FileReader();
+
+		reader.onload = function(e) {
+			try {
+				const data = new Uint8Array(e.target.result);
+				const workbook = XLSX.read(data, { type: 'array' });
+				const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+				excelData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+				// Remove empty rows if any
+				excelData = excelData.filter(row => row.length > 0 && !row.every(cell => cell === ""));
+
+				if (excelData.length < 2) {
+					throw new Error("Excel file is empty or has no data rows");
+				}
+
+				// Show modal and render first page
+				currentPage = 1;
+				renderTablePage(currentPage);
+
+				// Initialize modal
+				showBootstrapModal('previewModal');
+
+
+				// Reset UI elements
+				$('#importProgress').addClass('d-none');
+				$('#retryAll').addClass('d-none');
+				$('#startImport').removeClass('d-none');
+				$('#showMessage').empty();
+				$('#importTableContainer').removeClass('d-none');
+			} catch (error) {
+				Swal.fire('Error', 'Failed to process Excel file: ' + error.message, 'error');
+				console.error(error);
+			}
+		};
+
+		reader.onerror = function() {
+			Swal.fire('Error', 'Failed to read file', 'error');
+		};
+
+		reader.readAsArrayBuffer(file);
+	}
+
+	function showBootstrapModal(modalId) {
+		// Get the raw DOM element
+		const modalEl = document.getElementById(modalId);
+		if (!modalEl) {
+			console.error('Modal element not found:', modalId);
+			return;
+		}
+
+		// SOLUTION 1: Direct Bootstrap Modal API with Prototype workaround
+		try {
+			// Temporarily neutralize Prototype's show/hide if they exist
+			const originalShow = Element.prototype.show;
+			const originalHide = Element.prototype.hide;
+
+			if (typeof originalShow !== 'undefined') {
+				Element.prototype.show = function() { this.style.display = ''; };
+			}
+			if (typeof originalHide !== 'undefined') {
+				Element.prototype.hide = function() { this.style.display = 'none'; };
+			}
+
+			// Create and show modal
+			const modal = new bootstrap.Modal(modalEl);
+			modal.show();
+
+			// Restore Prototype methods
+			if (typeof originalShow !== 'undefined') {
+				Element.prototype.show = originalShow;
+			}
+			if (typeof originalHide !== 'undefined') {
+				Element.prototype.hide = originalHide;
+			}
+		} catch (e) {
+			console.error('Bootstrap modal error:', e);
+			// Fallback to manual modal show
+			manualShowModal(modalEl);
+		}
+	}
+
+	// SOLUTION 2: Manual Modal Implementation
+	function manualShowModal(modalEl) {
+		// Add necessary classes
+		modalEl.classList.add('show');
+		modalEl.style.display = 'block';
+
+		// Add backdrop
+		const backdrop = document.createElement('div');
+		backdrop.className = 'modal-backdrop fade show';
+		document.body.appendChild(backdrop);
+
+		// Handle ESC key
+		const handleKeydown = (e) => {
+			if (e.key === 'Escape') {
+				manualHideModal(modalEl);
+			}
+		};
+
+		// Store reference for cleanup
+		modalEl._modalHandlers = {
+			backdrop,
+			keydown: handleKeydown
+		};
+
+		document.addEventListener('keydown', handleKeydown);
+	}
+
+	function manualHideModal(modalEl) {
+		// Remove classes
+		modalEl.classList.remove('show');
+		modalEl.style.display = 'none';
+
+		// Remove backdrop and handlers
+		if (modalEl._modalHandlers) {
+			document.body.removeChild(modalEl._modalHandlers.backdrop);
+			document.removeEventListener('keydown', modalEl._modalHandlers.keydown);
+			delete modalEl._modalHandlers;
+		}
+
+		$("#import_file").val("");
+	}
+
+	//Get product info by ID
+	function getProductData(productIDs = []) {
+		return new Promise((resolve, reject) => {
+			if (!productIDs.length) {
+				resolve([]); // Resolve with empty data if no IDs
+				return;
+			}
+
+			$.ajax({
+				url: '?app=physical.stock.verification&cmd=get_product_info',
+				type: 'POST',
+				data: JSON.stringify({ rows: productIDs }),
+				contentType: 'application/json',
+				dataType: 'json',
+				success: function (response) {
+					if (response.status) {
+						productData = response.data;
+						resolve(response.data);
+					} else {
+						productData = [];
+						resolve([]);
+					}
+				},
+				error: function (xhr, status, error) {
+					productData = [];
+					Swal.fire('Error', 'AJAX request failed: ' + error, 'error');
+					reject(error); // Optional: reject on error
+				}
+			});
+		});
+	}
+
+	function getProductByIDORCode(productId, productCode) {
+		if (productId && productData[productId]) {
+			return productData[productId];
+		}
+
+		if (productCode) {
+			return Object.values(productData).find(
+					p => p.product_code === productCode
+			);
+		}
+
+		return null;
+	}
+
+	// Render table page with pagination
+	async function renderTablePage(page) {
+		const start = (page - 1) * rowsPerPage;
+		const end = start + rowsPerPage;
+		const pageData = excelData.slice(start + 1, end + 1); // +1 to skip header
+		const rowData = pageData.map((row, index) => ({index:index,stock_id:row[0],depo:row[1],product_id:row[4],product_code:row[5],verified_qty:row[6]}));
+
+		await getProductData(rowData);
+
+		const tbody = $('#previewTable tbody');
+		tbody.empty();
+
+		pageData.forEach((row, index) => {
+			const tr = $('<tr id="row_' + index + '">');
+
+			const product = getProductByIDORCode(row[4], row[5]) || {};
+
+			let productID  = product.product_id || row[4];
+			let productCode = product.product_code || row[5];
+
+			tr.html(`
+            <td>${start + index + 1}</td>
+            <td id="verification_id_${index}" contenteditable="true">${row[0] || ''}</td>
+            <td id="depo_${index}" contenteditable="true" onblur="handleDepoChange(${index},${row[0]})">${row[1] || ''}</td>
+            <td id="date_${index}" contenteditable="true">${row[2] || ''}</td>
+            <td id="inventory_head_${index}" contenteditable="true">${row[3] || ''}</td>
+            <td id="product_id_${index}" contenteditable="true" onblur="handleProductChange(${index},${row[0]})">${productID || ''}</td>
+            <td id="product_code_${index}" contenteditable="true" onblur="handleProductCodeChange(${index},${row[0]})">${productCode || ''}</td>
+            <td id="product_name_${index}">${product.product_name || ''}</td>
+            <td id="catagoryname_${index}">${product.catagoryname || ''}</td>
+            <td id="brandname_${index}">${product.brandname || ''}</td>
+            <td id="stock_qty_${index}">${product.stock_qty}</td>
+            <td id="verifyStock_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${row[6]}</td>
+            <td id="unitPrice_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${product.unit_price}</td>
+            <td id="amount_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${product.total}</td>
+            <td class="status status-pending">Pending</td>
+            <td><button class="btn btn-sm btn-danger delete-row">Delete</button></td>
+        `);
+			tbody.append(tr);
+		});
+
+		renderPaginationControls();
+	}
+
+	function handleChangeRow(index) {
+		// Correct element selectors with "#"
+		const verifyStockEl = document.getElementById("verifyStock_" + index);
+		const unitPriceEl = document.getElementById("unitPrice_" + index);
+		const amountEl = document.getElementById("amount_" + index);
+
+		if (!verifyStockEl || !unitPriceEl || !amountEl) return;
+
+		// Parse the current editable values (fallback to 0)
+		const qty = parseFloat(verifyStockEl.innerText.trim()) || 0;
+		const price = parseFloat(unitPriceEl.innerText.trim()) || 0;
+
+		// Calculate amount
+		const total = qty * price;
+
+		// Update the amount cell
+		amountEl.innerText = total.toFixed(2);
+	}
+
+	function getDepo(verification_id){
+		const rows = $('#previewTable tbody tr');
+		let depo = "";
+
+		rows.each(function(index) {
+			const cells = $(this).find('td');
+			if(cells.eq(1).text().trim() == verification_id && cells.eq(2).text().trim() != ""){
+				depo = cells.eq(2).text().trim();
+			}
+		});
+
+		return depo;
+	}
+
+	function getStockProductData(verification_id){
+		const rows = $('#previewTable tbody tr');
+		let allRows = [];
+
+		rows.each(function(index) {
+			const cells = $(this).find('td');
+			if(cells.eq(1).text().trim() == verification_id){
+				allRows.push(index);
+			}
+		});
+
+		return allRows;
+	}
+
+
+	function handleDepoChange(index,verification_id){
+		const rows = getStockProductData(verification_id);
+
+		const depoEl = document.getElementById("depo_" + index);
+		if (!depoEl) return;
+		const depo = depoEl.innerText.trim();
+
+		const products = [];
+
+		rows.each(function(_,rowindex) {
+			const productIdEl = document.getElementById("product_id_" + rowindex);
+			const product_id = productIdEl.innerText.trim();
+
+			const verifyStockEl = document.getElementById("verifyStock_" + rowindex);
+			const verified_qty = verifyStockEl.innerText.trim();
+
+			products.push({
+				index:rowindex,
+				stock_id:verification_id,
+				depo:depo,
+				product_id:product_id,
+				verified_qty:verified_qty
+			});
+
+		});
+
+		handleDepoOrProductChange(products);
+	}
+
+	function handleProductChange(index,verification_id){
+		const depo = getDepo(verification_id);
+
+		const productIdEl = document.getElementById("product_id_" + index);
+		const product_id = productIdEl.innerText.trim();
+
+		const verifyStockEl = document.getElementById("verifyStock_" + index);
+		const verified_qty = verifyStockEl.innerText.trim();
+
+		products = [{
+			index:index,
+			stock_id:verification_id,
+			depo:depo,
+			product_id:product_id,
+			verified_qty:verified_qty
+		}];
+
+		if(product_id){
+			handleDepoOrProductChange(products);
+		}
+	}
+
+	function handleProductCodeChange(index,verification_id){
+		const depo = getDepo(verification_id);
+
+		const productCodeEl = document.getElementById("product_code_" + index);
+		const product_code = productCodeEl.innerText.trim();
+
+		const verifyStockEl = document.getElementById("verifyStock_" + index);
+		const verified_qty = verifyStockEl.innerText.trim();
+
+		products = [{
+			index:index,
+			stock_id:verification_id,
+			depo:depo,
+			product_code:product_code,
+			verified_qty:verified_qty
+		}];
+
+		if(product_code){
+			handleDepoOrProductChange(products);
+		}
+	}
+
+
+	function handleDepoOrProductChange(products = []) {
+		if(products.length){
+			$.ajax({
+				url: '?app=physical.stock.verification&cmd=get_product_info',
+				type: 'POST',
+				data: JSON.stringify({
+					rows: products
+				}),
+				contentType: 'application/json',
+				dataType: 'json',
+				success: function (response) {
+					if (response.status) {
+						const data = response.data;
+
+						for (let productId in response.data) {
+							if (response.data.hasOwnProperty(productId)) {
+								productData[productId] = response.data[productId]; // merge/update
+							}
+						}
+
+						products.each(function(elData) {
+							let index = elData.index;
+							let product_id = elData.product_id;
+							let product_code = elData.product_code;
+							let verification_id = elData.stock_id;
+							let verified_qty = elData.verified_qty;
+
+							let depodEl = document.getElementById("depo_" + index);
+							let depo = depodEl.innerText.trim();
+
+							let productIdEl = document.getElementById("date_" + index);
+							let date = productIdEl.innerText.trim();
+
+							let verifyStockEl = document.getElementById("inventory_head_" + index);
+							const inventory_head = verifyStockEl.innerText.trim();
+
+							const product = getProductByIDORCode(product_id, product_code) || {};
+
+							let product_name  = product.product_name  || '';
+							let catagoryname  = product.catagoryname  || '';
+							let brandname     = product.brandname     || '';
+							let stock_qty     = product.stock_qty     || 0;
+							let unit_price    = product.unit_price    || 0;
+							let total         = product.total         || 0;
+
+							let productID  = product.product_id || product_id;
+							let productCode = product.product_code || product_code;
+
+							// let product_name = data[product_id].product_name;
+							// let catagoryname = data[product_id].catagoryname;
+							// let brandname = data[product_id].brandname;
+							// let stock_qty = data[product_id].stock_qty;
+							// let unit_price = data[product_id].unit_price;
+							// let total = data[product_id].total;
+
+							// Replace the row with updated content
+							const newRow = `
+										<tr id="row_${index}">
+											<td>${index + 1}</td>
+											<td id="verification_id_${index}" contenteditable="true">${verification_id}</td>
+											<td id="depo_${index}" contenteditable="true" onblur="handleDepoChange(${index},${verification_id})">${depo || ''}</td>
+											<td id="date_${index}" contenteditable="true">${date || ''}</td>
+											<td id="inventory_head_${index}" contenteditable="true">${inventory_head || ''}</td>
+											<td id="product_id_${index}" contenteditable="true" onblur="handleProductChange(${index},${verification_id})">${productID || ''}</td>
+											<td id="product_code_${index}" contenteditable="true" onblur="handleProductCodeChange(${index},${verification_id})">${productCode || ''}</td>
+											<td id="product_name_${index}">${product_name || ''}</td>
+											<td id="catagoryname_${index}">${catagoryname || ''}</td>
+											<td id="brandname_${index}">${brandname || ''}</td>
+											<td id="stock_qty_${index}">${stock_qty}</td>
+											<td id="verifyStock_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${verified_qty}</td>
+											<td id="unitPrice_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${unit_price}</td>
+											<td id="amount_${index}" oninput="handleChangeRow(${index})" contenteditable="true">${total}</td>
+											<td class="status status-pending">Pending</td>
+											<td><button class="btn btn-sm btn-danger delete-row">Delete</button></td>
+										</tr>
+									`;
+
+							//Replace existing row
+							$('#row_' + index).replaceWith(newRow);
+
+						});
+					} else {
+						Swal.fire('Warning', 'No product found for this depo and product ID.', 'warning');
+					}
+				},
+				error: function (xhr, status, error) {
+					Swal.fire('Error', 'Failed to fetch product data: ' + error, 'error');
+				}
+			});
+		}
+	}
+
+
+	// Render pagination controls
+	function renderPaginationControls() {
+		const totalPages = Math.ceil((excelData.length - 1) / rowsPerPage);
+		const container = $('#paginationControls');
+		container.empty();
+
+		for (let i = 1; i <= totalPages; i++) {
+			const btn = $(`<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-secondary'} me-1">${i}</button>`);
+			btn.on('click', () => {
+				currentPage = i;
+				renderTablePage(currentPage);
+			});
+			container.append(btn);
+		}
+	}
+
+
+
+	// Add delete handler
+	$(document).on('click', '.delete-row', function() {
+		const $row = $(this).closest('tr').addClass('deleting');
+		const rowIndex = $row.index();
+
+		Swal.fire({
+			title: 'Confirm Delete',
+			text: 'This will remove the row from import',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			confirmButtonText: 'Delete'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// Remove from excelData
+				const dataIndex = (currentPage - 1) * rowsPerPage + rowIndex;
+				if (dataIndex >= 0 && dataIndex < excelData.length) {
+					excelData.splice(dataIndex + 1, 1);
+				}
+
+				// Remove from DOM
+				$row.fadeOut(300, function() {
+					$(this).remove();
+					renderPaginationControls();
+
+					// Update any existing import progress
+					if ($('#importProgress').is(':visible')) {
+						const remainingRows = $('#previewTable tbody tr').length;
+						const percent = 100 - (remainingRows / excelData.length * 100);
+						$('#progressBar').css('width', percent + '%').text(percent + '%');
+					}
+				});
+			} else {
+				$row.removeClass('deleting');
+			}
+		});
+	});
+
+
+	// Start Import button handler
+	$('#startImport').on('click', function() {
+		const rows = $('#previewTable tbody tr');
+		const allRows = [];
+
+		$('#importProgress').removeClass('d-none');
+		const bar = $('#progressBar');
+
+		rows.each(function(index) {
+			const cells = $(this).find('td');
+			let product_id = cells.eq(5).text().trim();
+			let product_code = cells.eq(6).text().trim();
+
+			const product = getProductByIDORCode(product_id, product_code) || {};
+			let product_name  = product.product_name  || '';
+			let catagory  = product.catagory  || '';
+			let catagoryname  = product.catagoryname || '';
+			let brandname     = product.brandname || '';
+			let brand_id      = product.brand_id || '';
+			let munit         = product.munit || '';
+			let total         = product.total || 0;
+			let variation     = product.variation || '';
+
+			allRows.push({
+				verification_id: cells.eq(1).text().trim(),
+				depo: cells.eq(2).text().trim(),
+				date: cells.eq(3).text().trim(),
+				inventory_id: cells.eq(4).text().trim(),
+				product_id: cells.eq(5).text().trim(),
+				product_code: cells.eq(6).text().trim(),
+				stock_qty: cells.eq(10).text().trim(),
+				qty: cells.eq(11).text().trim(),
+				unit_price: cells.eq(12).text().trim(),
+				product_name:product_name,
+				brand_id:brand_id,
+				brandname:brandname,
+				catagory:catagory,
+				catagoryname:catagoryname,
+				munit:munit,
+				amount:total,
+				variation:variation,
+				status: cells.eq(14).text().trim()
+			});
+		});
+
+		// AJAX call to import data
+		importData(allRows, bar, rows);
+	});
+
+	// Function to import data via AJAX
+	function importData(rows, progressBar, rowElements) {
+		$.ajax({
+			url: '?app=physical.stock.verification&cmd=stock_bulk_import',
+			type: 'POST',
+			data: JSON.stringify({ rows: rows }),
+			contentType: 'application/json',
+			dataType: 'json',
+			beforeSend: function() {
+				$('#startImport').prop('disabled', true);
+			},
+			success: function(response) {
+				if (response.status === 'success') {
+					lastFailedRows = [];
+
+					rowElements.each(function(index) {
+						const statusCell = $(this).find('.status');
+						const retryBtn = $(this).find('.retry');
+
+						const failedRow = response.failed.find(r => r.index === index);
+						if (failedRow) {
+							statusCell.removeClass('status-pending').addClass('status-failed')
+									.html(`Failed: ${failedRow.error}`);
+							//retryBtn.removeClass('d-none');
+							lastFailedRows.push(rows[index]);
+						} else {
+							statusCell.removeClass('status-pending').addClass('status-success')
+									.html('? Success');
+							setTimeout(() => $(this).fadeOut(), 500);
+						}
+
+						const percent = Math.round(((index + 1) / rows.length) * 100);
+						progressBar.css('width', percent + '%').text(percent + '%');
+					});
+
+					finishImport(response);
+				} else {
+					Swal.fire('Error', response.message || 'Import failed', 'error');
+				}
+			},
+			error: function(xhr, status, error) {
+				Swal.fire('Error', 'AJAX request failed: ' + error, 'error');
+			},
+			complete: function() {
+				$('#startImport').prop('disabled', false);
+			}
+		});
+	}
+
+	// Finish import process
+	function finishImport(response) {
+		if (lastFailedRows.length === 0) {
+			$('#importTableContainer').addClass('d-none');
+			$('#startImport').addClass('d-none');
+			$('#retryAll').addClass('d-none');
+			$('#paginationControls').empty();
+			$('#showMessage').html(`
+            <div class="swal-like-alert">
+                <i class="fas fa-check-circle"></i>
+                All ${response.total} record imported successfully!
+            </div>
+        `);
+			productData = [];
+		} else {
+			$('#startImport').addClass('d-none');
+			$('#retryAll').removeClass('d-none');
+			Swal.fire('Warning',
+					`${response.success} succeeded, ${lastFailedRows.length} failed. Fix them or click Retry.`,
+					'warning');
+		}
+	}
+
+	// Retry All button handler
+	$('#retryAll').on('click', function() {
+		if (lastFailedRows.length === 0) {
+			Swal.fire('Info', 'No failed rows to retry', 'info');
+			return;
+		}
+
+		Swal.fire({
+			title: 'Retry All Failed?',
+			text: `You're about to retry ${lastFailedRows.length} failed rows. Continue?`,
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonText: 'Yes, retry all',
+			cancelButtonText: 'Cancel'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const rows = $('#previewTable tbody tr').filter(':visible');
+				const bar = $('#progressBar');
+
+				$('#importProgress').removeClass('d-none');
+				bar.css('width', '0%').text('0%');
+
+				const tableRows = $('#previewTable tbody tr');
+				const allRows = [];
+
+				tableRows.each(function(index) {
+					const cells = $(this).find('td');
+					let product_id = cells.eq(5).text().trim();
+					let product_code = cells.eq(6).text().trim();
+
+					const product = getProductByIDORCode(product_id, product_code) || {};
+
+					let product_name  = product.product_name  || '';
+					let catagory  = product.catagory  || '';
+					let catagoryname  = product.catagoryname || '';
+					let brandname     = product.brandname || '';
+					let brand_id      = product.brand_id || '';
+					let munit         = product.munit || '';
+					let total         = product.total || 0;
+					let variation     = product.variation || '';
+
+					allRows.push({
+						verification_id: cells.eq(1).text().trim(),
+						depo: cells.eq(2).text().trim(),
+						date: cells.eq(3).text().trim(),
+						inventory_id: cells.eq(4).text().trim(),
+						product_id: cells.eq(5).text().trim(),
+						product_code: cells.eq(6).text().trim(),
+						stock_qty: cells.eq(10).text().trim(),
+						qty: cells.eq(11).text().trim(),
+						unit_price: cells.eq(12).text().trim(),
+						product_name:product_name,
+						brand_id:brand_id,
+						brandname:brandname,
+						catagory:catagory,
+						catagoryname:catagoryname,
+						munit:munit,
+						amount:total,
+						variation:variation,
+						status: cells.eq(14).text().trim()
+					});
+				});
+
+				// AJAX call to retry failed rows
+				$.ajax({
+					url: '?app=physical.stock.verification&cmd=stock_bulk_import',
+					type: 'POST',
+					data: JSON.stringify({ rows: allRows }),
+					contentType: 'application/json',
+					dataType: 'json',
+					success: function(response) {
+						if (response.status === 'success') {
+							let retriedSuccess = 0;
+
+							rows.each(function(index) {
+								const statusCell = $(this).find('.status');
+								const retryBtn = $(this).find('.retry');
+
+								const failedRow = response.failed.find(r => r.index === index);
+								if (!failedRow) {
+									statusCell.removeClass('status-failed').addClass('status-success')
+											.html('? Success');
+									retryBtn.addClass('d-none');
+									setTimeout(() => $(this).fadeOut(), 500);
+									retriedSuccess++;
+								} else {
+									statusCell.html(`? Failed: ${failedRow.error}`);
+								}
+
+								const percent = Math.round(((index + 1) / lastFailedRows.length) * 100);
+								bar.css('width', percent + '%').text(percent + '%');
+							});
+
+							lastFailedRows = response.failed.map(f => lastFailedRows[f.index]);
+
+							if (lastFailedRows.length === 0) {
+								$('#retryAll').addClass('d-none');
+								$('#showMessage').html(`
+                                <div class="swal-like-alert">
+                                    <i class="fas fa-check-circle"></i>
+                                    All retried record imported successfully!
+                                </div>
+                            `);
+								productData = [];
+							}
+
+							Swal.fire('Success',
+									`${retriedSuccess} rows succeeded in retry`, 'info');
+						} else {
+							Swal.fire('Error', response.message || 'Retry failed', 'error');
+						}
+					},
+					error: function(xhr, status, error) {
+						Swal.fire('Error', 'AJAX request failed: ' + error, 'error');
+					}
+				});
+			}
+		});
+	});
+
+	function modalClose(){
+		const modalEl = document.getElementById('previewModal');
+		manualHideModal(modalEl);
+	}
+
+
+	// Retry single row handler
+	$(document).on('click', '.retry', function() {
+		const row = $(this).closest('tr');
+		const statusCell = row.find('.status');
+		const retryBtn = row.find('.retry');
+
+		let product_id = cells.eq(5).text().trim();
+		let product_code = cells.eq(6).text().trim();
+
+		const product = getProductByIDORCode(product_id, product_code) || {};
+
+		let product_name  = product.product_name  || '';
+		let catagory  = product.catagory  || '';
+		let catagoryname  = product.catagoryname || '';
+		let brandname     = product.brandname || '';
+		let brand_id      = product.brand_id || '';
+		let munit         = product.munit || '';
+		let total         = product.total || 0;
+		let variation     = product.variation || '';
+
+		const rowData = {
+			verification_id: cells.eq(1).text().trim(),
+			depo: cells.eq(2).text().trim(),
+			date: cells.eq(3).text().trim(),
+			inventory_id: cells.eq(4).text().trim(),
+			product_id: cells.eq(5).text().trim(),
+			stock_qty: cells.eq(9).text().trim(),
+			qty: cells.eq(10).text().trim(),
+			unit_price: cells.eq(11).text().trim(),
+			product_name:product_name,
+			brand_id:brand_id,
+			brandname:brandname,
+			catagory:catagory,
+			catagoryname:catagoryname,
+			munit:munit,
+			amount:total,
+			variation:variation,
+			status: 1
+		};
+
+		statusCell.removeClass('status-failed').addClass('status-pending')
+				.html('? Retrying...');
+		retryBtn.prop('disabled', true);
+
+		// AJAX call to retry single row
+		$.ajax({
+			url: '?app=physical.stock.verification&cmd=stock_bulk_import',
+			type: 'POST',
+			data: JSON.stringify({ rows: [rowData] }),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function(response) {
+				if (response.status === 'success' && response.failed.length === 0) {
+					statusCell.removeClass('status-pending').addClass('status-success')
+							.html('? Success');
+					retryBtn.addClass('d-none');
+					setTimeout(() => row.fadeOut(), 500);
+
+					// Remove from lastFailedRows
+					lastFailedRows = lastFailedRows.filter(item =>
+							item.product_id !== rowData.product_id);
+
+					if (lastFailedRows.length === 0) {
+						$('#retryAll').addClass('d-none');
+					}
+
+					Swal.fire('Success', 'Row imported successfully!', 'success');
+				} else {
+					statusCell.removeClass('status-pending').addClass('status-failed')
+							.html(`? Failed: ${response.failed[0]?.error || 'Unknown error'}`);
+					retryBtn.prop('disabled', false);
+					Swal.fire('Error', 'Still failed to import row', 'error');
+				}
+			},
+			error: function(xhr, status, error) {
+				statusCell.removeClass('status-pending').addClass('status-failed')
+						.html('? Failed: Server error');
+				retryBtn.prop('disabled', false);
+				Swal.fire('Error', 'AJAX request failed: ' + error, 'error');
+			}
+		});
+	});
+
+
+
+	function showInventoryList(section, sub_id){
+		if(section=="Equipment"){
+			$("#Track").html("Inventory Head");
+			$("#Van").hide();
+			$("#Equipment").show();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$('#equipment_id').trigger('chosen:activate');
+			$('#equipment_id').trigger('chosen:hiding_dropdown');
+			$('#equipment_id').val(sub_id).trigger('change');
+			$('#inventory_type').val("").trigger('change');
+		}else if(section=="raw_material"){
+			$("#Track").html("Inventory Head");
+			$("#Van").hide();
+			$("#Equipment").hide();
+			$("#raw_material").show();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$('#raw_material_id').trigger('chosen:activate');
+			$('#raw_material_id').trigger('chosen:hiding_dropdown');
+			$('#raw_material_id').val(sub_id).trigger('change');
+			$('#inventory_type').val("A000017").trigger('change');
+		}else if(section=="fg"){
+			$("#Track").html("Inventory Head");
+			$("#Van").hide();
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").show();
+			$("#maintanance").hide();
+			$('#fg_id').trigger('chosen:activate');
+			$('#fg_id').trigger('chosen:hiding_dropdown');
+			$('#fg_id').val(sub_id).trigger('change');
+			$('#inventory_type').val("A000036").trigger('change');
+		}else if(section=="maintanance"){
+			$("#Track").html("Inventory Head");
+			$("#Van").hide();
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").show();
+			$('#maintanance_id').trigger('chosen:activate');
+			$('#maintanance_id').trigger('chosen:hiding_dropdown');
+			$('#maintanance_id').val(sub_id).trigger('change');
+			$('#inventory_type').val("A007758").trigger('change');
+		}else{
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$('#inventory_type').val("").trigger('change');
+		}
+	}
+
+	const supplierData = <?= $supplierData; ?>;
+
+	function handleStoreChange(store_id){
+		getProductStock();
+
+		const match = supplierData.find(item => item.point_id === store_id);
+
+		if (match && match.sub_id != null && match.sub_id != "") {
+			showInventoryList(match.section, match.sub_id)
+		}else{
+			$("#Equipment").hide();
+			$("#raw_material").hide();
+			$("#fg").hide();
+			$("#maintanance").hide();
+			$('#inventory_type').val("").trigger('change');
+		}
+
+	}
+
+</script>
+
+</body>
+
+</html>
+

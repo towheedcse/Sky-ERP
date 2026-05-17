@@ -1,0 +1,50 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Forget Password</title>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/signup.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<link href="<?=REL_CONTENT_DIR?>/css/Login.css" rel="stylesheet" type="text/css" />
+
+<br><br><br><br><br><br><br><br><br><br><br><br>
+<form id="userinfo" name="userinfo" method="post">
+<table width="38%" border="0" align="center" cellpadding="0" cellspacing="4" class="addBorder">
+  <tr> 
+    <td>&nbsp;</td>
+    <td colspan="2"><div class="HighligtFont">&nbsp;&nbsp;Forget Password</div></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td width="6%">&nbsp;</td>
+    <td width="40%" class="CommonFont">Member Name </td>
+    <td width="44%" class="CommonFont"> <input type="text" name="userid" id="userid"  class="textField"/> 
+    </td>
+    <td width="10%">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td class="CommonFont"><label id="password">Password</label></td>
+    <td class="CommonFont"> <input type="password" name="password" id="password" onfocus="checkName()" class="textField" /> 
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td class="CommonFont"><label id="conf_password">Confirm Password </label></td>
+    <td class="CommonFont"> <input type="password" name="conf_password" id="conf_password" onFocus="checkPassword()" class="textField" /> 
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>
+        <label> 
+        <input type="submit" name="submit" value="Submit" class="Button" onFocus="checkRePassword()" onClick="if(onSubmit()){return true;}else{ return false;}"  onmouseover="this.className='ButtonEffect'" onmouseout="this.className='Button'" />
+        </label>
+      </td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</form>

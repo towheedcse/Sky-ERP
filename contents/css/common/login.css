@@ -1,0 +1,252 @@
+/*-----------------Footer CSS--------------------*/
+table
+{
+color:#FFFFFF;
+font-size:13px;
+font-weight:bold;
+}
+fieldset
+{
+width:320px;
+}
+legend
+{
+padding-left:4px;
+border-color:#FFFFFF;
+color:#FFFFFF;
+font-size:16px;
+font-weight:bold;
+}
+*{
+margin:0;
+padding:0;
+}
+
+body
+{
+	padding:0em;
+	margin:0em;
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;	
+	background-image:url(../../../images/back_in.jpg);
+}
+/*<====For Job seeker Login=====>*/
+#header{
+
+	width:auto;
+
+	height:140px;
+
+	background:url(../../../images/header.gif);
+
+	background-repeat:repeat-x;
+
+	}
+
+#logo{
+
+	width:300px;
+
+	height:81px;
+
+	/*background:url(/buyingerp/images/logo.gif);*/
+
+	float:left;
+
+	background-repeat:no-repeat;
+
+	}
+#footer{
+
+	width:auto;
+	height:89px;
+	background:url(../../../images/footer.gif);
+	background-repeat:repeat-x;
+
+	}
+	#footer a:link, a:visited,a:hover{
+	color:#FFFFFF;
+	font-weight:bold;
+	}
+.jlogin
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:10px;
+}
+
+.fontresume
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:12px;
+text-align:center;
+color:#FF0000;
+}
+.regitableBorder
+{
+border: 1px solid #009900;
+}
+.resume
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size:15px;
+font-weight:bold;
+color: #CC0000;
+text-align:center;
+}
+.headline
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:14px;
+color: #000000;
+height:10px;
+
+}
+.buttonResume
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color: #333333;
+border:1px solid #CC0000;
+background-color:#D6F3DF;
+font-size:12px;
+font-weight:bold;
+background-image:url(../../../images/button.png);
+cursor:pointer;
+
+}
+/* CSS Document */
+.head
+{
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:16px;
+font-weight:bold;
+color: #000000;
+text-align: left;
+}
+.idpass
+{
+font-family: "Courier New", Courier, monospace;
+font-size:12px;
+color: #000000;
+}
+.tableborder
+{
+border:1px solid #009900;
+background-image: url(../../../images/loginbg.gif);
+}
+.button
+{
+border:1px solid #0066CC ;
+/*background-color: #FFF4F4;*/
+background-color:#FFFFFF;
+/*background-image:url(images/mover.png);*/
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-weight:bold;
+color: #000099;
+cursor:pointer;
+font-size:12px;
+
+}
+.buttonout
+{
+border:1px solid #0066CC ;
+/*background-color: #B9F0DE;*/
+background-image: url(../../../images/mout.png);
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-weight:bold;
+font-size:12px;
+color: #000099;
+cursor:pointer;
+
+}
+.textfield
+{
+border:1px solid #009900;
+/*background-color: #FFF2F9;*/
+height:20px;
+
+}
+.textfieldblink
+{
+border:1px solid  #333399;
+background-color: #FFFFFF;
+/*height:16px;*/
+}
+
+
+/*=======For Round Corner========*/
+.cornerTop
+{
+background-image: url(cornerTop.png);
+background-position:left;
+background-repeat:no-repeat;
+}
+.cornerb
+{
+background-image:url(../../../images/cornerb.png);
+background-position: right;
+background-repeat:no-repeat;
+}
+.cornertr
+{
+background-image:url(../../../images/cornertr.png);
+background-position: right;
+background-repeat:no-repeat;
+}
+.cornerbl
+{
+background-image:url(../../../images/cornerbl.png);
+background-position: left;
+background-repeat:no-repeat;
+}
+#tdTop
+{
+background-image:url(../../../images/dot.png);
+background-repeat:repeat-x;
+}
+#tdBottom
+{
+background-image:url(dot.png);
+background-repeat:repeat-x;
+background-position:bottom;
+}
+#tdRight
+{
+background-image:url(dot.png);
+background-repeat:repeat-y;
+background-position: right;
+}
+#tdLeft
+{
+background-image:url(dot.png);
+background-repeat:repeat-y;
+background-position: left;
+}
+.maintable
+{
+background-image:url(../../../images/bg3.gif);
+}
+/* CSS for Footer */
+.footerStyle
+{
+	background-color: #000;
+	width:100%;
+	height:1.8em;
+	padding-top:.4em;
+	color:#FFFFFF;
+	font-size:11px;
+	background-image: url(../../../images/FooterBG.gif); 
+	
+}
+.footerStyle a
+{
+	text-decoration:none;
+	color:#FFFFFF;
+	font-size:10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;	
+	
+}
+.footerStyle a:hover
+{
+	text-decoration:underline;
+}

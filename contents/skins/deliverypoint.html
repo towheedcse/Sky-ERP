@@ -1,0 +1,502 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+require_once(CLASS_DIR . '/common.list.class.php');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/style.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+function show_confirm(val)
+{
+	var r=confirm("Are you sure delete this record?");
+	if (r==true)
+  	{
+  		window.location ="?app=deliverypoint&cmd=delete&id="+val;
+  	}
+}
+</script>
+<title>General ERP::Delivery Point</title>
+
+<body>
+  <table width="98%" id="tblbg" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="4" valign="top">	
+	</td>
+    <td width="985" valign="top">
+	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+          <tbody>            
+            <tr> 
+              <td colspan="5"><div><?php if($message) echo $message; ?></div></td>
+            </tr>                      
+            <tr> 
+              <td colspan="5">
+			  <form name="style" method="post" action="" enctype="multipart/form-data">
+			  <div id="entry" style="display:block">			  
+			
+			    <table width="66%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+                  <tr>
+                    <td align="left" class="topbg" height="26" colspan="5"><span><strong>Delivery Point </strong></span></td>
+				 </tr>
+				 <tr>
+				   <td width="2%">&nbsp;</td>
+				   <td width="23%">Delivery Point Name </td>
+				   <td width="63%">
+				     <input type="text" name="delivery_point_name" id="delivery_point_name" value="<?=$delivery_point_name?>" class="validate[required]"></td>
+				   <td width="6%">&nbsp;</td>
+				   <td width="6%">&nbsp;</td>
+				   </tr>
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Delivery Point Details </td>
+				   <td><textarea name="details" id="details" cols="45" rows="3"><?=$details?></textarea></td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Acc Ledger Map </td>
+				   <td>
+					<select id="ledger_id" name="ledger_id" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($head_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$ledger_id) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr>  
+
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Inventory Type </td>
+				   <td>
+					<select name="inventory_type" id="inventory_type" style="width:270px">
+					     <option value="">Select Sales Item</option>					     <option value="Sales Item" <?php if($inventory_type=="Sales Item") echo "selected";?>>Sales Item</option>
+					     <option value="General Invetory" <?php if($inventory_type=="General Invetory") echo "selected";?>>General Invetory</option>
+					     <option value="Raw Materials" <?php if($inventory_type=="Raw Materials") echo "selected";?>>Raw Materials</option>
+					     <option value="Packing Materials" <?php if($inventory_type=="Packing Materials") echo "selected";?>>Packing Materials</option>
+					     <option value="Mixer Item" <?php if($inventory_type=="Mixer Item") echo "selected";?>>Mixer Item</option>
+					     <option value="Wastage Item" <?php if($inventory_type=="Wastage Item") echo "selected";?>>Wastage Item</option>
+					     <option value="Equipment" <?php if($inventory_type=="Equipment") echo "selected";?>>Equipment</option>
+				        </select>
+				    </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Custom Name (optional) </td>
+				   <td>
+					<input type="text" name="inventory_type_name" id="inventory_type_name" value="<?=$inventory_type_name?>" style="width: 270px;">
+				    </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>WIP Ledger Map </td>
+				   <td>
+					<select id="wip_ledger" name="wip_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($wip_ledger_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$wip_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Sales Ledger Map </td>
+				   <td>
+					<select id="sales_ledger" name="sales_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($sales_ledger_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$sales_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Discount Ledger Map </td>
+				   <td>
+					<select id="discount_ledger" name="discount_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($discount_ledger_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$sales_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Return Ledger Map </td>
+				   <td>
+					<select id="return_ledger" name="return_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($return_ledger_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$sales_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Diposit VAT Ledger Map </td>
+				   <td>
+					<select id="vat_ledger" name="vat_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($vat_on_sale_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$vat_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr>  
+				 <tr>
+				   <td>&nbsp;</td>
+				   <td>Payable VAT Ledger Map </td>
+				   <td>
+					<select id="payable_vat_ledger" name="payable_vat_ledger" style="width:270px">
+						<option value="">Select Head</option>
+						<?php
+	  			foreach($payable_vat_list as $i=>$v)
+						{
+						$sub_id = $v->sub_id;
+						$code = $v->code;
+						$sub_head_name = $v->sub_head_name;
+						?>
+						<option value="<?=$sub_id?>" <?php if($sub_id==$payable_vat_ledger) echo "selected";?>><?=(new CommonList())->normalizeUserName($code,$sub_head_name)?></option>
+						<? }?>
+					</select>
+				   </td>
+				   <td>&nbsp;</td>
+				   <td>&nbsp;</td>
+				   </tr> 
+
+                
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><p>&nbsp;</p></td>
+                    <td><input value="Save" name="save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" />
+                      <input name="reset" type="reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" value="Reset" /></td>
+                    <td colspan="2">
+                    <input type="hidden" name="id" id="id" value="<?=$delivery_pid?>">
+                    <input type="hidden" name="project_id" id="project_id" value="<?=$project_id?>">                    </td>
+                  </tr>
+                </table>
+			  </div>
+			  </form>			  
+			  </td>
+            </tr>
+           
+            <tr> 
+              <td width="191">&nbsp;</td>
+              <td width="35">&nbsp;</td>
+              <td width="606"><form name="form1" method="post" action="">
+                <table width="92%"  border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <th width="26%" scope="row"><div align="right">Search&nbsp; </div></th>
+                    <td width="74%"><input  type="text" name="srckey" style="width:258px;border:1px solid  #999;
+	box-shadow: 0 0 1px 1px #F4F4F4; " value="<?=getRequest('srckey')?>" >
+                    <input type="submit" name="Submit" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'"></td>
+                  </tr>
+                </table>
+              </form></td>
+              <td width="97">&nbsp;</td>
+              <td width="190">&nbsp;</td>
+            </tr>
+            <tr>
+              <td align="center" colspan="5"><div align="center" style="width:300px; background-color:FFEAEA" id="footer_status_msg"></div></td>
+            </tr>
+            <tr>
+			<td>&nbsp;</td>
+              <td align="left" colspan="3">
+			<div class="page_link">  
+			  <?			 			 	
+				$from_rs=getRequest('from');
+				$to_rs=$from_rs+45;
+				if($from_rs>=45){$from_rs =$from_rs+1;}
+				if($from_rs=="" || $from_rs==0){$from_rs =1;}
+				if($to_rs=="" || $totalrecord<45){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >45){$to_rs=45;}
+				if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+				?>
+				<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+				
+			  if($totalrecord>0){?>
+			 </span>
+			 <span style="float:right">
+			  Page:
+	 		<?php	 						
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 45)
+			{
+				$res = $totalrecord/45;
+				$res=(int)$res;
+				if(($totalrecord%45)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+
+			if($totalrecord >45)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 45;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=deliverypoint&from=$frm&to=45&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}	
+
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=45;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+						echo "href='?app=deliverypoint&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";} 
+						echo "href='?app=deliverypoint&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}			
+
+					$i++;
+					$from =$from+45;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+		  	if($totalrecord >45)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=45;$page=2;}else{ $f=$f+45;} 
+				$t = 45;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=deliverypoint&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+		   </span>
+		  </div>
+
+		  <?}?>
+			</td>
+			<td width="190">&nbsp;</td>
+            </tr>
+            <tr> 
+              <td colspan="5" align="center">		 
+				<table width="66%"  class="addBorder" cellspacing="2" cellpadding="4">
+
+                  <tr bgcolor="#ccc" style="height:30px">
+
+                    <td width="4%" height="31" align="center">SL</td>
+
+                    <td width="8%">Point ID  </td>
+                    <td width="20%">Delivery Point Name</td>
+
+                    <td width="25%">Details</td>
+                    <td width="15%">Inventory Type</td>
+                    <td width="20%">Ledger Details</td>
+                    <td width="8%">Action</td>
+                  </tr>
+				  <?
+				  $i=1;
+				  foreach($brand_list as $val){
+				  $delivery_pid=$val->delivery_pid;
+	$ledger_code = $val->ledger_code;
+	$ledger_name = $val->ledger_name;
+	$ledger_head_Name = (new CommonList())->normalizeUserName($ledger_code,$ledger_name);
+
+	$sales_ledger_code = $val->sales_ledger_code;
+	$sales_ledger_name = $val->sales_ledger_name;
+	$sales_ledger_Name = (new CommonList())->normalizeUserName($sales_ledger_code,$sales_ledger_name);
+
+	$wip_ledger_code = $val->wip_ledger_code;
+	$wip_ledger_name = $val->wip_ledger_name;
+	$wip_ledger_Name = (new CommonList())->normalizeUserName($wip_ledger_code,$wip_ledger_name);
+
+	$discount_ledger_code = $val->discount_ledger_code;
+	$discount_ledger_name = $val->discount_ledger_name;
+	$discount_ledger_Name = (new CommonList())->normalizeUserName($discount_ledger_code,$discount_ledger_name);
+
+	$return_ledger_code = $val->return_ledger_code;
+	$return_ledger_name = $val->return_ledger_name;
+	$return_ledger_Name = (new CommonList())->normalizeUserName($return_ledger_code,$return_ledger_name);
+
+	$vat_ledger_code = $val->vat_ledger_code;
+	$vat_ledger_name = $val->vat_ledger_name;
+	$vat_ledger_Name = (new CommonList())->normalizeUserName($vat_ledger_code,$vat_ledger_name);
+
+	$payable_vat_ledger_code = $val->payable_vat_ledger_code;
+	$payable_vat_ledger_name = $val->payable_vat_ledger_name;
+	$payable_vat_ledger_Name = (new CommonList())->normalizeUserName($payable_vat_ledger_code,$payable_vat_ledger_name);
+
+
+
+				  ?>
+                  <tr style="height:30px" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+                    <td height="23"><?=$i?></td>
+                    <td><?=$val->delivery_pid?></td>
+                    <td><?=$val->delivery_point_name?></td>
+                    <td><?=$val->details?></td>
+		    <td>
+			<?=$val->inventory_type?>
+			<?php
+			if(!empty($val->inventory_type_name)){
+				echo "<br><strong>Custom Name: </strong>". $val->inventory_type_name;
+			}
+
+			?>
+			</td>
+                    <td>
+			<?php
+			$ledgerDetails = "";
+			if(!empty($ledger_head_Name)){
+			   $ledgerDetails .= "<strong>Acc Ledger Map: </strong>" . $ledger_head_Name;
+			}
+
+			if(!empty($sales_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>Sales Ledger: </strong>" . $sales_ledger_Name;
+			}
+
+			if(!empty($wip_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>WIP Ledger: </strong>" . $wip_ledger_Name;
+			}
+
+			if(!empty($discount_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>Discount Ledger: </strong>" . $discount_ledger_Name;
+			}
+
+			if(!empty($return_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>Return Ledger: </strong>" . $return_ledger_Name;
+			}
+
+			if(!empty($vat_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>Diposit VAT Ledger: </strong>" . $vat_ledger_Name;
+			}
+
+			if(!empty($payable_vat_ledger_Name)){
+			   $ledgerDetails .= "<br><strong>Payable VAT Ledger: </strong>" . $payable_vat_ledger_Name;
+			}
+
+			echo $ledgerDetails;
+			?>
+			</td>
+                    <td>
+					<div align="center" class="table-option">
+					<a href="?app=deliverypoint&cmd=edit&id=<?=$delivery_pid?>"><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;&nbsp;
+					<a href="javascript:onclick=show_confirm('<?=$val->delivery_pid?>')"><img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.gif'></a>					</div>					</td>
+                  </tr>
+
+				  <?$i++;}?>
+                </table>
+			  
+			  </td>
+            </tr>
+            <tr> 
+              <td colspan="5">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+	</td>
+  </tr>
+</tbody></table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

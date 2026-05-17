@@ -1,0 +1,248 @@
+
+
+	<!-- START HEADER -->
+	 <? 	
+	require_once(TEMPLATES_SKINS.'/header.html');	
+	?>
+
+	<!-- END HEADER -->
+
+	<style>
+	#tableborder_btm_right{
+	border-right::1px solid #CCCCCC;
+	border-bottom:1px solid #CCCCCC;
+	}
+	#tableborder_btm{
+	border-right::1px solid #CCCCCC;
+	border-bottom:1px solid #CCCCCC;
+	}
+	table, td
+	{
+	    border-color: #999999;
+	    border-style: solid;
+	}
+	table{
+	    border-width: 0 0 1px 1px;
+	    border-spacing: 0;
+	    border-collapse: collapse;
+	}
+
+	td{
+	    margin: 0;
+	    padding: 4px;
+	    border-width: 1px 1px 0 0;
+	    font-weight:normal;	
+	    font-size:12px;
+	}
+#conten {
+    width: auto;
+    height: inherit;
+    background: #f4f6f9;
+}
+#conten_body {
+    width: 100% !important;
+}
+@media screen and (min-width: 833px) and (max-width: 880px) {
+    div#logo .brand {
+        font-size: 15px !important;
+    }
+    div#logo img {
+        width: 70px !important;
+    }
+}
+
+@media screen and (max-width: 833px){
+    .bg-base-200.main-container {
+    	width: 100% !important;
+    }
+}
+@media screen and (max-width: 767px){
+    .main-sec {
+        padding-left: 1rem !important;
+    }
+}
+	</style>	
+	<div id="conten_body" align="center">
+
+	<? if(getFromSession('u_type_id')==101){
+		require_once(TEMPLATES_SKINS . '/mis_dashboard.php');
+	}else{?>
+
+<style>
+#conten_body {
+    margin-top: -24px !important;
+}
+table.shortcutKeyMap {
+    margin: 20px 0 0 20px !important;
+}
+@media screen and (max-width: 832px){
+    table.shortcutKeyMap {
+       margin-right: 20px !important;
+    }
+}
+</style>
+	<table class="shortcutKeyMap" style="float:left" bgcolor="#FFFFFF" align="center" cellpadding="0" cellspacing="0" border="1">
+		      <tr>
+			<td width="02%" style="font-weight:bold;" align="left" nowrap>SL</td>
+			<td width="20%" style="font-weight:bold;" align="left" nowrap>Short Key</td>
+			<td width="45%" style="font-weight:bold;" align="left" nowrap>Note</td>
+			<td width="33%" style="font-weight:bold;" align="left">Open Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>1</td>
+			<td width="20%" align="left" nowrap>Press C key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Cash Book Report</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>2</td>
+			<td width="20%" align="left" nowrap>Press B key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Bank Book Report</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>3</td>
+			<td width="20%" align="left" nowrap>Press D key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Sales Delivery Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>4</td>
+			<td width="20%" align="left" nowrap>Press L key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Show Ledger Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>5</td>
+			<td width="20%" align="left" nowrap>Press N key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open New Sales Order Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>6</td>
+			<td width="20%" align="left" nowrap>Press V key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Contra Voucher Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>7</td>
+			<td width="20%" align="left" nowrap>Press P key</td>
+			<td width="45%" align="left" nowrap>In any report page</td>
+			<td width="33%" align="left">Print Report</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>8</td>
+			<td width="20%" align="left" nowrap>Press S key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Sales Summary Report</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>9</td>
+			<td width="20%" align="left" nowrap>Press G key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open General Voucher Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>10</td>
+			<td width="20%" align="left" nowrap>Press + key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Product Entry Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>11</td>
+			<td width="20%" align="left" nowrap>Press - key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Sales Return Invoice Page</td>
+		      </tr>
+		      <tr>
+			<td width="02%" align="left" nowrap>12</td>
+			<td width="20%" align="left" nowrap>Press = key</td>
+			<td width="45%" align="left" nowrap>In home page or any report page</td>
+			<td width="33%" align="left">Open Customer Entry Page</td>
+		      </tr>
+		</table>
+
+	<? } ?>
+
+	<? 
+	if((getFromSession('u_type_id')==101 || getFromSession('u_type_id')==102) && getFromSession('project')==''){
+	 	//require_once(TEMPLATES_SKINS.'/sis_admin_content_right.html');
+		require_once(TEMPLATES_SKINS.'/fm_content_right.html');
+	}else if(getFromSession('project_type')=='Cold Storage'){
+	  	require_once(TEMPLATES_SKINS.'/cs_content_right.html');
+	}else if(getFromSession('project_type')=='Import Export'){
+	  	require_once(TEMPLATES_SKINS.'/im_content_right.html');
+	}else if(getFromSession('project_type')=='Feed Mill'){
+	  	require_once(TEMPLATES_SKINS.'/fm_content_right.html');
+	}else if(getFromSession('project_type')=='Jute Mill'){
+	  	require_once(TEMPLATES_SKINS.'/jm_content_right.html');
+	}else if(getFromSession('project_type')=='Propertise'){
+	  	require_once(TEMPLATES_SKINS.'/property_content_right.html');
+	}
+	 ?>
+
+	</div>
+	<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+	<script>
+	  $(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+	   switch (e.keyCode) { 
+	    case 61: // Press = key for Customer Entry
+		window.location ="index.php?app=customer&cmd=add";
+		return true;
+	    case 67: // Press C key for Cash Book
+		window.location ="index.php?app=sales.report&cmd=cashbook_list";
+		return true;
+	    case 66: // Press B key for Bank Book
+		window.location ="index.php?app=sales.report&cmd=bankbook_list";
+		return true;
+	    case 68: // Press D key for Sales Delivery 
+		window.location ="index.php?app=sales.report&cmd=order_list";
+		return true;   
+	    case 76: // Press L key for Show Ledger     
+		window.location ="index.php?app=show_ledger&cmd=show";
+		return true;
+	    case 78: // Press N key for New Sales Invoice     
+		window.location ="index.php?app=sales.order";
+		return true;   
+	    case 71: // Press G key for General Voucher
+		window.location ="index.php?app=general_vouchar&cmd=add";
+		return true;    
+	    case 83: // Press S key for Sales Summary
+		window.location ="index.php?app=sales.report&cmd=sal_dtl";
+		return true;      
+	    case 86: // Press V key for Contra Voucher
+		window.location ="index.php?app=contra.voucher.new&cmd=add";
+		return true;   
+	       
+	    case 107: // Press + key for Product Entry
+		window.location ="index.php?app=product";
+		return true;     
+	    case 109: // Press - key for Sales Return
+		window.location ="index.php?app=sales.return.customerwise&cmd=add";
+		return true;    
+	   }
+	  });	
+	  </script>
+	<script>
+	window.addEventListener('load', function() {
+	  const body = document.body;
+	  body.style.transition = 'width 0.1s ease';
+	  body.style.width = '99%';
+	  
+	  // Simulate visual resize
+	  setTimeout(() => {
+	    body.style.width = '100%';
+	    // Also trigger actual JS "resize" event
+	    window.dispatchEvent(new Event('resize'));
+	  }, 100);
+	});
+	</script>
+
+
+
+	<!-- START FOOTER -->
+
+	<!-- <?require_once(TEMPLATES_SKINS.'/footer.html');?> -->
+
+	<!-- END FOOTER -->
+

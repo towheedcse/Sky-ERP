@@ -1,0 +1,229 @@
+<?php
+extract($data);
+//dumpVar($data);	
+$created_date = getRequest('created_date'); 
+?>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer_booking.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style type="text/css">
+<!--
+.trHead{
+color:#FFFFFF;
+font-size:12px;
+font-weight:bold;
+font: 140% SutonnyMJ;
+}
+.td{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+font: 140% SutonnyMJ;
+}
+.tdCode{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+}
+a:visited{color:#FFFFFF;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a{color:#FFFFFF;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a:hover{ color:#CCCCCC;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+#action a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+#action a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+#action a:hover{ color:#333333;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+
+-->
+</style>
+<head>
+
+<title>Buying House ERP: Employee List</title>
+<style>
+img{
+border:none;
+}
+</style></head>
+
+<body>
+<form name="frm" method="post">
+
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td class="topHeader" colspan="2"><div id="tblTitle" align="left">&nbsp;<b>Booking List</b></div></td>
+  </tr>
+
+  <tr>
+    <th width="42%" scope="row"><div align="left"><a href="?app=customer_booking&cmd=add">Add Customer Booking</a></div></th>
+    <td width="58%">	
+	<table width="100%" border="0">
+      <tr>
+        <td width="47%"><div align="right" style="color:#FFFFFF; font-size:14px; font-weight:bold">Search:</div></td>
+        <td width="22%"><label>
+          <input type="text" style="height:25px; font-size:14px" name="srckey" value="<?=getRequest('srckey')?>">
+        </label></td>
+        <td width="31%"><label>
+          <input type="submit" name="Submit" value="GO" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+        </label></td>
+      </tr>
+    </table>	</td>
+  </tr>
+  <tr>
+    <th colspan="2" scope="row" bgcolor="#079895">
+
+		<div align="right">
+		  <?			 			 	
+			$from_rs=getRequest('from');
+			$to_rs=$from_rs+20;
+			if($from_rs>=20){$from_rs =$from_rs+1;}
+			if($from_rs=="" || $from_rs==0){$from_rs =1;}
+			if($to_rs=="" || $totalrecord<20){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >20){$to_rs=20;}
+			if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+			?>
+			<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+			
+			  if($totalrecord>0){?>
+			 </span>
+			 <span style="float:right"> 
+			  Page:
+	 		<?php	 						
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 20)
+			{
+				$res = $totalrecord/20;
+				$res=(int)$res;
+				if(($totalrecord%20)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+
+			if($totalrecord >20)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 20;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{					
+					echo "<a id='$pno' href='?app=customer_booking&from=$frm&to=20&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}	
+
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=20;
+				echo "<select onChange='goPage(this.value)'>";
+				while($i<=$totalpage)
+				{							
+						echo "<option  value='?app=customer_booking&from=$from&to=$to&page_no=$i'"; 
+						if($i==$plink){ echo " selected='selected' ";} 
+						echo ">$i</option>";
+							
+
+					$i++;
+					$from =$from + 20;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+				echo "</select>";
+			}
+		  	if($totalrecord >20)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=20;$page=2;}else{ $f=$f+20;} 
+				$t = 20;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=customer_booking&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+		   </span>
+		  </div>
+		  <?}?>			
+				
+	</th>
+    </tr>
+  <tr>
+    <td colspan="2">
+	<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:99.5%;visibility:visible;height:340px;overflow:auto">
+	<table width="130%" border="0" cellpadding="0" cellspacing="0">
+      <tr bgcolor="#060147">
+        <td width="22" height="25"><span class="trHead">bs</span></td>
+        <td width="72"><div align="left" class="trHead">eywKs bs</div></td>
+        <td width="87"><div align="left" class="trHead">G&Dagger;R&rsaquo;U &dagger;KvW </div></td>
+        <td width="161"><div align="left" class="trHead"> cvwU&copy;i bvg</div></td>
+        <td width="160"><div align="left" class="trHead">wcZvi bvg</div></td>
+        <td width="117" align="left"><span class="trHead">&Dagger;gvevBj</span></td>
+        <td width="117" align="center"><span class="trHead">eywKs e&macr;&mdash;v msL&uml;v</span></td>
+        <td width="79" align="center"><span class="trHead">&Dagger;gvU &Dagger;Kwis</span></td>
+        <td width="106" align="left"><div align="center" class="trHead"> Lvwj e&macr;&mdash;v msL&uml;v</div></td>
+        <td width="104" align="left"><div align="center" class="trHead">Lvwj e&macr;&mdash;v UvKv</div></td>
+        <td width="72" align="left"><div align="center" class="trHead">eywKs UvKv</div></td>
+        <td width="81"><div align="center" class="trHead">G&uml;vKkb</div></td>
+        </tr>
+	  <?
+	  $i=1;
+	  foreach($record_list as $val){
+	  $booking_id=$val->booking_id;
+   	  ?>
+      <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#DFE9FF'";}else{ echo "bgcolor='#E0EFF3'";}?>>
+        <td height="41" align="center" class="td" valign="top"><?echo $i;?></td>
+        <td align="left" valign="top" class="tdCode" ><?=$val->booking_id?></td>
+        <td align="left" valign="top" class="tdCode" ><?=$val->agent_code?>&nbsp;</td>
+        <td align="left" valign="top" class="td" ><?=$val->customer_code.'<br>'.$val->name?></td>
+        <td align="left" valign="top" class="td" ><?=$val->fname?>&nbsp;</td>
+        <td align="left" valign="top" class="td" ><?=$val->mobile?>&nbsp;</td>
+        <td align="center" valign="top" class="td" ><?=$val->bag_qty?>&nbsp;</td>
+        <td align="center" valign="top" class="td" ><?=$val->total_carring_cost?>&nbsp;</td>
+        <td align="center" valign="top" class="td" ><?=$val->empty_bag_qty?>&nbsp;</td>
+        <td align="center" valign="top" class="td" ><?=$val->total_empty_bag_cost?>&nbsp;</td>
+        <td align="center" valign="top" class="td" ><?=$val->booking_amount?>&nbsp;</td>
+        <td align="left" valign="top" class="td" >
+		  <div id="action" align="center">
+		 <a href="?app=customer_booking&cmd=edit&id=<?=$booking_id?>">
+		  <img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;
+		  <!--a onClick='return doConfirm(PROMPT_DELETE_CONFIRM);' href=javascript:deleteRecord('<?=$booking_id?>') target='_top'>
+		      <img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.png'>		  </a-->		  </div>		</td>
+        </tr>
+	   <?
+	  $i++;
+	  }
+	  ?>
+    </table>
+	</div>	</td>
+    </tr> 
+</table>
+
+</form>
+<br>
+</body>
+
+</html>
+

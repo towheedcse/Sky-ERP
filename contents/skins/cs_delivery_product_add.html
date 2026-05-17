@@ -1,0 +1,515 @@
+<?php
+extract($data);
+//dumpVar($data); 
+$project_id     = getFromSession('project_id');  
+if($account_head==''){
+$sub_head = 9;
+}else{
+$sub_head = $account_head ;
+}
+if($transaction_type==''){
+$transaction_type="Recieved";
+}
+if($transaction_type!=""){ 
+	if($transaction_type=="Recieved"){
+	$creditBlock = "display:none;margin-top:0px;margin-bottom:0px;";
+	$debitBlock = "display:block;margin-top:0px;margin-bottom:0px;";
+	$Recievedreadonly='';
+	$Payreadonly= "disabled";
+	$balanceQty = $received_bag_qty - $total_delivery_bag;
+	}
+}else{ 
+	$creditBlock = "display:block;margin-top:0px;margin-bottom:0px;";
+	$debitBlock = "display:none;margin-top:0px;margin-bottom:0px;";
+	$Recievedreadonly= "";
+	$Payreadonly='disabled';	
+	
+	$balanceQty = $received_bag_qty - $total_delivery_bag;
+}
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_delivery_product.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style type="text/css">
+<!--
+.trHead{
+color:#FFFFFF;
+font-size:12px;
+font-weight:bold;
+font: 130% SutonnyMJ;
+}
+
+#btmBorder{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid #CCCCCC;
+border-right:1px solid #CCCCCC;
+font: 130% SutonnyMJ;
+}
+#btmBorderEng{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid #CCCCCC;
+border-right:1px solid #CCCCCC;
+}
+.tdCode{
+color:#000000;
+font-size:11px;
+font-family:Geneva, Arial, Helvetica, sans-serif;
+border-bottom:1px solid;
+}
+a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a:hover{ color:#CCCCCC;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:visited{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a{color:#000000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+#action a:hover{ color:#333333;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:11px;}
+.bngFont{
+font: 126% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+
+-->
+</style>
+<head>
+
+<title>Customer Journal List</title>
+<style>
+img{
+border:none;
+}
+</style></head>
+
+<body>
+<form name="formID" id="formID"  method="post">
+
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td width="100%" class="topHeader"><div id="tblTitle" align="left">&nbsp;<b>Delivery Voucher </b></div></td>
+  </tr>
+  <?
+  if($received_id!=""){
+  ?>
+  <tr>
+    <td>
+	<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:100%;visibility:visible;height:auto;overflow:auto">
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="0">
+      <tr>
+        <td width="6%" class="bngFont">&nbsp;</td>
+        <td width="8%" class="bngFont"><div align="right">cvwU&copy;i bvg:</div></td>
+        <td width="27%" align="left" class="bngFont"><?=$name?></td>
+        <td width="9%" class="bngFont" align="left"><div align="right">wcZvi bvg:</div></td>
+        <td width="19%" align="left" class="bngFont"><?=$fname?></td>
+        <td width="7%" align="left" class="bngFont"><div align="right">&macr;^&Euml;vwaKvix:</div></td>
+        <td width="24%" class="bngFont" align="left" ><?=$mname?></td>
+      </tr>
+      <tr>
+        <td class="bngFont">&nbsp;</td>
+        <td class="bngFont"><div align="right">&macr;&rsquo;vqx wVKvbv:</div></td>
+        <td colspan="3" align="left" class="bngFont"><?=$address?></td>
+        <td align="left" class="bngFont"><div align="right">&Dagger;gvevBj:</div></td>
+        <td align="left"><span class="bngFont">
+          <?=$mobile?>
+        </span></td>
+      </tr>
+    </table>
+	
+      <fieldset>
+      <legend style="color:#FFFFFF; font-weight:bold">Product Information</legend>
+        <table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="1"cellspacing="0">
+		
+		<tr>
+          <td width="4%" id="btmBorder" class="bngFont"><div align="center">`wjj bs</div></td>
+          <td width="10%" id="btmBorder" class="bngFont">weeiY</td>
+          <td width="6%" id="btmBorder" class="bngFont"><div align="center">e&macr;&mdash;vi msL&uml;v</div></td>
+          <td width="6%" id="btmBorder" class="bngFont"><div align="center">c&Ouml;wZ e&macr;&mdash;vi fvov</div></td>
+          <td width="8%" id="btmBorder" class="bngFont"><div align="center">&Dagger;gvU fvov</div></td>
+          <td width="7%" id="btmBorder" class="bngFont"><div align="center">Lvwj e&macr;&mdash;vi UvKv</div></td>
+          <td width="7%" id="btmBorder" class="bngFont"><div align="center">&Dagger;gvU &Dagger;Kwis</div></td>
+          <td width="7%" id="btmBorder" class="bngFont"><div align="center">&Dagger;gvU &Dagger;Kwis B&rsaquo;Uv&Dagger;i&divide;</div></td>
+          <td width="9%" id="btmBorder" class="bngFont"><div align="center">&Dagger;gvU &dagger;jv&Dagger;bi UvKv</div></td>
+          <td width="7%" id="btmBorder" class="bngFont"><div align="center">&Dagger;gvU &dagger;jvb B&rsaquo;Uv&Dagger;i&divide;</div></td>
+          <td width="8%" id="btmBorder" class="bngFont"><div align="center"> &Dagger;gvU  cvIbv</div></td>
+          <td width="10%" class="bngFont" id="btmBorder"><div align="center">eywKs Gi UvKv</div>            <div align="center"></div></td>
+          <td width="11%" id="btmBorder" class="bngFont"><div align="left">me&copy; &Dagger;gvU  cvIbv</div></td>
+        </tr>
+	  <?
+	   $i=1;
+	   
+	   $total_payble = 0;  $total_loan_cr = 0;
+	   $payble = 0;
+	   $service_charge =0;
+	   $brow = mysql_fetch_object(mysql_query("SELECT ( to_days( curdate( )) - to_days('".$booking_date."')) AS `total_carring_days`"));
+	   $total_carring_days = $brow->total_carring_days;
+	   $total_carring_days = $total_carring_days+3;
+	   
+	   
+	   $sql = "SELECT received_bag_qty,loan_per_bag,interest_per_bag,service_charge,loan_date,est_return_date FROM ".CS_LOAN_DISTRIBUTE_TBL;
+	   $sql .= " WHERE received_id ='".$received_id."' AND project_id = '$project_id'";
+	   $res = mysql_query($sql);
+	   $total_loan = 0;
+	   $loan_interest = 0;
+	   while($row = mysql_fetch_array($res)){
+		$service_charge =0;
+	   	$recieved_bag = $row['received_bag_qty'];
+	   	$loan_per_bag = $row['loan_per_bag'];
+	   	$loan_date = $row['loan_date'];
+		$service_charge = $row['service_charge'];
+		
+		$loan = $recieved_bag * $loan_per_bag;
+		
+		$row1 = mysql_fetch_object(mysql_query("SELECT ( to_days( curdate( )) - to_days('".$loan_date."')) AS `total_days`"));	
+		$total_load_days = $row1->total_days+3;   
+		$loan_interest += number_format (((($loan*($row['interest_per_bag']/100))/365)*$total_load_days),2);		
+		$total_loan = $total_loan+$loan;		
+	   }
+
+       $total_empty_bag_cost = (($total_empty_bag_cost/$received_bag_qty) *$balanceQty);
+	   $total_carring_cost = (($total_carring_cost/$received_bag_qty)*$balanceQty); 
+
+	   $rent = ($received_bag_qty-$total_delivery_bag)*$rent_per_bag;
+	   $carring_interest = number_format (((($total_carring_cost*($carring_interest/100))/365)*$total_carring_days),2);
+
+       $total_loan = (($total_loan/$received_bag_qty)* $balanceQty);
+	   $loan_interest = number_format ((($loan_interest/$received_bag_qty)* $balanceQty),2);
+
+	   $loansql = " SELECT sum( `credit` ) AS total_loan_cr FROM ".CS_LOAN_RECEIVED_TBL." WHERE `received_id` = '".$received_id."' AND project_id = '$project_id'";
+	   $loanrow = mysql_fetch_object(mysql_query($loansql));
+	   $total_loan_cr 			= $loanrow->total_loan_cr;
+	   if($total_loan_cr==""){ $total_loan_cr = 0;}
+	   
+	   if($total_loan_cr > $total_loan){
+ 	    $total_loan = 0;	   
+ 	    $loan_interest = 0;
+
+	   }else{
+		$total_loan =$total_loan - $total_loan_cr;
+	   }
+
+	   $payble = $rent + $total_empty_bag_cost + $total_carring_cost + $carring_interest + $total_loan + $loan_interest;
+	   $grandPayble = $rent + $total_empty_bag_cost_acc + $total_carring_cost_acc + $carring_interest + $total_loan + $loan_interest;
+	   $total_payble = ($total_payble+ $payble)- $booking_amount;
+	   
+	   $costing_per_bag = number_format ((($total_payble+$booking_amount)/$balanceQty),3);
+   	   ?>
+        <tr>
+          <td id="btmBorderEng" align="center"><?=$received_id?></td>
+          <td id="btmBorder" class="bngFont" align="left"><?=$product_details?>&nbsp;</td>
+          <td id="btmBorder" class="bngFont" align="center"><?=$received_bag_qty-$total_delivery_bag?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$rent_per_bag?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$rent?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$total_empty_bag_cost?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$total_carring_cost?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$carring_interest?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$total_loan?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=$loan_interest?></td>
+          <td id="btmBorder" align="center" class="bngFont"><?=round($payble,2)?></td>
+          <td align="center" class="bngFont" id="btmBorder"><?=$booking_amount?>&nbsp;</td>
+          <td id="btmBorder" align="left" class="bngFont"><?=round(($payble+$credit_amount),2)?>
+            /=</td>
+        </tr>
+		 
+        <tr>
+          <td class="bngFont" align="left">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont"><div align="left">me&copy; &Dagger;gvU Rgv </div>
+            <div align="left"></div></td>
+          <td align="left" class="bngFont"><?=($credit_amount+$booking_amount)?>
+            /=</td>
+        </tr>
+        <tr>
+          <td class="bngFont" align="left">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td class="bngFont" align="center">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="center" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">&nbsp;</td>
+          <td align="left" class="bngFont">Aewk&oacute; cvIbv</td>
+          <td align="left" class="bngFont"><?=round($total_payble,2)?>/=</td>
+        </tr>        
+     	 
+	  </table>
+     </fieldset>
+	</div>	
+	</td>
+   </tr>
+   <?}?>
+  <tr align="center">
+    <td><table width="68%"  class="addBorder" cellspacing="0" cellpadding="3">
+      <tr>
+        <td width="2%">&nbsp;</td>
+        <td width="20%">&nbsp;</td>
+        <td width="28%">&nbsp;</td>
+        <td width="2%">&nbsp;</td>
+        <td width="6%">&nbsp;</td>
+        <td width="42%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <div align="right">
+            <label id="mode_of_payment">Mode of Payment</label>
+        </div></td>
+        <td>
+          <div align="left">
+            <input name="mode_of_payment" id="mode_of_payment" type="radio" value="Check" onClick="showhideCashCheck('Check')" <?php if($mode_of_payment=="Check"){echo "checked";}else{echo "checked";}?> >
+        Check
+        <input name="mode_of_payment" id="mode_of_payment" type="radio"  value="Cash" onClick="showhideCashCheck('Cash')" <?php if($mode_of_payment=="Cash") echo "checked";?> >
+        Cash </div></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><input type="hidden" name="customer_code" value="<?=$customer_code?>"></td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <div align="left" id="Check" style="<?=$checkMode?>">
+            <table width="100%" border="0">
+              <tr>
+                <td width="2%">&nbsp;</td>
+                <td width="20%">
+                  <div align="right">
+                    <label id="lcopener">Bank Name</label>
+                </div></td>
+                <td width="69%">
+                  <div align="left">
+                    <input type="text" name="bank_name" id="bank_name" style="width:170px;" value="<?=$bank_name?>">
+                </div></td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>
+                  <div align="right">
+                    <label id="acc_no">Acc No.</label>
+                </div></td>
+                <td>
+                  <div align="left">
+                    <input type="text" name="acc_no" id="acc_no" style="width:170px;" value="<?=$acc_no?>">
+                </div></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>
+                  <div align="right">
+                    <label id="check_no">Check No.</label>
+                </div></td>
+                <td>
+                  <div align="left">
+                    <input type="text" name="check_no" id="check_no" style="width:170px;" value="<?=$check_no?>">
+                </div></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td>
+                  <div align="right">
+                    <label id="check_no">Check Issue Date.</label>
+                </div></td>
+                <td>
+                  <div align="left">
+                    <input name="check_issue_date" id="check_issue_date" style="width:140px;" value="<?=dateInputFormatDMY($check_issue_date)?>" size="20" onFocus="gfPop.fPopCalendar(document.formID.elements['check_issue_date']);return false;" title="calendar" type="text">
+                    <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.formID.elements['check_issue_date']);return false;" title="calendar" width="18" height="18"> </div></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+        </div></td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <div align="left" id="Cash" style="<?=$cashMode?>" >
+            <table width="99%" border="0">
+              <tr>
+                <td width="3%">&nbsp;</td>
+                <td width="19%">
+                  <div align="right">
+                    <label id="tt_sender">Ref. No.</label>
+                </div></td>
+                <td width="69%">
+                  <div align="left">
+                    <input type="text" name="ref_no" id="ref_no" style="width:170px;" value="<?=$ref_no?>">
+                </div></td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+              </tr>
+            </table>
+        </div></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Delivery Bag Qty </div></td>
+        <td colspan="4">
+		<div align="left">
+          <input type="text" name="delivery_bag_qty" id="delivery_bag_qty" class="validate[required]" onKeyUp="calculateDrAmount(this.value)" style="width:170px;" value="0">
+         <span id="error_msg" style="color:#FF0000"></span>
+		</div>
+		</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Costing Per Bag </div></td>
+        <td colspan="4"><div align="left">
+          <input type="text" name="costing_per_bag" id="costing_per_bag" class="validate[required]" readonly="" style="width:170px;" value="<?=$costing_per_bag?>">
+        </div></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><div align="right">Service Charge </div></td>
+        <td colspan="4"><input name="service_charge" type="text" style="width:170px;" id="service_charge" value="<?=$service_charge?>"></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <div align="right">
+            <label id="transaction_type">Transaction Type</label>
+        </div></td>
+        <td>
+          <div align="left">
+            <input name="transaction_type" id="transaction_type1" type="radio" value="Payment" onClick="showhideTransactionType('Payment')" <?php if($transaction_type=="Payment"){echo "checked";}else{echo "checked";}?> <?=$Payreadonly?> >
+        Payment
+        <input name="transaction_type" id="transaction_type2" type="radio" value="Recieved" onClick="showhideTransactionType('Recieved')" <?php if($transaction_type=="Recieved") echo "checked";?> <?=$Recievedreadonly?> >
+        Recieved </div></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <div align="left" id="Payment" style="<?=$creditBlock?>">
+            <table width="100%" border="0">
+              <tr>
+                <td width="2%">&nbsp;</td>
+                <td width="20%">
+                  <div align="right"> Credit Amount </div></td>
+                <td width="69%">
+                  <div align="left">
+                    <input type="text" name="credit" id="Payment_f" style="width:170px;" value="<?=$credit?>">
+                </div></td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+              </tr>
+            </table>
+        </div></td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <div align="left" id="Recieved" style="<?=$debitBlock?>">
+            <table width="99%" border="0">
+              <tr>
+                <td width="3%">&nbsp;</td>
+                <td width="19%">
+                  <div align="right"> Debit Amount </div></td>
+                <td width="69%">
+                  <div align="left">
+                    <input type="text" name="debit" id="Recieved_f" class="validate[required]" style="width:170px;" value="<?=$debit?>">
+                </div></td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+                <td width="3%">&nbsp;</td>
+              </tr>
+            </table>
+        </div></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td height="74"><div align="right">Description</div></td>
+        <td colspan="4">
+          <div align="left">
+            <textarea name="description" id="description" cols="67" rows="3"><?=$remarks?>
+    </textarea>
+        </div></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td colspan="3">
+          <input type="submit" name="submit" value="Save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+          <input name="Reset" type="reset" id="Reset" value="Reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'">
+          <input type="button" name="Submit2" value="Cancel" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" onClick="javascript:window.location='index.php?app=journal'">
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td colspan="3">
+		<input type="hidden" name="received_id" value="<?=getRequest('id')?>" size="27">
+          <?php 
+			if(getRequest('voucher_no'))
+			{
+		  ?>
+          <input type="hidden" name="id" value="<?=$voucher_no?>" size="27">
+          <input type="hidden" name="account_head" id="account_head" style="width:170px;" value="<?=$account_head?>">
+          <input type="hidden" name="cmd" value="doUpdate">
+          <?php
+			}else
+			{
+			?>
+           <input type="hidden" name="cmd" id="cmd" value="<?=getRequest('cmd')?>">
+          <?php	
+			}			
+		 ?>
+		 <input type="hidden" name="balanceQty" id="balanceQty" value="<?=$balanceQty?>">
+		 
+        </td>
+        <td>&nbsp;          </td>
+      </tr>
+    </table></td>
+  </tr> 	
+	
+</table>
+
+</form>
+<br>
+</body>
+
+</html>
+

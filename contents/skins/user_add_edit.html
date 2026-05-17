@@ -1,0 +1,450 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$id = getRequest('id');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/signup.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Create User</title>
+<style>
+
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+.style2 {color: #666666}
+
+
+select#store_id {
+    background: #fff !important;
+    border: 1px solid #c1c1c1;
+}
+.select2Parent, .select2Parent1, .select2Parent2, .select2Parent3, .select2Parent4, .select2Parent5, .select2Parent6, .select2Parent7, .select2Parent8, .select2Parent9, .select2Parent10 {
+        position: relative !important;
+    }
+span#select2-store_id-container {
+    margin-top: -15px;
+    font-size: 16px;
+    text-align: start;
+}
+
+span.select2-selection.select2-selection--single {
+    padding: 23px;
+}
+ul#select2-store_id-results {
+    text-align: left;
+}
+
+span.select2.select2-container.select2-container--default.select2-container--below {
+            width: 100% !important;
+        }
+
+        span.select2.select2-container.select2-container--default.select2-container--focus {
+            width: 100% !important;
+        }
+
+        span.select2-selection.select2-selection--single {
+            padding: 0px 0px 12px 0px !important;
+            margin-top: 2px !important;
+            border-color: #c9c9c9 !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 48px;
+        }
+
+        span.select2-selection.select2-selection--single {
+            padding: 0px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 48px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 48px;
+        }
+	span#select2-store_id-container {
+	    margin-top: 0px !important;
+	}
+
+
+span.select2-selection.select2-selection--multiple {
+    padding: 0px 0px 0px 0px !important;
+}
+.select2-container {
+    display: block;
+    height: 100% !important;
+}
+
+.select2-container--default 
+.select2-selection--multiple 
+.select2-selection__rendered {
+    display: flex;
+    flex-wrap: wrap;
+}
+ul.select2-selection__rendered> li {
+    height: 100%;
+}
+</style>
+</head>
+
+<body>
+<form name="userinfo" method="post">
+<table width="100%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="651" align="center" valign="top">
+		<table width="53%"  class="addBorder" cellspacing="0" cellpadding="2">
+			  <tr>
+				<td class="topHeader" colspan="6"><div id="tblTitle" align="left">&nbsp;<strong>Create New User</strong></div></td> 
+			  </tr>
+			  <tr>
+			    <td width="1%">&nbsp;</td>
+			    <td colspan="5"><div align="center" id="status_msg" style="color:#FF3366 "></div></td>
+	      		  </tr>
+			  <tr>
+				<td>&nbsp;</td> 
+				<td width="36%"><div align="right">Project</div></td>
+				<td width="53%"><div align="left">
+				<select name="project_id" id="project_id" style="width:150px" class="validate[required]" tabindex="1">
+				<option value=''>Select One</option>
+				 <?
+				 $project_code =$project_id;
+				foreach($project_list as $i=>$v)
+				{
+					$project_id = $v->project_id;
+					$project_name = $v->project_name;		
+				?>
+				<option value="<?=$project_id?>" <? if($project_code==$project_id){ echo "selected";} ?> > 
+				<?=$project_name?>
+				</option>
+				<?}?>
+				</select>
+				</div>
+				</td>
+				<td width="4%">&nbsp;</td>
+				<td width="3%">&nbsp;</td>
+				<td width="3%">&nbsp;</td>
+			  </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">Employee</div></td>
+			    <td>
+				<select name="employee_id" id="employee_id" style="width:150px" class="validate[required]" tabindex="2">
+				  <option value=''>Select One</option>
+				  <?					
+				   foreach($employee_list as $i=>$v)
+				   {
+					$emp_code = $v->employee_id;
+					$name = $v->name;		
+				  ?>
+				  <option value="<?=$emp_code?>" <? if($employee_id==$emp_code){ echo "selected";} ?> >
+				  <?=$name?>
+				  </option>
+				  <?}?>
+				</select>
+			    </td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		  </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">Division Name</div></td>
+			    <td>
+			    <select name="division" id="division" style="width:150px" class="validate[required]" onChange="javascript:getDistrictList(this.value)" tabindex="3">
+			        <option value="">Select Sales Division</option>
+			        <?php
+				$sql = "SELECT * FROM ".DIVISION_TBL;
+				$result=mysql_query($sql);
+				while($row=mysql_fetch_array($result)){
+				?>
+			        <option value="<?=$row['division_id']?>" <? if($row['division_id']==$division){ echo 'selected';} ?> >
+			          <?=$row['division_name_eng']?>
+			          </option>
+			        <?php } ?>
+			      </select>
+			</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		        </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">District Name</div></td>
+			    <td>
+			    <select name="district" id="district" style="width:150px" tabindex="4" onChange="javascript:getAreaList(this.value)" >
+				<option value="">Select Sales District</option>
+				<?php	 
+				if($id!=""){		
+				$DISsql = "SELECT * FROM ".DISTRICT_TBL." WHERE division_id='$division' ORDER BY district_name";
+				$Dresult=mysql_query($DISsql);
+				while($Drow=mysql_fetch_object($Dresult)){
+				$district_id = $Drow->district_id;
+				$district_name = $Drow->district_name;	
+				?>
+				<option value="<?=$district_id?>"<?php if($district_id==$district) echo "selected";?> ><?=$district_name?></option>
+				<?}?>
+				<?}?>
+			      </select>
+			</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		        </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">Area Name</div></td>
+			    <td>
+			   <select name="area" id="area" style="width:150px" tabindex="2" >
+				<option value="">Select Sales Area</option>
+				<?php	
+				if($id!=""){		
+				$Asql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district'";			
+				$Asql.=" ORDER BY area_name";
+				$Aresult=mysql_query($Asql);
+				while($av=mysql_fetch_object($Aresult)){			
+				$area_id = $av->area_id;	
+				$area_name = $av->area_name;	
+				?>                      
+				<option value="<?=$area_id?>"<?php if($area_id==$area) echo "selected";?> >
+				<?=$area_name?>
+				</option>
+				<?}?>
+				<? }?>
+			      </select>
+			</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		        </tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">User Type</div></td>
+			    <td>
+				<select name="u_type_id" id="u_type_id" style="width:150px" class="validate[required]" tabindex="6">
+				  <option value=''>Select Uesr</option>
+				  <?
+							
+				    foreach($u_type_list as $i=>$v)
+				    {
+					$user_type = $v->u_type_id;
+					$u_type_name = $v->u_type_name;		
+				   ?>
+				   <option value="<?=$user_type?>" <? if($user_type==$u_type_id){ echo "selected";} ?> ><?=$u_type_name?></option>
+				  <?}?>
+				</select>
+			    </td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		</tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">User Store</div></td>
+			    <td class="select2Parent2">
+				<select name="store[]" multiple="multiple" id="store_id" class="store_id" style="width:150px">
+				  <option value=''>Select Store</option>
+				  <?
+							
+				    foreach($store_list as $i=>$v)
+				    {
+					$delivery_pid = $v->delivery_pid;
+					$delivery_name = $v->delivery_point_name;		
+				   ?>
+				   <option value="<?=$delivery_pid?>"><?=$delivery_name?></option>
+				  <?}?>
+				</select>
+			    </td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		</tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">User SL</div></td>
+			    <td>
+			    <select name="user_sl" id="user_sl" style="width:150px" class="validate[required]" tabindex="7">
+		            <option value=''>Select SL</option>
+
+			<?php foreach (range('A', 'Z') as $option): ?>
+        			<option value="<?= $option ?>" <? if($user_sl== $option){ echo "selected";} ?>><?= $option ?></option>
+    			<?php endforeach; ?>
+		                
+		            </select>
+			</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		      </tr>
+		      <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right"><label id="userid">Login Id</label></div></td>
+			    <td><input type="text" name="userid" id="userid" style="width: 150px;" class="validate[required]" title="User Id" tabindex="8"/></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		</tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">Password </div></td>
+			    <td><input type="password" name="password" id="password" class="validate[required]" onfocus="chkUserExistence()" style="width: 150px;" title="Password" tabindex="9"/></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right"><label id="conf_password">Confirm Password</label></div></td>
+			    <td><input type="password" name="conf_password" id="conf_password" class="validate[required,confirm[password],length[6,16]]" title="Confirm Password" style="width: 150px;" tabindex="10"/></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      </tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right"><label id="approved_permission">Approved Permission</label></div></td>
+			    <td><input type="checkbox" name="approved_permission" <?php if($approved_permission==1) echo "checked"; ?> value="1" /></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		</tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right"><label id="checked_permission">Checked Permission</label></div></td>
+			    <td><input type="checkbox" name="checked_permission" <?php if($checked_permission==1) echo "checked"; ?> value="1" /></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+	      		</tr>
+			<tr>
+			    <td>&nbsp;</td>
+			    <td><div align="right">App Special</div></td>
+			    <td>
+			    <select name="app_special" id="app_special" style="width:150px">
+        			<option value="0" <? if($app_special== "0"){ echo "selected";} ?>>Select One</option>
+        			<option value="1" <? if($app_special== "1"){ echo "selected";} ?>>1 (Approved)</option>
+        			<option value="2" <? if($app_special== "2"){ echo "selected";} ?>>2 (Checked)</option>
+    			
+		            </select>
+			</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		      </tr>
+			
+			  <tr>
+				<td>&nbsp;</td> 
+				<td>&nbsp;</td>
+				<td colspan="3">
+					<input class="button" type="submit" name="submit" value="Save">&nbsp;
+				  	<input class="button"  name="Reset" type="reset" id="Reset" value="Reset">&nbsp;
+				  	<input class="button" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=user_home';">				</td>
+				<td>&nbsp;</td>
+			  </tr>
+			  <tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td colspan="3">
+				<?php 
+				if(getRequest('id'))
+				{
+				?>
+				  <input type="hidden" name="id" value="<?=$userid?>" size="27">
+				  <input type="hidden" name="cmd" value="doUpdate">
+				  <?php
+				}else
+				{
+				?>
+				  <input type="hidden" name="cmd" id="cmd" value="<?=getRequest('cmd')?>">
+				  <?php	
+				}				
+				?>
+						
+				</td>
+				<td>&nbsp;</td>
+			  </tr>
+			</table>
+      </td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</form>
+<div style="display:block;height:70px"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    // Put jQuery in noConflict mode and use $j instead of $
+    var $j = jQuery.noConflict();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+
+<script>
+    $j(document).ready(function () {
+        $j(".store_id").select2({
+            width: '100%',
+            dropdownParent: $j('.select2Parent2')
+        });
+
+	var storeIds = "<?=$store_ids;?>".split(',');
+	$j("#store_id").val(storeIds).trigger("change");
+    });
+</script>
+
+</body>
+</html>

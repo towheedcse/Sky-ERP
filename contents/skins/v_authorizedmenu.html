@@ -1,0 +1,169 @@
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/h_menu.css" type="text/css">
+	
+<link href="<?=REL_CONTENT_DIR?>/css/v_authorizedmenu.css" rel="stylesheet" type="text/css" />
+<title>DickHunt.net</title>
+<body>
+<table width="28%" border="0" cellpadding="1" cellspacing="5" >
+  <?php 
+	    //=======Admin has no profile==============
+	if(getFromSession('u_type_id')!='1')
+	{?>
+  <tr>    
+	<td class="hilightFont" id="tableTop"><b><div class="align">View guys</div></b></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=member_profile&cmd=manonline" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Men Online</div></a></td>
+  </tr>
+  <tr>   
+    <td> <a href="index.php?app=member_profile&cmd=new_profile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">New Profiles</div></a></td>
+  </tr>
+  <tr>    
+    <td> <a href="index.php?app=member_profile&cmd=all_profile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">All Profiles</div></a></td>
+  </tr>
+  <tr>    
+	<td class="hilightFont" id="tableTop"><b><div class="align">My buddies</div></b></td>
+  </tr>
+   <tr>    
+    <td> <a href="index.php?app=member_profile&cmd=online_buddies" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Online Buddies</div></a></td>
+  </tr>
+  <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=track_list" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Track List</div></a></td>
+  </tr>
+   <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=block_list" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Block List</div></a></td>
+  </tr> 
+ 
+ <tr>
+    <td class="hilightFont" id="tableTop"><b><div class="align">E-mail</div></b></td>
+  </tr>
+  
+   <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=inbox" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Mail box</div></a></td>
+  </tr>
+    
+  <tr> 
+	<td class="hilightFont" id="tableTop"><b><div class="align">Preferences</div></b></td>
+  </tr>  
+  <tr>
+    <td> <a href="index.php?app=member_profile&cmd=accountinfo" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Account info</div></a></td>
+  </tr>
+  <tr>
+    <td> <a href="index.php?app=member_profile&cmd=edit_myprofile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">My profile</div></a></td>
+  </tr>
+  <tr>
+    <td> <a href="index.php?app=signup&cmd=view_help" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Help</div></a></td>
+  </tr>
+  
+   <tr>
+    <td> <a href="index.php?app=change_pass" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Change Password</div></a></td>
+  </tr>
+  <?}else if(getFromSession('u_type_id')=='1'){?>
+   <tr>    
+	<td class="hilightFont" id="tableTop"><b><div class="align">View guys</div></b></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=member_profile&cmd=manonline" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Men Online</div></a></td>
+  </tr>
+  <tr>   
+    <td> <a href="index.php?app=member_profile&cmd=new_profile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">New Profiles</div></a></td>
+  </tr>
+  <tr>    
+    <td> <a href="index.php?app=member_profile&cmd=all_profile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">All Profiles</div></a></td>
+  </tr>
+  <tr>    
+	<td class="hilightFont" id="tableTop"><b><div class="align">My buddies</div></b></td>
+  </tr>
+   <tr>    
+    <td> <a href="index.php?app=member_profile&cmd=online_buddies" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Online Buddies</div></a></td>
+  </tr>
+  <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=track_list" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Track List</div></a></td>
+  </tr>
+   <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=block_list" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Block List</div></a></td>
+  </tr> 
+ 
+ <tr>
+    <td class="hilightFont" id="tableTop"><b><div class="align">E-mail</div></b></td>
+  </tr>
+  
+   <tr> 
+    <td> <a href="index.php?app=member_profile&cmd=inbox" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Mail box</div></a></td>
+  </tr>
+    
+  <tr> 
+	<td class="hilightFont" id="tableTop"><b><div class="align">Preferences</div></b></td>
+  </tr>  
+  <tr>
+    <td> <a href="index.php?app=member_profile&cmd=accountinfo" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Account info</div></a></td>
+  </tr>
+  <tr>
+    <td> <a href="index.php?app=member_profile&cmd=edit_myprofile" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">My profile</div></a></td>
+  </tr>
+   <tr>
+    <td> <a href="index.php?app=change_pass" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Change Password</div></a></td>
+  </tr>
+  <tr> 
+	<td class="hilightFont" id="tableTop"><b><div class="align">Admin Panel</div></b></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=admin_panel&cmd=viewmember" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      Member Setting</a></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=draft_email&cmd=list" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      Draft Email</a></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=admin_panel&cmd=add" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      Help Category</a></td>
+  </tr>
+  <tr>     
+    <td> <a href="index.php?app=help&cmd=add" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      Help</a></td>
+  </tr>
+  
+  <?}?>
+  <tr>     
+    <td> <a href="index.php?app=login&cmd=logout" class="h_off" onMouseOver="this.className='h_on';" onMouseOut="this.className='h_off';"> 
+      <div class="align">Logout</div></a></td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</body>

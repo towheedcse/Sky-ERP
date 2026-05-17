@@ -1,0 +1,573 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+require_once(CLASS_DIR . '/common.list.class.php');
+extract($data);
+//dumpVar($data);
+if($mode_of_payment=="Cash"){
+
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+
+}else{
+
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+
+}
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR);
+
+$resultData = $tmp_items;
+$po_no_value = $resultData["poVoucherNo"];
+$tableData = $resultData["table"];
+$total_value = $resultData["total_value"];
+$supplier = $resultData["supplier_id"];
+$store_id = $resultData["storeId"];
+
+if(isset($resultData["purchase_date"]) && !empty($resultData["purchase_date"])){
+	$purchase_date = $resultData["purchase_date"];
+}else{
+	$purchase_date = date("d-m-Y");
+}
+
+
+
+
+
+?>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/purchase_item_recieved.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap-chosen.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/bootstrap.css" type="text/css">
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+
+var J = jQuery.noConflict();
+
+</script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+
+	
+
+<script language="javascript1.3">
+
+
+
+      J("[class^=validate]").validationEngine({
+
+
+
+      inlineValidation: false,
+
+
+
+      success :  false,
+
+
+
+      failure : function() { callFailFunction()  }
+
+
+
+      })
+
+
+
+var CANCEL_URL = "index.php?app=buyerorder&cmd=list";
+
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<title>Goods Received Note</title>
+
+<style>
+
+
+
+input{
+
+background-color:#ffffff;
+
+border: 1px solid #006699;
+
+}
+
+.style2 {color: #666666}
+
+.bangFont {font: 130% SutonnyMJ;
+}
+</style>
+
+</head>
+
+
+
+<body>
+
+<form name="frmbuyerorder" id="frmbuyerorder" method="post">
+
+<table width="100%" align="center" cellspacing="0" cellpadding="0">
+
+  <tr> 
+
+    <td colspan="2">&nbsp;
+
+		
+
+	</td>
+
+  </tr>
+
+  <tr> 
+
+    <td height="322" align="center" valign="top">
+
+		<table width="97%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+			  <tr>
+
+				<td class="topHeader" colspan="9"><div id="tblTitle" align="left">&nbsp;<strong>Goods Received Note</strong></div></td> 
+			  </tr>
+
+			  <tr>
+
+			    <td width="3%">&nbsp;</td>
+
+			    <td width="15%">&nbsp;</td>
+
+			    <td width="27%">&nbsp;</td>
+
+			    <td width="5%">&nbsp;</td>
+
+			    <td width="9%">&nbsp;</td>
+
+			    <td width="9%">&nbsp;</td>
+
+			    <td colspan="2">
+
+				<div align="right">				</div></td>
+          	</tr>
+
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td align="left">PO No</td>
+		    <td colspan="2">
+<input type="hidden" name="po_no_value" id="po_no_value" value="<?=$po_no_value?>">
+<select id="po_no" style="width:250px" onChange="addPOProduct(this.value)" >
+						<option value="">Select PO No</option>
+						<?php
+			  			foreach($po_list as $i=>$v)
+						{
+						?>
+						<option value="<?=$v->voucher_no?>" <?php if($v->voucher_no==$po_no) echo "selected";?>><?=$v->voucher_no?></option>
+						<?php } ?>
+					</select>
+				<p id="showSprNo" style="margin-top: 2px; margin-bottom: 5px;"><?=$salesArr[3]?></p>
+			</td>
+			    <td colspan="2">Store Name </td>
+			    <td><select name="store_id" id="store_id" style="width:250px" tabindex="1" class="validate[required]">
+                  <option value="">Select Store Name</option>
+                  <?php	 
+				  	
+					foreach($depo_list as $i=>$v)
+					{
+
+						$delivery_pid = $v->delivery_pid;	
+						$delivery_point_name = $v->delivery_point_name;	
+					?>
+                  <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$store_id) echo "selected";?> >
+                  <?=$delivery_point_name?>
+                  </option>
+                  <?}?>
+                </select></td>
+	      	 </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="supplier_lbl">Supplier Name</label> </td>
+			    <td><select name="supplier" id="supplier" style="width:250px" class="validate[required]">
+			      <option value="">Select Supplier</option>
+			      <?php				  	
+					foreach($supplier_list as $i=>$v)
+					{
+						$supplier_code = $v->sub_id;	
+						$name = $v->sub_head_name;	
+					?>
+			      <option value="<?=$supplier_code?>"<?php if($supplier_code==$supplier) echo "selected";?> ><?=$name?>
+		          </option>
+			      <?}?>
+		        </select></td>
+			    <td>&nbsp;</td>
+			    <td colspan="2">Challan/Bill of Entry. </td>
+			    <td colspan="2"><input type="text" name="quotation_no" id="quotation_no" style="width:250px;" value="<?=$quotation_no?>" class="validate[required]" tabindex="3"></td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>GRN Date</td>
+			    <td>
+                <input name="purchase_date" id="purchase_date" style="width:250px;" value="<?=$purchase_date?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" type="text"  class="validate[required]" tabindex="5">
+                  <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['purchase_date']);return false;" title="calendar" width="15" height="15">
+                <input type="hidden"  name="currency" id="currency" value="1###BDT">				</td>
+			    <td>&nbsp;</td>
+			    <td colspan="2">Truck/Van No. </td>
+			    <td colspan="2"><input type="text" name="track_no" id="track_no" tabindex="19" style="width:250px;" value="<?=$track_no?>">
+		        <input type="hidden" name="van_no" id="van_no" tabindex="20" style="width:160px;" value="<?=$van_no?>"></td>
+	      </tr> 
+		<tr>
+		      <td colspan="8">
+				  <fieldset>
+				    
+				    <legend>Product Details</legend>
+					  <table width="100%"  cellspacing="0" cellpadding="2">
+                        <tr>
+                          <td width="0%"><div align="left"> </div></td>
+                          <td width="20%"><div align="left"><label id="product_lbl">Product</label></div></td>
+                         
+			<td width="10%">Serial  No.</td>
+			<td width="10%">Warranty</td>
+                        <td width="10%"><div align="left"><label id="qty_lbl"> Quantity<span id="qty_m"></span></label></div></td>
+                          <td><div align="left"> </div></td>
+
+			 </tr>
+			<td><div align="left"> </div></td>
+                          <td><div align="left">
+						  <select name="product" id="product" style="width:150px" tabindex="9" onChange="javascript:getProductDtl(this.value)" class="chosen-select-deselect">
+                            <option value="">Select One</option>
+							<?php												
+							foreach($product_list as $i=>$v)
+							{							
+							$product_id = $v->product_id;
+							$product_name = (new CommonList())->normalizeProductName($v->product_code, $v->product_name);	
+							?>
+                            <option value='<?=$product_id?>' <?php if($product==$product_id) echo "selected";?> >
+                            <?=$product_name?>
+                            </option>
+                            <?}?>
+                          </select>
+                          </div></td>
+                          <td><input type="text" style="width:150px; " name="serial"  id="serial" value="<?=$serial?>" tabindex="9"/></td>
+                          <td><div align="left">
+				<input type="text" style="width:150px; " name="warranty" id="warranty" value="<?=$warranty?>" tabindex="10" />
+			  </div></td>
+                         
+                          <td><div align="left">
+                            <input type="text" style="width:80px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="10">
+                          </div>
+
+<input type="hidden" name="product_name" id="product_name" value='<?=$product_name?>'>
+<input type="hidden" name="catagory" id="catagory" value="<?=$catagory?>">
+<input type="hidden" name="catagory_name" id="catagory_name" value="<?=$catagory_name?>">
+<input type="hidden" name="brand" id="brand" value="<?=$brand?>">
+<input type="hidden" name="brand_name" id="brand_name" value="<?=$brand_name?>">
+
+<input type="hidden" name="pur_detail_id" id="pur_detail_id" value="<?=$pur_detail_id?>">
+<input type="hidden" name="total_unit" id="total_unit" value="pc"/>
+<input type="hidden" name="total_bag" id="total_bag" value="<?=$total_bag?>"/>
+<input type="hidden" name="m_unit" id="m_unit" value="pc"/>
+<input type="hidden" name="tmp_id" id="tmp_id" value=""/>
+<input type="hidden" name="edit_product_id" id="edit_product_id" value=""/>
+<input type="hidden" name="edit_product_qty" id="edit_product_qty" value=""/>
+<input type="hidden" name="po_voucher_no" id="po_voucher_no" value=""/>
+<input type="hidden" name="pod_id"  id="pod_id" value=""/>
+<input type="hidden" name="max_qty"  id="max_qty" value=""/>
+<input type="hidden" name="discount_amount" id="discount_amount" value="0">
+<input type="hidden" name="details" id="details" style="width:120px"/>
+<input type="hidden" name="free_qty" id="free_qty" value="<?=$free_qty?>" />
+<input type="hidden" name="unit_price" id="unit_price" value="<?=$unit_price?>" onKeyUp="calTotalValue()" />
+<input type="hidden" name="unit_discount" id="unit_discount" value="0" onKeyUp="calTotalValue()">
+<input type="hidden" name="total" id="total" value="<?=$total?>" />
+			  </td> 
+                          <td><input name="button" type="button" class="button"  onClick="purchaseProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" value="Add" tabindex="14" style="margin-left: 30px;">
+                              <input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=purchase_item_received&cmd=add';" tabindex="18"></td>
+                        </tr>
+                      </table>
+			    </fieldset>			  </td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td width="12%">&nbsp;</td>
+			    <td width="22%">&nbsp;</td>
+	      	</tr>						
+
+			  <tr align="center">
+
+			    <td colspan="8" align="left">
+                <div id="tbs">
+				<?php
+				echo $tableData;
+				?>
+				</div>
+                </td>
+	      </tr>			  
+		  <tr>
+			 <td align="left"></td>
+
+				<td>&nbsp;</td>
+			    <td>&nbsp;</td>
+
+				<td align="left"><div align="right">
+				  <input type="hidden" name="total_recieved_qty" id="total_recieved_qty">
+				</div></td>
+				<td colspan="3" align="left" style="display:none"><div align="right">Grand Total</div></td>
+
+				<td>
+
+				<div align="left">
+<input type="hidden" name="net_payble" id="net_payble" style="width:130px;" value="<?=$total_value?>">
+				  <input type="hidden" style="width:130px; " name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="" tabindex="16">
+				</div>				</td> 
+			  </tr>
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td>Narration Note </td>
+			    <td>
+				<textarea name="narration_note" id="narration_note" cols="50" rows="2"></textarea>
+				<input type="hidden" name="exceed_received_amount" id="exceed_received_amount" style="width:130px;" value="<?=$exceed_received_amount?>" class="validate[required]" tabindex="15">
+				</td>
+
+				<td colspan="3">
+
+			<input type="hidden" name="cmd" value="saveGRNPurchase">			
+
+				<input name="transaction_type" id="transaction_type" type="hidden" value="Payment">
+				<input type="hidden" name="transaction_name" value="Purchase">				</td>
+
+				<td>&nbsp;</td>
+
+			    <td>
+
+				<div align="left">
+
+		        <input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave(event);" tabindex="17">
+				</div>				</td>
+			  </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td colspan="5">&nbsp;				</td>
+
+				<td>&nbsp;</td>
+
+			    <td>&nbsp;</td>
+			  </tr>
+		</table>
+
+      </td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/bootstrap.min.js"></script>
+<!--script src="<?=REL_CONTENT_DIR?>/js/bootbox.min.js"></script-->
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/chosenchosen.jquery.js"></script>
+<script>
+$(function() {
+	$('.chosen-select').chosen({
+		    search_contains: true, // allows matching in the middle of the string
+		    width: "100%"
+		});
+		$('.chosen-select-deselect').chosen({
+		    allow_single_deselect: true,
+		    search_contains: true,
+		    width: "100%"
+		});
+});
+
+function addPOProduct(voucher_no){
+	var voucher_no 		= document.getElementById('po_no').value;
+	
+	var purchase_date 	= document.getElementById('purchase_date').value;
+	var quotation_no 	= document.getElementById('quotation_no').value;
+	var warranty 	= document.getElementById('warranty').value;
+
+	if(voucher_no != "") {
+		const data = {
+			voucher_no:voucher_no,
+			purchase_date:purchase_date,
+			quotation_no:quotation_no,
+			warranty:warranty,
+		}
+
+		if (confirm("Sure want to add product???")) {
+			$.ajax({
+				url: '?app=purchase_item_received&cmd=addPOProduct',
+				type: 'POST',
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				dataType: 'json',
+				success: function (response) {
+					if (response.status) {
+						$("#tbs").html(response.data.table);
+						const total_value = parseFloat(response.data.total_value);
+						
+						$("#total_value").val(response.data.total_value);
+$("#net_payble").val(response.data.total_value);
+						$("#supplier").val(response.data.supplier_id);
+						$("#store_id").val(response.data.storeId);
+if(response.data.purchase_date && response.data.purchase_date != "" && response.data.purchase_date!= "null"){
+	$("#purchase_date").val(response.data.purchase_date);
+}
+						
+						$("#po_no_value").val(response.data.poVoucherNo);
+						$("#showSprNo").html(response.data.poVoucherNo);
+						$("#po_no").val("").trigger("change");
+					} else {
+						alert(response.mesage);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert('AJAX request failed: ' + error);
+				}
+			});
+		} else {
+			$("#po_no").val("").trigger("change");
+			return false;
+		}
+	}
+	return false;
+}
+
+
+function editTempPo(tmpId){
+	if(tmpId==""){
+		alert('ID Missing');
+	}
+
+	$.ajax({
+		url: '?app=purchase_item_received&cmd=editTempPoItem',
+		type: 'POST',
+		data: JSON.stringify({tmpId:tmpId}),
+		contentType: 'application/json',
+		dataType: 'json',
+		success: function (response) {
+			if (response.status) {
+				const data = response.data || {};
+
+				var productid = data.productid;
+				var product_name = data.product_name;
+				var brand_id = data.brand_id;
+				var brandname = data.brandname;
+				var catagory = data.catagory;
+				var catagoryname = data.catagoryname;
+				var details = data.details;
+				var serial = data.serial;
+				var warranty = data.warranty;
+				var qty = data.qty;
+				var free_qty = data.free_qty;
+				var unit_price = data.unit_price;
+				var unit_discount = data.unit_discount;
+				var total = data.total;
+				var tmp_id = data.tmp_id;
+				var po_voucher_no = data.po_voucher_no;
+				var pod_id = data.pod_id;
+				var max_qty = data.max_qty;
+
+				$("#product").val(productid).trigger("chosen:updated").trigger("change");
+				$("#catagory").val(catagory);
+				$("#brand").val(brand_id);
+				$("#details").val(details);
+				$("#serial").val(serial);
+				$("#warranty").val(warranty);
+				$("#qty").val(qty);
+				$("#free_qty").val(free_qty);
+				$("#unit_price").val(unit_price);
+				$("#unit_discount").val(unit_discount);
+				$("#total").val(total);
+				$("#edit_product_qty").val(qty);
+				$("#edit_product_id").val(productid);
+				$("#tmp_id").val(tmp_id);
+
+				$("#po_voucher_no").val(po_voucher_no);
+				$("#pod_id").val(pod_id);
+				$("#max_qty").val(max_qty);	
+			} else {
+				alert(response.mesage);
+			}
+		},
+		error: function (xhr, status, error) {
+			alert('AJAX request failed: ' + error);
+		}
+	});
+
+}
+
+function resetForm(){
+	$("#product").val("").trigger("chosen:updated").trigger("change");
+	$("#catagory").val("");
+	$("#brand").val("");
+	$("#details").val("");
+	$("#serial").val("");
+	$("#warranty").val("");
+	$("#qty").val("");
+	$("#free_qty").val("");
+	$("#unit_price").val("");
+	$("#unit_discount").val("");
+	$("#total").val("");
+	$("#edit_product_qty").val("");
+	$("#edit_product_id").val("");
+	$("#tmp_id").val("");
+	$("#po_voucher_no").val("");
+	$("#pod_id").val("");
+	$("#max_qty").val("");
+}
+
+</script>
+
+
+</body>
+</html>
+

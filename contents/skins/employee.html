@@ -1,0 +1,121 @@
+<?php
+
+extract($data);
+//dumpVar($data);	
+$created_date = getRequest('created_date'); 
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/employee.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style type="text/css">
+<!--
+.style1 {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+a:visited{color:#FF6699;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px;}
+a{color:#FF6699;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px;}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:10px;}
+
+-->
+</style>
+<head>
+
+<title>Buying House ERP: Employee List</title>
+<style>
+img{
+border:none;
+}
+
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+</style></head>
+
+<body>
+<form name="frm" method="post">
+
+<table width="99%" class="addBorder" id="tblbg" style="margin-left:2px" border="0">
+  <tr>
+    <th class="topHeader" colspan="2" scope="row"><div id="tblTitle" align="left">&nbsp;<b>Employee List</b></div></th>
+  </tr>
+
+  <tr>
+    <th width="49%" scope="row"><div align="left"><a href="?app=employee&cmd=add">Add Employee</a></div></th>
+    <td width="51%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2">
+	<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:99.4%;visibility:visible;height:350px;overflow:auto">
+	<table width="100%" border="0">
+      <tr bgcolor="#060147">
+        <td width="25" height="25"><span class="style1">SL</span></td>
+        <td width="63"><div align="center" class="style1"> ID </div></td>
+        <td width="168"><div align="left" class="style1">Name</div></td>
+        <td width="164"><span class="style1">Branch</span></td>
+        <td width="148"><div align="center" class="style1">Father Name </div></td>
+        <td width="115" align="left"><div align="left" class="style1">Date of Join </div></td>
+        <td width="163" align="left"><div align="left" class="style1">Email</div></td>
+        <td width="197" align="left"><span class="style1">Contact Info</span></td>
+        <td width="140" align="left"><span class="style1">Department</span></td>
+        <td width="67" align="left"><div align="center"><span class="style1">Photo</span></div></td>
+        <td width="72"><div align="center" class="style1">Action</div></td>
+        </tr>
+	  <?
+	  $i=1;
+	  foreach($record_list as $val){
+	  $emp_code=$val->emp_code;
+   	  ?>
+      <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+        <td height="41" align="center" valign="top"><?echo $i;?></td>
+        <td align="center" valign="top"><?=$val->employee_id?></td>
+        <td align="left" valign="top"><?=$val->name.'<br/>'.$val->designation?></td>
+        <td align="left" valign="top"><?=$val->project_name?></td>
+        <td align="center" valign="top"><?=$val->f_name?></td>
+        <td align="left" valign="top">
+          <?=$val->joining_date?>
+</td>
+        <td align="left" valign="top">
+		  <?=$val->email?></td>
+        <td align="left" valign="top">
+		<?=$val->mobile?><br>
+		<?=$val->email?>
+		</td>
+        <td align="left" valign="top"><?=$val->department?></td>
+        <td align="left" valign="top"><div align="center"><img width="50" height="50" src="<?=IMAGE_DIR.'/'.$val->photo_path?>"></div></td>
+        <td align="left" valign="top">
+		  <div align="center">
+		  <a href="?app=employee&cmd=edit&id=<?=$emp_code?>">
+		  <img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;
+		  <a onClick='return doConfirm(PROMPT_DELETE_CONFIRM);' href=javascript:deleteRecord('<?=$emp_code?>') target='_top'>
+		      <img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.png'>
+		  </a>
+		    </div>
+		</td>
+        </tr>
+	   <?
+	  $i++;
+	  }
+	  ?>
+    </table>
+	</div>
+	</td>
+    </tr>
+ 
+  <tr>
+    <th colspan="2" scope="row">&nbsp;</th>
+  </tr>
+</table>
+
+</form>
+<br>
+</body>
+
+</html>
+

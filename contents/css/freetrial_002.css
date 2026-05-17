@@ -1,0 +1,281 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	background-color: #F2EEEA;
+	font-family: Verdana,Arial, Helvetica, Sans-serif, Pragmatica;
+}
+td{
+	font-size: 11px;
+	font-family: Verdana,Arial, Helvetica, Sans-serif, Pragmatica;
+}
+select, option, textarea{
+	font-size: 11px;
+	font-family: Verdana,Arial, Helvetica, Sans-serif, Pragmatica;
+}
+a{
+	color: navy;
+}
+
+/* ----------------------------------------------------------------  Text Styles -----------------------------------------------------------------------*/
+
+h3{
+	font:bold 14px Verdana;
+	margin-bottom: 10px;
+}
+p {
+margin: 0px;
+}
+
+ol,ul,li{
+margin-bottom: 0px; 
+}
+.txt-step-title{
+	vertical-align: center;
+	font-weight : bold;
+	color: #003366;
+	font-size: 12px;
+}
+.txt-description{
+	font-size: 11px;
+	font-family: Verdana,Arial, Helvetica, Sans-serif, Pragmatica;
+	font-weight : bold;
+	color: black;
+}
+.txt-wzd-desc{
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, Sans-serif, Pragmatica;
+	text-align : justify;
+}
+.txt-wzd-desc-small{
+	color:#333333;
+	font-size: 11px;
+	font-family: Verdana, Arial, Helvetica, Sans-serif, Pragmatica;
+	text-align : justify;
+}
+
+.txt-vend {
+	color: #003399;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
+.txt-soon { 
+	font-size: 11px; 
+	font-family: verdana, sans-serif; 
+	color: black; 
+}
+
+.txt-vend1 { 
+	font-size: 11px; 
+	font-family: verdana, sans-serif; 
+	color: #474747; 
+}
+
+.txt-score { 
+	color: gray; 
+	font-size: 10px; 
+	font-family: verdana,sans-serif; 
+	font-weight:normal; 
+}
+.txt-blue{
+	color: #003366;
+}
+.textv12b{ 
+	font-size: 12px; 
+	font-family: verdana,arial,sans-serif; 
+	color: #000000; 
+	font-weight:bold; 
+}
+.textv12{ 
+	font-size: 12px; 
+	font-family: verdana,arial; 
+}
+ul{
+	margin-top: 0px;
+	padding-top: 0px;	
+}
+p.model-descr{
+	font: 11px Verdana;
+	display: none;
+	padding: 5px;
+	margin-top: 0px;
+	margin-bottom: 0px;	
+	background-color: #FFF8E7;
+	border: 1px dotted #FF9D02;
+}	
+
+
+/*---------------------------------------------------------- control  styles---------------------------------------------------------*/		
+.inp-width235{
+    FONT-SIZE: 12px;
+    WIDTH: 170px;
+    COLOR: #000000;
+    FONT-FAMILY: arial,sans-serif;
+	margin-top: 2px;
+	margin-bottom: 2px;	
+}
+.width235{
+    FONT-SIZE: 12px;
+    WIDTH: 170px;
+    COLOR: #000000;
+    FONT-FAMILY: arial,sans-serif;
+	margin-top: 2px;
+	margin-bottom: 2px;	
+}
+input.invisible{
+    FONT-SIZE: 12px;
+    WIDTH: 170px;
+    COLOR: #000000;
+    FONT-FAMILY: arial,sans-serif;
+    border: 0px solid white;	
+}
+textarea.width235 {
+    FONT-SIZE: 12px;
+    WIDTH: 270px;
+   	HEIGHT: 55px;
+    COLOR: #000000;
+    FONT-FAMILY: arial,sans-serif;
+	margin-top: 1px;
+	margin-bottom: 1px;	
+
+}
+
+
+/*---------------------------------------------------------- Div styles---------------------------------------------------------*/		
+div.fail{
+	border: 1px dotted black ;
+	background:#EFEFEF;
+	color:black;
+	padding:3px 5px;
+	display: none;
+	line-height : 150%;
+	margin-bottom: 3px;
+	margin-bottom: 10px;
+}
+div.stepnum{
+	border : 1px solid #003366;
+	width: 20px;
+	height: 20px;
+	FONT-FAMILY: Verdana;
+	color: #003366;
+	background-color : #E7E7E7;
+	TEXT-DECORATION: none;
+	FONT-SIZE: 11px;
+	FONT-FAMILY: Verdana,Arial, Helvetica, Sans-serif, Pragmatica;
+	padding-top:2px;
+	font-weight : bold;
+	text-align : center;
+}
+
+div.outer{
+	background-color:	white;
+	overflow: auto;
+	height	: 99%;
+	width	: 100%;
+	text-align	: left;
+}
+html>body div.outer{
+	overflow : -moz-scrollbars-vertical;
+}
+div.inner{
+	height	: 1px;
+	width	: 100%;
+}
+.wiz-content{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.wiz-header{
+	height	: 31px;
+	text-align	: left;
+	width:100%;
+	padding-left: 15px;
+	padding-right: 15px;
+	background-image : url("/images/topgrad1.gif");
+	background-color: #BDDBF2;
+}
+.wiz-footer{
+	height	: 30px;
+	padding-top :	2px;
+	padding-left:	15px;
+	padding-right:	15px;
+/*	background-image : url("img/topgrad1.gif");
+	background-color: #c3d0e0; */
+}
+
+/*---------------------------------------------------------- Button Styles ---------------------------------------------------------*/
+.btn-border{ 
+	border: 1px solid #333333; 
+}
+.btn-nav {
+	background-color : #D7E0EB; 
+	border-top: 1px solid #FFFFFF; 
+	border-left: 1px solid #FFFFFF; 
+	border-bottom: 1px solid #788FAC; 
+	border-right: 1px solid #788FAC; 
+	font-family: verdana,arial, helvetica, sans-serif, pragmatica;
+	font-weight : bold;
+	padding-left: 10px;
+	padding-right: 10px;	
+	font-size: 11px;
+}
+/*----------------------------- vertical menu -------------------------------------*/
+
+ul#navlist
+{
+width: 150px;
+padding: 0px;
+border: 0px;
+margin: 0px;
+font: 12px Verdana,helvetica,arial,sans-serif;
+}
+
+ul#navlist li {
+list-style: none;
+margin: 0px;
+border: 0px;
+background: white;
+border-bottom: 1px dotted #C2C2C2;
+}
+
+ul#navlist li span{
+display: block;
+padding: 6px;
+border: 0px;
+border-right: 2px solid #C2C2C2;
+background: white;
+text-align: left;
+color: gray;
+}
+
+ul#navlist #active span{
+display: block;
+border-left: 6px solid #FF6601;
+border-bottom: 2px solid #C2C2C2;
+border-top: 2px solid #C2C2C2;
+border-right: 2px;
+background: #F1EAE3;
+font-weight : bold;
+color: black;
+text-align: right;
+}
+
+
+.shopitem{
+border: 2px solid #F0F0F0; 
+margin: 5px;
+font: 12px Verdana;
+padding: 3px;
+background-color:white;
+}
+.shopitemover{
+margin: 5px;
+border: 2px solid #FF9D02; 
+padding: 3px;
+font: 12px Verdana;
+background-color:#FFF8E7;
+cursor: hand;
+cursor: pointer;
+
+}

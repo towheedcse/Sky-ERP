@@ -1,0 +1,37 @@
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/change_pass.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<body>
+<form name="change_pass_frm" action="index.php?app=change_pass" method="post" onSubmit="">
+  <table width="23%" border="0" align="center" bgcolor="#F0F0F0">
+  <tr> 
+      <td align="left" nowrap colspan="2" bgcolor="#996666"><div align="center"><strong><font size="+2" color="#FFFFFF">Change 
+          Password</font></strong></div></td>
+      
+    </tr>
+    <tr> 
+      <td align="left" nowrap>Current Password:</td>
+      <td><input name="current_password" id="current_password" type="password" size="20"></td>
+    </tr>
+    <tr> 
+      <td nowrap> New Password:</td>
+      <td width="70%" align="left"><input name="new_password" id="new_password" type="password" size="20"></td>
+    </tr>
+	<tr> 
+      <td nowrap> Confirm New Password:</td>
+      <td width="70%" align="left"><input name="confirm_password" id="confirm_password" type="password" size="20"></td>
+    </tr>
+    <tr> 
+    	<input type="hidden" name="cmd" value="add">
+      <td colspan="2"><div align="center">
+          <input type='submit' name='submit' id="submit" value="Ok" onclick="if(SubmitToChangePass()){ return true;}else{return false;}">
+        </div></td>
+    </tr>
+  </table>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  </form>
+</body>
+

@@ -1,0 +1,753 @@
+<?php
+
+extract($data);
+
+//dumpVar($data);	
+
+?><head>
+
+<title>Order Status</title>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/production_order.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+var J = jQuery.noConflict();
+
+
+
+function showTip(val)
+
+{   
+
+  if(document.getElementById('ltip'+val).style.display =="none")
+
+  {
+
+  	document.getElementById('ltip'+val).style.display = 'block';
+
+	document.getElementById('close'+val).style.display = 'block';	 	
+
+  }
+
+     
+
+} 
+
+function hideTip(val)
+
+{ 	 
+
+  if(document.getElementById('ltip'+val).style.display =="block")
+
+  {
+
+  	document.getElementById('ltip'+val).style.display = 'none';
+
+	document.getElementById('close'+val).style.display = 'none';
+
+	 	
+
+  }
+
+ } 
+
+</script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+
+<script language="javascript1.3">
+
+
+
+      J("[class^=validate]").validationEngine({
+
+
+
+      inlineValidation: false,
+
+
+
+      success :  false,
+
+
+
+      failure : function() { callFailFunction()  }
+
+
+
+      })
+
+
+
+
+
+</script>
+
+<style type="text/css">
+
+<!--
+
+.trHeadRight {
+
+	color: #000000;
+
+	font-weight: bold;
+
+	border-bottom:1px solid #000000;
+
+	border-right:1px solid #000000;
+
+	font-family: Georgia, "Times New Roman", Times, serif
+
+	font-size:8px;
+
+}
+
+.trHead{
+
+	color: #000000;
+
+	font-weight: bold;
+
+	border-bottom:1px solid #000000;
+
+}
+
+.tdLeft {
+
+	color: #000000;
+
+	border-bottom:1px solid #000000;
+
+	border-right:1px solid #000000;
+
+	font-family: Georgia, "Times New Roman", Times, serif
+
+	font-size:8px;
+
+}
+
+.tdRight{
+
+	color: #000000;
+
+	border-bottom:1px solid #000000;
+
+}
+
+a:visited{color:#000066; font-family:Geneva, Arial, Helvetica, sans-serif;font-size:12px;}
+
+a:active{color:#000066; font-family:Geneva, Arial, Helvetica, sans-serif;font-size:12px;}
+
+a{color:#000066;font-family:Geneva, Arial, Helvetica, sans-serif;font-size:12px;}
+
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+
+
+
+img{
+
+border:none;
+
+}
+
+input{
+
+background-color:#ffffff;
+
+border: 1px solid #006699;
+
+}
+
+.topHeader
+
+{
+
+font-family:Verdana, Arial, Helvetica, sans-serif;
+
+font-size:14px;
+
+color: #000000;
+
+background-image:url(/ssgroup/images/common/table/bottom.gif);
+
+border:0px;
+
+height:26px;
+
+}
+
+.tblHeader
+
+{
+
+font-family:Verdana, Arial, Helvetica, sans-serif;
+
+font-size:14px;
+
+color: #000000;
+
+background-image:url(/buyingerp/images/common/table/education_top.gif);
+
+font-weight:bold;
+
+border:1px solid #000033;
+
+height:25px;
+
+}
+
+.tblborder{
+
+border:1px solid #000033;
+
+width:600px;
+
+font-family: Georgia, "Times New Roman", Times, serif;
+
+font-size:10px;
+
+font-weight:bold
+
+}
+
+.td{
+
+font-family: Georgia, "Times New Roman", Times, serif;
+
+font-size:12px;
+
+font-weight:bold;
+
+line-height:22px;
+
+}
+
+</style>
+
+</head>
+
+
+
+<form name="frm" method="post">
+
+
+
+<table width="99%" style="background-color:#FFFFFF;margin-left:2px " id="tblbg" border="0">
+
+  <tr>
+
+    <th class="topHeader"><div id="tblTitle" align="left">&nbsp;</div></th>
+
+  </tr> 
+
+  <tr>
+
+    <th><div align="left">Order Processing : </div></th>
+
+  </tr> 
+
+  <tr>
+
+    <th scope="row">
+
+	<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:1px;margin-bottom:1px;width:100%;visibility:visible;height:auto;overflow:auto">
+
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+	   
+
+	   <tr bgcolor="#F2F0E1" height="28px">
+
+	     <td width="31" class="trHeadRight">SL No. </td>
+
+         <td width="84" class="trHeadRight"><div align="center">Order Ref No.</div></td>
+
+         <td width="78" class="trHeadRight"><div align="center">Style No.</div></td>
+
+        <td width="319" class="trHeadRight"><div align="left">Style Name</div></td>
+
+        <td width="86" class="trHeadRight"><div align="center">P.O. No. </div></td>
+
+        <td width="83" class="trHeadRight"><div align="center">Art No. </div></td>
+
+        <td width="99" class="trHeadRight"><div align="center">Customer ID </div></td>
+
+        <td width="96" class="trHeadRight"><div align="center">Order Quantity</div></td>
+
+        <td width="81" class="trHeadRight"><div align="center"> Order Unit Price </div></td>
+
+        <td width="98" class="trHeadRight"><div align="center">Order Total Value </div></td>
+
+        <td width="103" class="trHeadRight"> Confirmation Date </td>
+
+        <td width="101" class="trHead"><div align="center">Shipment Schedule </div></td>       
+
+      </tr>
+
+	  <?
+
+	  $i=1; 
+
+	  $total_qty = 0;
+
+	  $total_uprice = 0;
+
+	  $total_order_value = 0;
+
+	  foreach($record_list as $val){	 
+
+      $order_ref_no = $val->order_ref_no;	 
+
+	  $style_code=$val->style_code; 
+
+
+
+	  $PSQL = " SELECT SUM( `today_production_qty` ) AS total_production_qty FROM ".PRODUCTION_ORDER_STOCK_TBL." WHERE `order_ref_no` = '$order_ref_no'";
+
+	  $PRow = mysql_fetch_object(mysql_query($PSQL));
+
+	  if($PRow->total_production_qty=="" || $PRow->total_production_qty==0){ 		  
+
+	 
+
+	  $total_qty +=$val->order_qty;
+
+	  $total_uprice +=$val->unit_price;
+
+	  $total_order_value +=$val->total_value;
+
+	  $order_currency_name = $val->currency_name;
+
+	 ?>	  
+
+      <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#F7F9F2'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+        <td align="center" valign="top" class="tdLeft"><div align="left">
+
+          <?=$i?>
+
+        </div></td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->order_ref_no?></td>
+
+        <td height="27" align="center" valign="top" class="tdLeft"><?=$val->style_code?></td>
+
+        <td align="left" valign="top" class="tdLeft"><?=$val->style_name?></td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->buyer_order_no?>&nbsp;</td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->art_no?>&nbsp;</td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->customer_id?>&nbsp;</td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->order_qty?>&nbsp;pc</td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->unit_price.' '.$val->currency_name?>&nbsp;</td>
+
+        <td align="center" valign="top" class="tdLeft"><?=$val->total_value.' '.$val->currency_name?>&nbsp;</td>
+
+        <td align="left" valign="top" class="tdLeft"> <?=$val->confirmation_date?>&nbsp;</td>
+
+        <td align="left" valign="top" class="tdRight">
+
+		  <div align="left"><?=$val->shipment_schedule?>&nbsp;</div></td>
+
+      </tr>
+
+	  <?
+
+	  $i++;
+
+	  }// END IF
+
+	  }	//end foreach 
+
+	  ?>
+
+	  <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+        <td height="25" colspan="7" class="tdLeft" align="center" valign="top"><div align="right"><b>Total:</b></div></td>
+
+        <td align="left" valign="top" class="tdLeft"><div align="center"><b>
+
+          <?=$total_qty?> pc</b></div></td>
+
+        <td align="left" valign="top" class="tdLeft"><div align="center"><b>
+
+        </b></div></td>
+
+        <td align="left" valign="top" class="tdLeft"><div align="center"><b><?=$total_order_value.' '.$order_currency_name?></b></div></td>
+
+        <td colspan="2" align="left" valign="top" class="tdLeft">&nbsp;</td>
+
+        </tr>
+
+	</table>
+
+	</div>
+
+	</th>
+
+  </tr>
+
+  <tr>
+
+    <th><div align="left">Production Processing : </div></th>
+
+  </tr> 
+
+  <tr>
+
+    <td scope="row">
+
+		<!-- Production Running -->
+
+		<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:1px;margin-bottom:1px;width:100%;visibility:visible;height:auto;overflow:auto">
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+			   
+
+			   <tr bgcolor="#F2F0E1" height="28px">
+
+				 <td width="34" class="trHeadRight">SL No. </td>
+
+				 <td width="71" class="trHeadRight"><div align="center">Order Ref No.</div></td>
+
+				 <td width="70" class="trHeadRight"><div align="center">Style No.</div></td>
+
+				<td width="248" class="trHeadRight"><div align="left">Style Name</div></td>
+
+				<td width="89" class="trHeadRight"><div align="center">P.O. No. </div></td>
+
+				<td width="77" class="trHeadRight"><div align="center">Art No. </div></td>
+
+				<td width="90" class="trHeadRight"><div align="center">Customer ID </div></td>
+
+				<td width="100" class="trHeadRight"><div align="center">Order Quantity</div></td>
+
+				<td width="99" class="trHeadRight"><div align="center">Total Production Qty </div></td>
+
+				<td width="92" class="trHeadRight">Balance Qty </td>
+				<td width="96" class="trHeadRight"> Confirmation Date </td>
+
+				<td width="95" class="trHeadRight">Shipment Schedule</td>
+
+				<td width="98" class="trHead"><div align="left">Projected Shipment Schedule </div></td>       
+			  </tr>
+
+			  <?
+
+			  $i=1; 
+
+			  $total_qty = 0;
+			  $total_uprice = 0;
+			  $total_value = 0;
+			  $gt_po_balance = 0;
+
+			  $gt_total_production_qty = 0;
+			  $buyer_code = getFromSession('buyer_code');
+			  
+			  $SQL = " SELECT p.`order_ref_no` , s.style_code,s.style_name,b.buyer_order_no,b.art_no,b.customer_id,b.order_qty,DATE_FORMAT(b.confirmation_date,'%d %b %y') as 
+			  confirmation_date,DATE_FORMAT(b.shipment_schedule,'%d %b %y' ) as shipment_schedule ,DATE_FORMAT(b.projected_shipment_schedule,'%d %b %y' ) as 
+			  projected_shipment_schedule FROM ".PRODUCTION_ORDER_TBL." p,".BUYER_ORDER_TBL." b, ".SAMPLE_TBL." sa,".STYLE_TBL." s WHERE p.`order_ref_no` = b.`order_ref_no` AND
+			  b.sample_code = sa.sample_code AND sa.style_code = s.style_code AND p.buyer_code = '$buyer_code' AND p.status='Running' group by b.order_ref_no";
+			  $pres = mysql_query($SQL);
+			 while($val = mysql_fetch_object($pres)){				
+			  $order_ref_no = $val->order_ref_no;
+			  $style_code=$val->style_code;
+		
+				$total_production_qty = 0;
+				$Po_SQL = " SELECT ps.`today_production_qty` , ps.m_unit FROM ".PRODUCTION_ORDER_STOCK_TBL." ps, ".PRODUCTION_ORDER_TBL." p
+				WHERE p.`production_order_no` = ps.`production_order_no` AND p.`order_ref_no` = '$order_ref_no' AND p.status='Running'";
+				 $p_res = mysql_query($Po_SQL);
+				 while($PRow = mysql_fetch_object($p_res)){
+					if($PRow->m_unit=="pc"){ 
+						$total_production_qty+=$PRow->today_production_qty; 
+					}else{
+						$temp = $PRow->today_production_qty; 
+						$pc_temp = ($temp * 12);
+						$total_production_qty+=$pc_temp; 
+					}
+				  }
+			
+			  if($total_production_qty>0){ 		  
+				$gt_total_production_qty+= $total_production_qty;
+			    $SSQL = " SELECT SUM( `shipment_qty` ) AS total_shipment_qty FROM ".SHIPMENT_DETAILS_TBL." WHERE `order_ref_no` = '$order_ref_no'";
+			   	$SRow = mysql_fetch_object(mysql_query($SSQL));
+			   	//$po_balance = $total_production_qty - $SRow->total_shipment_qty;
+				$po_balance = $val->order_qty - $total_production_qty;
+				$gt_po_balance+=$po_balance;
+			   	$total_qty +=$val->order_qty;	
+			   
+			 ?>	  
+
+			  <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#F7F9F2'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+				<td align="center" valign="top" class="tdLeft"><div align="left">
+
+				  <?=$i?>
+
+				</div></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$val->order_ref_no?></td>
+
+				<td height="27" align="center" valign="top" class="tdLeft"><?=$val->style_code?></td>
+
+				<td align="left" valign="top" class="tdLeft"><?=$val->style_name?></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$val->buyer_order_no?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$val->art_no?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$val->customer_id?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$val->order_qty?>&nbsp;pc</td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"> <?=$total_production_qty?> pc</div></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$po_balance?>&nbsp;pc</td>
+				<td align="left" valign="top" class="tdLeft"> <?=$val->confirmation_date?>&nbsp;</td>
+
+				<td align="left" valign="top" class="tdLeft"><?=$val->shipment_schedule?></td>
+
+				<td align="left" valign="top" class="tdRight">
+
+				  <div align="left"><?=$val->projected_shipment_schedule?>&nbsp;</div></td>
+			  </tr>
+
+			  <?
+
+			  $i++;
+
+				 } // end if
+			   
+			  }	//end while 
+
+			  ?>
+
+			  <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+				<td height="25" colspan="7" class="tdLeft" align="center" valign="top"><div align="right"><b>Total:</b></div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b>
+
+			     <?=$total_qty?> 
+
+			     pc</b></div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b><?=$gt_total_production_qty?> pc</b>
+
+				</div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b><?=$gt_po_balance?> pc</b></div></td>
+				<td colspan="3" align="left" valign="top" class="tdLeft">&nbsp;</td>
+			  </tr>
+			</table>
+
+		</div>
+
+		<!-- End Production Running-->
+
+	</td>
+
+  </tr>
+
+  <tr>
+
+    <th scope="row"><div align="left">Shipment Done : </div></th>
+
+  </tr>
+
+  <tr>
+
+    <td scope="row">
+
+	<!-- Start Shipment Done-->
+
+	<div id="divTrim" style="display:block;border:1px solid #003366; margin-top:1px;margin-bottom:1px;width:100%;visibility:visible;height:auto;overflow:auto">
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+			   
+
+			   <tr bgcolor="#F2F0E1" height="28px">
+
+				 <td width="33" class="trHeadRight">SL No. </td>
+
+				 <td width="72" class="trHeadRight"><div align="center">Order Ref No.</div></td>
+
+				 <td width="61" class="trHeadRight"><div align="center">Style No.</div></td>
+
+				<td width="270" class="trHeadRight"><div align="left">Style Name</div></td>
+
+				<td width="81" class="trHeadRight"><div align="center">P.O. No. </div></td>
+
+				<td width="78" class="trHeadRight"><div align="center">Art No. </div></td>
+
+				<td width="80" class="trHeadRight"><div align="center">Customer ID </div></td>
+
+				<td width="89" class="trHeadRight"><div align="center">Order Quantity</div></td>
+
+				<td width="83" class="trHeadRight"><div align="center"> Shipment Qty </div></td>
+
+				<td width="84" class="trHeadRight"><div align="center"> Import Unit Price </div></td>
+
+				<td width="92" class="trHeadRight"><div align="center"> Total Import Value </div></td>
+
+				<td width="93" class="trHead"><div align="center">Shipment Date </div></td>       
+
+			  </tr>
+
+			  <?
+
+			  $i=1; 
+
+			  $total_qty = 0; $total_ship_qty = 0;
+
+			  $total_uprice = 0;
+
+			  $total_import_value = 0;
+
+			  $buyer_code = getFromSession('buyer_code');	 			  
+
+			   $StockSQL = " SELECT s.stock_id,s.shipment_id,s.order_ref_no,o.art_no,o.customer_id,o.order_qty,s.production_order_no,s.style_code,st.style_name,s.buyer_order_no,c.currency_name,s.sbd_id,s.unit_price,s.shipment_qty,s.total_value FROM ".STOCK_DETAILS_TBL." s, ".STYLE_TBL." st, ".BUYER_ORDER_TBL." o, ".CURRENCY_TBL." c WHERE  s.order_ref_no = o.order_ref_no AND s.style_code = st.style_code AND s.currency = c.currency_id AND s.`buyer_code` = '$buyer_code' AND s.recieved_qty =0 group by s.stock_id";
+
+			   $res = mysql_query($StockSQL);
+
+				while($SRow = mysql_fetch_object($res)){			   
+
+				$shipment_id = $SRow->shipment_id;
+
+				$total_ship_qty+=$SRow->shipment_qty;
+
+				$total_qty+= $SRow->order_qty;
+
+				$SMSQL = " SELECT DATE_FORMAT(shipment_date,'%d %b %y' ) as shipment_date  FROM ".SHIPMENT_MASTER_TBL." WHERE `shipment_id` = '$shipment_id'";
+
+			    $SMRow = mysql_fetch_object(mysql_query($SMSQL));
+
+				$total_import_value+=$SRow->total_value;
+
+				$shipment_currency_name = $SRow->currency_name;
+
+			 ?>	  
+
+			  <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#F7F9F2'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+				<td align="center" valign="top" class="tdLeft"><div align="left">
+
+				  <?=$i?>
+
+				</div></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->order_ref_no?></td>
+
+				<td height="27" align="center" valign="top" class="tdLeft"><a href="?app=shipment&cmd=shipment_recieved&shipment_id=<?=$shipment_id?>" title="Click for receive">				<?=$SRow->style_code?></a></td>
+
+				<td align="left" valign="top" class="tdLeft"><?=$SRow->style_name?></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->buyer_order_no?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->art_no?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->customer_id?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->order_qty?>&nbsp;pc</td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center">
+
+                    <?=$SRow->shipment_qty?>
+
+    			dz </div></td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->unit_price.' '.$SRow->currency_name?>&nbsp;</td>
+
+				<td align="center" valign="top" class="tdLeft"><?=$SRow->total_value.' '.$SRow->currency_name?>&nbsp;</td>
+
+				<td align="left" valign="top" class="tdRight">
+
+				  <div align="left"><?=$SMRow->shipment_date?>&nbsp;</div></td>
+
+			  </tr>
+
+			  <?
+
+			  $i++;
+
+				  
+
+			  }	//end while 
+
+			  ?>
+
+			  <tr class="normal_font" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+
+				<td height="25" colspan="7" class="tdLeft" align="center" valign="top"><div align="right"><b>Total:</b></div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b>
+
+				  <?=$total_qty?> pc </b></div></td>
+
+				<td align="left" valign="top" class="tdLeft">
+
+				<div align="center"><b><?=$total_ship_qty?> dz </b></div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b>
+
+				</b></div></td>
+
+				<td align="left" valign="top" class="tdLeft"><div align="center"><b><?=$total_import_value.' '.$shipment_currency_name?></b>
+
+				</div></td>
+
+				<td colspan="1" align="left" valign="top" class="tdLeft">&nbsp;</td>
+
+			  </tr>
+
+			</table>
+
+		</div>
+
+    <!-- End -->
+
+	</td>
+
+  </tr>
+
+</table>
+
+
+
+</form>
+
+<br>
+
+
+
+</html>
+
+
+

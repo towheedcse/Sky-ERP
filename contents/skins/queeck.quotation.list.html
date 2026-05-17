@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Quotation List</title>
+<?php
+extract($data);
+$due=0;
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{
+    border-color: #999999;
+    border-style: solid;
+}
+table{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Quotation List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmbooking" method="post">
+<div id="printdiv">
+<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp;Quotation List</strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:bold"> <?=$row->project_name?></span><br>
+      <span style="font-size:16px; font-weight:bold"><?=$row->location?></span></div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset>
+	<legend><span class="topbg"><span><strong>Quotation List</strong></span></span></legend>	
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="9%" align="left" nowrap>Quotation Id </td>
+        <td width="7%" align="left" nowrap>Date</td>
+        <td width="8%" align="left">Party Id  </td>
+        <td width="19%" align="left" nowrap> <div align="left">Party  Details </div></td>
+        <td width="20%" align="left" nowrap>Product Name </td>
+        <td width="14%" align="left" nowrap><div align="center">Total Amount</div></td>
+        <td width="12%" align="left" nowrap><div align="center">Discount  Amount</div></td>
+        <td width="11%" align="left" nowrap><div align="center">Grand Total </div></td>
+        </tr>
+	  	<?
+ 		  $total_due = 0;
+		  foreach($record_list as $val){
+		  $quotation_no= $val->quotation_no;	
+		  $total_quotation+= $val->net_payble;
+		?>
+      <tr>
+        <td align="left" nowrap><a href="?app=queeck.quotation&cmd=print_vouchar&quotation_no=<?=$quotation_no?>"><?=$quotation_no?></a></td>
+        <td align="left" nowrap><?=$val->quotation_date?></td>
+        <td align="left"><?=$val->sub_id?></td>
+        <td align="left" nowrap>
+		<?//======== Party Name ========		
+		echo $val->sub_head_name.'<br>'.$val->head_details;
+		?>		</td>
+        <td align="left" nowrap>
+		<?//======== Product Name ========		
+		$ssql= "SELECT p.product_name ,pd.m_unit,pd.unit_price,pd.qty FROM ".QUOTATION_DETAILS_TBL." as pd,".PRODUCT_TBL." as p WHERE pd.product = p.product_id 
+		AND pd.quotation_no  = '".$val->quotation_no."'";
+		$sres = mysql_query($ssql);
+		if(mysql_num_rows($sres)>0){
+			$srow = mysql_fetch_object($sres);
+			echo $srow->product_name." <br> Qty: ".$srow->qty.' '.$srow->m_unit;
+		}
+		?>		</td>
+        <td align="center" nowrap><?=$val->total_value." ".$val->curr_symble?></td>
+        <td align="center" nowrap><?=$val->discount." ".$val->curr_symble?></td>
+        <td align="center" nowrap><?=$val->net_payble." ".$val->curr_symble?></td>
+        </tr>
+      
+	<?}?>
+ 	 <tr>
+        <td colspan="7" align="left" nowrap><div align="right"></div>
+          <div align="right">Total Quotation Amount </div></td>
+        <td align="center" nowrap><? echo number_format($total_quotation, 2, '.', ''); echo  " ".$val->curr_symble?> </td>
+        </tr>
+    </table>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+</div>	
+<p align="center">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+</form>
+</body>
+</html>

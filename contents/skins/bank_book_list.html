@@ -1,0 +1,604 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Bank Book List</title>
+<?php
+extract($data);
+$due=0;
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+dateIFrame(REL_EXT_DIR);
+$date_from = getRequest('date_from'); 
+$date_to   = getRequest('date_to');  
+$branch_id = getRequest('branch_id');
+if($date_from==""){ $date_from = date("d-m-Y");}
+if($date_to==""){ $date_to = date("d-m-Y");}
+
+if($date_from!="" || $date_to!=""){
+$datefrom = formatDate($date_from);
+$dateto  = formatDate($date_to);
+$dsql="SELECT DATE_FORMAT('$datefrom' ,'%d %b %y' ) as datefrom, DATE_FORMAT('$dateto' ,'%d %b %y' ) as dateto";
+$drow = mysql_fetch_object(mysql_query($dsql));
+}
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<style>
+body{font-size:12px;font-family:Verdana, Arial, Helvetica, sans-serif;}
+#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}
+#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}
+table, td{border-color: #999999;border-style: solid; font-weight:normal}
+table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}
+td{ margin: 0; padding: 4px; border-width: 1px 1px 0 0;	font-weight:normal;font-size:12px;}
+th{ font-size:12px;margin: 0; padding: 4px; border-width: 1px 1px 0 0;	font-weight:bold;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; font-weight:normal;}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Bank Book List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{font-size:12px;font-family:Verdana, Arial, Helvetica, sans-serif;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table, td{border-color: #999999;border-style: solid; font-weight:normal}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{ margin: 0; padding: 4px; border-width: 1px 1px 0 0;font-weight:normal;font-size:12px;}th{ font-size:12px;margin: 0; padding: 4px; border-width: 1px 1px 0 0;	font-weight:bold;}a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}.footer{display:none;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+</style>
+</head>
+
+<body>
+<form name="frmjournal" id="frmjournal" action="" method="post">
+  <table bgcolor="#FFFFFF" width="98%" align="center" border="0" cellspacing="5" cellpadding="0">
+    <tr>
+      <th width="271"><div align="right">From
+              <input name="date_from" id="date_from" style="width:140px;" value="<?=$date_from?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['date_from']);return false;" title="calendar" type="text">
+              <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['date_from']);return false;" title="calendar" width="15" height="15"> </div></th>
+      <th width="77" >&nbsp;</th>
+      <th width="243"><div align="left">To
+              <input name="date_to" id="date_to" style="width:140px;" value="<?=$date_to?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['date_to']);return false;" title="calendar" type="text">
+              <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['date_to']);return false;" title="calendar" width="15" height="15"> </div></th>
+      <th width="100">Voucher Of</th>
+      <th width="225" align="left">
+      <select name="branch_id" id="branch_id" style="width:180px">
+      <?
+        $bsql= "SELECT * FROM ".BRANCH_TBL." WHERE project_id  = '".getFromSession('project_id')."'";
+        $bres = mysql_query($bsql);
+        while($row=mysql_fetch_object($bres)){
+        ?>
+        <option value="<?=$row->branch_id?>" <?php if($branch_id==$row->branch_id){ echo "selected";}?> >
+        <?=$row->branch_name?>
+       </option>
+        <?}?>
+      </select>
+      </th>
+      <th width="203"><div align="left">
+          <input type="submit" name="Submit" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+      </div></th>
+    </tr>
+  </table>
+</form>
+<p class="pageBreak"></p>
+<div id="printdiv">
+<table width="97%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>
+	<? 
+    if($branch_id!=""){ 
+    $bsql= "SELECT * FROM ".BRANCH_TBL." WHERE branch_id  = '".$branch_id."'";
+    $brow = mysql_fetch_object(mysql_query($bsql)); echo $brow->branch_name." ";
+    }
+	?>	
+    &nbsp;Bank Book 
+	</strong></span></td>
+  </tr>
+  <tr>
+    <td>	
+    <?
+	$psql= "SELECT * FROM ".PROJECT_TBL." WHERE project_id  = '".getFromSession('project_id')."'";
+    $pres = mysql_query($psql);
+	$prow = mysql_fetch_object($pres);
+	?>
+	<div align="center">
+      <span style="font-size:25px; font-weight:bold"> <?=$prow->project_name?></span><br>
+      <span style="font-size:14px; font-weight:normal"><?=$prow->location?></span><br><div style="display:block; height:6px"></div>
+      <span style="font-size:13px; font-weight:normal; margin-top:1px; border:1px dotted; padding:2px">
+      <? echo formatDate4Display(formatDate($date_from)). " to ".formatDate4Display(formatDate($date_to)); ?>
+      </span>
+    </div>
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset>
+	<legend>Bank Book List </legend>	
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <th width="5%" align="left" nowrap>Date</th>
+        <th width="9%" align="left" nowrap>Vouchar No. </th>
+        <th width="9%" align="left" nowrap>Voucher Type </th>
+        <th width="6%" align="left">Acc. ID </th>
+        <th width="19%" align="left" nowrap> <div align="left">Account Name </div></th>
+        <th width="26%" align="left" nowrap>Particulars</th>
+        <th width="13%" align="left" nowrap><div align="center">Debit (BDT)</div></th>
+        <th width="13%" align="left" nowrap><div align="center">Credit (BDT) </div></th>
+      </tr>
+	  <?	  				
+		$project_id = getFromSession('project_id');
+		$total_credit = 0; $total_debit = 0;
+		foreach($record_list as $val){
+		$voucher_no= $val->voucher_no; $cvNum=0;               
+        $sdSql	= "SELECT voucher_no FROM ".SALES_MASTER_TBL." WHERE voucher_no = '".$val->voucher_no."' 
+        AND project_id='$project_id' AND customer='".$val->account_head."'";
+		$sdres 	= mysql_query($sdSql);
+        $sdrow = mysql_fetch_object($sdres); 
+        $sdNum = mysql_num_rows($sdres);
+        if($sdNum==0){
+        $cvSql	= "SELECT contra_id,`dr_amount`,`cr_amount`,description FROM ".CONTRA_MASTER_TBL." WHERE voucher_no = '".$val->voucher_no."' 
+        AND project_id='$project_id'";
+		$cvres 	= mysql_query($cvSql);
+        $cvmrow = mysql_fetch_object($cvres); 
+        $cvNum = mysql_num_rows($cvres); 
+        }
+        if($cvNum==0){
+        			
+		$crsql="SELECT account_head,head_type,debit as dr,credit as cr FROM ".CREDIT_VOUCHAR_TBL." WHERE voucher_no='".$val->voucher_no."' 
+		AND project_id= '$project_id'";
+		$crrow 	= mysql_fetch_object(mysql_query($crsql));
+		$Dr 	= $crrow->dr;		 
+		$Cr 	= $crrow->cr;
+        $total_debit+= $val->debit;		
+		$total_credit+= $Cr;	
+		$head_type1 	= $crrow->head_type;		
+		$account_head1 	= $crrow->account_head;	
+		if($val->debit!=0 && $crrow->cr!=0){
+		?>
+      <tr>
+        <td rowspan="2" align="left" nowrap><?=$val->created_date?></td>
+        <td rowspan="2" align="left" nowrap>
+        <a href="?app=journal&cmd=vouchar_print&voucher_no=<?=$voucher_no?>"><?=$voucher_no?></a></td>
+        <td rowspan="2" align="left" nowrap>
+          <? 
+		  echo $val->vouchar_type;
+		  ?>
+        </td>
+        <td align="left"><a href="?app=show_ledger&cmd=show&account_head=<?=$val->account_head?>&bcrumbs=sales.report&atc=bankbook_list"><?=$val->account_head?></a></td>
+        <td align="left" nowrap>
+		<?//======== Party Name ========
+				
+		if($val->head_type!=""){
+			$acsql= "SELECT sub_head_name ,head_details FROM ".SUB_ACC_HEAD_TBL." WHERE sub_id  = '".$val->account_head."' AND project_id = '$project_id'";
+			$acres = mysql_query($acsql);
+			$acnum = mysql_num_rows($acres);
+			if($acnum>0){
+				$row = mysql_fetch_object($acres);
+				 echo $row->sub_head_name;
+				 if($row->head_details!=""){
+					 echo "<br>".$row->head_details;
+				}
+			}else{
+				$sql= "SELECT name ,address FROM ".SUPPLIER_TBL." WHERE supplier_code  = '".$val->account_head."' AND project_id = '$project_id'";
+				$res = mysql_query($sql);
+				$num = mysql_num_rows($res);
+				if($num>0){
+					$row = mysql_fetch_object($res);
+					echo $row->name;
+					 if($row->head_details!=""){
+						 echo "<br>".$row->address;
+					}
+				}else{
+					$asql= "SELECT b.bank_name, c.bank_account_no FROM ".BANK_TBL." b, ".BANK_ACCOUNT_TBL." c WHERE b.bank_id = c. bank_code AND c.bank_account_no ='".$val->account_head."' AND b.project_id = '$project_id'";
+					$ares = mysql_query($asql);
+					$anum1 = mysql_num_rows($ares);
+					if($anum1>0){
+					$arow=mysql_fetch_object($ares);
+					echo $arow->bank_name.", Acc No. ".$arow->bank_account_no;
+					}else{ echo "Cheque"; }
+				}
+
+			}
+		}
+		?>		</td>
+        <td rowspan="2" align="left">
+          <? 
+		$descriptionArr= explode("\r\n",$val->description);
+		foreach($descriptionArr as $v){
+			echo $v."<br>";
+		}
+        if($val->bank_name!=""){ echo $val->bank_name; }
+        if($val->bank_name!="" && $val->acc_no!=""){ echo ", ".$val->acc_no; }elseif($val->bank_name=="" && $val->acc_no!=""){
+         echo $val->acc_no; }
+         if($val->acc_no!="" && $val->check_no!=""){ echo ", INS-No ".$val->check_no; }elseif($val->acc_no=="" && $val->check_no!=""){
+         echo " INS-No ".$val->check_no; }
+         if($val->check_issue_date!="0000-00-00"){ echo " Issue: ".$val->check_issue_date; }
+        if($val->bank_name!="" || $val->acc_no!="" || $val->check_no!="" || $val->check_issue_date!="0000-00-00"){ echo "<br>"; }
+		if($val->created_by!=""){ echo "<span style='font-size:10px; font-style:italic'> Created By: $val->created_by</span>";}
+		?>          
+  &nbsp;		</td>
+        <td align="center" nowrap><? echo number_format($val->debit, 2, '.', ',');?></td>
+        <td align="center" nowrap><? echo number_format($val->credit, 2, '.', ',');?></td>
+        </tr>
+	
+      <tr>
+        <td align="left"><a href="?app=show_ledger&cmd=show&account_head=<?=$account_head1?>&bcrumbs=sales.report&atc=bankbook_list"><?=$account_head1?></a></td>
+        <td align="left" nowrap>
+          <?//======== Party Name ========		
+		if($head_type1!=""){
+			$sql= "SELECT sub_head_name ,head_details FROM ".SUB_ACC_HEAD_TBL." WHERE sub_id  = '".$account_head1."' AND project_id = '$project_id'";
+			$res = mysql_query($sql);
+			$num = mysql_num_rows($res);
+			if($num>0){
+				$row = mysql_fetch_object($res);
+				 echo $row->sub_head_name;
+				 if($row->head_details!=""){
+					 echo "<br>".$row->head_details;
+				}
+			}else{
+				$sql= "SELECT name ,address FROM ".SUPPLIER_TBL." WHERE supplier_code  = '".$account_head1."' AND project_id = '$project_id'";
+				$res = mysql_query($sql);
+				$num = mysql_num_rows($res);
+				if($num>0){
+					$row = mysql_fetch_object($res);
+					echo $row->name;
+					 if($row->head_details!=""){
+						 echo "<br>".$row->address;
+					}
+				}else{
+					$asql= "SELECT b.bank_name, c.bank_account_no FROM ".BANK_TBL." b, ".BANK_ACCOUNT_TBL." c WHERE b.bank_id = c. bank_code AND c.bank_account_no ='".$account_head1."' AND b.project_id = '$project_id'";
+					$ares = mysql_query($asql);
+					$anum = mysql_num_rows($ares);
+					$arow=mysql_fetch_object($ares);
+					if($anum>0){
+					echo $arow->bank_name.", Acc No. ".$arow->bank_account_no;
+					}else{ echo "Check"; }
+				}
+
+			}
+		}
+		?>		</td>
+        <td align="center" nowrap><? echo number_format($Dr, 2, '.', ',');?></td>
+        <td align="center" nowrap><? echo number_format($Cr, 2, '.', ',');?></td>
+        </tr>
+	<? } ?>
+    <? }elseif($cvNum==1){ // is contra voucher    
+    ?>
+    
+    <tr>
+        <td rowspan="2" align="left" nowrap><?=$val->created_date?></td>
+        <td rowspan="2" align="left" nowrap><a href="?app=contra.voucher.new&cmd=print_vouchar&contra_id=<?=$cvmrow->contra_id?>"><?=$voucher_no?></a></td>
+        <td rowspan="2" align="left" nowrap>
+          <?
+		  if($vouchar_type=="Journal Voucher"){ 
+		  echo "Journal Voucher";
+		  }else{ 
+		  $vouchartype 	= str_replace('Vouchar',"Voucher",$val->vouchar_type);
+		  echo $vouchartype; 
+		  }
+		  
+		  ?>
+		  <span style="font-size:10px; font-style:italic">
+		  <? 
+		  if($val->transaction_name!=""){ echo "<br>".$val->transaction_name; }
+		  else{ $transaction_name = explode(" ",$val->vouchar_type); echo "<br>".$transaction_name[0];} 
+		  ?>
+		  </span>        </td>
+        <td colspan="2" align="left">
+        <table width="100%">        
+        <?
+        $total_debit+=$cvmrow->dr_amount; $total_credit+= $cvmrow->cr_amount;
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Dr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td width="22%"><a href="?app=show_ledger&cmd=show&account_head=<?=$cdrow->cr_account?>&bcrumbs=sales.report&atc=bankbook_list"><?=$cdrow->cr_account?></a></td>
+        <td width="78%">
+        <?
+		//======== Dr Head Name ========	
+		$acsql= "SELECT sub_head_name ,head_details FROM ".SUB_ACC_HEAD_TBL." WHERE BINARY sub_id  = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+		$acres = mysql_query($acsql);
+		$acnum = mysql_num_rows($acres);
+		if($acnum>0){
+			$row = mysql_fetch_object($acres);
+			 echo $row->sub_head_name;
+			 if($row->head_details!=""){
+				 echo "<br>".$row->head_details;
+			}
+		}else{
+			$sql= "SELECT name ,address FROM ".SUPPLIER_TBL." WHERE BINARY supplier_code = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+			$res = mysql_query($sql);
+			$num = mysql_num_rows($res);
+			if($num>0){
+				$row = mysql_fetch_object($res);
+				echo $row->name;
+				 if($row->address!=""){
+					 echo "<br>".$row->address;
+				}
+			}else{
+				$sql= "SELECT product_name,product_desc FROM ".PRODUCT_TBL." WHERE BINARY product_id = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+				$res = mysql_query($sql);
+				$num = mysql_num_rows($res);
+				if($num>0){
+					$row = mysql_fetch_object($res);
+					echo $row->product_name;
+					 if($row->product_desc!=""){
+						 echo "<br>".$row->product_desc;
+					}
+				}else{
+					$asql= "SELECT b.bank_name, c.bank_account_no FROM ".BANK_TBL." b, ".BANK_ACCOUNT_TBL." c WHERE b.bank_id=c.bank_code AND BINARY c.bank_account_no ='".$cdrow->cr_account."' 
+					AND b.project_id = '$project_id'";
+					$ares = mysql_query($asql);
+					$anum = mysql_num_rows($ares);
+					if($anum>0){
+					$arow=mysql_fetch_object($ares);
+					echo $arow->bank_name.", Acc No. ".$arow->bank_account_no;
+					}
+				}
+			}
+
+		}
+        ?>
+		</td></tr>
+        <? }?>
+         
+         </table>
+        </td>
+        <td rowspan="2" align="left" style="line-height:18px">
+        <? 	
+        $cdSql	= "SELECT bank_name,acc_no,check_no,DATE_FORMAT(check_issue_date,'%d %b %y' ) as check_issue_date FROM ".CONTRA_DETAILS_TBL." WHERE
+         voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Dr'";
+		$cdrres = mysql_query($cdSql);	
+        while($cdrow = mysql_fetch_object($cdrres)){
+		if($cdrow->bank_name!=""){ echo $cdrow->bank_name; }
+        if($cdrow->bank_name!="" && $cdrow->acc_no!=""){ echo ", ".$cdrow->acc_no; }elseif($cdrow->bank_name=="" && $cdrow->acc_no!=""){
+         echo $cdrow->acc_no; }
+         if($cdrow->acc_no!="" && $cdrow->check_no!=""){ echo ", INS-No ".$cdrow->check_no; }elseif($cdrow->acc_no=="" && $cdrow->check_no!=""){
+         echo " INS-No ".$cdrow->check_no; }
+        if($cdrow->check_issue_date!=""){ echo " Issue -".$cdrow->check_issue_date; }
+        if($cdrow->bank_name!="" || $cdrow->acc_no!="" || $cdrow->check_no!="" || $cdrow->check_issue_date!=""){ echo "<br>"; }
+        }// end while
+        $cdSql	= "SELECT bank_name,acc_no,check_no,DATE_FORMAT(check_issue_date,'%d %b %y' ) as check_issue_date FROM ".CONTRA_DETAILS_TBL." WHERE
+         voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Cr'";
+		$cdcres = mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdcres)){
+		if($cdrow->bank_name!=""){ echo $cdrow->bank_name; }
+        if($cdrow->bank_name!="" && $cdrow->acc_no!=""){ echo ", ".$cdrow->acc_no; }elseif($cdrow->bank_name=="" && $cdrow->acc_no!=""){
+         echo $cdrow->acc_no; }
+        if($cdrow->acc_no!="" && $cdrow->check_no!=""){ echo ", INS-No ".$cdrow->check_no; }elseif($cdrow->acc_no=="" && $cdrow->check_no!=""){
+         echo " INS-No ".$cdrow->check_no; }
+        if($cdrow->check_issue_date!=""){ echo " Issue -".$cdrow->check_issue_date; }
+        if($cdrow->bank_name!="" || $cdrow->acc_no!="" || $cdrow->check_no!="" || $cdrow->check_issue_date!=""){ echo "<br>"; }
+        
+        }// end while
+        
+        $descriptionArr= explode("\r\n",$cvmrow->description);
+		foreach($descriptionArr as $v){
+			echo $v."<br>";
+		}
+		?>
+        <span style="font-size:10px; font-style:italic">
+        <? if($val->created_by!=""){ echo " Created by :".$val->created_by; } ?></span>&nbsp;        
+        </td>
+        <td align="center" nowrap>
+        
+         <table width="100%">
+        
+        <?
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Dr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td align="center"><? echo number_format($cdrow->cr_amount, 2, '.', ',');?> </td>
+        </tr>
+        <? }?>
+         
+         </table>
+        
+        </td>
+        <td align="center" nowrap>
+        <table width="100%">        
+        <?
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Cr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td align="center"><? echo "0.00";?> </td>
+        </tr>
+        <? }?>         
+         </table>
+        </td>
+      </tr>
+	
+      <tr>
+        <td colspan="2" align="left">
+         <table width="100%">
+        
+        <?
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Cr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td width="22%"><a href="?app=show_ledger&cmd=show&account_head=<?=$cdrow->cr_account?>&bcrumbs=sales.report&atc=bankbook_list"><?=$cdrow->cr_account?></a></td>
+        <td width="78%">
+        <?
+		//======== Dr Head Name ========	
+		$acsql= "SELECT sub_head_name ,head_details FROM ".SUB_ACC_HEAD_TBL." WHERE BINARY sub_id  = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+		$acres = mysql_query($acsql);
+		$acnum = mysql_num_rows($acres);
+		if($acnum>0){
+			$row = mysql_fetch_object($acres);
+			 echo $row->sub_head_name;
+			 if($row->head_details!=""){
+				 echo "<br>".$row->head_details;
+			}
+		}else{
+			$sql= "SELECT name ,address FROM ".SUPPLIER_TBL." WHERE BINARY supplier_code = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+			$res = mysql_query($sql);
+			$num = mysql_num_rows($res);
+			if($num>0){
+				$row = mysql_fetch_object($res);
+				echo $row->name;
+				 if($row->address!=""){
+					 echo "<br>".$row->address;
+				}
+			}else{
+				$sql= "SELECT product_name,product_desc FROM ".PRODUCT_TBL." WHERE BINARY product_id = '".$cdrow->cr_account."' AND project_id = '$project_id'";
+				$res = mysql_query($sql);
+				$num = mysql_num_rows($res);
+				if($num>0){
+					$row = mysql_fetch_object($res);
+					echo $row->product_name;
+					 if($row->product_desc!=""){
+						 echo "<br>".$row->product_desc;
+					}
+				}else{
+					$asql= "SELECT b.bank_name, c.bank_account_no FROM ".BANK_TBL." b, ".BANK_ACCOUNT_TBL." c WHERE b.bank_id=c.bank_code AND BINARY c.bank_account_no ='".$cdrow->cr_account."' 
+					AND b.project_id = '$project_id'";
+					$ares = mysql_query($asql);
+					$anum = mysql_num_rows($ares);
+					if($anum>0){
+					$arow=mysql_fetch_object($ares);
+					echo $arow->bank_name.", Acc No. ".$arow->bank_account_no;
+					}
+				}
+			}
+
+		}
+        ?>
+		</td></tr>
+        <? }?>
+         
+         </table>
+        </td>
+        <td align="center" nowrap>
+         <table width="100%">        
+        <?
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Cr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td align="center"><? echo "0.00";?> </td>
+        </tr>
+        <? }?>         
+         </table>
+        </td>
+        <td align="center" nowrap>
+        <table width="100%">        
+        <?
+        $cdSql	= "SELECT * FROM ".CONTRA_DETAILS_TBL." WHERE voucher_no = '".$val->voucher_no."' AND project_id='$project_id' AND headtypes='Cr'";
+		$cdres 	= mysql_query($cdSql);
+        while($cdrow = mysql_fetch_object($cdres)){
+        ?>
+        <tr>    
+		<td align="center"><? echo number_format($cdrow->cr_amount, 2, '.', ',');?> </td>
+        </tr>
+        <? }?>         
+         </table>
+        </td>
+      </tr>
+    <? }?>
+    <? }?>
+ 	 <tr>
+        <th colspan="6" align="left" nowrap><div align="right">Total </div></th>
+        <th align="center" nowrap><? echo number_format($total_debit, 2, '.', ','); ?></th>
+        <th align="center"><? echo number_format($total_credit, 2, '.', ','); ?></th>
+      </tr>
+ 	 <tr>
+ 	   <td colspan="8" align="left" nowrap><table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+ 	     <tr>
+ 	       <td width="33%" height="84" align="center"><div style="width:268px; border-top:1px dashed #000; margin-top:25px">Prepared  by<br/>
+ 	         </div></td>
+ 	       <td width="33%" align="center"><div style="width:268px; border-top:1px dashed #000; margin-top:25px"> Verified by <br/>
+ 	         </div></td>
+ 	       <td width="33%" align="center"><div style="width:268px; border-top:1px dashed #000; margin-top:25px">Authorise by<br/>
+ 	         </div></td>
+ 	       </tr>
+ 	     </table></td>
+ 	   </tr>
+    </table>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+</div>	
+<p class="pageBreak"></p>
+<p align="center">
+  <input value="Print" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+</p>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+</script>
+</body>
+</html>

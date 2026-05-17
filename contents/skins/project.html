@@ -1,0 +1,300 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/project.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+<script>
+   var myTable = new SortTable("myTable");
+   //Add the coloums of the table as name,attribute,alignment,content type
+   myTable.AddColumn("check box",      "", "center", "");
+   myTable.AddColumn("Project Code",      "", "left", "");
+   myTable.AddColumn("Project Name",     "", "left",   "");
+    myTable.AddColumn("Project Type",      "", "left", "");
+   myTable.AddColumn("Location",     "", "left",   "");
+   myTable.AddColumn("Header",     "", "left",   "");
+   myTable.AddColumn("Footer",     "", "left",   "");
+   myTable.AddColumn("Action",         "", "center", "");
+   var i = 1;
+   //Now populate the coloums with the user data
+<?php
+foreach($project_list[0] as $v)
+{
+$date_of_birth = dateInputFormatDMY($v[0]->date_of_birth);
+?> 
+  myTable.AddLine("<input type=\"checkbox\" name=\"chkBox\" value=\"<?=$v[0]->project_id?>\" id=\"chkBox['<?=$v[0]->project_id?>']\">","<?=$v[0]->project_id?> <input type=\"hidden\" value=\"<?=$v[0]->project_id?>\" id=\"project_id<?=$v[0]->project_id?>\">", "<?=$v[0]->project_name?> <input type=\"hidden\" value=\"<?=$v[0]->project_name?>\" id=\"project_name<?=$v[0]->project_id?>\">","<?=$v[0]->project_type?> <input type=\"hidden\" value=\"<?=$v[0]->project_type?>\" id=\"project_type<?=$v[0]->project_id?>\">","<?=$v[0]->location?> <input type=\"hidden\" value=\"<?=$v[0]->location?>\" id=\"location<?=$v[0]->project_id?>\">"," <img width=\"80\" height=\"60\" src=\"images/<?=$v[0]->header?>\"> <input type=\"hidden\" value=\"<?=$v[0]->header?>\" id=\"header<?=$v[0]->project_id?>\">", "<img width=\"80\" height=\"60\" src=\"images/<?=$v[0]->footer?>\"> <input type=\"hidden\" value=\"<?=$v[0]->footer?>\" id=\"footer<?=$v[0]->project_id?>\">", "<a href=javascript:editSetting('<?=$v[0]->project_id?>') target='_top'><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>&nbsp;&nbsp;<a onClick='return doConfirm(PROMPT_DELETE_CONFIRM);'href=javascript:deleteRecord('<?=$v[0]->project_id?>') target='_top'><img border='0' src='<?=IMAGE_DIR?>/common/icons/delete.png'><a/>"); 
+	if(i%2==0) 
+    	myTable.AddLineProperties("id='<?=$v[0]->project_id?>' name='<?=$v[0]->project_id?>' class='reportEvenRow'");
+   else
+       myTable.AddLineProperties("id='<?=$v[0]->project_id?>' name='<?=$v[0]->project_id?>' class='reportOddRow'");
+     ++i;
+<?php
+}
+?>
+</script>
+<title>Project Information</title>
+
+<body>
+<form name="project" method="post" enctype="multipart/form-data">
+  <table width="100%" id="tblbg" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="4" valign="top">	
+	</td>
+    <td width="985" valign="top">
+	<table width="100%" border="0" cellpadding="1" cellspacing="1" class="addBorder" id="tblbg">
+          <tbody>            
+            <tr> 
+              <td colspan="8">&nbsp;</td>
+            </tr>
+                      
+            <tr> 
+              <td colspan="8">
+			  <div id="entry" style="display:block">
+			    <table width="70%" bgcolor="#FFFFFF" align="center" cellpadding="4"cellspacing="0" style="border: 1px solid">
+                   
+				  <tr bgcolor="#67ADC5">
+                    <td align="center" class="topbg" height="26" colspan="5"><span><strong>&nbsp;Project Information  </strong></span></td>
+                  </tr>
+				  <tr>
+                    <td colspan="5" style="color:#FF6699">
+					<div align="center" id="status_msg">
+                        <?php if($message) echo $message; ?>
+                    </div>					</td>
+                    </tr>
+                  <tr>
+                    <td colspan="5">&nbsp;</td>
+                    </tr>
+                  <tr>
+                    <td width="14%">&nbsp;</td>
+                    <td width="19%"><div align="left" id="project_name">Name
+                      </div></td>
+                    <td width="55%" align="left"><input type="text" name="project_name" id="project_name" size="25"></td>
+                    <td width="5%">&nbsp;</td>
+                    <td width="7%">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">
+                      <label id="project_type"> Project type </label>
+                    </div></td>
+                    <td>
+					<select name="project_type" id="project_type">
+                      <option value="">Select Project type</option>
+                      <option value="Cold Storage">Cold Storage</option>
+                      <option value="Feed Mill">Feed Mill</option>
+                      <option value="Jute Mill">Jute Mill</option>
+                      <option value="Propertise">Propertise</option>
+                      <option value="CNS Station">CNS Station</option>
+                    </select>
+					</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">Location</div></td>
+                    <td><input type="text" name="location" id="location" size="25"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><div align="left">Header</div></td>
+                    <td><input type="file" name="header"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>Footer</td>
+                    <td><input type="file" name="footer"></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td><input value="Save" name="save" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" />
+                      <input name="reset" type="reset" class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" value="Reset" />                      </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </table>
+			  </div>			  
+			  </td>
+            </tr>
+           
+            <tr> 
+              <td width="17"> <input type="hidden" name="id" id="id"></td>
+              <td width="235">&nbsp;</td>
+              <td width="44">&nbsp;</td>
+              <td width="80">&nbsp;</td>
+              <td width="104">&nbsp;</td>
+              <td width="154">&nbsp;</td>
+              <td width="309">&nbsp;</td>
+              <td width="1">&nbsp;</td>
+            </tr>
+            <tr>
+              <td align="center" colspan="8"><div align="center" style="width:300px; background-color:FFEAEA" id="footer_status_msg"></div></td>
+            </tr>
+            <tr bgcolor="#67ADC5">
+			<td colspan="8">
+			<div class="page_link">  
+			  <?			 			 	
+				$from_rs=getRequest('from');
+				$to_rs=$from_rs+10;
+				if($from_rs>=10){$from_rs =$from_rs+1;}
+				if($from_rs=="" || $from_rs==0){$from_rs =1;}
+				if($to_rs=="" || $totalrecord<10){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >10){$to_rs=10;}
+				if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+				?>
+				<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+				
+			  if($totalrecord>0){?>
+			  </span>
+			  <span style="float:right">
+			    Page:
+	 		  <?php	 						
+			$plink = getRequest('page_no');
+			if($plink==""){$plink=1;}
+			if($totalrecord > 10)
+			{
+				$res = $totalrecord/10;
+				$res=(int)$res;
+				if(($totalrecord%10)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+
+			if($totalrecord >10)
+			{
+				$two = getRequest('from');
+				$pno = getRequest('page_no');
+				$pno = $pno-1;
+				$frm = $two - 10;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=agent&from=$frm&to=10&page_no=$pno'><b>Prev</b></a>&nbsp;";
+				}
+			}	
+
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=10;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+						echo "href='?app=agent&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "style='background-color:#CCCCCC'";} 
+						echo "href='?app=agent&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+					}			
+
+					$i++;
+					$from =$from+10;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+		  	if($totalrecord >10)
+			{
+				$f = getRequest('from');
+				$page = getRequest('page_no');
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=10;$page=2;}else{ $f=$f+10;} 
+				$t = 10;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=agent&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+				}
+			}
+
+		  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+		   </span>
+			</div>
+		  <?}?>
+		   </td>
+              
+            </tr>
+            <tr> 
+              <td colspan="8">		 
+			
+			  <table width="100%" style="border:1px solid;" align="center" bgcolor="#FFFFFF">
+                  <script>
+				 //This variable holds the number of click event that a user
+				 //did on the table header, it is require to find the display order
+				 var counter = 0;
+			  	</script>
+                  <tbody id="installed_systems" name="installed_systems">
+                    <tr>
+                      <td align="left" colspan="4"> </td>
+                    </tr>
+                    <tr class="tbl_header" align="center"> 
+                      <td width="23"> <input type="checkbox" name="select_all" onClick="selectAll(document.agent.select_all, document.agent.chkBox)">                      </td>
+                      <td width="102"><div align="left"><a href="javascript:SortRows(myTable,1); onclick=toggleSort(0);">Project Code</a> 
+                          <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_1"> 
+					      <img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_2">
+					    </div>
+					  </td>
+					  
+					  <td width="202" align="left"><a href="javascript:SortRows(myTable,2); onclick=toggleSort(2);">Project Name</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4">					</td>
+					<td width="111" align="left"><a href="javascript:SortRows(myTable,2); onclick=toggleSort(2);">Project Type</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_3"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_4"></td>
+					 <td width="154" align="left"><a href="javascript:SortRows(myTable,3); onclick=toggleSort(4);">Location</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_5"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_6">					</td>
+					 <td width="155" align="left"><a href="javascript:SortRows(myTable,4); onclick=toggleSort(6);">Header</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_7"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_8">					</td>
+					 <td width="111" align="left"><a href="javascript:SortRows(myTable,5); onclick=toggleSort(8);">Footer</a> 
+                        <img src="<?=IMAGE_DIR?>/common/s_asc.png" border="0" style="display:none" id="s_9"> 
+						<img src="<?=IMAGE_DIR?>/common/s_desc.png" border="0" style="display:none" id="s_10">					</td>
+					                     
+                    <td width="74">Action</td>
+                    </tr>
+                    <script>myTable.WriteRows()</script>
+                  </tbody>
+                </table></td>
+            </tr>
+            <tr> 
+              <td colspan="8">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+	</td>
+  </tr>
+</tbody></table>
+</form>
+</body>

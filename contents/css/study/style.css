@@ -1,0 +1,619 @@
+/*  
+Theme Name: Mental Disorder
+Theme URI: http://teo.esuper.ro
+Description: The most vital thing in a man's life is his mental attitude.
+Version: 1.2
+Author: Razvan Teodorescu
+Author URI: http://teo.esuper.ro/
+This theme was designed and built by Razvan Teodorescu,
+whose blog you will find at http://teo.esuper.ro.
+The CSS, XHTML and design is released under GPL:
+http://www.opensource.org/licenses/gpl-license.php
+If you have questions feel free to contact me at: razvan.teodorescu@gmail.com
+*/
+
+a:link, a:visited, a:active {
+	color: #666666;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: #E92821;
+	text-decoration: none;
+}
+
+blockquote {
+	border-left: 1px dotted #E1E1E1;
+	color: #B0B0B0;
+	margin: 0px 0px 0px 0px;
+	padding: 2px 2px 2px 8px;
+}
+
+body {
+	background: url(images/background.gif) #FFFFFF repeat-x top;
+	color: #999999;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	margin: 30px 0px 30px 0px;
+}
+
+form#commentform{
+	background-color: #FAFAFA;
+	border: 1px solid #F6F6F6;
+	list-style: none;
+	margin: 10px 0px 10px 0px;
+	padding: 10px 10px 0px 10px;
+}
+
+form#commentform input#submit {
+	background-color: #E92821;
+	border: 1px solid #CACACA;
+	color: #FFFFFF;
+	font-size: 10px;
+	width: 70px;
+}
+
+form#commentform input, form#commentform textarea {
+	background-color: #FFFFFF;
+	border: 1px solid #F0F0F0;
+	color: #999999;
+	font-size: 10px;
+	width: 200px;
+}
+
+form#commentform:hover {
+	background-color: #F6F6F6;
+	border: 1px solid #F0F0F0;
+}
+
+img {
+	border: 0;
+}
+
+input#submit {
+	background-color: #E92821;
+	border: 1px solid #CACACA;
+	color: #FFFFFF;
+	font-size: 10px;
+	width: 70px;
+}
+
+input, textarea {
+	background-color: #F6F6F6;
+	border: 1px solid #F0F0F0;
+	color: #999999;
+	font-size: 10px;
+}
+
+ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.alignleft {
+	color: #D2D2D2;
+	display: block;
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+}
+
+.alignleft a, .alignleft a:visited, .alignleft a:hover {
+	background: url(images/alignleft01.gif) no-repeat left center;
+	color: #D2D2D2;
+	margin: 0px;
+	padding: 0px 0px 0px 16px;
+	text-decoration: underline;
+}
+
+.alignleft a:hover {
+	background: url(images/alignleft02.gif) no-repeat left center;
+	color: #ACACAC;
+	margin: 0px;
+	padding: 0px 0px 0px 16px;
+	text-decoration: none;
+}
+
+.alignright {
+	color: #D2D2D2;
+	display: block;
+	float: right;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+}
+
+.alignright a, .alignright a:visited, .alignright a:hover {
+	background: url(images/alignright01.gif) no-repeat right center;
+	color: #D2D2D2;
+	margin: 0px;
+	padding: 0px 16px 0px 0px;
+	text-decoration: none;
+}
+
+.alignright a:hover {
+	background: url(images/alignright02.gif) no-repeat right center;
+	color: #ACACAC;
+	margin: 0px;
+	padding: 0px 16px 0px 0px;
+	text-decoration: underline;
+}
+
+.article a:link, #article a:visited, #article a:active {
+	color: #999999;
+	text-decoration: underline;
+}
+
+.article a:hover {
+	color: #E92821;
+	text-decoration: none;
+}
+
+.commentlist {
+	color: #999999;
+	margin: 0px;
+	padding: 0px;
+	text-align: left;
+}
+
+.commentlist li {
+	background-color: #FAFAFA;
+	border: 1px solid #F6F6F6;
+	font-size: 11px;
+	list-style: none;
+	margin: 10px 0px 10px 0px;
+	padding: 10px 10px 0px 10px;
+}
+
+.commentlist li:hover {
+	background-color: #F6F6F6;
+	border: 1px solid #F0F0F0;
+}
+
+.feedback {
+	color: #A7A7A7;
+	font-size: 10px;
+	margin: 0px 0px 10px 0px;
+	padding: 3px 0px 3px 10px;
+	text-align: right;
+}
+
+.feedback a:link, .feedback a:visited, .feedback a:active {
+	background-color: #FFFFFF;
+	color: #A7A7A7;
+	text-decoration: underline;
+}
+
+.feedback a:hover {
+	color: #666666;
+	text-decoration: none;
+}
+
+.headline {
+	text-align: right;
+	text-transform: lowercase;
+}
+
+.highlight {
+	background-color: #FAFAFA;
+	color: #999999;
+	font-size: 9px;
+	padding: 2px;
+}
+
+.line {
+	background: url(images/line.gif) no-repeat center;
+	border: 0px;
+	height: 13px;
+	margin: 5px 0px 10px 0px;
+	padding: 0px;
+}
+
+.link-categorie {
+	background: url(images/icon_categorie.gif) #FFFFFF no-repeat center left;
+	color: #666666;
+	font-size: 10px;
+	margin: 0px 0px 0px 20px;
+	padding: 0px 0px 0px 18px;
+	text-align: right;
+}
+
+.link-comentariu {
+	background: url(images/icon_comentariu.gif) no-repeat center left;
+	margin: 0px 0px 0px 20px;
+	padding: 0px 0px 0px 18px;
+	text-align: right;
+}
+
+.required{
+	color: #E92821;
+	font-size: 9px;
+}
+
+#content {
+	color: #999999;
+	font-size: 11px;
+	margin: 0px 0px 0px 180px;
+	padding: 0px 0px 0px 0px;
+	text-align: justify;
+	width: 400px;
+}
+
+#content h1 {
+	color: #E92821;
+	font-size: 12px;
+	font-weight: bold;
+	margin: 15px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+#content h1 a{
+	color: #E92821;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#content h1 a:visited{
+	color: #E92821;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#content h1 a:hover{
+	color: #555555;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#content h2 {
+	color: #A7A7A7;
+	font-size: 10px;
+	font-weight: bold;
+	margin: 5px 0px 10px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+#content h2 a{
+	color: #A7A7A7;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+#content h2 a:hover{
+	color: #A7A7A7;
+	font-size: 10px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#content ol li p.autor-comentariu {
+	color: #555555;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+#content ol li p.autor-comentariu a{
+	color: #555555;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+#content ol li p.autor-comentariu a:hover{
+	color: #555555;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#content ol li p.data-comentariu {
+	background: url(images/icon_ceas.gif) no-repeat center right;
+	color: #E92821;
+	font-size: 9px;
+	margin: 0px 0px 10px 0px;
+	padding: 0px 12px 0px 0px;
+	text-align: right;
+}
+
+#content ol li p.data-comentariu a{
+	color: #E92821;
+	text-decoration: none;
+}
+
+#content ol li p.data-comentariu a:hover{
+	color: #E92821;
+	text-decoration: underline;
+}
+
+#content p a, #content ul li a {
+	color: #666666;
+	text-decoration: underline;
+}
+
+#content p a:hover, #content ul li a:hover {
+	color: #E92821;
+	text-decoration: none;
+}
+
+#content ul {
+	border: 0px;
+	margin: 10px 0px 10px 5px;
+	padding: 0px;
+	text-align: left;
+}
+
+#content ul li {
+	background: url(images/bullet01.gif) no-repeat 2px 6px;
+	margin: 0px 0px 5px 0px;
+	padding: 0px 0px 4px 12px;
+}
+
+#content.article li {
+	background: url(images/bullet01.gif) no-repeat 2px 6px;
+	margin: 0px 0px 5px 0px;
+	padding: 0px 0px 4px 12px;
+}
+
+#footer {
+	background: url(images/background_footer.gif) no-repeat;
+	height: 10px;
+	margin: 0px;
+	padding: 0px;
+	width: 610px;
+}
+
+#footer p{
+	color: #CCCCCC;
+	font-size: 9px;
+	margin: 0px;
+	padding: 15px 4px 0px 0px;
+	text-align: center;
+}
+
+#footer p a{
+	color: #CCCCCC;
+	text-decoration: underline;
+}
+
+#footer p a:hover{
+	color: #999999;
+	text-decoration: underline;
+}
+
+#header {
+	background: url(images/background_header.gif) no-repeat;
+	height: 70px;
+	width: 610px;
+}
+
+#header form{
+	background-color: transparent;
+	float: left;
+	margin: 34px 0px 0px 0px;
+	padding: 0px 0px 0px 25px;
+	width: 165px;
+}
+
+#header input {
+	background: url(images/background_form.gif) #FFFFFF top left;
+	border: 1px solid #E6E6E6;
+	color: #BCBCBC;
+	font-size: 9px;
+}
+
+#icon-css a {
+	background: url(images/icon_css.gif) no-repeat 0px 0px;
+	float: right;
+	height: 15px;
+	margin: 0px 5px 0px 0px;
+	text-indent: -9999px;
+	width: 26px;
+}
+
+#icon-css a:hover {
+	background-position: 0px -15px;
+}
+
+#icon-rss a {
+	background: url(images/icon_rss.gif) no-repeat 0px 0px;
+	float: right;
+	height: 15px;
+	margin: 0px 5px 0px 0px;
+	text-indent: -9999px;
+	width: 27px;
+}
+
+#icon-rss a:hover {
+	background-position: 0px -15px;
+}
+
+#icons {
+	background: url(images/background_icons.gif); /*	clear: both;*/
+	height: 15px;
+	margin: 0px;
+	padding: 10px 20px 5px 0px;
+	width: 590px;
+}
+
+#icons li {
+	display: inline;
+}
+
+#icon-xhtml a {
+	background: url(images/icon_xhtml.gif) no-repeat 0px 0px;
+	float: right;
+	height: 15px;
+	margin: 0px 5px 0px 0px;
+	text-indent: -9999px;
+	width: 38px;
+}
+
+#icon-xhtml a:hover {
+	background-position: 0px -15px;
+}
+
+#menu-navigation {
+	float: right;
+	margin: 34px 0px 0px 0px;
+	width: 290px;
+}
+
+#menu-navigation a {
+	color: #A7A7A7;
+	font-size: 9px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#menu-navigation a:hover {
+	color: #7E7E7E;
+	text-decoration: underline;
+}
+
+#menu-navigation li {
+	display: inline;
+	list-style: none;
+	margin: 0px 16px 0px 0px;
+}
+
+#menu-navigation li a span {
+	border: solid 1px #CCCCCC;
+	line-height: 22px;
+	padding: 4px 4px 4px 4px;
+}
+
+#metadata {
+	background: #FAFAFA;
+	color: #666666;
+	font-size: 9px;
+	line-height: 20px;
+	margin: 2px 0px 2px 0px;
+	padding: 3px 8px 3px 8px;
+}
+
+#metadata a {
+	color: #E92821;
+	text-decoration: underline;
+}
+
+#metadata a:hover {
+	color: #E92821;
+	text-decoration: none;
+}
+
+#middle {
+	background: url(images/background_middle.gif) repeat-y;
+	margin: 0px;
+	padding: 0px;
+	width: 610px;
+}
+
+#navigation {
+	margin: 10px 0px 10px 0px;
+	padding: 0px 0px 10px 0px;
+}
+
+#sidebar {
+	border-right: 1px solid #E1E1E1;
+	color: #999999;
+	float: left;
+	font-size: 9px;
+	margin: 0px 10px 0px 14px;
+	padding: 0px;
+	width: 130px;
+}
+
+#sidebar ul {
+	margin: 0px;
+	padding: 0px 0px 5px 0px;
+	text-decoration: none;
+}
+
+#sidebar ul li {
+	margin: 0px;
+	padding: 2px 0px 2px 0px;
+}
+
+#sidebar ul li a:link, #sidebar ul li a:visited, #sidebar ul li a:active {
+	background: url(images/bullet03.gif) no-repeat 0px 0px;
+	color: #999999;
+	line-height: 15px;
+	margin: 2px 0px 2px 0px;
+	padding: 0px 0px 0px 12px;
+	text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+	color: #E92821;
+	line-height: 15px;
+	margin: 2px 0px 2px 0px;
+	padding: 0px 0px 0px 12px;
+	text-decoration: underline;
+}
+
+#sidebar ul li h2{
+	font-size: 9px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 0px;
+}
+
+#sidebar ul li h2  a:link, #sidebar ul li h2 a:visited, #sidebar ul li h2 a:active{
+	background: transparent url(images/bullet02.gif) no-repeat 0px 2px;
+	font-size: 9px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 0px 0px 0px 14px;
+	text-decoration: none;
+}
+
+#sidebar ul li h2  a:hover{
+	background: transparent url(images/bullet02.gif) no-repeat 0px 2px;
+	font-size: 9px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 0px 0px 0px 14px;
+	text-decoration: none;
+}
+
+#splash {
+	height: 125px;
+	margin: 0px 21px 10px 21px;
+	width: 568px;
+}
+
+#wrapper {
+	list-style-type: none;
+	margin: 0px auto 0px auto;
+	width: 610px;
+}
+
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+* html .clearfix {height: 1%;}
+
+html>body #sidebar {margin: 0px 0px 0px 26px;}
+
+
+#qTip {
+padding: 3px 3px 3px 3px;
+border: 1px solid #f0f0f0;
+display: none;
+background-color: #E92821;
+color: #FFFFFF;
+font: bold 9px Verdana, Arial, Helvetica, sans-serif;
+position: absolute;
+z-index: 1000;
+}

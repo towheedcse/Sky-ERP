@@ -1,0 +1,331 @@
+<?php
+
+extract($data);
+//dumpVar($data);	
+$created_date = getRequest('created_date'); 
+dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/journal.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script>
+
+<style type="text/css">
+<!--
+.style1 {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+a:visited{color:#FF6699;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a{color:#FF6699;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+
+-->
+</style>
+<head>
+
+<title>Buying House ERP: Journal List</title>
+<style>
+img{
+border:none;
+}
+.borderbtm{
+border-bottom:1px solid #000000;
+}
+input{
+background-color:#ffffff;
+border: 1px solid #006699;
+}
+
+.tr_colorGreen{
+color:#009900;
+line-height:20px;
+font-size:12px;
+}
+
+.tr_colorBlack{
+color:#000000;
+line-height:20px;
+font-size:12px;
+}
+
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=10,top=40,width=980,height=980')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Print Page</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+
+<table width="99%" class="addBorder" id="tblbg" style="margin-left:2px" border="0">
+  <tr>
+    <th class="topHeader" colspan="2" scope="row"><div id="tblTitle" align="left">&nbsp;<b>Journal List</b></div></th>
+  </tr>
+
+  <tr>
+    <th colspan="2" scope="row">
+	<form name="frmjournal" id="frmjournal" action="" method="post">
+	<table width="886" border="0" cellspacing="5" cellpadding="0">
+      <tr>
+        <th width="275" scope="col"><div align="right">From
+                <input name="date_from" id="date_from" style="width:140px;" value="<?=$_REQUEST['date_from']?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['date_from']);return false;" title="calendar" type="text">
+                <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['date_from']);return false;" title="calendar" width="15" height="15">        </div></th>
+        <th width="195" scope="col"><div align="left">To
+          <input name="date_to" id="date_to" style="width:140px;" value="<?=$_REQUEST['date_to']?>" size="20" onFocus="gfPop.fPopCalendar(document.frmjournal.elements['date_to']);return false;" title="calendar" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmjournal.elements['date_to']);return false;" title="calendar" width="15" height="15"> </div></th>
+        <th width="396" scope="col"><div align="left">
+          <input type="submit" name="Submit" value="Submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'">
+        </div></th>
+      </tr>
+    </table>
+	</form>
+	</th>
+    </tr>
+  <tr>
+    <th width="8%" scope="row"><div align="left"><a href="?app=journal&cmd=add">Add New</a></div></th>
+    <td width="92%">
+	<div class="page_link">  
+	  <?			 			 	
+		$from_rs=getRequest('from');
+		$to_rs=$from_rs+10;
+		if($from_rs>=10){$from_rs =$from_rs+1;}
+		if($from_rs=="" || $from_rs==0){$from_rs =1;}
+		if($to_rs=="" || $totalrecord<10){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >10){$to_rs=10;}
+		if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+		?>
+		<span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+		
+	  if($totalrecord>0){?>
+	  </span>
+	  <span style="float:right">
+		Page:
+	  <?php	 						
+		$plink = getRequest('page_no');
+		if($plink==""){$plink=1;}
+		if($totalrecord > 10)
+		{
+			$res = $totalrecord/10;
+			$res=(int)$res;
+			if(($totalrecord%10)!=0)
+			{	
+				$totalpage = $res+1;
+			}
+			else
+			{
+			$totalpage = $res;
+			}
+		}
+		else
+		{
+			$totalpage = 1;
+		}		
+
+		if($totalrecord >10)
+		{
+			$two = getRequest('from');
+			$pno = getRequest('page_no');
+			$pno = $pno-1;
+			$frm = $two - 10;				
+			
+			if($pno <= $totalpage && $pno >0)
+			{
+				echo "<a id='$pno' href='?app=journal&from=$frm&to=10&page_no=$pno'><b>Prev</b></a>&nbsp;";
+			}
+		}	
+
+		if($totalpage>=1)
+		{	
+			$i = 1;
+			$from =0; $to=10;
+			while($i<=$totalpage)
+			{		
+				if($from ==0)
+				{		
+					echo "<a id='$i'";
+					if($i==$plink){ echo "style='background-color:#CCCCCC'";}
+					echo "href='?app=journal&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+				}
+				else
+				{
+					echo "<a id='$i'"; 
+					if($i==$plink){ echo "style='background-color:#CCCCCC'";} 
+					echo "href='?app=journal&from=$from&to=$to&page_no=$i'><b>$i</b></a>&nbsp;";
+				}			
+
+				$i++;
+				$from =$from+10;
+				if($to >$totalrecord){ $to=$totalrecord;} 
+			}
+		}
+		if($totalrecord >10)
+		{
+			$f = getRequest('from');
+			$page = getRequest('page_no');
+			$page = $page+1;
+			if($f ==""||$f ==0){ $f=10;$page=2;}else{ $f=$f+10;} 
+			$t = 10;
+			if($t >$totalrecord){ $t=$totalrecord;} 
+			if($page <= $totalpage)
+			{
+				echo "&nbsp;<a id='$page' href='?app=journal&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+			}
+		}
+
+	  ?>&nbsp;&nbsp;&nbsp;&nbsp;
+	   </span>
+		</div>
+	  <?}?>
+	</td>
+  </tr>
+  <tr>
+    <th colspan="2" scope="row">
+	<table width="130%" border="0" cellspacing="0">
+      <tr bgcolor="#060147">
+        <td width="21" height="25"><span class="style1">SL</span></td>
+        <td width="69"><div align="left" class="style1">
+           Date
+        </div></td>
+        <td width="73"><span class="style1">Execution Date</span></td>
+        <td width="102"><div align="left" class="style1">Particulars</div></td>
+        <td width="72"><div align="left" class="style1">To</div></td>
+        <td width="74" align="left"><div align="left" class="style1">From</div></td>
+        <td width="92" align="left"><div align="left" class="style1">Purpose</div></td>
+        <td width="113" align="left"><span class="style1">Name</span></td>
+        <td width="43" align="left"><div align="center"><span class="style1">Folio</span></div></td>
+        <td width="86" align="left"><div align="center"><span class="style1">Debit</span></div></td>
+        <td width="70" align="left"><div align="center"><span class="style1">Credit</span></div></td>
+        <td width="67" align="left"><div align="center"><span class="style1">Balance</span></div></td>
+        <td width="48"><div align="center" class="style1">Action</div></td>
+        </tr>
+	</table>
+	</th>
+  </tr>
+  <tr>
+    <td colspan="2">
+	<div id="print_journal" style="display:block;border:1px solid #003366; margin-top:3px;margin-bottom:3px;width:99.5%;visibility:visible;height:350px;overflow:auto">
+	<table width="130%" border="0" cellspacing="0">
+      <?	
+	  if(getRequest('from')=="" || getRequest('from')==0){  
+	  $i = 1;	
+	  }else{
+	  $i = getRequest('from')+1;
+	  }
+	  if(getRequest('drd')!=''){
+	  $total_debit = getRequest('drd');
+	  }
+	  if(getRequest('crd')!=''){
+	  $total_credit = getRequest('crd');
+	  }
+	  	  
+	  foreach($record_list as $val){
+	  $journal_code=$val->journal_code;
+	  $total_credit+=$val->credit;
+	  $total_debit+=$val->debit;
+	  if($val->debit>1){   
+	  	$trcolor = "tr_colorBlack";
+	  }else{	
+	  	$trcolor = "tr_colorGreen";	
+	  } 
+   	  ?>
+      <tr class="<?=$trcolor?>" <? if($i%2==0){ echo "bgcolor='#E6E6E6'";}else{ echo "bgcolor='#FFFFFF'";}?>>
+        <td width="2%" height="30" align="center" valign="top" class="borderbtm"><?echo $i;?></td>
+        <td width="8%" align="left" valign="top" class="borderbtm"><?=$val->created_date?></td>
+        <td width="8%" align="left" valign="top" class="borderbtm"><?=$val->execution_date?>&nbsp;</td>
+        <td width="11%" align="left" valign="top" class="borderbtm"><?=$val->sub_head_name?></td>
+        <td width="8%" align="left" valign="top" class="borderbtm"><?=$val->to1?>&nbsp;</td>
+        <td width="8%" align="left" valign="top" class="borderbtm">
+          <?=$val->from1?>&nbsp;
+		</td>
+        <td width="10%" align="left" valign="top" class="borderbtm">
+		  <?=$val->remarks?>&nbsp;</td>
+        <td width="12%" align="left" valign="top" class="borderbtm">
+		<?=$val->name?><br>
+		<?=$val->designation?>
+		</td>
+        <td width="5%" align="center" valign="top" class="borderbtm">
+		<?=$journal_code?>
+        </td>
+        <td width="9%" align="center" valign="top" class="borderbtm">
+		<?
+		if($val->debit >0){
+		 	echo $val->currency_name.' '.$val->debit;
+		}else{
+			echo "&nbsp;";
+		}
+		?>
+		</td>
+        <td width="8%" align="left" valign="top" class="borderbtm">
+		<div align="center">
+		<?
+		if($val->credit >0){
+			echo $val->currency_name.' '.$val->credit;
+		}else{
+			echo "&nbsp;";
+		}
+		?>            
+        </div>
+		</td>
+        <td width="7%" align="left" valign="top" class="borderbtm"><div align="center">
+          <?		  
+		  echo $val->currency_name.' '.$val->balance;
+		  ?>
+        </div></td>
+        <td width="4%" align="left" valign="top" class="borderbtm">
+		  <div align="center">
+		  <? if($totalrecord==$i){?> 		 
+		  <a href="?app=journal&cmd=edit&id=<?=$journal_code?>"><img border='0' src='<?=IMAGE_DIR?>/common/icons/edit.gif'></a>
+		  <?}else{?>
+		  &nbsp;
+		  <?}?>
+		  </div>
+		</td>
+        </tr>
+	   <?
+	  $i++;
+	  }
+	  ?>
+    </table>
+	</div>
+	</td>
+    </tr>
+  <tr>
+    <th align="left" colspan="2" scope="row">&nbsp;	
+  </th>
+  </tr>
+</table>
+
+<br>
+</body>
+
+</html>
+

@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>GENERAL ERP</title>
+<script src="<?=REL_CONTENT_DIR?>/js/common/AC_RunActiveContent.js" type="text/javascript"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/user_comments.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/sorttable.js"></script> 
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/login.css" type="text/css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+.hind-siliguri-light {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.hind-siliguri-regular {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.hind-siliguri-medium {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.hind-siliguri-semibold {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hind-siliguri-bold {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+div#logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div#logo img {
+    width: 85px !important;
+}
+div#logo .brand {
+    font-family: 'Hind Siliguri', sans-serif;
+    color: #fff;
+    font-weight: 600;
+    font-size: 20px;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+
+#login-container {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+#login-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+    font-size: 15px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #777;
+}
+
+.login-footer a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+div#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+#header {
+    height: 81px !important;
+    background: #343a40 !important;
+}
+
+body {
+    width: 100%;
+    height: auto;
+    background: #e6f8ff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+div#login-container h2 {
+    text-transform: uppercase;
+    font-family: 'Hind Siliguri';
+    font-weight: 600;
+    font-size: 22px;
+}
+</style>
+
+
+</head>
+
+<body>
+<div id="header">
+<div id="logo">
+<?
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+
+$port = "";
+if (defined('URL_PORT') && URL_PORT) {
+    $port = ':' . URL_PORT;
+}
+
+$baseUrl = $protocol . '://' . $host.$port;
+
+$project_logo = $baseUrl.IMAGE_DIR."/P0005.png";
+?>
+		<img src="<?=$project_logo?>" style="width:100px"'>
+		<span class="brand"><?=LOGO_BRAND?></span>
+</div>
+</div>
+<br /><br />
+<!--<fieldset style="float: right "><legend>Login</legend>
+<form method="post" name="loginform" action="?app=login">
+<table width="100%" height="145"  border="0" cellpadding="0" cellspacing="0">
+	  <tr>
+		<td width="4%">&nbsp;</td>
+		<td colspan="2">
+		  <div align="center"><h2>&nbsp;</h2>
+		  </div>
+		</td>
+		<td width="2%">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>&nbsp;</td>
+		<td width="30%"><div class="txtcolor" align="right">User ID :&nbsp;</div></td>
+		<td width="64%"><input style="height:18px " type="text" id="loginid" name="loginid" /></td>
+		<td>&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td height="43">&nbsp;</td>
+		<td><div class="txtcolor" align="right">Password :&nbsp;</div></td>
+		<td><input type="password" style="height:18px " id="password" name="password" /></td>
+		<td>&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td ><input type="image" src="<?=IMAGE_DIR?>/common/button/Login.gif" width="65" height="31" border="0" name="Submit" /></td>
+		<td>&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>a href="index.php?app=change_pass&cmd=forget_pass">Forget Password?</a></td>
+		<td>&nbsp;</td>
+	  </tr>
+	</table>
+	</form>
+</fieldset>-->
+
+<div id="container">
+	<div id="login-container">
+	    <h2>Login</h2>
+	    <form method="post" name="loginform" action="?app=login">
+		<div class="form-group">
+		    <label for="loginid">User ID</label>
+		    <input type="text" id="loginid" name="loginid" placeholder="Enter your User ID" autocomplete="username">
+		</div>
+		<div class="form-group">
+		    <label for="password">Password</label>
+		    <input type="password" id="password" name="password" placeholder="Enter your Password" autocomplete="current-password">
+		</div>
+		<button type="submit">Login</button>
+	    </form>
+	    <div class="login-footer">
+		<!--a href="index.php?app=change_pass&cmd=forget_pass">Forget Password?</a-->
+	    </div>
+	</div>
+</div>
+</body>
+</html>

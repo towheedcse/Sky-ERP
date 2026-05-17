@@ -1,0 +1,788 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <?php
+extract($data);
+//dumpVar($data);
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR);
+?>
+
+    <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/purchase.js"></script>
+    <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+    <link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+    <link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css"
+          media="screen" title="no title" charset="utf-8"/>
+    <link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen"
+          title="no title" charset="utf-8"/>
+    <link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+    <link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+
+    <!-- 1. ADD SELECT2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
+    <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+    <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+    <script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var J = jQuery.noConflict();
+    </script>
+    <script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+    <script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+    <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+    <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+    <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+    <script language="javascript1.3">
+
+
+        J("[class^=validate]").validationEngine({
+
+
+
+        inlineValidation: false,
+
+
+
+        success :  false,
+
+
+
+        failure : function() { callFailFunction()  }
+
+
+
+        })
+
+
+
+  var CANCEL_URL = "index.php?app=buyerorder&cmd=list";
+
+    </script>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>LC Opening for Purchase Item - Modern ERP</title>
+
+
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --primary-color: #2c3e50; /* Dark Blue/Grey for ERP feel */
+            --accent-color: #3498db; /* Blue for actions */
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #dcdde1;
+            --input-bg: #fcfcfc;
+            --text-color: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* --- Layout Containers --- */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .card-header {
+            background: #ecf0f1;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* --- Grid System for Inputs --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group label {
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 13px;
+            color: #7f8c8d;
+            display: flex;
+        }
+
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            background: #fff;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        /* --- Item Entry Section (Row of Inputs) --- */
+        .item-entry-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .item-entry-row .form-group {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        /* --- Tables --- */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* --- Payment Section & Totals --- */
+        .financial-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 1px;
+        }
+
+        .radio-label input {
+            margin-right: 8px;
+        }
+
+        .totals-card {
+            background: #fdfefe;
+            border: 1px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-top: 2px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219150;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        /* --- Conditional Logic --- */
+        .hidden {
+            display: none;
+        }
+
+        /* --- Responsive Tweaks --- */
+        @media (max-width: 768px) {
+            .financial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item-entry-row {
+                flex-direction: column;
+            }
+
+            .item-entry-row .form-group {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+
+        #frmbuyerorder {
+            padding: 20px;
+        }
+
+        input[type="text"] {
+            height: 35px;
+        }
+
+        select {
+            height: 35px;
+        }
+
+        button.btn {
+            width: fit-content;
+            min-height: 35px;
+            padding: 0 10px;
+            color: #fff !important;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-right: 0px !important;
+        }
+
+        .select2-container--open .select2-dropdown {
+            left: 0px;
+            top: 56px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form name="frmbuyerorder" id="frmbuyerorder" method="post">
+
+        <!-- 1. LC HEADER INFO -->
+        <div class="card">
+            <div class="card-header">
+                <span>LC Basic Information</span>
+                <small>Date: <?= date('d-m-Y') ?></small>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LC No.</label>
+                        <input type="text" name="lc_no" id="lc_no" class="form-control" value="<?=$lc_no?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>LC Opener</label>
+                        <input type="text" name="lcopener" id="lcopener" class="form-control" value="<?=$lcopener?>"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label>LC Opening Bank</label>
+                        <input type="text" name="lcopening_bank" id="lcopening_bank" class="form-control"
+                               value="<?=$lcopening_bank?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select name="country" class="form-control">
+                            <!-- PHP Loop Here -->
+                            <option value="">Select One</option>
+                            <?php foreach($country_list as $i=>$v): ?>
+                            <option value="<?=$v->country?>"><?=$v->country?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>LC Date</label>
+                        <input type="date" name="lcopening_date" id="lcopening_date" class="form-control"
+                               value="<?=$_REQUEST['lcopening_date']?>" style="height: 35px;padding: 5px 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <select name="supplier" id="supplier" class="form-control">
+                            <option value="">Select Supplier</option>
+                            <!-- PHP Loop Here -->
+                            <?php foreach($supplier_list as $i=>$v): ?>
+                            <option value="<?=$v->supplier_code?>"><?=$v->name?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Invoice No.</label>
+                        <input type="text" name="quotation_no" id="quotation_no" class="form-control"
+                               value="<?=$quotation_no?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select name="currency" id="currency" class="form-control">
+                            <option value="">Select One</option>
+                            <!-- PHP Loop Here -->
+                            <?php foreach($currency_list as $i=>$v): ?>
+                            <option value="<?=$v->currency_id.'###'.$v->currency_name?>"><?=$v->currency_des?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Track No.</label>
+                        <input type="text" name="track_no" id="track_no" class="form-control" value="<?=$track_no?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. ADD ITEM SECTION -->
+        <div class="card">
+            <div class="card-header">
+                Add LC Product Item
+            </div>
+            <div class="card-body">
+                <div class="item-entry-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="catagory" id="catagory" class="form-control"
+                                onchange="getProductList(this.value)">
+                            <option value="">Select</option>
+                            <?php foreach($cat_list as $i=>$v): ?>
+                            <option value="<?=$v->catagory_code.'###'.$v->catagory_name?>"><?=$v->catagory_name?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <select name="brand" id="brand" class="form-control" onchange="getProductList(this.value)">
+                            <option value="">Select</option>
+                            <?php foreach($brand_list as $i=>$v): ?>
+                            <option value="<?=$v->brand_id.'###'.$v->brand_name?>"><?=$v->brand_name?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Product</label>
+                        <select name="product" id="product" class="form-control">
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label>Details</label>
+                        <input type="text" name="details" id="details" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Serial No.</label>
+                        <input type="text" name="serial" id="serial" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Warranty (M)</label>
+                        <input type="text" name="warranty" id="warranty" class="form-control" value="<?=$warranty?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="text" name="qty" id="qty" class="form-control" onkeyup="calTotalValue()"
+                               placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price</label>
+                        <input type="text" name="unit_price" id="unit_price" class="form-control"
+                               onkeyup="calTotalValue()" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="text" name="total" id="total" class="form-control" readonly placeholder="0.00">
+                    </div>
+
+                    <div class="form-group" style="flex: 0 0 auto; margin-left: auto;">
+                        <button type="button" class="btn btn-success" onclick="purchaseProcess()">Add Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ADDED ITEMS LIST -->
+        <div class="card">
+            <div class="card-header">
+                Added Items List
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-responsive">
+                    <table id="lcTable">
+                        <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Brand</th>
+                            <th>Product</th>
+                            <th>Details / Serial</th>
+                            <th>Warranty</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Value</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbs">
+                        <!-- Javascript will append rows here or PHP loop for existing items -->
+                        <!-- Example of a static row for structure visualization:
+                        <tr>
+                            <td>Electronics</td>
+                            <td>Sony</td>
+                            <td>Camera X</td>
+                            <td>SN:12345</td>
+                            <td>12</td>
+                            <td>1</td>
+                            <td>500.00</td>
+                            <td>500.00</td>
+                            <td><button type="button" class="btn btn-danger">X</button></td>
+                        </tr>
+                        -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. PAYMENT & ACCOUNTING -->
+        <div class="card">
+            <div class="card-header">
+                Payment & Accounts
+            </div>
+            <div class="card-body">
+                <div class="financial-grid">
+
+                    <!-- Left Column: Payment Details -->
+                    <div>
+                        <div class="payment-options">
+                            <label class="radio-label">
+                                <input type="radio" name="mode_of_payment" value="Check"
+                                       onclick="showhideCashCheck('Check')" checked> Check
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="mode_of_payment" value="Cash"
+                                       onclick="showhideCashCheck('Cash')"> Cash
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="mode_of_payment" value="Payable"
+                                       onclick="showhideCashCheck('Recievable')"> Due
+                            </label>
+                        </div>
+
+                        <!-- Check Details -->
+                        <div id="CheckPanel" class="form-grid"
+                             style="background: #f8f9fa; padding: 15px; border-radius: 4px;">
+                            <div class="form-group">
+                                <label>Bank Name</label>
+                                <input type="text" name="bank_name" id="bank_name" class="form-control"
+                                       value="<?=$bank_name?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Account No</label>
+                                <input type="text" name="acc_no" id="acc_no" class="form-control" value="<?=$acc_no?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Check No</label>
+                                <input type="text" name="check_no" id="check_no" class="form-control"
+                                       value="<?=$check_no?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Check Issue Date</label>
+                                <input type="text" name="check_issue_date" id="check_issue_date" class="form-control"
+                                       value="<?=$check_issue_date?>">
+                            </div>
+                        </div>
+
+                        <!-- Cash Details -->
+                        <div id="CashPanel" class="hidden form-grid"
+                             style="background: #f8f9fa; padding: 15px; border-radius: 4px;">
+                            <div class="form-group">
+                                <label>Reference No</label>
+                                <input type="text" name="ref_no" id="ref_no" class="form-control" value="<?=$ref_no?>">
+                            </div>
+                        </div>
+
+                        <!-- Due Details (Payable) -->
+                        <div id="RecievablePanel" class="hidden form-grid"
+                             style="background: #f8f9fa; padding: 15px; border-radius: 4px;">
+                            <div class="form-group">
+                                <label>Credit Period / Notes</label>
+                                <input type="text" name="credit_note" class="form-control"
+                                       placeholder="Enter credit details">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Totals -->
+                    <div>
+                        <div class="totals-card">
+                            <div class="total-row">
+                                <span>Grand Total</span>
+                                <input type="text" name="total_value" id="total_value" class="form-control"
+                                       style="text-align: right; font-weight: bold;width: 200px;"
+                                       value="<?=$total_value?>" readonly>
+                            </div>
+                            <div class="total-row">
+                                <span>Discount</span>
+                                <input type="text" name="discount" id="discount" class="form-control"
+                                       style="text-align: right;width: 200px;" value="<?=$discount?>"
+                                       onkeyup="calNetPayble()">
+                            </div>
+                            <div class="total-row">
+                                <span>Net Payable</span>
+                                <input type="text" name="net_payble" id="net_payble" class="form-control"
+                                       style="text-align: right; color: var(--success-color); font-weight: bold;width: 200px;"
+                                       value="<?=$net_payble?>">
+                            </div>
+                            <div class="total-row">
+                                <span>Paid Amount</span>
+                                <input type="text" name="paid_amount" id="paid_amount" class="form-control"
+                                       style="text-align: right;width: 200px;" value="<?=$paid_amount?>"
+                                       onkeyup="calDueAmount()">
+                            </div>
+                            <div class="total-row grand-total">
+                                <span style="font-size: 15px;">Due Amount</span>
+                                <input type="text" name="due" id="due" class="form-control"
+                                       style="text-align: right; border: none; background: transparent; font-size: 18px;width: 200px;"
+                                       value="<?=$due?>" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="card-footer"
+                 style="padding: 20px; background: #fff; border-top: 1px solid #eee; text-align: right;">
+                <input type="hidden" name="cmd" value="savePurchase">
+                <button type="reset" class="btn btn-secondary" onclick="handleReset();">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" onclick="handleSubmit();">Save LC</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // --- INITIALIZE SELECT2 ON ALL SELECT ELEMENTS ---
+        $('select').each(function () {
+            $(this).select2({
+                width: '100%',
+                placeholder: 'Select an option',
+                allowClear: true,
+                // dropdownParent: $(this).parent()
+                dropdownParent: $(this).closest('.form-group')
+            });
+
+        });
+
+        // Initial mode setup
+        var mode = "<?=$mode_of_payment?>";
+        if (mode == "") mode = "Check";
+        showhideCashCheck(mode);
+    });
+
+    function showhideCashCheck(mode) {
+        $('#CheckPanel').hide();
+        $('#CashPanel').hide();
+        $('#RecievablePanel').hide();
+
+        if (mode === 'Check') $('#CheckPanel').show();
+        else if (mode === 'Cash') $('#CashPanel').show();
+        else if (mode === 'Recievable') $('#RecievablePanel').show();
+    }
+
+    function calTotalValue() {
+        var qty = parseFloat($('#qty').val()) || 0;
+        var price = parseFloat($('#unit_price').val()) || 0;
+        $('#total').val((qty * price).toFixed(2));
+    }
+
+    function calNetPayble() {
+        var total = parseFloat($('#total_value').val()) || 0;
+        var discount = parseFloat($('#discount').val()) || 0;
+        $('#net_payble').val((total - discount).toFixed(2));
+        calDueAmount();
+    }
+
+    function calDueAmount() {
+        var net = parseFloat($('#net_payble').val()) || 0;
+        var paid = parseFloat($('#paid_amount').val()) || 0;
+        $('#due').val((net - paid).toFixed(2));
+    }
+
+    function purchaseProcess() {
+        var tbody = $('#tbs');
+        // Get text, not value, for display
+        var cat = $('#catagory').select2('data')[0].text;
+        var brand = $('#brand').select2('data')[0].text;
+        var prod = $('#product').select2('data')[0].text;
+        var serial = $('#serial').val();
+        var qty = $('#qty').val();
+        var price = $('#unit_price').val();
+        var total = $('#total').val();
+
+        if (qty == "" || price == "") {
+            alert("Please enter Quantity and Unit Price");
+            return;
+        }
+
+        var row = `<tr>
+            <td>${cat}</td>
+            <td>${brand}</td>
+            <td>${prod}</td>
+            <td>${serial}</td>
+            <td>-</td>
+            <td>${qty}</td>
+            <td>${price}</td>
+            <td>${total}</td>
+            <td><button type="button" class="btn btn-danger" onclick="jQuery(this).closest('tr').remove();">X</button></td>
+        </tr>`;
+
+        tbody.append(row);
+
+        // Update Grand Total Mockup
+        var currentGrand = parseFloat($('#total_value').val()) || 0;
+        var newTotal = parseFloat(total) || 0;
+        $('#total_value').val((currentGrand + newTotal).toFixed(2));
+        calNetPayble();
+
+        // Clear Inputs
+        $('#qty').val('');
+        $('#unit_price').val('');
+        $('#total').val('');
+        $('#serial').val('');
+        // Reset Select2 values? Optional: $('#catagory').val(null).trigger('change');
+    }
+
+    function handleReset() {
+        console.log("click for rest form")
+    }
+
+    function handleSubmit() {
+        console.log("click for save")
+        // Your existing validation logic
+    }
+</script>
+
+
+</body>
+</html>
+

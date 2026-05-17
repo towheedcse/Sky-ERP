@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Print Vouchar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<table width="99%" style="margin-left:2px; border:1px solid #ffffff">
+  <tr>
+    <td>
+      <form action="" method="post">
+        <table width="100%"  border="0">
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+	        <td width="8%">
+                       <div align="right" style="color:#FFFFFF "><strong>Vouchar Type </strong></div>
+                </td>
+                <td width="8%">
+                    <select name="vouchar_type" id="vouchar_type" style="width:150px" class="validate[required]"
+                            tabindex="2">
+                        <option value="">Select Voucher Type</option>
+                        <option value="sales_invoice">Sales Invoice</option>
+                        <option value="purchase_invoice">Purchase Invoice</option>
+                        <option value="contra_voucher">Contra Voucher</option>
+                        <option value="">Others</option>
+                    </select>
+                </td>
+            <td width="8%"><div align="right" style="color:#FFFFFF "><strong>Vouchar No. </strong></div></td>
+            <td width="12%"><input type="text" name="voucher_no" value="<?=getRequest('voucher_no')?>"></td>
+            <td width="60%"><input type="submit" class="button" name="search" value="Search"></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+    </form></td>
+  </tr>
+</table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    //case 80: // Press P key for Print Invoice
+        //e.preventDefault();
+        //printContent('printdiv');
+        //return true; 
+       
+  }
+});
+</script>
+</body>
+</html>

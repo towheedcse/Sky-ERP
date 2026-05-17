@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data);
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR);
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/production.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Stock Transfer</title>
+<style>
+input{background-color:#ffffff;border: 1px solid #006699;}
+</style>
+</head>
+<body>
+<form name="frmbuyerorder" method="post">
+<table width="67%" align="center" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td height="162" align="center" valign="top">
+	<table width="82%"  class="addBorder" cellspacing="0" cellpadding="4">
+      <tr>
+        <td colspan="4"><div align="center"><?php if($message) echo $message; ?></div></td>
+      </tr>
+      <tr>
+        <td class="topHeader" colspan="4"><div id="tblTitle" align="left">&nbsp;<strong> Stock Transfer </strong></div></td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">Transfer From </td>
+        <td align="left">
+		<select name="transfer_from" id="transfer_from" style="width:190px" tabindex="1" onChange="clearStockQty()">
+          <option value="">Select Transfer from Store Name</option>
+          <?php	 
+				  	
+					foreach($depo_list as $i=>$v)
+					{
+
+						$delivery_pid = $v->delivery_pid;	
+						$delivery_point_name = $v->delivery_point_name;	
+					?>
+          <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$transfer_from) echo "selected";?> >
+          <?=$delivery_point_name?>
+          </option>
+          <?}?>
+        </select></td>
+        <td align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">Transfer To </td>
+        <td align="left">
+		<select name="store_id" id="store_id" style="width:190px" tabindex="2" onChange="clearStockQty()">
+          <option value="">Select Transfer to Store Name</option>
+          <?php	 
+				  	
+					foreach($depo_list as $i=>$v)
+					{
+
+						$delivery_pid = $v->delivery_pid;	
+						$delivery_point_name = $v->delivery_point_name;	
+					?>
+          <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$store_id) echo "selected";?> >
+          <?=$delivery_point_name?>
+          </option>
+          <?}?>
+        </select></td>
+        <td align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="8%" align="left">&nbsp;</td>
+        <td width="27%" align="left"> Product Name</td>
+        <td width="55%" align="left">
+		<select name="transfer_product" id="transfer_product" style="width:190px" class="validate[required]" onChange="javascript:getProductStock(this.value)" tabindex="3">
+            <option value=''>Select One</option>
+            <?php												
+			foreach($finish_list as $i=>$v)
+			{
+				$product_id = $v->product_id;
+				$product_name = $v->product_name;	
+			?>
+            <option value="<?=$product_id?>"<?php if($transfer_product==$product_id) echo "selected";?> >
+            <?=$product_name?>
+            </option>
+            <?}?>
+        </select></td>
+        <td width="10%" align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">Stock Quantity</td>
+        <td align="left"><input type="text" style="width:147px; " name="stock_qty" id="stock_qty" value="<?=$stock_qty?>" readonly="" class="validate[required]">
+Pcs </td>
+        <td align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">Transfer Quantity</td>
+        <td align="left"><input type="text" style="width:147px; " name="transfer_qty" id="transfer_qty" value="<?=$transfer_qty?>" onKeyUp="chkTransferQty(this.value)" class="validate[required]">
+          Pcs </td>
+        <td align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">Transfer Date</td>
+        <td align="left"><input name="transfer_date" id="transfer_date" style="width:140px;" value="<?=$_REQUEST['transfer_date']?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['transfer_date']);return false;" title="calendar" class="validate[required]" type="text">
+            <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Date" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['transfer_date']);return false;"></td>
+        <td align="left">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">&nbsp;</td>
+        <td align="left"><input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save"></td>
+        <td align="left"><input type="hidden" name="cmd" value="<?=getRequest('cmd')?>"></td>
+      </tr>
+      <tr>
+        <td align="left">&nbsp;</td>
+        <td align="left">&nbsp;</td>
+        <td align="left">&nbsp;</td>
+        <td align="left">&nbsp;</td>
+      </tr>
+    </table></td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+</body>
+
+</html>
+

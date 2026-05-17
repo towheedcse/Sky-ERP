@@ -1,0 +1,993 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Delivery Challan</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+function lineBreak($str){
+	$addressArr = explode("\r\n",$str); 
+	foreach($addressArr as $p1val){
+		$address.=$p1val."<br />";
+	}
+	return $address;
+}
+
+function getAgingDays($aging_date){
+
+    if(empty($aging_date)){
+        return 0;
+    }
+
+    $date = strtotime($aging_date);
+
+    // check if valid date
+    if($date === false){
+        return 0;
+    }
+
+    $today = strtotime(date('Y-m-d'));
+
+    // if date is past or today
+    if($date <= $today){
+        return 0;
+    }
+
+    $diff = $date - $today;
+    $days = floor($diff / (60 * 60 * 24));
+
+    return $days;
+}
+
+require_once(CLASS_DIR.'/common.list.class.php');	
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<style>
+body{ font-size:12px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td{ border-color: #999999; border-style: solid;}
+table{ border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse;}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+
+</style>
+<style>
+.title-box{
+    padding:10px;
+    font-weight:bold;
+    margin-bottom: 20px;
+}
+
+.sign-name{
+    margin-bottom:6px;
+}
+
+.sign-line{
+    border-top:1px dashed #000;
+    padding-top:5px;
+    font-size:11px;
+}
+
+td.border-top-none {
+    border-top: none;
+}
+
+td.border-right-none {
+    border-right: none;
+}
+.signature-table td{
+    padding: 0 20px 20px;
+}
+
+/* Responsive */
+@media (max-width:768px){
+
+table tr{
+    display:block;
+}
+
+table td{
+    display:block;
+    width:100%;
+    margin-bottom:25px;
+}
+
+}
+
+
+h1.company_name {
+    font-size: 16px;
+}
+
+p.company_address {
+    font-size: 12px !important;
+    font-weight:normal;
+    margin:0px !important;
+}
+
+p.company_address-2 {
+    font-size: 12px !important;
+    font-weight:normal;
+    margin:0px !important;
+}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=15,top=5,width=99%,height=1200px')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Delivery Challan</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>body{ font-size:12px;}.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}.title-box{ font-size:12px;} .sign-name{ margin-bottom:6px; font-size:12px;} .sign-line{ border-top:1px dashed #000; padding-top:5px; font-size:11px; } td.border-top-none { border-top: none; } td.border-right-none { border-right: none; } .signature-table td{ padding: 0 20px 20px; }table.delivery-challan p { padding: 0px !important; }.mt10{margin-top: -12px;}h1.company_name { font-size: 20px !important; margin: 0 !important; } p.company_address { font-size: 14px !important; font-weight:normal; margin:0px !important; } p.company_address-2 { font-size: 14px !important; font-weight:normal; margin:0px !important; }td.customer-info p { margin: 0 !important; font-weight: normal; }</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+</head>
+
+<body>
+<form name="frmbooking" method="post">
+
+<div id="printChallanWithWeight">
+<table width="97%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp; Weight Scale Copy </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:normal"> </span>
+      <table width="96%" align="center" border="0">
+        <tr>
+          <td align="center">
+            <?  
+            $project_id = getFromSession('project_id');
+            $psql= "SELECT delivery_point_name as project_name, details AS address FROM ".DELIVERY_POINT_TBL." WHERE delivery_pid ='".$delivery_point."' AND project_id = '".$project_id."'";
+            $prow = mysql_fetch_object(mysql_query($psql));		
+            ?>
+	    <img src="<?=$project_logo?>" class="logo" style="width:50px;" align="center" >
+	    <h1 style="font-size: 16px;" class="company_name"><?=COMPANY_NAME?></h1>
+		<p style="margin-top: 8px; padding-bottom: 4px;" class="company_address">Corporate Office: 57-57A, Uday Tower (2nd Floor), Gulshan-1, Dhaka-1212</p>
+	  	<p style="padding-bottom: 4px;" class="company_address-2">Reg. Office: City Heart (12th Floor), Suite # 13/5,67, Naya Paltan, Dhaka-1000</p>
+	  
+	  </td>
+          </tr>
+      </table>
+     
+	</div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset style="width:95%">
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="12%" align="left" nowrap>Order No </td>
+        <td width="28%" align="left"><?=$voucher_no?></td>
+        <td width="11%" align="left" nowrap><div align="right">Challan No</div></td>
+        <td width="24%" align="left" nowrap><?=$challan_no?></td>
+        <td width="9%" align="left" nowrap> <div align="right">Order Date </div></td>
+        <td width="16%" align="left"><?=$sales_date?></td>
+      </tr>
+      <tr>
+        <td><div align="left">Customer Details </div></td>
+        <td align="left"><?php if($consignee==""){ echo (new CommonList())->normalizeUserName($user_code,$sub_head_name);}else{echo getRetailerName($consignee);}?> <? if($att_name2!="") {echo ", N.I.D No.: ".$att_name2;}?></td>
+		
+        <td width="11%" align="left" nowrap><div align="right">W.O No</div></td>
+	<?php
+            //$wono = $wo_no;
+            //if(isset($und_wo_no) && $und_wo_no != ""){
+            //    $wono = $und_wo_no;
+            //}
+            ?>
+        <td width="24%" align="left" nowrap><?=$ref_voucher?></td>
+        <td width="9%" align="left" nowrap> <div align="right"> Delivery Date </div></td>
+        <td width="16%" align="left"><?=$delivery_date?></td>
+        </tr>
+      <tr>
+	 <tr>
+        <td align="left"><?php if($consignee==""){?>Contact Person<?}else{?> Contact Number<?}?></td>
+        <td>
+	<? 
+	if($consignee==""){
+	echo $att_name1; if($att_designation1!=""){ echo ", ".$att_designation1;} if($att_mobile1!=""){ echo ", Mobile: ".$att_mobile1;}
+	}else{
+	echo getRetailerMobile($consignee);
+	}
+	?>
+	</td>
+		<td><div align="right">Terms of Delivery</div></td>
+		<td><?=$description?></td>
+		<td><div align="right" style="vertical-align:top">Delivery Point</div></td>
+		<td><?php echo $prow->project_name; //getDeliveryPointName($delivery_point); ?></td>
+      </tr>
+      <tr>
+		<td align="left">Address</td>
+        <td>
+        <div align="left">
+        <?php if($consignee==""){ if($head_details!=""){ echo $head_details.", ";}  echo getCustomerAreaTRT($customer);}else{echo getRetailerDetails($consignee);}?>
+        </div>
+        
+        </td>
+		<td>
+			<div align="right"><span style="vertical-align:top">(Product+Vehicle) weight</span></div>
+		</td>
+		<td>
+			<?
+			$totalWeight = (float)$total_p_weight + (float)$vehicle_weight;
+			echo $totalWeight;
+			?>
+		</td>
+		<td><div align="right"><span style="vertical-align:top">Sales Contact</span></div></td>
+		<td>
+        <?
+        if($reference!=""){
+        echo getSalesRefID($reference);        
+		echo ", ".getSalesRefName($reference);
+        }
+        ?>
+        </td>
+        </tr>
+    </table>
+    <br><br>
+   <div align="left" style="font-weight:normal; margin-left:12px">
+    <b><span style="font-weight: bold;
+    font-size: 16px;">Delivery Product List: </span>
+   </div>
+   <br>
+    <table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="2%" align="left">SL.</td>
+        <td width="40%">Description of Goods </td>
+        <!-- <td width="8%">Brand</td>
+        <td width="11%"><div align="center">Order Quantity</div></td> -->
+ 	<td width="11%"><div align="center">Weight</div></td>
+        <td width="11%" align="left"><div align="center">Delivery Qty </div></td>
+        <!-- <td width="11%" align="left"><div align="center">Free Qty</div></td> -->
+      </tr>
+		<?
+		$i=1; $total_order_qty =0; $total_delivery_qty=0; $total_pending_qty=0; $total_free_qty=0;
+	  	foreach($item_list as $val){
+		if(($val->qty>0 && $val->delivery_qty>0) || ($val->qty==0 && $val->free_qty>0)){
+		$total_delivery_qty+=$val->delivery_qty;
+		$total_missing_qty+=$val->missing_qty;
+		$total_value+= ($val->delivery_qty*($val->unit_price-$val->discount_amount));
+		$total_order_qty+=($val->qty+$val->undelivery_qty); $total_free_qty+=$val->free_qty;
+
+        $pWeight = isset($val->weight) ? $val->weight : 0;
+        $productQty = (float)$val->qty + (float)$val->undelivery_qty;
+        //$productWeight = (float)$pWeight * $productQty;
+	$productDeliveryQty = $val->delivery_qty;
+	$productWeight = (float)$pWeight * $productDeliveryQty;
+        $totalProductWeight += $productWeight;
+	$decimals = 0;
+	if(strtolower($val->m_unit) == "kg"){
+            $decimals = 2;
+        }
+		?>
+      <tr>
+        <td align="left"><?=$i?></td>
+        <td><?=(new CommonList())->normalizeProductName($val->product_code,$val->product_name)?>
+          <? if($val->details!=""){echo $val->details;}else{ echo $val->product_desc;}?></td>
+        <!-- <td><?=$val->brand_name?></td>
+          
+        <td align="left"><div align="right">
+            <?=number_format($val->qty+$val->undelivery_qty,$decimals)?>
+        </div></td> -->
+	<td align="left"><div align="right"><?= $productWeight > 0 ? number_format($productWeight,2) : "" ?></div></td>
+        <td align="left"><div align="right">
+            <?=number_format($productDeliveryQty,$decimals)?>
+        </div></td>
+        <!-- <td align="right"><?=number_format($val->free_qty,$decimals)?></td> -->
+      </tr> 
+		<? }?>
+		<?$i++;}?>
+        <tr>
+        <td colspan="2" align="left"><div align="right"> Total</div></td>
+		<!-- <td align="right"><? echo number_format($total_order_qty,2);?></td> -->
+		<td align="right"><? echo number_format($totalProductWeight,2);?></td>
+		<td align="right"><? echo number_format($total_delivery_qty,2);?></td>
+		<!-- <td align="right"><? echo number_format($total_free_qty,2);?></td> -->
+        </tr>
+    </table>
+
+    <br><br>
+
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">     
+  
+ 	<tr>
+        <td width="33%" height="84" align="center">
+		<div style="width:275px;margin-bottom: -20px;"><?=$created_by?></div>
+		<div style="width:275px; border-top:1px dashed #000; margin-top:25px">Prepared By</div>
+	</td>
+        <td width="33%" align="center">
+		<div style="width:275px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:268px; border-top:1px dashed #000; margin-top:25px">Checked By</div>
+	</td>
+	<td width="33%" align="center">
+		<div style="width:275px;margin-bottom: -20px;"><?php echo !empty($approved_by) ? $approved_by : "&nbsp;"; ?></div>
+		<div style="width:268px; border-top:1px dashed #000; margin-top:25px">Approved By</div>
+	</td>
+      </tr>
+
+    </table><br>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+<br/>
+</div>	
+<p align="center" id="btnPrint" style="margin-bottom:20px;">
+  <input value="Print" onClick="printContent('printChallanWithWeight')" name="save" class="button" type="submit" />
+</p>
+<!--Start Sales Invoice -->
+
+<hr style="page-break-after:always">
+
+
+<div id="printChallan">
+<table width="97%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp; Challan </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:normal"> </span>
+      <table width="96%" align="center" border="0">
+        <tr>
+          <td align="center">
+            <?php 
+            $project_id = getFromSession('project_id');
+            $psql= "SELECT delivery_point_name as project_name, details AS address FROM ".DELIVERY_POINT_TBL." WHERE delivery_pid ='".$delivery_point."' AND project_id = '".$project_id."'";
+            $prow = mysql_fetch_object(mysql_query($psql));		
+            ?>
+	    <img src="<?=$project_logo?>" class="logo" style="width:50px;" align="center" >
+	    <h1 style="font-size: 16px;" class="company_name"><?=COMPANY_NAME?></h1>
+		<p style="margin-top: 8px; padding-bottom: 4px;" class="company_address">Corporate Office: 57-57A, Uday Tower (2nd Floor), Gulshan-1, Dhaka-1212</p>
+	  	<p style="padding-bottom: 4px;" class="company_address-2">Reg. Office: City Heart (12th Floor), Suite # 13/5,67, Naya Paltan, Dhaka-1000</p>
+	 
+	  </td>
+          </tr>
+      </table>
+     
+	</div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	<fieldset style="width:95%">
+	
+<table class="delivery-challan" width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+<tr>
+    <td width="60%">Customer Name: <?php if($consignee==""){ echo $sub_head_name;}else{echo getRetailerName($consignee);}?> <? if($att_name2!="") {echo ", N.I.D No.: ".$att_name2;}?></td>
+    <td rowspan="2">
+	<p style="padding: 5px 0;text-align:center">Challan No </p> 
+	<p class="mt10" style="text-align:center"><span class="inside-text"><?=$voucher_no?></span></p></td>
+    <td rowspan="2">
+	<p style="padding: 5px 0;text-align:center">Delivery Date </p> 
+	<p class="mt10" style="text-align:center"><span class="inside-text"><?=$delivery_date?></span></p></td>
+</tr>
+
+<tr>
+    <td>Contact Person: <?=$contact_person?></td>
+</tr>
+
+<tr>
+    <td>Mode/Terms of Payment: <?=getAgingDays($aging_date) . " days"?></td>
+    <td rowspan="2">
+	<p style="padding: 5px 0;text-align:center">W.O No </p> 
+	<p class="mt10" style="text-align:center"><span class="inside-text"><?=$ref_voucher?></span></p> 
+	</td>
+    <td rowspan="2">
+	<p style="padding: 5px 0;text-align:center">Order Date </p> 
+	<p class="mt10" style="text-align:center"><span class="inside-text"><?=$sales_date?></span></p>
+    </td>
+</tr>
+
+<tr>
+    <td>Delivery Address: <?=$delivery_address?></td>
+</tr>
+<tr>
+    <td>Note: <?=$description?></td>
+    <td>
+	<p style="padding: 5px 0;">Vehicle No: <span class="inside-text"><?=$vehicle_no?></span> </p>
+	<p class="mt10" style="padding: 5px 0;">Driver Name: <span class="inside-text"><?=$driver_name?></span> </p>
+    </td>
+    <td>
+	<p style="padding: 5px 0;">VAT Challan No: <span class="inside-text"><?=$vat_no?></span> </p>
+    </td>
+</tr>
+</table>
+
+
+
+
+    <br><br>
+   <div align="left" style="font-weight:normal; margin-left:12px">
+    <b><span style="font-weight: bold;
+    font-size: 16px;">Delivery Product List: </span>
+   </div>
+   <br>
+    <table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="2%" align="left">SL.</td>
+        <td width="40%">Description of Goods </td>
+        <!-- <td width="8%">Brand</td>
+        <td width="15%"><div align="center">Order Quantity</div></td> -->
+	<td width="15%" align="left"><div align="center">Delivery Qty </div></td>
+ 	<td width="15%"><div align="center">Gross Weight</div></td>
+ 	<td width="15%"><div align="center">Net. Weight</div></td>
+        <!-- <td width="15%" align="left"><div align="center">Free Qty</div></td> -->
+      </tr>
+		<?
+		$i=1; $total_order_qty =0; $total_delivery_qty=0; $total_pending_qty=0; $total_free_qty=0;
+		$total_gross_weight =0;$total_net_weight =0;
+	  	foreach($item_list as $val){
+		if(($val->qty>0 && $val->delivery_qty>0) || ($val->qty==0 && $val->free_qty>0)){
+		$total_delivery_qty+=$val->delivery_qty;
+
+		$total_gross_weight +=$val->gross_weight;
+		$total_net_weight +=$val->net_weight;
+
+		$total_missing_qty+=$val->missing_qty;
+		$total_value+= ($val->delivery_qty*($val->unit_price-$val->discount_amount));
+		$total_order_qty+=($val->qty+$val->undelivery_qty); $total_free_qty+=$val->free_qty;
+		$decimals = 0;
+		if(strtolower($val->m_unit) == "kg"){
+		    $decimals = 2;
+		}
+		?>
+      <tr>
+        <td align="left"><?=$i?></td>
+        <td><?=(new CommonList())->normalizeProductName($val->product_code,$val->product_name)?>
+          <? if($val->details!=""){echo $val->details;}else{ echo $val->product_desc;}?></td>
+        <!-- <td><?=$val->brand_name?></td>
+        <td align="left"><div align="right">
+            <?=number_format($val->qty+$val->undelivery_qty,$decimals)?>
+        </div></td> -->
+        <td align="left"><div align="right">
+            <?=number_format($val->delivery_qty,2)?>
+        </div></td>
+        <td align="left"><div align="right">
+            <?=number_format($val->gross_weight,2)?>
+        </div></td>
+        <td align="left"><div align="right">
+            <?=number_format($val->net_weight,2)?>
+        </div></td>
+        <!-- <td align="right"><?=number_format($val->free_qty,$decimals)?></td> -->
+      </tr> 
+		<? }?>
+		<?$i++;}?>
+        <tr>
+        <td colspan="2" align="left"><div align="right"> Total</div></td>
+		<td align="right"><? echo number_format($total_order_qty,2);?></td>
+		<td align="right"><? echo number_format($total_gross_weight,2);?></td>
+		<td align="right"><? echo number_format($total_net_weight,2);?></td>
+		<!-- <td align="right"><? echo number_format($total_delivery_qty,2);?></td>
+		<td align="right"><? echo number_format($total_free_qty,2);?></td> -->
+        </tr>
+    </table>
+
+    <br><br>
+
+<table class="signature-table" style="width:98%; border-collapse:collapse; text-align:center;">
+
+<tr>
+    <td style="width:25%;">
+        <div class="title-box">
+            Products Recived in Good Condition
+        </div>
+    </td>
+
+    <td colspan="4">
+        <div class="title-box">
+            for <?=$project_name?>
+        </div>
+    </td>
+</tr>
+
+<tr>
+
+    <td class="border-top-none">
+        <div class="sign-name">&nbsp;</div>
+        <div class="sign-line" style="border-top:1px dashed #000;">Receiver Signature</div>
+    </td>
+
+    <td class="border-top-none border-right-none">
+        <div class="sign-name">&nbsp;</div>
+        <div class="sign-line" style="border-top:1px dashed #000;">Prepared By</div>
+    </td>
+
+    <td class="border-top-none border-right-none">
+        <div class="sign-name">&nbsp;</div>
+        <div class="sign-line" style="border-top:1px dashed #000;">Checked By</div>
+    </td>
+
+    <td class="border-top-none border-right-none">
+        <div class="sign-name">&nbsp;</div>
+        <div class="sign-line" style="border-top:1px dashed #000;">Verified By</div>
+    </td>
+
+    <td class="border-top-none">
+        <div class="sign-name">&nbsp;</div>
+        <div class="sign-line" style="border-top:1px dashed #000;">Authorized Signatory</div>
+    </td>
+
+</tr>
+
+</table>
+<br>
+	</fieldset>
+	</div>
+	</td>
+  </tr>
+</table>
+<br/>
+</div>	
+<p align="center" id="btnPrint"  style="margin-bottom:20px;">
+  <input value="Print" onClick="printContent('printChallan')" name="save" class="button" type="submit" />
+</p>
+<!--Start Sales Invoice -->
+
+<hr style="page-break-after:always">
+<div id="printInvoice">
+<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>SALES INVOICE </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center"><br></div>	
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	
+	<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+      <tr>
+        <td width="40%" colspan="2" rowspan="2" align="left" nowrap>
+		<div style="display:flex; gap:20px;align-items: center;">
+		<img src="<?=$project_logo?>" class="logo" style="width:60px;">
+		<h1 style="font-size: 16px;" class="company_name"><?=COMPANY_NAME?></h1></div>
+		<p style="font-size:12px; font-weight:normal" class="company_address">Corporate Office: 57-57A, Uday Tower (2nd Floor), Gulshan-1, Dhaka-1212</p>
+	  	<p style="padding-bottom: 4px;font-size:12px; font-weight:normal" class="company_address-2">Reg. Office: City Heart (12th Floor), Suite # 13/5,67, Naya Paltan, Dhaka-1000</p>
+        </td>
+        <td width="10%" height="36" align="left" nowrap>Invoice No:
+		<?php 
+		$voucherAndChallan = $voucher_no;
+		if(!empty($challan_no)){
+			$voucherAndChallan .= " / ".$challan_no;
+		}
+		echo $voucherAndChallan;
+
+		?>
+         </td>
+        <td width="50%" align="center" nowrap colspan="2"> 
+		<div align="center">Order Date </div>
+		<div align="center"><?=$sales_date?></div>
+	</td>
+        <!-- <td width="26%" align="left"><?=$sales_date?></td> -->
+      </tr>
+      <tr>
+        <td height="37" align="left" nowrap>W.O No: <?=$ref_voucher?></td>
+        <td align="center" colspan="2">
+		<div align="center">Delivery Point </div>
+		<div align="center"><?=$delivery_point_name?></div>
+	</td>
+        <!-- <td colspan='2'><?php echo $delivery_point_name; //getDeliveryPointName($delivery_point); ?></td> -->
+      </tr>         
+	 
+    <tr>
+       <td colspan="2" align="left" nowrap class="customer-info">
+    <p>
+        Customer:
+        <?php 
+            echo $sub_head_name;
+        ?>
+    </p>
+    <p>
+        Address:
+        <?php 
+            if($head_details!="") { echo ", ".$head_details; }
+            if($att_name2!="") { echo ", N.I.D No.: ".$att_name2; }
+        ?>
+    </p>
+
+    <p>
+        Att. Contact:
+        <?php 
+            echo $att_name1;
+            if($att_designation1!=""){ echo ", ".$att_designation1; }
+            if($att_mobile1!=""){ echo ", Mobile: ".$att_mobile1; }
+        ?>
+    </p>
+
+    <?php if($phone!=""){ ?>
+        <p>Phone: <?php echo $phone; ?></p>
+    <?php } ?>
+
+    <?php if($mobile!=""){ ?>
+        <p>Mobile: <?php echo $mobile; ?></p>
+    <?php } ?>
+
+    <?php if($email!=""){ ?>
+        <p>Email: <?php echo $email; ?></p>
+    <?php } ?>
+
+	</td>
+        <td align="left" nowrap>Ref.
+		<?php
+		$parts = [];
+
+		if (!empty($att_name1)) {
+		    $parts[] = $att_name1;
+		}
+
+		if (!empty($att_designation1)) {
+		    $parts[] = $att_designation1;
+		}
+
+		if (!empty($att_mobile1)) {
+		    $parts[] = "Mobile: " . $att_mobile1;
+		}
+
+		echo implode(", ", $parts);
+		?>
+	</td>
+        
+        <td align="left" nowrap colspan="2">
+		<div align="center">Delivery Date </div>
+		<div align="center"><?=$delivery_date?></div>
+	</td>
+        <!-- <td align="left"><?=$delivery_date?></td> -->
+      </tr>
+	  
+      <tr>
+        <td height="32" align="left" colspan="4">Note: <?=$description?>&nbsp;</td>
+        <td align="left" nowrap>
+		<div align="center">VAT Challan No: <?=$vat_no?></div>
+	</td>
+      </tr>
+    </table>
+   <br><div align="left" style="font-weight:normal; margin-left:12px">
+   <b><span style="font-weight: bold;
+    font-size: 16px;">Delivery Product List: </span>
+   </div>
+   <br>
+   <table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+     <tr>
+       <td width="2%" align="left">SL.</td>
+       <td width="30%">Description of Goods </td>
+       <!-- <td width="7%">Brand</td>
+       <td width="7%"><div align="center">Order Quantity</div></td>
+       <td width="8%" align="left"><div align="center">Order  Amount </div></td>
+       <td width="8%"><div align="center">Undelivery Quantity</div></td> -->
+       <td width="8%" align="left"><div align="center">Delivery Qty </div></td>
+       <!-- <td width="5%" align="left"><div align="center">Free Qty</div></td> -->
+       <td width="8%" align="left"><div align="center">Rate </div></td>
+       <!-- <td width="5%" align="left"><div align="center">Discount / Pcs </div></td> -->
+
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+       <td width="5%" align="left"><div align="center">VAT </div></td>
+<?php //} ?>
+
+       <td width="12%" align="left"><div align="center">Delivery Amount </div></td>
+     </tr>
+     <?
+		$i=1; $totalDeliveryAmountBefoureDiscount=0; $total_order_qty =0; $total_order_amount=0;$total_delivery_qty=0; $total_pending_qty=0;
+		$total_free_qty=0;
+	  	foreach($item_list as $val){
+		if(($val->qty>=0 && $val->delivery_qty>=0) || ($val->qty==0 && $val->free_qty>0)){
+		$total_delivery_qty+=$val->delivery_qty;		
+		$total_order_qty+=($val->qty+$val->undelivery_qty);	
+		$total_order_amount+=$val->total;	
+		$total_free_qty+=$val->free_qty;
+		$decimals = 0;
+		if(strtolower($val->m_unit) == "kg"){
+		    $decimals = 2;
+		}
+		?>
+     <tr>
+       <td align="left"><?=$i?></td>
+       <td><?=(new CommonList())->normalizeProductName($val->product_code,$val->product_name)?>
+         <? if($val->details!=""){echo ", ".$val->details;}else{ echo ", ".$val->product_desc;}?></td>
+       <!-- <td><?=$val->brand_name?></td>
+       <td align="left"><div align="center">
+           <?=number_format($val->qty+$val->undelivery_qty,$decimals)?>
+       </div></td>
+       <td align="left"><div align="center">
+           <?=number_format($val->total,2)?>
+       </div></td>
+       <td align="left"><div align="center">
+           <? 
+           //$pending_qty = ($val->qty-$val->totaldelivery_qty); 
+           $pending_qty = ($val->undelivery_qty); 
+           $total_pending_qty+=$pending_qty; echo $pending_qty;
+           ?>
+       </div></td> -->
+       <td align="left"><div align="center">
+           <?=number_format($val->delivery_qty,$decimals)?>
+       </div></td>
+       <!-- <td align="center"><?=number_format($val->free_qty,$decimals)?></td> -->
+       <td><div align="center">
+           <?=number_format($val->unit_price,2)?>
+       </div></td>
+       <!-- <td><div align="center">
+           <? echo $val->discount_amount.'('.$val->discount_per_qty . '%)';?>
+       </div></td> -->
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+       <td><div align="center">
+           <? echo number_format($val->vat_amount,2).'('.number_format($val->vat,2) . '%)';?>
+       </div></td>
+<?php //} ?>
+       <td align="right"><div align="right">
+           <?
+	   // $unit_discount = (($val->unit_price/100) * $val->overall_discount); 
+	   $unit_discount = (($val->unit_price/100) * $val->discount_per_qty);  
+	   $unitDiscountAmount = $unit_discount*$val->delivery_qty;
+	   $deliveryAmount = (($val->unit_price*$val->delivery_qty)-$unitDiscountAmount+$val->vat_amount);
+	   $delivery_amount = $deliveryAmount;
+	   $totalDeliveryAmountBefoureDiscount+=$deliveryAmount;
+	   echo number_format($deliveryAmount,2);
+
+	   ?>
+       </div></td>
+     </tr>
+     <? }?>
+     <?$i++;}?>
+     <tr>
+       <td colspan="2" align="left"><div align="right">Grand Total</div></td>
+	  <!--  <td align="center"><? echo number_format($total_order_qty,2);?></td>
+	   <td align="center"><? echo number_format($total_order_amount,2);?></td>
+	   <td align="center">
+	    <?		
+		echo number_format($total_pending_qty,2);
+		?>	   </td> -->
+	   <td align="center"><? echo number_format($total_delivery_qty,2);?></td>
+	   <!-- <td align="center"><? echo number_format($total_free_qty,2);?></td> -->
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+    <td>&nbsp;</td>
+<?php //} ?>
+	   <td>&nbsp;</td>
+	   <td width="13%" align="right"><div align="right"> <? echo number_format($totalDeliveryAmountBefoureDiscount,2);?> </div></td>
+     </tr>
+<?php
+ //$colSpan = 4;
+ //if(isset($direct_invoice) && $direct_invoice){
+    $colSpan = 5;
+ //}
+?>
+
+<?php $GDiscountAmount=(($totalDeliveryAmountBefoureDiscount/100)*$general_discount_percent);?>
+     <!-- <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">DD Commission (<?=number_format($general_discount_percent,2)?> %)</div></td>
+       <td align="right"><?=number_format($GDiscountAmount,2);?></td>
+     </tr> -->
+
+<?php
+	   $deliveryAmountAfterDiscount = ($totalDeliveryAmountBefoureDiscount - $GDiscountAmount);
+	   $EDiscountAmount = (($deliveryAmountAfterDiscount/100)*$exclusive_discount_percent);
+	  
+	   $orderValueAfterDiscount = ($total_order_amount-($GDiscountAmount+$EDiscountAmount));
+	   ?>
+     <!-- <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Exclusive Discount (<?=number_format($exclusive_discount_percent,2)?> %)</div></td>
+       <td align="right">
+	   <?=number_format($EDiscountAmount,2);
+	   ?>	   </td>
+     </tr> -->
+
+  <?php
+   if($delivery_amount>0){
+	$additional_discount = (($additional_discount/$orderValueAfterDiscount)*$orderValueAfterDiscount);
+   }else{
+	$order_amount=($order_amount-($GDiscountAmount+$EDiscountAmount+$product_discount));
+	$additional_discount = (($additional_discount/$order_amount)*$delivery_amount);
+   }
+   ?>
+
+     <!--<tr>
+       <td colspan="<?=$colSpan?>" align="left">       
+       <?php if($additional_discount_percent >0){?>
+       <div align="right">Additional Discount (<?php echo number_format($additional_discount_percent,2); ?> %) </div>
+       <?php }else{?>
+       <div align="right">Additional Discount </div>
+       <?php }?>
+       </td>
+       <td align="right">
+   <?=number_format($additional_discount,2);?>	   </td>
+     </tr>
+<?php if(isset($additional_cost) && $additional_cost > 0){ ?>
+     <tr>
+<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Additional Cost</div></td>
+<?php //} ?>
+       <td align="right"><?=number_format($additional_cost,2);?></td>
+     </tr>
+<?php } ?>
+<?php // if(isset($direct_invoice) && $direct_invoice){ ?>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left">       
+       <?php if(isset($vat_type) && $vat_type == "percent"){?>
+       <div align="right">VAT (<?php echo number_format($additional_vat_percent,2); ?> %) </div>
+       <?php }else{?>
+       <div align="right">VAT </div>
+       <?php }?>
+       </td>
+       <td align="right"><?=number_format($additional_vat_amount,2);?></td>
+     </tr>
+<?php //} ?> -->
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Net Delivery Amount </div></td>
+       <td align="right"><?php
+$totalDiscountAmount = ($GDiscountAmount+$EDiscountAmount+$additional_discount);
+$delivery_amount = (($delivery_amount + $additional_cost + $additional_vat_amount) - $totalDiscountAmount);
+
+ echo number_format($delivery_amount,2);
+
+?></td>
+     </tr>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Previous Balance </div></td>
+       <td align="right">
+	   <div align="right"> 
+	   <? 
+	   echo abs($previour_balance); 
+	   if ($previour_balance>0){ 
+	   echo " Dr"; $totalReceivable =($delivery_amount+$previour_balance); 
+	   }else{ 
+		   echo " Cr"; 
+		   if($delivery_amount<=abs($previour_balance)){
+		   $totalReceivable =(abs($previour_balance)-$delivery_amount); $amountType = "Cr";
+		   }else{ 
+		   $totalReceivable =($delivery_amount-abs($previour_balance)); $amountType = "Dr";
+		   }
+	   }
+	   ?>
+	   </div>	   </td>
+     </tr>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Total  Receivable Amount </div></td>
+       <td align="right" rowspan="2"><? echo $totalReceivable; echo " ".$amountType; ?></td>
+     </tr>
+     <tr>
+	   <td colspan="2" align="right">Amount Chargeable (in words) </td>
+       <td colspan="3" align="left">
+	   <?php
+	    $numberArr = explode(".",format_amount_exact($net_payble));
+		$number1 = $numberArr[0];
+		$number2 = $numberArr[1];
+		
+	    $inwords = convert_number($number1);
+	    if($number2>0){
+	    $inwords2 = convert_number($number2);
+	    $inwords.= " Taka ".$inwords2." paisa ";
+	    }else{ $inwords.=" Taka ";} 
+	    echo $inwords." Only";
+	   ?>	   </td>
+     </tr>
+   </table>
+
+  <div style="display:block; height:3px"></div>
+
+  <br>
+   <div align="left" style="font-weight:normal; margin-left:15px">
+   <b>Declaration:</b> We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct 
+   </div>
+   <br>
+	<table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">     
+    
+
+ 	<tr>
+        <td width="33%" height="84" align="center">
+		<div style="width:275px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:275px; border-top:1px dashed #000; margin-top:25px">Prepared By</div>
+	</td>
+        <td width="33%" align="center">
+		<div style="width:275px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:268px; border-top:1px dashed #000; margin-top:25px">Checked By</div>
+	</td>
+	<td width="33%" align="center">
+		<div style="width:275px;margin-bottom: -20px;">&nbsp;</div>
+		<div style="width:268px; border-top:1px dashed #000; margin-top:25px">Approved By</div>
+	</td>
+      </tr>
+    </table><br>
+   <div align="center" style="font-weight:normal; margin-bottom:10px;font-size: 12px;">
+   <b>**This is a system-generated invoice no signature is required**</b>
+   </div>
+	</div>
+	</td>
+  </tr>
+</table>
+<br/>
+</div>	
+<p align="center" id="btnPrint" style="margin-bottom:20px;padding-bottom: 50px;">
+  <input value="Print" onClick="printContent('printInvoice')" name="save" class="button" type="submit" />
+</p>
+</form>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+</script>
+</body>
+</html>

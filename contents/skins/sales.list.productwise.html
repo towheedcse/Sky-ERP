@@ -1,0 +1,386 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR); $currency=1; 
+$delivery_point	= getRequest('delivery_point');   
+$product		= getRequest('product');  
+$district 		= getRequest('district');  
+$area 			= getRequest('area'); 
+$order_by 		= getRequest('order_by'); 
+$srcParam 		= "&delivery_point=$delivery_point&product=$product&district=$district&area=$area&order_by=$order_by";
+
+require_once(CLASS_DIR . '/common.list.class.php');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<title>General ERP::Sales List</title>
+<style>
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1119"><div><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="94%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+		  <tr>
+          <td align="left" class="topbg" height="26" colspan="7"><span><strong>Search Sales List  </strong></span></td>
+		 </tr>
+		 <tr>
+		   <td width="8%">From</td>
+		   <td width="19%">
+           <input name="date_from" id="date_from" style="width:140px;" value="<?=$_REQUEST['date_from']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" class="validate[required]" tabindex="1" type="text">
+			 <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" width="15" height="15"> </td>
+		   <td width="8%">To</td>
+		   <td width="22%"><input name="date_to" id="date_to" style="width:140px;" value="<?=$_REQUEST['date_to']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" class="validate[required]" tabindex="2" type="text">
+			 <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" width="15" height="15"> </td>
+		   <td width="9%">District</td>
+		   <td width="20%">
+           <select name="district" id="district" style="width:170px" tabindex="3" onChange="javascript:getAreaList(this.value)" >
+               <option value="">Select Sales District</option>
+               <?php			
+				foreach($district_list as $i=>$v)
+				{
+					$district_id = $v->district_id;	
+					$district_name = $v->district_name;	
+				?>
+               <option value="<?=$district_id?>"<?php if($district_id==$district) echo "selected";?> >
+               <?=$district_name?>
+               </option>
+               <?}?>
+             </select></td>
+		   <td width="14%">
+           <select name="order_by" style="width:120px" tabindex="4">
+		     <option value="Max Sales" <? if($order_by=="Max Sales"){echo "selected";}?>> Sort by Max Sales Qty</option>
+		     <option value="Min Sales" <? if($order_by=="Min Sales"){echo "selected";}?>>Sort by Min Sales Qty</option>
+		   </select>
+           </td>
+		 </tr>
+		 <tr>
+		   <td>Store</td>
+		   <td>
+           <select name="delivery_point" id="delivery_point" style="width:170px" tabindex="5">
+              <option value="">Sales Delivery Point</option>
+              <?php	 
+                
+                foreach($depo_list as $i=>$v)
+                {
+                    $delivery_pid = $v->delivery_pid;	
+                    $delivery_point_name = $v->delivery_point_name;	
+                ?>
+              <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$delivery_point) echo "selected";?> >
+              <?=$delivery_point_name?>
+              </option>
+              <?}?>
+            </select>	
+           </td>
+		   <td>Product</td>
+		   <td><select name="product" id="product" style="width:180px" tabindex="6">
+		     <option value="">Select Product Name</option>
+		     <?php	 
+			foreach($product_list as $i=>$v)
+			{
+				if($v->product_type=="Sales Item"){
+				$product_id = $v->product_id; $product_name = (new CommonList())->normalizeProductName($v->product_code,$v->product_name).", ".$v->product_desc;	
+			?>
+		     <option value="<?=$product_id?>"<?php if($product_id==$product) echo "selected";?> >
+		       <?=$product_name?>
+		       </option>
+		     <?}}?>
+		     </select></td>
+		   <td>Area</td>
+		   <td><select name="area" id="area" style="width:170px" tabindex="7"  >
+             <option value="">Select Sales Area</option>
+             <?php	
+			  foreach($area_list as $i=>$v){
+				$area_id = $v->area_id;	
+				$area_name = $v->area_name;	
+			  ?>
+             <option value="<?=$area_id?>"<?php if($area_id==$area) echo "selected";?> >
+             <?=$area_name?>
+             </option>
+             <?}?>
+           </select></td>
+		   <td><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		 </tr>
+		</table>       
+        
+		<? 
+		if( getRequest('submit') || $_REQUEST['date_from']!="" ) {
+		require_once(CLASS_DIR.'/purchase.class.php');	
+		$poApp 			= new Purchase();			  
+		//$salesby = getRequest('salesby'); 
+		$salesby = "Qty"; 		
+		?>
+		
+        <br>
+        <table bgcolor="#FFFFFF" width="100%" align="center" border="0" cellspacing="5" cellpadding="0">
+          <tr>
+            <th scope="col">
+            <div class="page_link">  
+              <?
+                $date_from 	= getRequest('date_from'); 
+                $date_to   	= getRequest('date_to'); 			 			 	
+                $from_rs	= getRequest('from');
+                $to_rs=$from_rs+200;
+                if($from_rs>=200){$from_rs =$from_rs+1;}
+                if($from_rs=="" || $from_rs==0){$from_rs =1;}
+                if($to_rs=="" || $totalrecord<200){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >200){$to_rs=200;}
+                if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+                ?>
+                <span style="float:left">&nbsp;Results <strong><?=$from_rs?> - <?=$to_rs?> </strong> of <strong><?=$totalrecord;
+                
+              if($totalrecord>0){?>
+              </span>
+              <span style="float:right">
+               Page:
+              <?php	 						
+                $plink = getRequest('page_no');
+                if($plink==""){$plink=1;}
+                if($totalrecord > 200)
+                {
+                    $res = $totalrecord/200;
+                    $res=(int)$res;
+                    if(($totalrecord%200)!=0)
+                    {	
+                        $totalpage = $res+1;
+                    }
+                    else
+                    {
+                    $totalpage = $res;
+                    }
+                }
+                else
+                {
+                    $totalpage = 1;
+                }		
+        
+        				
+                if($totalrecord >200)
+                {
+                    $two = getRequest('from');
+                    $pno = getRequest('page_no');
+                    $pno = $pno-1;
+                    $frm = $two - 200;				
+                    
+                    if($pno <= $totalpage && $pno >0)
+                    {
+                        echo "<a id='$pno' href='?app=sales.report&cmd=product_wise_sl_list&date_from=$date_from&date_to=$date_to$srcParam&from=$frm&to=200&page_no=$pno'><b>Prev</b></a>&nbsp;";
+                    }
+                }	
+        
+                if($totalpage>=1)
+                {	
+                   
+
+				$i = 1;
+
+				$from =0; $to=200;
+
+				echo "<select onChange='goPage(this.value)'>";
+
+				while($i<=$totalpage)
+				{							
+
+                    echo "<option  value='?app=sales.report&cmd=product_wise_sl_list&date_from=$date_from&date_to=$date_to$srcParam&from=$from&to=$to&page_no=$i'"; 
+
+                    if($i==$plink){ echo " selected='selected' ";} 
+
+                    echo ">$i</option>";
+
+					$i++;
+					$from =$from + 200;
+					if($to >$totalrecord){ $to=$totalrecord;}
+				}
+
+				echo "</select>";
+            
+                }
+                
+                if($totalrecord >200)
+                {
+                    $f = getRequest('from');
+                    $page = getRequest('page_no');
+                    $page = $page+1;
+                    if($f ==""||$f ==0){ $f=200;$page=2;}else{ $f=$f+200;} 
+                    $t = 200;
+                    if($t >$totalrecord){ $t=$totalrecord;} 
+                    if($page <= $totalpage)
+                    {
+                        echo "&nbsp;<a id='$page' href='?app=sales.report&cmd=product_wise_sl_list&date_from=$date_from&date_to=$date_to$srcParam&from=$f&to=$t&page_no=$page'><b>Next</b></a>";
+                    }
+                }
+        
+          ?>&nbsp;&nbsp;&nbsp;&nbsp;
+           </span>
+           <?}?>
+          </div>
+          
+            </th>
+          </tr>
+        </table>
+        
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp; Product Wise Sales List by <?=$salesby?></strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">
+			  <span style="font-size:25px; font-weight:bold"> <?=$row->project_name?></span><br>
+			  <span style="font-size:16px; font-weight:bold"><?=$row->location?></span></div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+				<td width="3%" align="left" nowrap>Sl</td>
+				<td width="8%" align="left" nowrap>Voucher No</td>
+				<td width="19%" align="left" nowrap>Customer Details</td>
+				<td width="12%" align="left">Store Name</td>
+				<td width="20%" align="left" nowrap>Product Name </td>				
+				<td width="9%" align="left" nowrap>Sales Date</td>
+				<td width="10%" align="right" nowrap>Sales <?=$salesby?> </td>
+				<td width="9%" align="right" nowrap>Delivery <?=$salesby?> </td>
+				<td width="10%" align="right" nowrap>Undelivery <?=$salesby?> </td>
+				</tr>
+				<?
+				  $sl=1; $totalStock = 0; $totalSales = 0; $totalDelivery = 0;  $totalReturn = 0; $Qtys=0;
+				  foreach($record_list as $val){
+				  $voucher_no= $val->voucher_no; $deliveryQty=0; $sdm_id = $val->sales_delivery_master_id;
+				  $totalCR  	= $poApp->getTotalCreditStock($val->product,getFromSession('project_id'));
+				  $totalDR  	= $poApp->getTotalDebitStock($val->product,getFromSession('project_id'));					 
+				  $StockQty  	= ($totalDR - $totalCR);
+				  
+				  if($salesby=="Qty"){
+				  $totalStock+=$StockQty;				 
+				  $sales 	= getTotalSalesOrderQtys($val->voucher_no,$val->product);  $sales.=' '.$val->m_unit;
+				  $totalSales+= getTotalSalesOrderQtys($val->voucher_no,$val->product);
+                  		  $deliveryQty = getTotalSalesDeliveryQty($val->voucher_no,$val->product);
+				  $delivery = $deliveryQty.' '.$val->m_unit;
+				  $totalDelivery+=$deliveryQty;
+				  $return 	= $val->undelivery_qty.' '.$val->m_unit;
+				  $totalReturn+=$val->undelivery_qty;
+				  $mUnit = $val->m_unit;
+				  }else{ 
+				  $StockQty=($StockQty*$val->unit_price);
+				  $totalStock+=(($totalDR - $totalCR)*$val->unit_price);
+				  $Qtys = getTotalSalesOrderQtys($val->voucher_no,$val->product);
+				  $sales 	= ($Qtys * $val->unit_price);
+				  $totalSales+=($Qtys *$val->unit_price);
+				  $sales.=" ".$val->curr_symble;
+                  		  $deliveryQty = getTotalSalesDeliveryQty($val->voucher_no,$val->product);
+				  $delivery = ($deliveryQty*$val->unit_price);
+				  $totalDelivery+=($deliveryQty*$val->unit_price);
+				  $delivery.=" ".$val->curr_symble;
+				  $return 	= ($val->undelivery_qty*$val->unit_price);
+				  $totalReturn+=($val->undelivery_qty*$val->unit_price);
+				  $return.=" ".$val->curr_symble;
+				  $mUnit = $val->curr_symble;
+				  }					  
+				?>
+			  <tr>
+				<td align="left" nowrap><?=$sl?></td>
+				<td align="left" nowrap>                
+                <a href="?app=delivery_challan&cmd=print_invoice&voucher_no=<?=$voucher_no?>&sdm_id=<?=$sdm_id?>"><?=$val->voucher_no?></a>
+                </td>
+				<td align="left"><? echo getPartyDetails($val->customer);?></td>
+				<td align="left"><?=$val->delivery_point_name?></td>
+				<td align="left"><?=$val->product_name?></td>				
+				<td align="left"><? echo $val->sales_date;?></td>
+				<td align="right" nowrap><?=$sales?></td>
+				<td align="right" nowrap><?=$delivery?></td>
+				<td align="right" nowrap><?=$return?></td>
+				</tr>
+			  
+			<? $sl++;}?>
+			 <tr>
+				<td colspan="6" align="left" nowrap>
+				<div align="right">Total <?=$salesby?></div></td>
+				<td align="right" nowrap><? echo $totalSales.' '.$mUnit;?> </td>
+				<td align="right" nowrap><? echo $totalDelivery.' '.$mUnit;?> </td>
+				<td align="right" nowrap><? echo $totalReturn.' '.$mUnit;?> </td>
+				</tr>
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+		
+		<?}?>				
+	  </div>
+	  </form>			  </td>
+	</tr>
+  </tbody>
+</table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

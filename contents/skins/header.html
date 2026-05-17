@@ -1,0 +1,500 @@
+<html>
+<head>
+<title>General ERP</title>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+/>
+<?php
+  $cmd = getRequest('cmd');
+  if(
+   (getRequest('app') =='accounts.head' && $cmd == "coa_tree") ||
+   (getRequest('app') =='accounts.head' && $cmd == "add") ||
+   (getRequest('app') =='physical.stock.verification' && $cmd == "verify") ||
+   (getRequest('app') =='contra.voucher.new' && $cmd == "voucher_entry") ||
+   (getRequest('app') =='product')
+   ){ ?>
+
+<?php }else{ ?>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/dashborad.css" type="text/css">
+<?php } ?>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<?php
+  $cmd = getRequest('cmd');
+  if(
+     $cmd == "mis_dashboard" || 
+     (getRequest('app') =='user_home' && getFromSession('u_type_id')==101) ||
+     (getRequest('app') =='fg.production' && $cmd=='infg') ||
+     getRequest('app') =='batch_setup'
+  ){
+
+}else{
+?>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<?php } ?>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+
+<script type="text/JavaScript">
+
+function MM_swapImgRestore() { //v3.0
+
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+
+}
+
+
+
+function MM_preloadImages() { //v3.0
+
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+
+}
+
+
+
+function MM_findObj(n, d) { //v4.01
+
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+
+}
+
+
+
+function MM_swapImage() { //v3.0
+
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+
+}
+
+function toggleMenu(e) {
+  e.preventDefault();
+
+  const el = document.querySelector('.loged_user_div'); // find the element
+  if (!el) return; // safety check
+
+  // Toggle the extra class
+  el.classList.toggle('loged_user_expand');
+
+  const elIcon = document.querySelector('.menu-icon'); // find the element
+  if (!el) return; // safety check
+
+  // Toggle the extra class
+  elIcon.classList.toggle('rotate');
+
+}
+
+
+function toggleLeftMenu(e) {
+  e.preventDefault();
+
+  const el = document.querySelector('#Conten_right '); // find the element
+  if (!el) return; // safety check
+
+  // Toggle the extra class
+  el.classList.toggle('show_left_right');
+
+}
+
+</script>
+<?php
+if (getFromSession('u_type_id') == 101) {
+    $contentBody = "
+        #conten_body {
+            position: relative;
+        }
+    ";
+} else {
+    $contentBody = "
+        #conten_body {
+            position: relative;
+            display: flex;
+            gap: 30px;
+        }
+    ";
+}
+?>
+
+<style>
+.hind-siliguri-light {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.hind-siliguri-regular {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.hind-siliguri-medium {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.hind-siliguri-semibold {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hind-siliguri-bold {
+  font-family: "Hind Siliguri", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+.main-container {
+    display: flex;
+}
+.before-main {
+    flex-grow: 1;
+}
+/*#conten {
+    width: auto;
+    height: inherit;
+    background: #ffffff;
+}*/
+.btn{
+    color: #000 !important;
+}
+.po-container {
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+}
+#Conten_right {
+    border-top: 1px solid #343a40;
+    border-right: 1px solid #343a40;
+    border-bottom: 1px solid #343a40;
+    background: #343a40 !important;
+    height: fit-content;
+    margin-right: 15px;
+}
+#conten {
+    min-height: 1170px !important;
+    padding-bottom: 30px;
+}
+#content_right_inner {
+    padding: 0;
+}
+.right_block_inner {
+    width: 100%;
+}
+.right_block {
+    width: 100%;
+}
+.bg-base-200 {
+    background-color: #f4f6f9 !important;
+}
+#content_right_inner ul li {
+    border-bottom: none;
+    font-size: 14px;
+    padding: 5px 0 5px 0;
+    color: #c2c7d0 !important;
+}
+#content_right_inner ul li a {
+    height: fit-content;
+    padding: 2px 10px 0px 10px;
+    min-height: 30px;
+}
+#content_right_inner ul li a:hover {
+    height: fit-content;
+    padding: 5px 0px 0px 15px;
+    min-height: 30px;
+    background-color: transparent;
+}
+#content_right_inner ul li:hover {
+    background: #ffffff1a;
+    color:#e9e9e9 !important;
+}
+.right_block h3 {
+    background: #ffffff1a !important;
+    color: #e9e9e9 !important;
+}
+.main-container {
+    padding-bottom: 30px;
+}
+
+table.shortcutKeyMap {
+    width: 100%;
+    height: fit-content;
+}
+#header {
+    height: 81px !important;
+    background: #343a40 !important;
+}
+#loged_user {
+        margin-top: 0px !important;
+        height: 100%;
+        align-items: center !important;
+        display: flex;
+    }
+div#loged_user a {
+    padding: 10px 10px !important;
+    border-radius: 5px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #c2c7d0 !important;
+}
+div#loged_user a:hover {
+    background: #ffffff1a !important;
+    color: #fff !important;
+}
+#header {
+    position: relative !important;
+}
+#logo {
+    width: fit-content !important;
+}
+
+<?= $contentBody; ?>
+
+span.menu-icon {
+    display:none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px solid #a3a3a3;
+    position: absolute;
+    left: 50%  !important;
+    transform: translateX(-50%) !important;
+    top: 60px;
+    color: #ffffff;
+    cursor: pointer;
+    background: #393939;
+}
+
+span.menu-icon i {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    transition: transform 0.3s ease;
+}
+.menu-icon.rotate i {
+  transform: rotate(180deg) !important;
+}
+.left-menu-icon {
+    position: absolute;
+    right: 20px;
+    top: 30px;
+    cursor: pointer;
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #87898d;
+    border-radius: 5px;
+}
+.left-menu-icon i {
+    font-size: 30px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 4px;
+}
+div#logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div#logo img {
+    width: 85px !important;
+}
+div#logo .brand {
+    font-family: 'Hind Siliguri', sans-serif;
+    color: #c2c7d0;
+    font-weight: 600;
+    font-size: 20px;
+}
+@media screen and (max-width: 1274px){
+	#Conten_right {
+	    width: 35% !important;
+	}
+}
+
+@media screen and (max-width: 833px){
+	.loged_user_div{
+	    display:none !important;
+	    transform: translateY(-200%) !important;
+	    transition: transform 0.3s ease-in-out  !important;
+	}
+	span.menu-icon {
+	    display:block;
+	    z-index: 999 !important;
+	}
+	span.left-menu-icon {
+	    display:block;
+	}
+	.#loged_user{
+		margin-top: 0px !important;
+	}
+
+	.loged_user_div.loged_user_expand {
+	    margin-top: 0px !important;
+	    position: absolute;
+	    top: 81px;
+	    background: #585858;
+	    width: 100%;
+	    justify-content: center;
+	    flex-direction: column;
+	    height: fit-content!important;
+	    display:flex !important;
+	    padding: 20px 0px;
+	    border-top: 1px solid #757575;
+	    transform: translateY(0) !important;
+	    z-index: 99 !important;
+	}
+
+	#Conten_right {
+	  position: absolute;
+	  right: -370px;
+	  top: 0;
+	  height: fit-content;
+	  z-index: 99999;
+	  transition: right 0.5s ease-in-out; /* smooth slide */
+	}
+
+	.show_left_right {
+	  right: 0 !important;
+	  z-index: 99999 !important;
+	}
+	#conten_body {
+	    display: flex;
+	}
+	div#conten_body table {
+	    width: 100% !important;
+	}
+
+}
+
+</style>
+</head>
+<? if(getRequest('app')=="user_home"){?>
+<body onLoad="show_hide_menu('home')">
+<?}else{?>
+<body>
+<?}?>
+
+<div id="loading" style="display: none">Working... please wait</div>
+
+<div id="main">
+
+	<div id="header">
+
+	  <div id="logo">
+<?php
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+
+$port = "";
+if (defined('URL_PORT') && URL_PORT) {
+    $port = ':' . URL_PORT;
+}
+
+$baseUrl = $protocol . '://' . $host.$port;
+$project_logo = $baseUrl.IMAGE_DIR."/P0005.png";
+?>
+		<img src="<?=$project_logo?>" style="width:100px"'>
+		<span class="brand"><?=LOGO_BRAND?></span>
+	</div>	
+
+	   <div class="loged_user_div" id="loged_user"><?php echo getFromSession('username'); ?> 
+
+     <?php
+	$cmd = getRequest('cmd');
+	if((getRequest('app') =='user_home' AND $cmd == "mis_dashboard") || (getRequest('app')!='user_home' AND getRequest('app') != 'home'))
+	{
+	?> 
+		<a href="index.php?app=user_home">Home</a>
+    <?php
+    }
+    ?>
+	  <a href="?app=warranty&cmd=servicing">Servicing Claim</a> <a href="?app=warranty&cmd=service.status">Service Status</a> <a href="?app=sales&cmd=srcwarranty">Check Warranty</a> <a href="?app=warranty&cmd=srcclaim">Warranty Status</a>
+	<?php
+	if(getFromSession('userid'))
+	{
+	?>
+	  <a href="index.php?app=logout">Logout</a>
+	 <?php
+    }
+    ?> 
+	  </div>
+
+	    <span class="menu-icon" id="menu_icon" onclick="toggleMenu(event)"><i class="fa fa-arrow-down" aria-hidden="true"></i></span>
+<?php
+	$cmd = getRequest('cmd');
+	if((getRequest('app') =='user_home' AND $cmd != "mis_dashboard") || getRequest('app') == 'home')
+	{
+	?> 
+<span class="left-menu-icon" id="left_menu_icon" onclick="toggleLeftMenu(event)"><i class="fa fa-bars" aria-hidden="true"></i></span>
+<?php } ?> 
+	</div>
+
+	<div id="conten" align="center">
+<?php if(getFromSession('u_type_id')==101){?>
+		<div style="width:100%; height:0px">&nbsp;</div>
+	<?php }else{ ?>
+		<div style="width:100%; height:auto">&nbsp;</div>
+<?php } ?>		
+
+		<?php if(getFromSession('username')!='')
+
+		{?>
+
+			<!--div id="titel_bar" style="color:#FFFFFF"><h2><?=$heading?></h2></div-->
+
+		<?php }
+
+		?>
+
+
+
+	  

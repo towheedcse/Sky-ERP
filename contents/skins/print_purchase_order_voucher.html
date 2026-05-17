@@ -1,0 +1,824 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Purchase Order</title>
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+require_once(CLASS_DIR . '/common.list.class.php');
+
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+	
+<script language="javascript1.3">
+
+      J("[class^=validate]").validationEngine({
+
+      inlineValidation: false,
+
+      success :  false,
+
+      failure : function() { callFailFunction()  }
+
+      })
+
+
+</script>
+<style>
+body{ font-size:12px;}
+.bngFont{
+font: 128% SutonnyMJ;
+}
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+a.button.btn-send-mail {
+    color: #000;
+    text-decoration: none;
+    padding: 4px 6px;
+    margin-left: 10px;
+}
+</style>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    margin: 0;
+    padding: 20px;
+    color: #000;
+  }
+  .po-container {
+    max-width: 900px;
+    margin: auto;
+    border: 1px solid #000;
+    padding: 30px;
+  }
+  .po-header {
+    display: block !important;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+  }
+  .po-header img {
+    height: 80px;
+  }
+  .po-header h2 {
+    margin: 0;
+    text-align: center;
+    flex: 1;
+  }
+  .po-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  .to-info {
+    width: 70%;
+  }
+.right-table {
+    width: 30%;
+}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 8px;
+    font-size: 11px;
+    text-align: center;
+    font-weight: 500;
+  }
+  th {
+    background: #f0f0f0;
+    font-weight: 600;
+}
+  }
+  .terms {
+    font-size: 13px;
+    margin-top: 20px;
+  }
+  .sign-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 90px;
+    font-size: 13px;
+  }
+  .sign-box {
+    text-align: center;
+    width:33%;
+  }
+  .footer {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+.to-info {
+    text-align: start;
+    font-size: 14px;
+}
+
+.to-info strong {
+    font-size: 14px;
+}
+
+p.head-to-bottom {
+    text-align: start;
+    font-size: 14px;
+}
+
+.amount-in-text p {
+    text-align: start;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.terms {
+    text-align: start;
+}
+
+.footer-section {
+    margin-top: 30px;
+    font-size: 14px;
+    text-align: center;
+}
+.terms {
+    margin-top: 30px;
+}
+
+.terms ol {
+    font-size: 14px;
+}
+
+.terms h4 {
+    margin: -6px 0;
+    font-size: 14px;
+}
+.sign-box p {
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.po-info td {
+    padding: 4px;
+    font-size: 13px;
+    text-align: justify;
+    font-weight: 500;
+    border-right: none;
+    border-style: hidden;
+    border: 1px solid #00000000 !important;
+}
+
+.po-info tr {
+    border-style: hidden;
+}
+
+
+p.number-p {
+    text-align: right;
+}
+
+span.amount-in-number {
+    padding: 5px 5px;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    margin-left: 15px;
+}
+
+div#old-printdiv {
+    display: none;
+}
+
+.po-header h2 {
+    width: 90%;
+    float: left;
+    margin-top: 25px;
+}
+.po-header div {
+    max-width: 10%;
+    float: left;
+}
+
+.po-info {
+    clear: both;
+}
+.po-header {
+    height: 55px;
+}
+.right{
+    text-align:right;
+}
+.left{
+    text-align:left;
+}
+.pdfLogo{
+   display:none;
+}
+.mailSendMessage {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-weight: bold;
+    display: none; /* Hidden by default */
+}
+
+/* Success message style */
+.mailSendMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Error message style */
+.mailSendMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.sign-box {
+    border-top: 2px dotted #000;
+    margin: 0 10px;
+}
+.sprClass{
+margin-left: 10px; margin-top: -15px;
+}
+p#btnPrint {
+    padding-bottom: 50px;
+}
+.po-header {position: relative;}.img-div{position: absolute;top: -25px;left: 0;}
+
+
+.po-header h1, .po-header .img-div {
+    display: none !important;
+}
+.po-div {
+    margin-top: -25px;
+}
+
+img.printLogo, img.pdfLogo {
+    width: 100%;
+}
+  .to-info p {
+      margin: 5px 0;
+  }
+</style>
+
+<?php
+ $printStyle = "<style>body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 20px; color: #000; } .po-container { max-width: 900px; margin: auto; border: 1px solid #000; padding: 30px; } .po-header { display: block !important; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; } .po-header img { height: 80px; } .po-header h2 { margin: 0; text-align: center; flex: 1; } .po-info { display: flex !important; justify-content: space-between; margin-top: 20px;width: 100%;} .to-info { width: 65%;  float:left} .right-table { width: 35%; } table { width: 100%; border-collapse: collapse; margin-top: 15px; } th, td { border: 1px solid #000; padding: 8px; font-size: 11px; text-align: center; font-weight: 500; } th { background: #f0f0f0; font-weight: 600; }.terms { font-size: 11px; margin-top: 20px; } .sign-section { display: flex !important; justify-content: space-between; margin-top: 90px; font-size: 11px; } .sign-box { text-align: center; width: 33%; float:left;} .footer { font-size: 11px; text-align: center; margin-top: 20px; } .to-info { text-align: start; font-size: 11px; } .to-info strong { font-size: 11px; } p.head-to-bottom { text-align: start; font-size: 11px; } .amount-in-text p { text-align: start; font-size: 11px; margin-top: 20px; } .terms { text-align: start; } .footer-section { margin-top: 30px; font-size: 11px; text-align: center;} .terms { margin-top: 30px; } .terms ol { font-size: 11px; } .terms h4 { margin: -6px 0; font-size: 11px; } .right-table td { padding: 4px; font-size: 11px; text-align: justify; font-weight: 500; border-right: none; border-style: hidden; border: 1px solid #00000000 !important;} .right-table tr { border-style: hidden; }p.number-p { text-align: right; } span.amount-in-number { padding: 5px 5px; border-top: 1px solid #000; border-bottom: 1px solid #000; margin-left: 15px; } div#old-printdiv { display: none; }.po-header h2 { width: 90%; float: left; margin-top: 70px; } .po-header div { max-width: 10%; float: left; }.po-info { clear: both; } .po-header { height: 70px; }.right{text-align:right;}.left{text-align:left;}.sign-box { border-top: 2px dotted #000; margin: 0 10px; }.sprClass{ margin-left: 5px; margin-top: -12px; }.po-header {position: relative;}.img-div{position: absolute;top: -25px;left: 0;}.po-header h1, .po-header .img-div { display: none !important; }.po-div { margin-top: -25px; width: 100%; height: 20px; }.po-div img{width: 100%;height:50px;}.po-header { border-bottom: none !important; }</style>";
+?>
+
+
+<script type="text/javascript">
+function printContent(id){
+	str=document.getElementById(id).innerHTML
+	newwin=window.open('','printwin','left=15,top=5,width=99%,height=auto')
+	newwin.document.write('<HTML>\n<HEAD>\n')
+	newwin.document.write('<TITLE>Purchase Order</TITLE>\n')
+	newwin.document.write('<script>\n')
+	newwin.document.write('function chkstate(){\n')
+	newwin.document.write('if(document.readyState=="complete"){\n')
+	newwin.document.write('window.close()\n')
+	newwin.document.write('}\n')
+	newwin.document.write('else{\n')
+	newwin.document.write('setTimeout("chkstate()",2000)\n')
+	newwin.document.write('}\n')
+	newwin.document.write('}\n')
+	newwin.document.write('function print_win(){\n')
+	newwin.document.write('window.print();\n')
+	newwin.document.write('chkstate();\n')
+	newwin.document.write('}\n')
+	newwin.document.write('<\/script>\n')
+	newwin.document.write("<style>body{ font-size:12px;}.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}.pdfLogo{display:none !important;}.company_name{text-align: center;margin-top: 20px;}.pdfLogo{ height: 30px !important; }</style>")
+	newwin.document.write("<?=$printStyle?>")
+	newwin.document.write('</HEAD>\n')
+	newwin.document.write('<BODY onload="print_win()">\n')
+	newwin.document.write(str)
+	newwin.document.write('</BODY>\n')
+	newwin.document.write('</HTML>\n')
+	newwin.document.close()
+}
+
+</script>
+</head>
+
+<body>
+
+<?php
+
+$project_id = getFromSession('project_id');
+	$psql= "SELECT project_name,location AS address FROM ".PROJECT_TBL." WHERE project_id = '".$project_id."'";
+	$prow = mysql_fetch_object(mysql_query($psql));	
+
+
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+$baseUrl = $protocol . '://' . $host;
+
+$project_logo = $baseUrl.IMAGE_DIR."/P0005.png";
+$project_logoPDF = $_SERVER['DOCUMENT_ROOT'] . IMAGE_DIR . "/P0005.png";
+$po_print_logo = $baseUrl.IMAGE_DIR. "/po_logo.png";
+$po_PDF_logo = $_SERVER['DOCUMENT_ROOT'] . IMAGE_DIR . "/po_logo.png";
+
+$showVat = getRequest("showVat") === 'true';
+$showVat = false;
+$showTotalVat = getRequest("showVat") === 'true';
+
+?>
+
+<div class="po-container" id="printdiv">
+	<div class="po-div">
+		<img class="printLogo" src="<?=$po_print_logo?>" alt="Company Logo" />
+		<img class="pdfLogo" src="<?=$po_PDF_logo?>" style="height: 30px !important;" alt="Company Logo" />
+	</div>
+
+    <div class="po-header">
+
+	<h1 class="company_name">Heritage Polymer & Lami Tubes Ltd.</h1>	
+   
+      	<h2>Purchase Order</h2>
+
+	<div class="img-div" style="width: 100%; height: 20px;">
+		<img class="printLogo" src="<?=$project_logo?>" alt="Company Logo" />
+		<img class="pdfLogo" src="<?=$project_logoPDF?>" style="width: 100%; height: 20px;" alt="Company Logo" />
+	</div>
+    </div> 
+
+    <div class="po-info">
+      <div class="to-info">
+          <?php if(!empty($lc_no)){?>
+          <p><strong>LC No: </strong><?=$lc_head_name?></p>
+          <?php } ?>
+
+          <?php if(!empty($payable_id)){?>
+          <p><strong>Payable: </strong><?=$payable_head_name?></p>
+          <?php } ?>
+
+          <?php if(!empty($supplier_id)){?>
+          <p><strong>Supplier:</strong>
+              <?=$sub_head_name?>,<br>
+              <?=$head_details?></p>
+          <?php } ?>
+      </div>
+      <div class="right-table">
+	<table>
+	<tr>
+		<td>Vendor ID</td>
+		<td>: <?=$supplier_id?></td>
+	</tr>
+	<tr>
+		<td>Purchase Order No.</td>
+		<td>: <?=$voucher_no?></td>
+	</tr>
+	<tr>
+		<td>Purchase Order Date</td>
+		<td>: <?=$order_date?></td>
+	</tr>
+	<tr>
+		<td>Quotation No</td>
+		<td>: <?=$quotation_no?></td>
+	</tr>
+	<tr>
+		<td>PO Type</td>
+		<td>: Local</td>
+	</tr>
+	<tr>
+		<td>SPR</td>
+		<td>: <div class="sprClass"><?= str_replace(',', '<br>', $spr_no) ?></div></td>
+	</tr>
+	</table>
+      </div>
+    </div>
+
+    <p class="head-to-bottom">Dear Sir,<br>We are pleased to place the order for supply of the following materials:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>SL</th>
+          <th>Material Code</th>
+          <th>Material Name</th>
+          <th>Brand</th>
+          <th>Delivery Date</th>
+          <th>Quantity</th>
+          <th>UOM</th>
+          <th>Unit Price</th>
+<?php if($showVat){?>
+	  <th>Vat (%)</th>
+          <th>Vat Amount</th>
+<?php } ?>
+          <th>Base Value</th>
+          <!-- <th>Additional Charges</th> -->
+          <th>Gross Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+	<?php
+	$i=1;
+	$totalOrderPrice =0;
+	$total_order_qty=0;
+
+	foreach($item_list as $val){
+	$totalPrice = ($val->unit_price*$val->init_qty);
+	$totalOrderPrice+=$totalPrice;
+	
+	$total_order_qty+=$val->init_qty;		
+	?>
+  <tr>
+    <td align="left"><?=$i?></td>
+    <td><?=$val->product_code?></td>
+    <td><?=$val->product_name?></td>
+    <td><?=$val->custom_brand?></td>
+    <td><?=$delivery_date?></td>
+    <td><?=$val->init_qty?></td>
+    <td><?=$val->m_unit?></td>
+    <td align="left"><div align="center">
+      <?=number_format($val->unit_price, 9)?>
+    </div></td>
+<?php if($showVat){?>
+	  <td><?=$val->vat_percent?></td>
+          <td><?=$val->vat_amount?></td>
+<?php } ?>
+    <td align="right"><div align="right">
+      <? echo number_format($totalPrice, 9); ?>
+    </div></td>
+    <!-- <td align="right">0.00</td> -->
+   <td align="right"><div align="right">
+      <? echo number_format($totalPrice, 9);?>
+    </div></td>
+  </tr>
+  <?$i++;}?>
+  
+  <tr>
+       <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">Total</div></td>
+	   <td width="13%" align="right"><div class="right"><? echo number_format($totalOrderPrice, 9);?></div></td>
+  </tr>  
+ 
+ 
+  <tr>
+    <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">Discount Amount </div></td>
+    <td align="right"><div class="right"><? echo number_format($discount_amount, 6);?></div></td>
+  </tr>
+
+<?php 
+
+if($showTotalVat){
+$net_payable = (float)$net_payable + (float)$total_vat_amount;
+?>
+
+   <tr>
+<?php
+
+$vatPercent = number_format($total_vat_percent, 6);
+$vatPercentHtml = '';
+if(isset($vat_type) && !empty($vat_type) && $vat_type == 'percent' && $vatPercent > 0){
+$vatPercentHtml = "(" . $vatPercent . " %)";
+}
+
+?>
+    <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">VAT <?=$vatPercentHtml?> </div></td>
+    <td align="right"><div class="right"><? echo number_format($total_vat_amount, 9);?></div></td>
+  </tr>
+
+<?php } ?>
+
+   <tr>
+<?php
+//$net_payable = (float)$net_payable - (float)$total_tds_amount;
+$tdsPercent = number_format($total_tds_percent, 6);
+$tdsPercentHtml = '';
+if(isset($tds_type) && !empty($tds_type) && $tds_type == 'percent' && $tdsPercent > 0){
+$tdsPercentHtml = "(" . $tdsPercent . " %)";
+}
+
+?>
+    <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">TDS <?=$tdsPercentHtml?> </div></td>
+    <td align="right"><div class="right"><? echo number_format($total_tds_amount, 9);?></div></td>
+  </tr>
+
+
+ <tr>
+    <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">Additional Cost </div></td>
+    <td align="right"><div class="right"><? echo number_format($additional_cost, 6);?></div></td>
+  </tr>
+  <tr>
+    <td colspan="<?=$showVat ? 11 : 9 ?>" align="right"><div class="right">Grand Total (In BDT) </div></td>
+    <td align="right"><div class="right"><? echo number_format($net_payable, 2);?></div></td>
+  </tr>
+      </tbody>
+    </table>
+
+    <div class="amount-in-text">
+    <p class="number-p" style="display:none"><strong>Grand Total (In BDT):</strong> <span class="amount-in-number"><? echo number_format($net_payable, 2);?></span></p>
+<?php
+
+
+    function convertNumberToWordWithPoisha($number)
+    {
+        $hyphen = '-';
+        $conjunction = ' and ';
+        $separator = ', ';
+        $negative = 'negative ';
+        $decimal = ' point ';
+        $dictionary = array(
+            0 => 'zero',
+            1 => 'one',
+            2 => 'two',
+            3 => 'three',
+            4 => 'four',
+            5 => 'five',
+            6 => 'six',
+            7 => 'seven',
+            8 => 'eight',
+            9 => 'nine',
+            10 => 'ten',
+            11 => 'eleven',
+            12 => 'twelve',
+            13 => 'thirteen',
+            14 => 'fourteen',
+            15 => 'fifteen',
+            16 => 'sixteen',
+            17 => 'seventeen',
+            18 => 'eighteen',
+            19 => 'nineteen',
+            20 => 'twenty',
+            30 => 'thirty',
+            40 => 'forty',
+            50 => 'fifty',
+            60 => 'sixty',
+            70 => 'seventy',
+            80 => 'eighty',
+            90 => 'ninety',
+            100 => 'hundred',
+            1000 => 'thousand',
+            1000000 => 'million',
+            1000000000 => 'billion',
+            1000000000000 => 'trillion',
+            1000000000000000 => 'quadrillion',
+            1000000000000000000 => 'quintillion'
+        );
+
+        if (!is_numeric($number)) {
+            return false;
+        }
+
+        if ($number < 0) {
+            return $negative . numberToWords(abs($number));
+        }
+
+        $string = $fraction = null;
+
+        if (strpos($number, '.') !== false) {
+            list($number, $fraction) = explode('.', (string)$number);
+        }
+
+        $string = convertIntegerPartToWords((int)$number, $dictionary, $hyphen, $conjunction, $separator);
+
+        if ($fraction !== null && is_numeric($fraction)) {
+            $string .= $decimal;
+            foreach (str_split((string)$fraction) as $number) {
+                $string .= ' ' . $dictionary[$number];
+            }
+        }
+
+        return $string;
+    }
+
+
+
+
+    function convertIntegerPartToWords($number, $dictionary, $hyphen, $conjunction, $separator)
+    {
+        if ($number < 21) {
+            return $dictionary[$number];
+        } elseif ($number < 100) {
+            $tens = ((int)($number / 10)) * 10;
+            $units = $number % 10;
+            return $dictionary[$tens] . ($units ? $hyphen . $dictionary[$units] : '');
+        } elseif ($number < 1000) {
+            $hundreds = (int)($number / 100);
+            $remainder = $number % 100;
+            return $dictionary[$hundreds] . ' ' . $dictionary[100] . ($remainder ? $conjunction . convertIntegerPartToWords($remainder, $dictionary, $hyphen, $conjunction, $separator) : '');
+        } else {
+            $baseUnit = pow(1000, floor(log($number, 1000)));
+            $numBaseUnits = (int)($number / $baseUnit);
+            $remainder = $number % $baseUnit;
+            return convertIntegerPartToWords($numBaseUnits, $dictionary, $hyphen, $conjunction, $separator) . ' ' . $dictionary[$baseUnit] . ($remainder ? ($remainder < 100 ? $conjunction : $separator) . convertIntegerPartToWords($remainder, $dictionary, $hyphen, $conjunction, $separator) : '');
+        }
+    }
+
+
+$inWordAmount = convertNumberToWordWithPoisha(number_format($net_payable, 2, '.', ''));
+            $inWordAmount = ucwords(str_replace("point", "Taka and", $inWordAmount) . " Poisha Only");
+            $inWordAmount = str_replace("And Zero Zero Poisha", "", $inWordAmount);
+            $inWordAmount = str_replace("And  Zero Zero Poisha", "", $inWordAmount);
+
+?>
+    <p class="text-p"><strong>Remark:</strong> <span class="amount-in-text"><?=$remark?></span></p>
+
+    <p class="text-p"><strong>Amount in Words:</strong> <span class="amount-in-text"><?=$inWordAmount?></span></p>
+	<p class="text-p"><strong>Payment Note:</strong> <span class="amount-in-text"><?=$payment_note?></span></p>
+	<p class="text-p"><strong>Delivery Address:</strong> <span class="amount-in-text"><?=$delivery_note?></span></p>
+    </div>
+
+<?php
+    // Ensure $term_condition is an array
+    $termsArray = is_array($term_condition) ? $term_condition : explode(',', $term_condition);
+    $termsArray = array_filter($termsArray, function($value) {
+        return !empty($value);
+    });
+
+    if(count($termsArray)){
+?>
+    <div class="terms">
+      <h4>Terms & Conditions:</h4>
+	<ol>
+	<?php
+	    foreach ($terms_list as $val) {
+		if (in_array($val->id, $termsArray)) {
+		    echo "<li>" . htmlspecialchars($val->name) . "</li>";
+		}
+	    }
+	?>
+	</ol>
+    </div>
+
+ <?php } ?>
+
+    <div class="sign-section">
+      <div class="sign-box"><p style="font-weight:normal;margin: 0px; margin-top: -25px; padding-bottom: 10px;"><?=$created_by?></p>Create By</div>
+      <div class="sign-box"><p style="font-weight:normal;margin: 0px; margin-top: -25px; padding-bottom: 10px;">&nbsp</p>Checked By</div>
+      <div class="sign-box">
+<p style="font-weight:normal;margin: 0px; margin-top: -25px; padding-bottom: 10px;"><?= !empty($approved_by) ? $approved_by: "&nbsp;" ?></p>
+Approved By</div>
+    </div>
+
+    <div class="footer-section">
+      Head Office: 57-57A, Uday Tower (2nd Floor), Gulshan-1, Dhaka-1212, Bangladesh. Phone: +88 09666771313<br>
+      Factory: Meghnaghat, Sonargaon, Narayangong, Meghna Industrial Economic Zone, Sonargaon, Narayangong
+    </div>
+  </div>
+
+<input type="hidden" id="voucher_no" value="<?=$voucher_no?>" />
+<p class="mailSendMessage" style="display: none;width: 50%;"></p>
+<p align="center" id="btnPrint">
+  <a href="javascript:void(0)" onClick="printContent('printdiv')" class="button" style="text-decoration: none; padding: 5px 10px; color:#000">Print</a>
+<a href="javascript:void(0)" onClick="sendMail('printdiv')" class="button btn-send-mail">Send Mail</a>
+</p>
+<script src="<?=REL_CONTENT_DIR?>/js/chosen/jquery-2.1.4.min.js"></script>
+<script>
+$(window).keydown(function(e) { //alert(e.keyCode); // what's key?
+  switch (e.keyCode) {     
+    case 36: // Press Home key for go to Home
+       window.location ="index.php?app=user_home";
+	return true;   
+    case 80: // Press P key for Print Invoice
+        e.preventDefault();
+        printContent('printdiv');
+        return true; 
+       
+  }
+});
+
+    function getPrintableContent(id) {
+    var str = document.getElementById(id).innerHTML;
+    
+    // Create the complete HTML document with proper styling
+
+    var printStyle = "<?=$printStyle?>";
+    var fullHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Purchase Order</title>
+	    ${printStyle}
+            <style>
+		.printLogo{
+			display:none !important;
+		}
+		.pdfLogo{
+			display:block !important;
+		}
+                @media print {
+                    body { margin: 0; padding: 0; }
+                    .po-container { border: none; box-shadow: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="po-container">
+                ${str}
+            </div>
+        </body>
+        </html>
+    `;
+    
+    return fullHtml;
+}
+
+
+
+    function sendMail(elementID){
+	var content = getPrintableContent(elementID);
+	var voucher_no = document.getElementById("voucher_no").value;
+	$.ajax({
+		url: '?app=purchase_order&cmd=sendInvoiceMail',
+		type: 'POST',
+		data: JSON.stringify({voucher_no: voucher_no,content: content}),
+		contentType: 'application/json',
+		dataType: 'json',
+		success: function (response) {
+			//console.log(response);
+			// Display success message
+			var messageElement = $('.mailSendMessage');
+			messageElement
+			    .removeClass('error')
+			    .addClass('success')
+			    .text(response.message)
+			    .show();
+			
+			// Hide the message after 5 seconds
+			setTimeout(function() {
+			    messageElement.fadeOut('slow');
+			    messageElement.text("");
+			}, 5000);
+		},
+		error: function (xhr, status, error) {
+			 // Show error message
+			var messageElement = $('.mailSendMessage');
+			messageElement
+			    .removeClass('success')
+			    .addClass('error')
+			    .text('Error: ' + error)
+			    .show();
+			
+			// Hide the error message after 5 seconds
+			setTimeout(function() {
+			    messageElement.fadeOut('slow');
+			    messageElement.text("");
+			}, 5000);
+		}
+	});
+
+    }
+
+
+
+</script>
+
+
+
+</body>
+</html>

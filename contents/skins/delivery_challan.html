@@ -1,0 +1,484 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<?php
+extract($data);
+//dumpVar($data);
+$mode_of_payment = "Recievable";
+if($mode_of_payment=="Cash"){
+	$cashMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$checkMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}else{
+	$checkMode = "display:block;margin-top:0px;margin-bottom:0px;";
+	$cashMode = "display:none;margin-top:0px;margin-bottom:0px;";
+}
+ if($message==""){ $message = getRequest('msg');}
+ dateIFrame(REL_EXT_DIR); $currency=1;
+?>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/sales_delivery_item.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+
+var J = jQuery.noConflict();
+
+</script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+
+	
+
+<script language="javascript1.3">
+
+
+
+      J("[class^=validate]").validationEngine({
+
+
+
+      inlineValidation: false,
+
+
+
+      success :  false,
+
+
+
+      failure : function() { callFailFunction()  }
+
+
+
+      })
+
+
+
+var CANCEL_URL = "index.php?app=buyerorder&cmd=list";
+
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<title>Sales</title>
+
+<style>
+
+
+
+input{
+
+background-color:#ffffff;
+
+border: 1px solid #006699;
+
+}
+
+.style2 {color: #666666}
+
+.bangFont {font: 130% SutonnyMJ;
+}
+</style>
+
+</head>
+
+
+
+<body>
+
+<form name="frmbuyerorder" method="post">
+
+<table width="98%" align="center" cellspacing="0" cellpadding="0">
+
+  <tr> 
+
+    <td colspan="2">&nbsp;
+
+		
+
+	</td>
+
+  </tr>
+
+  <tr> 
+    <td height="322" align="center" valign="top">
+
+		<table width="99%"  class="addBorder" cellspacing="0" cellpadding="2">
+
+			  <tr>
+
+				<td class="topHeader" colspan="9"><div id="tblTitle" align="left">&nbsp;<strong>Sales Delivery Challan </strong></div></td> 
+			  </tr>
+			<? if(getRequest('type')=="lc"){?>
+			  <tr>
+
+			    <td width="7%">&nbsp;</td>
+
+			    <td width="12%">LC No. </td>
+
+			    <td width="22%">
+				<select name="lc_no" id="lc_no" style="width:180px" class="validate[required]">
+					<optgroup label="LC Account Head">	
+						<?	  	
+						$project_id = getFromSession('project_id');
+						$ssql= "SELECT * FROM ".SUB_ACC_HEAD_TBL." WHERE project_id  = '".$project_id."' AND head_type = 'LC'";
+						$sres = mysql_query($ssql);
+						while($v=mysql_fetch_object($sres)){
+							$sub_id 		= $v->sub_id;	
+							$sub_head_name 	= $v->sub_head_name;	
+							$head_type		= $v->head_type;
+							$head_details	= $v->head_details;
+						?>
+						<option value="<?=$sub_id?>" >
+						 <? if($head_details==""){?>
+						  <? echo $sub_head_name." - ".$head_type;?>
+						 <?}else{?>
+						  <? echo $sub_head_name.", ".$head_details." - ".$head_type;?>
+						 <?}?>
+						</option>
+						<?}?>
+					</optgroup>
+				</select>				</td>
+
+			    <td width="8%">&nbsp;</td>
+
+			    <td width="7%">&nbsp;</td>
+
+			    <td width="19%">&nbsp;</td>
+
+			    <td colspan="2">&nbsp;</td>
+          	</tr>
+			<?}else{?>
+			<tr>
+
+			    <td width="7%">&nbsp;</td>
+
+			    <td width="12%">&nbsp;</td>
+
+			    <td width="22%">&nbsp;</td>
+
+			    <td width="8%">&nbsp;</td>
+
+			    <td width="7%">&nbsp;</td>
+
+			    <td width="19%">&nbsp;</td>
+
+			    <td colspan="2">&nbsp;</td>
+          	</tr>
+			<?}?>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="wo_no_lbl">Customer</label></td>
+			    <td>
+				<select name="customer" id="customer" style="width:180px" class="validate[required]" onChange="javascript:getWorkOrderList(this.value)">
+                  <option value="">Select Customer</option>
+                  <?php	 
+					foreach($customer_list as $i=>$v){
+						$sub_id = $v->sub_id;	
+						$sub_head_name = $v->sub_head_name;	
+					?>
+                  <option value="<?=$sub_id?>"<?php if($sub_id==$customer) echo "selected";?> >
+                  <?=$sub_head_name?>
+                  </option>
+                  <?}?>
+                </select></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td align="right"><label id="svoucher_no_lbl">Work Order No.</label></td>
+			    <td colspan="2">
+				<select name="svoucher_no" id="svoucher_no" style="width:220px" tabindex="2" class="validate[required]" onChange="javascript:getSalesOrderInfo(this.value)">
+                </select>				</td>
+	      	 </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td><label id="currency_lbl">Currency</label></td>
+			    <td><select name="currency" id="currency" style="width:180px" class="validate[required]">
+                  <option value=''>Select One</option>
+                  <?php
+					$countryid =$country;			
+					foreach($currency_list as $i=>$v)			
+					{
+						$currency_id = $v->currency_id;			
+						$currency_name = $v->currency_name;				
+						$currency_des = $v->currency_des;	
+
+					?>
+                  <option value="<?=$currency_id.'###'.$currency_name?>"<?php if($currency==$currency_id) echo "selected";?> >
+                  <?=$currency_des?>
+                  </option>
+                  <?}?>
+                </select></td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td><div align="right">Retailer</div></td>
+			    <td colspan="2">
+				<select name="consignee" id="consignee" style="width:180px">
+                  <option value="">Select Customer</option>
+                  <?php	 
+					foreach($retailer_list as $i=>$v){
+						$retailer_id = $v->retailer_id;	
+						$retailer_name = $v->retailer_name.", ".$v->mobile;	
+					?>
+                  <option value="<?=$retailer_id?>"<?php if($retailer_id==$consignee) echo "selected";?> >
+                  <?=$retailer_name?>
+                  </option>
+                  <?}?>
+                </select>			    </td>
+	      	  <tr>
+	      	    <td>&nbsp;</td>
+	      	    <td>Challan No. </td>
+	      	    <td><input type="text" name="challan_no" id="challan_no" style="width:160px;" value="<?=$challan_no?>" class="validate[required]" ></td>
+	      	    <td><input type="hidden" name="salse_type" id="salse_type" value="<?=$salse_type?>" style="width:160px" class="validate[required]"></td>
+	      	    <td>&nbsp;</td>
+	      	    <td><div align="right">Delivery Date </div></td>
+	      	    <td colspan="2">
+				<input name="delivery_date" id="delivery_date" style="width:180px;" value="<?=$_REQUEST['delivery_date']?>" size="20" onFocus="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" class="validate[required]" type="text">
+                  <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" onClick="gfPop.fPopCalendar(document.frmbuyerorder.elements['delivery_date']);return false;" title="calendar" width="15" height="15">				  </td>
+          <tr>
+		      <td colspan="8">
+				  <fieldset><legend>Sales Details</legend>
+					  <table width="100%"  cellspacing="0" cellpadding="2">
+                        <tr>
+                          <td><div align="left">
+                              <label id="catagory_lbl">Catagory</label>
+                          </div></td>
+                          <td><label id="brand_lbl">Brand</label></td>
+                          <td><label id="product_lbl">Product</label></td>
+                          <td>Warranty</td>
+                          <td>Stock Qty </td>
+                          <td>Order Qty</td>
+                          <td>Pending Qty </td>
+                          <td><label id="qty_lbl">Delivery Qty <span id="qty_m"></span></label><label id="serial_lbl"></label></td>
+                          <td><div align="left">
+                            <label id="qty_lbl"></label>
+                          Free Qty </div></td>
+						  <td><div align="left"><label id="unit_price_lbl">Unit Price <span id="uprice_m"></span></label></div></td>
+                          <td>Discount %</td>
+                          <td><div align="left">
+                            <label id="currency_lbl">Total Amount </label>
+                          </div></td>
+                        </tr>
+                        <tr>
+                          <td><div align="left">
+                              <select name="catagory" id="catagory" style="width:150px" tabindex="6">
+                                <option value=''>Select One</option>
+                                <?php												
+									foreach($cat_list as $i=>$v)
+									{
+										$catagory_code = $v->catagory_code;
+										$catagory_name = $v->catagory_name;	
+									?>
+                                <option value="<?=$catagory_code.'###'.$catagory_name?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+                                <?=$catagory_name?>
+                                </option>
+                                <?}?>
+                              </select>
+                          </div></td>
+                          <td><select name="brand" id="brand" style="width:150px" onChange="getProductList(this.value)" tabindex="7">
+                              <option value="">Select One</option>
+                              <?php						
+                                    foreach($brand_list as $i=>$v){
+                                        $brand_id = $v->brand_id;
+                                        $brand_name = $v->brand_name;	
+                                  ?>
+                              <option value="<?=$brand_id.'###'.$brand_name?>"<?php if($brand==$brand_id) echo "selected";?> >
+                              <?=$brand_name?>
+                              </option>
+                              <?}?>
+                            </select></td>
+                          <td><select name="product" id="product" style="width:150px" onChange="javascript:getProductDtl(this.value)" tabindex="8" >
+                              <option value="">Select One</option>
+                          </select></td>
+                          <td><div align="left">
+                              <input type="text" style="width:70px; " name="warranty" id="warranty" value="<?=$warranty?>" tabindex="10" readonly="" />
+                          </div></td>
+                          <td><input type="text" style="width:90px; " name="stock_qty" id="stock_qty" readonly=""></td>
+                          <td><input type="text" style="width:90px; " name="order_qty" id="order_qty" readonly=""></td>
+                          <td><input type="text" style="width:90px; " name="pending_qty" id="pending_qty" value="<?=$pending_qty?>"  class="validate[required]" tabindex="11"></td>
+                          <td><!--select name="m_unit" id="m_unit" style="width:100px" class="validate[required]" onChange="checkUnit(this.value)">
+							  <option value="" >Select</option>
+							  <option value="pc" <? if($fbdunit=="pc"){ echo "selected";} ?> >pc</option>
+							  <option value="kg" <? if($fbdunit=="kg"){ echo "selected";} ?> >kg</option>
+							  <option value="bag" <? if($fbdunit=="bag"){ echo "selected";} ?> >bag</option>
+							  <option value="carton" <? if($fbdunit=="carton"){ echo "selected";} ?> >carton</option>
+							  <option value="ltr" <? if($fbdunit=="ltr"){ echo "selected";} ?> >ltr</option>
+							  <option value="sty" <? if($fbdunit=="sty"){ echo "selected";} ?> >sty</option>
+							  <option value="thousand" <? if($fbdunit=="thousand"){ echo "selected";} ?> >thousand</option>
+							  <option value="ft" <? if($fbdunit=="ft"){ echo "selected";} ?> >ft</option>
+							  <option value="mtr" <? if($fbdunit=="mtr"){ echo "selected";} ?> >mtr</option>
+							  <option value="sec" <? if($fbdunit=="sec"){ echo "selected";} ?> >sec</option>
+                            </select-->
+                          <input type="text" style="width:90px; " name="qty" id="qty" value="<?=$qty?>"  class="validate[required]" onKeyUp="calTotalValue()" tabindex="11"></td>
+                          <td><div align="left">
+                            <select name="free_item" id="free_item" style="width:50px" tabindex="9" >
+								<option value="0">00</option>
+                                <option value="1">01</option>
+								<option value="2">02</option>
+								<option value="3">03</option>
+								<option value="4">04</option>
+								<option value="5">05</option>
+								<option value="6">06</option>
+								<option value="7">07</option>
+								<option value="8">08</option>
+								<option value="9">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+                            </select>
+                          </div></td>
+						  <td><div align="left">
+                              <input type="text" style="width:100px; " name="unit_price" id="unit_price" value="<?=$unit_price?>"  class="validate[required]" onKeyUp="calTotalValue()" readonly="" tabindex="12">
+                          </div></td>
+                          <td><input type="text" style="width:70px; " name="unit_discount" id="unit_discount" value="0" readonly="" onKeyUp="calTotalValue()" tabindex="12"></td>
+                          <td><div align="left">
+                              <input type="text" style="width:125px; " name="total" id="total" value="<?=$total?>"  class="validate[required]" readonly="">
+                          </div></td>
+                        </tr>
+                        
+                        <tr>
+                          <td width="11%" height="28">&nbsp;</td>
+                          <td width="11%"><input type="hidden" name="total_unit" id="total_unit" value="pc"/>
+                          <input type="hidden" name="total_bag" id="total_bag" value="0"/></td>
+                          <td width="11%"><input type="hidden" name="m_unit" id="m_unit" value="pc"/>
+                            <input type="hidden" name="serial" id="serial" value="0"/></td>
+                          <td width="8%">&nbsp;</td>
+                          <td width="7%">&nbsp;</td>
+                          <td width="7%">&nbsp;</td>
+                          <td width="9%">&nbsp;</td>
+                          <td width="8%">&nbsp;</td>
+                          <td width="8%">&nbsp;</td>
+                          <td width="9%">&nbsp;</td>
+                          <td width="9%">&nbsp;</td>
+                          <td width="11%"><input name="button" type="button" class="button"  onClick="salesProcess();" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" onMouseOver="calTotalValue()" value="Next" tabindex="13">
+                          <input class="button" onMouseMove="this.className='resetBtnFocus'" onMouseOut="this.className='button'" type="button" name="Submit2" value="Cancel" onClick="javascript:window.location='index.php?app=buyerorder';"></td>
+                        </tr>
+                      </table>
+			    </fieldset>			  </td>
+	      </tr>
+			  <tr>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td>&nbsp;</td>
+			    <td width="7%">&nbsp;</td>
+			    <td width="18%">&nbsp;</td>
+	      	</tr>						
+
+			  <tr align="center">
+
+			    <td colspan="8" align="left"><table width="100%" align="center" bgcolor="#3399CC">
+                  <tr>
+                    <td width="11%" nowrap>Catagory</td>
+                    <td width="9%" nowrap>Brand</td>
+                    <td width="13%" nowrap>Product</td>
+                    <td width="8%" nowrap>Warranty</td>
+                    <td width="10%" nowrap><div align="left">Delivery Quantity</div></td>
+                    <td width="11%" nowrap><div align="left">Free Quantity</div></td>
+                    <td width="9%" nowrap><div align="left">Unit Price</div></td>
+                    <td width="11%" nowrap>Discount % </td>
+                    <td width="18%" nowrap>Total Amount </td>
+                  </tr>
+                  <tbody id="tbs" bgcolor="#CCCC99">
+                  </tbody>
+                </table></td>
+	      </tr>			  
+
+			 <td colspan="2" align="left">&nbsp;</td>
+
+				<td align="left">&nbsp;</td>
+				<td align="left"><div align="right"> <input type="hidden" name="total_delivery_qty" id="total_delivery_qty"></div></td>
+
+				<td colspan="3" align="left"><div align="right">Grand Total</div></td>
+
+				<td>
+
+				<div align="left">
+
+				  <input type="text" style="width:130px; " name="total_value" id="total_value" value="<?=$total_value?>" class="validate[required]" readonly="">
+				</div>				</td> 
+
+			  </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+				<td colspan="5">
+
+				<input type="hidden" name="cmd" value="save_sales">			
+
+				<input name="transaction_type" id="transaction_type" type="hidden" value="Payment">	
+				<input type="hidden" name="transaction_name" value="Sales">				
+				<input type="hidden" name="exceed_delivery_amount" id="exceed_delivery_amount" style="width:130px;" value="<?=$exceed_delivery_amount?>" class="validate[required]" readonly=""></td>
+
+				<td width="7%">&nbsp;</td>
+
+			    <td>
+
+				<div align="left">
+
+		        <input class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" name="submit" value="Save" onClick="wantToSave();">
+				</div>				</td>
+			  </tr>
+
+			  <tr>
+
+				<td>&nbsp;</td>
+
+				<td colspan="5">&nbsp;				</td>
+
+				<td>&nbsp;</td>
+
+			    <td>&nbsp;</td>
+			  </tr>
+		</table>
+
+      </td>
+
+  </tr>
+
+  <tr> 
+
+    <td>&nbsp;</td>
+
+  </tr>
+
+</table>
+
+</form>
+
+</body>
+
+</html>
+

@@ -1,0 +1,423 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR); 
+$catagory		= getRequest('catagory');  
+$product_type 	= getRequest('product_type'); 
+
+
+function getStockOBQty($product_id){
+	$sql = "SELECT verify_qty FROM ".PRODUCT_TBL." WHERE product_id = '".$product_id."'";
+	$res = mysql_query($sql);
+	if(mysql_num_rows($res)>0){
+	$row = mysql_fetch_object($res);
+	return $row->verify_qty;
+	}else{
+	return 0;
+	}
+}
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+function show_confirm(val)
+{
+	var r=confirm("Are you sure delete this record?");
+	if (r==true)
+  	{
+  		window.location ="?app=brand&cmd=delete&id="+val;
+  	}
+}
+</script>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<title>General ERP</title>
+<style>
+#tableborder_btm_right{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+#tableborder_btm{
+border-right::1px solid #CCCCCC;
+border-bottom:1px solid #CCCCCC;
+}
+table, td
+{
+    border-color: #999999;
+    border-style: solid;
+}
+table
+{
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td
+{
+    margin: 0;
+    padding: 4px;
+    border-width: 1px 1px 0 0;
+	font-weight:bold;	
+}
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+</style>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Transaction List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1119"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="84%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+		  <tr>
+			<td align="left" class="topbg" height="26" colspan="7"><span><strong>Search Stock </strong></span></td>
+		 </tr>
+		 <tr>
+		   <td width="2%">&nbsp;</td>
+		   <td width="12%">Catagory Name </td>
+		   <td width="31%">
+		   <select name="catagory" id="catagory" style="width:150px">
+             <option value=''>Select One</option>
+             <?php
+			foreach($catagory_list as $i=>$v)
+			{
+				$catagory_code = $v->catagory_code;
+				$catagory_name = $v->catagory_name;	
+			?>
+             <option value="<?=$catagory_code?>"<?php if($catagory==$catagory_code) echo "selected";?> >
+             <?=$catagory_name?>
+             </option>
+             <?}?>
+           </select>
+		   </td>
+		   <td width="15%">Product Type </td>
+		   <td width="27%">
+		   <select name="product_type" id="product_type" style="width:150px">
+             <option value="Sales Item" <?php if($product_type=="Sales Item") echo "selected";?>>Finish Goods Item</option>
+             <option value="Invetory Item" <?php if($product_type=="Invetory Item") echo "selected";?>>Invetory Item</option>
+             <option value="Raw Materials" <?php if($product_type=="Raw Materials") echo "selected";?>>Raw Materials</option>
+             <option value="Equipment" <?php if($product_type=="Equipment") echo "selected";?>>Equipment</option>
+           </select>
+		   </td>
+		   <td width="11%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		   <td width="2%">&nbsp;</td>
+		 </tr>
+		</table>
+		
+		<br>
+		<!--Start Pagination -->	 
+		<div class="pagination">
+		 <?	
+		$sql2 = "SELECT * FROM ".CATAGORY_TBL;			
+		$tres 	= mysql_query($sql2);
+		$totalrecord = mysql_num_rows($tres);
+							
+		$from_rs=$_REQUEST['from'];
+		$to_rs=$from_rs+5;
+		if($from_rs>=5){$from_rs =$from_rs+1;}
+		if($from_rs=="" || $from_rs==0){$from_rs =1;}
+		if($to_rs=="" || $totalrecord<5){$to_rs =$totalrecord;}else if($to_rs=="" && $totalrecord >5){$to_rs=5;}
+		if($to_rs>$totalrecord){$to_rs = $totalrecord;}
+		if($totalrecord==0){ $from_rs=0;}
+		?>
+		<div style="float:left; font-size:13px;">
+			 <span>Results <strong><?=$from_rs?>-<?=$to_rs?></strong> of 
+			 <strong>
+			 <?=$totalrecord;	
+			if($totalrecord>0){?>
+			 </strong>			 </span>			</div>
+			<div style="float:right;font-size:13px;"> &nbsp;&nbsp;
+			 &nbsp;&nbsp;<span style="height:20px">Page:</span>
+			<?php	 						
+			$plink = $_REQUEST['page_no'];
+			if($plink==""){$plink=1;}
+			if($totalrecord > 5)
+			{
+				$res = $totalrecord/5;
+				$res=(int)$res;
+				if(($totalrecord%5)!=0)
+				{	
+					$totalpage = $res+1;
+				}
+				else
+				{
+				$totalpage = $res;
+				}
+			}
+			else
+			{
+				$totalpage = 1;
+			}		
+		
+			if($totalrecord >5)
+			{
+				$two = $_REQUEST['from'];
+				$pno = $_REQUEST['page_no'];
+				$pno = $pno-1;
+				$frm = $two - 5;				
+				
+				if($pno <= $totalpage && $pno >0)
+				{
+					echo "<a id='$pno' href='?app=sales.report&cmd=stock.status_by_cat&from=$frm&to=5&page_no=$pno'><span>Prev</span></a>&nbsp;";
+				}
+			}	
+		
+			if($totalpage>=1)
+			{	
+				$i = 1;
+				$from =0; $to=5;
+				while($i<=$totalpage)
+				{		
+					if($from ==0)
+					{		
+						echo "<a id='$i'";
+						if($i==$plink){ echo "class='selected'";}
+						echo "href='?app=sales.report&cmd=stock.status_by_cat&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}
+					else
+					{
+						echo "<a id='$i'"; 
+						if($i==$plink){ echo "class='selected'";} 
+						echo "href='?app=sales.report&cmd=stock.status_by_cat&from=$from&to=$to&page_no=$i'><span>$i</span></a>&nbsp;";
+					}			
+		
+					$i++;
+					$from =$from+5;
+					if($to >$totalrecord){ $to=$totalrecord;} 
+				}
+			}
+			if($totalrecord >5)
+			{
+				$f = $_REQUEST['from'];
+				$page = $_REQUEST['page_no'];
+				$page = $page+1;
+				if($f ==""||$f ==0){ $f=5;$page=2;}else{ $f=$f+5;} 
+				$t = 5;
+				if($t >$totalrecord){ $t=$totalrecord;} 
+				if($page <= $totalpage)
+				{
+					echo "&nbsp;<a id='$page' href='?app=sales.report&cmd=stock.status_by_cat&from=$f&to=$t&page_no=$page'><span>Next</span></a>";
+				}
+			}
+		
+		  }?>
+&nbsp;&nbsp;&nbsp;		</div>	
+	</div>
+		<!-- End Pagenation -->	
+		<br style="clear:both">
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp; Product Stock List </strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">
+			  <span style="font-size:25px; font-weight:bold"> <?=$row->project_name?></span><br>
+			  <span style="font-size:14px; font-weight:normal"><?=$row->location?></span></div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+				<td width="2%" rowspan="2" align="left" nowrap>Sl</td>
+				<td width="11%" rowspan="2" align="left" nowrap>Particulars </td>
+				<td colspan="3" align="left" nowrap><div align="center">Opening Balance </div></td>
+				<td colspan="3" align="right" nowrap><div align="center">Inwards </div></td>				
+				<td colspan="3" align="right" nowrap><div align="center">Outwards </div></td>
+				<td colspan="3" align="right" nowrap><div align="center">Closing Balance </div></td>
+				</tr>
+			  <tr>
+			    <td width="6%" align="left" nowrap>Quantity</td>
+			    <td width="7%" align="left" nowrap>Rate </td>
+			    <td width="9%" align="left">Value</td>
+			    <td width="7%" align="right" nowrap>Quantity</td>
+			    <td width="6%" align="right" nowrap>Rate</td>
+			    <td width="7%" align="right" nowrap>Value</td>
+			    <td width="7%" align="right" nowrap>Quantity</td>
+			    <td width="7%" align="right" nowrap>Rate</td>
+			    <td width="7%" align="right" nowrap>Value</td>
+			    <td width="7%" align="right" nowrap>Quantity</td>
+			    <td width="8%" align="right" nowrap> Rate </td>
+			    <td width="9%" align="right" nowrap>Value</td>
+			  </tr>
+				<?
+				  $csl=1;
+				  $from = getRequest('from');   $to = getRequest('to');  
+				  if($from == "" && $to == ""){$from=0; $to=5;}
+				  $total_OP =0; $total_IN = 0; $total_OUT = 0; $total_balance =0;
+				  $project_id  = getFromSession('project_id');  
+				  $csql= "SELECT * FROM ".CATAGORY_TBL." WHERE project_id='$project_id' ";
+				  if($catagory!=""){ $csql.=" AND catagory_code='$catagory' "; }
+				  $csql.="ORDER BY catagory_name ASC LIMIT $from,$to";
+				  $cres = mysql_query($csql);
+				  while($crow = mysql_fetch_object($cres)){	
+				  $catagory = $crow->catagory_code;
+				?>
+			  <tr bgcolor="#F3F3F3">
+				<td align="left" nowrap><?=$csl?></td>
+				<td align="left" nowrap style="font-style:oblique"><?=$crow->catagory_name?></td>
+				<td align="left" nowrap><? $OBQty = getTotalCatagoryOBQty($catagory,$project_id); echo number_format($OBQty, 2, '.', '')." Pcs";?></td>
+				<td align="left" nowrap><? $OBRate = getAvgCatagoryOBRate($catagory,$project_id); echo number_format($OBRate, 2, '.', ''); ?></td>
+				<td align="left"><? $OBValue = ($OBQty*$OBRate); echo number_format($OBValue, 2, '.', ''); ?> </td>
+				<td align="right" nowrap><? $CatInstock = getTotalCatagoryInStockQty($catagory,$project_id); echo number_format($CatInstock, 2, '.', '')." Pcs";?></td>				
+				<td align="right"><? $CatInRate = getAvgCatagoryInRate($catagory,$project_id); echo number_format($CatInRate, 2, '.', ''); ?></td>
+				<td align="right"><? $CatInValue = ($CatInstock*$CatInRate); echo number_format($CatInValue, 2, '.', ''); ?></td>
+				<td align="right" nowrap><? $CatOutstock=getTotalCatagoryOutStockQty($catagory,$project_id); echo number_format($CatOutstock, 2, '.', '')." Pcs";?></td>
+				<td align="right" nowrap><? $CatOutRate = getAvgCatagoryInRate($catagory,$project_id); echo number_format($CatOutRate, 2, '.', ''); ?></td>
+				<td align="right" nowrap><? $CatOutValue = ($CatOutstock*$CatOutRate); echo number_format($CatOutValue, 2, '.', ''); ?></td>
+				<td align="right" nowrap><? $catBalance = ($CatInstock-$CatOutstock); echo number_format($catBalance, 2, '.', '')." Pcs";?></td>
+				<td align="right" nowrap><? $CatClsRate = getAvgCatagoryInRate($catagory,$project_id); echo number_format($CatOutRate, 2, '.', ''); ?></td>
+			    <td align="right" nowrap><? $CatClosValue = ($catBalance*$CatClsRate); echo number_format($CatClosValue, 2, '.', ''); ?></td>
+			  </tr>
+			  <?
+			 $sl=1; $totalInStock = 0; $totalOutStock = 0; $totalBalance = 0; $OBQty = 0; $totalOBQty=0; $instock=0; 
+			 if($product_type==""){ $product_type="Sales Item";}
+			 $Psql="SELECT * FROM ".PRODUCT_STATUS_BY_CATAGORY_VIEW." WHERE catagory='$crow->catagory_code' AND product_type='$product_type' ORDER BY product_name ASC";
+			   $pres = mysql_query($Psql);
+			   while($prow = mysql_fetch_object($pres)){
+			   	$instock   = ($prow->instock-$prow->op_qty);
+				$totalOBStock+=$prow->op_qty;				  
+				$totalInStock+=($instock);
+				$totalOutStock+=($prow->outstock);
+				$totalBalance+=($prow->balance);
+				$mUnit = $prow->m_unit;	
+			  ?>
+			  <tr>
+				<td align="left" nowrap><?=$sl?></td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><?=$prow->product_name?></td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($prow->op_qty, 2, '.', '')." ".$prow->m_unit;?></td>
+				<td align="left" nowrap style="font-size:11px; font-weight:normal">
+				<? $POBRate = getAvgProductOBRate($prow->product_id,$project_id); echo number_format($POBRate, 2, '.', ''); ?> 
+				</td>
+				<td align="left" style="font-size:11px; font-weight:normal"><? $POBValue = ($prow->op_qty*$POBRate); echo number_format($POBValue, 2, '.', ''); ?></td>
+				<td align="right" style="font-size:11px; font-weight:normal"><? echo number_format($instock, 2, '.', '')." ".$prow->m_unit;?></td>				
+				<td align="right" style="font-size:11px; font-weight:normal">
+				<? $ProductInRate = getAvgProductInRate($prow->product_id,$project_id); echo number_format($ProductInRate, 2, '.', ''); ?> 
+				</td>
+				<td align="right" style="font-size:11px; font-weight:normal">
+				<? $InwardsValue = ($instock*$ProductInRate); echo number_format($InwardsValue, 2, '.', ''); ?>
+				</td>
+				<td align="right" nowrap style="font-size:11px; font-weight:normal"><?=number_format($prow->outstock, 2, '.', '')." ".$prow->m_unit?></td>
+				<td align="right" nowrap style="font-size:11px; font-weight:normal">
+				<? $ProductOutRate = getAvgProductInRate($prow->product_id,$project_id); echo number_format($ProductOutRate, 2, '.', ''); ?>
+				</td>
+				<td align="right" nowrap style="font-size:11px; font-weight:normal">
+				<? $OutwardsValue = ($prow->outstock*$ProductOutRate); echo number_format($OutwardsValue, 2, '.', ''); ?> 
+				</td>
+				<td align="right" nowrap style="font-size:11px; font-weight:normal"><?=number_format($prow->balance, 2, '.', '')." ".$prow->m_unit?></td>
+				<td align="right" nowrap style="font-size:11px; font-weight:normal"><? echo number_format($prow->unit_price, 2, '.', ''); ?></td>
+			    <td align="right" nowrap style="font-size:11px; font-weight:normal">
+				<? $ClosingValue = ($prow->balance*$prow->unit_price); echo number_format($ClosingValue, 2, '.', ''); ?>
+				</td>
+			  </tr>
+			<? $sl++;} $csl++;}?>
+			 <tr>
+				<td colspan="2" align="left" nowrap>
+				<div align="right">Total </div></td>
+				<td align="right" nowrap><? echo $totalOBStock.' '.$mUnit;?> </td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap><? echo $totalInStock.' '.$mUnit;?></td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap><? echo $totalOutStock.' '.$mUnit;?> </td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap>&nbsp;</td>
+				<td align="right" nowrap><? echo $totalBalance.' '.$mUnit;?> </td>
+				<td align="right" nowrap>&nbsp;</td>
+			    <td align="right" nowrap>&nbsp;</td>
+			 </tr>
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        
+		<p class="pageBreak"></p>
+        <p align="center">
+          <input value="Print" style="" onClick="printContent('printdiv')" name="save" class="button" type="submit" />
+        </p>
+        <div style="height:45px; display:block"></div>
+					
+	  </div>
+	  </form>			  </td>
+	</tr>
+  </tbody>
+</table>
+<div style="height:50px; display:block; clear:both"></div>
+</body>

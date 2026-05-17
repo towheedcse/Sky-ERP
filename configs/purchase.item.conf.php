@@ -1,0 +1,6 @@
+<?php
+	define('STOCK_PURCHASE_REQUSITION_SKIN', TEMPLATES_SKINS . '/spr_add.html');
+	define('STOCK_PURCHASE_REQUSITION_LIST_SKIN', TEMPLATES_SKINS . '/spr_list.html');
+	define('STOCK_PURCHASE_REQUSITION_EDIT_SKIN', TEMPLATES_SKINS . '/spr_edit.html');
+	define('STOCK_PURCHASE_REQUSITION_VOUCHER_PRINT_SKIN', TEMPLATES_SKINS . '/spr_voucher_print.html');
+?>

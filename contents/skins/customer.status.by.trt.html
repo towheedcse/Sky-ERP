@@ -1,0 +1,889 @@
+<?php
+extract($data);
+//dumpVar($data);
+if($message==""){ $message = getRequest('msg');}
+dateIFrame(REL_EXT_DIR);
+$project_id     = getFromSession('project_id');  
+$division_id	= getRequest('division_id');  
+$district_id	= getRequest('district');  
+$areaid		= getRequest('area');  
+$sales_type 	= getRequest('sales_type');   
+$odd_date 	= getRequest('odd_date');    
+$minus_odd_date = getRequest('minus_odd_date');     
+$issue_date 	= getRequest('issue_date');     
+$division_summary= getRequest('division_summary');  
+$division_only= getRequest('division_only');
+$sales_collection = getRequest('sales_collection');
+$date_from 	= formatDate(getRequest('date_from')); $date_to = formatDate(getRequest('date_to')); 
+dateIFrame(REL_EXT_DIR);
+require_once(CLASS_DIR . '/common.list.class.php');
+
+/*
+$sql=" SELECT * FROM sales_master WHERE order_type='Sales Opening' OR district IS NULL";
+$RES =mysql_query($sql);
+while($r = mysql_fetch_object($RES)){
+$customer = $r->customer;
+$csql=" SELECT * FROM sub_acc_head WHERE head_type='Customer' AND sub_id='$customer'";
+$cres =mysql_query($csql);
+$cr = mysql_fetch_object($cres);
+$district = $cr->district;
+$area = $cr->area;
+mysql_query("UPDATE sales_master SET district='$district', area='$area' WHERE customer='$customer'");
+}
+*/
+                  
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/print.css" media="all" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var J = jQuery.noConflict();
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
+<script language="javascript1.3">
+J("[class^=validate]").validationEngine({
+inlineValidation: false,
+success :  false,
+failure : function() { callFailFunction()  }
+})
+</script>
+<script type="text/javascript">
+function show_confirm(val)
+{
+	var r=confirm("Are you sure delete this record?");
+	if (r==true)
+  	{
+  	  window.location ="?app=brand&cmd=delete&id="+val;
+  	}
+}
+</script>
+<script language="javascript">
+function goPage(url){
+	window.location = url;
+}
+</script>
+<title>General ERP</title>
+<script type="text/javascript">
+<!--
+function printContent(id){
+str=document.getElementById(id).innerHTML
+newwin=window.open('','printwin','left=50,top=5,width=1200,height=895')
+newwin.document.write('<HTML>\n<HEAD>\n')
+newwin.document.write('<TITLE>Sundry Debtors Summary List</TITLE>\n')
+newwin.document.write('<script>\n')
+newwin.document.write('function chkstate(){\n')
+newwin.document.write('if(document.readyState=="complete"){\n')
+newwin.document.write('window.close()\n')
+newwin.document.write('}\n')
+newwin.document.write('else{\n')
+newwin.document.write('setTimeout("chkstate()",2000)\n')
+newwin.document.write('}\n')
+newwin.document.write('}\n')
+newwin.document.write('function print_win(){\n')
+newwin.document.write('window.print();\n')
+newwin.document.write('chkstate();\n')
+newwin.document.write('}\n')
+newwin.document.write('<\/script>\n')
+newwin.document.write("<style>.bngFont{font: 128% SutonnyMJ;}#tableborder_btm_right{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}#tableborder_btm{border-right::1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;}table,td{border-color: #999999;border-style: solid;}table{border-width: 0 0 1px 1px;border-spacing: 0;border-collapse: collapse;}td{margin: 0;padding: 4px;border-width: 1px 1px 0 0;}</style>")
+newwin.document.write('</HEAD>\n')
+newwin.document.write('<BODY onload="print_win()">\n')
+newwin.document.write(str)
+newwin.document.write('</BODY>\n')
+newwin.document.write('</HTML>\n')
+newwin.document.close()
+}
+//-->
+</script>
+<style>
+.pageBreak{
+page-break-after:always;
+}
+</style>
+<body>
+  <table width="100%" border="0" align="center" cellpadding="1" cellspacing="1"  id="tblbg">
+  <tbody>            
+	<tr> 
+	  <td width="1119"><div align="center"><?php if($message) echo $message; ?></div></td>
+	</tr>                      
+	<tr> 
+	  <td>
+	  <form name="report" method="post" action="" enctype="multipart/form-data">
+	  <div id="entry" style="display:block">			  
+	
+		<table width="99%" align="center" cellpadding="4"cellspacing="0" class="addborder" id="viewScreen">
+		  <tr>
+			<td align="left" class="topbg" height="26" colspan="13">
+			<span><strong>Search Sundry Debtors Summary </strong></span>  
+			<span style="float:right">&nbsp;&nbsp;Sales Collection:
+                                <input name="sales_collection" type="checkbox" value="1" <? if ($sales_collection) {
+                                    echo "checked";
+                                } ?>>
+                                </span>
+			<span style="float:right">&nbsp;&nbsp;Division:
+			<input name="division_only" type="checkbox" value="1" <? if($division_only){echo "checked";}?>>
+			</span>
+			<span style="float:right">&nbsp;&nbsp;Hide Party: 
+			<input name="division_summary" type="checkbox" value="1" <? if($division_summary){echo "checked";}?>>
+			</span>
+			<span style="float:right">Issue Date Statement : 
+			<input name="issue_date" type="checkbox" value="1" <? if($issue_date){echo "checked";}?>>
+			</span> 
+			<span style="float:right">Odd Date Statement : 
+			<input name="odd_date" type="checkbox" value="1" <? if($odd_date){echo "checked";}?>> (+)
+
+			<input name="minus_odd_date" type="checkbox" value="1" <? if($minus_odd_date){echo "checked";}?>> (-) &nbsp; &nbsp; &nbsp;
+			</span>
+			</td>
+		 </tr>
+		 <tr>
+		   <td width="4%" align="right">From</td>
+		   <td width="10%"><input name="date_from" id="date_from" style="width:80px;" value="<?=dateInputFormatDMY($date_from)?>" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" type="text" class="validate[required]">
+             <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="Form" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;"></td>
+		   <td width="3%">To</td>
+		   <td width="10%"><input name="date_to" id="date_to" style="width:80px;" value="<?=dateInputFormatDMY($date_to)?>" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" type="text" class="validate[required]">
+             <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;"></td>
+		   <td width="6%"> &nbsp;Division  </td>
+		   <td width="10%">
+		   <select name="division_id" id="division_id" style="width:95px" class="validate[required]" onChange="javascript:getDistrictList(this.value)">
+		      <option value="0">Select Division</option>
+		     <?php
+				$sql = "SELECT * FROM ".DIVISION_TBL;
+				$result=mysql_query($sql);
+				while($row=mysql_fetch_array($result)){
+				?>
+				<option value="<?=$row['division_id']?>" <? if($row['division_id']==$division_id){ echo 'selected';} ?> >
+				<?=$row['division_name_eng']?>
+				</option>
+				<?php } ?>
+		     </select>
+		   </td>
+		   <td width="4%">Area</td>
+		   <td width="15%">
+           <select name="district" id="district" style="width:135px" tabindex="1" onChange="javascript:getAreaList(this.value)" >
+		     <option value="">Select Area</option>
+		    <?php	
+		    $DISsql = "SELECT * FROM ".DISTRICT_TBL." WHERE division_id='$division_id'";            
+		    $DISsql.=" ORDER BY district_name";
+		    $Dresult=mysql_query($DISsql);
+		    while($Drow=mysql_fetch_object($Dresult)){
+		    $district_name = $Drow->district_name;	
+		    ?>
+		     <option value="<?=$Drow->district_id?>"<?php if($Drow->district_id==$district_id) echo "selected";?> >       <?=$district_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="4%">TRT</td>
+		   <td width="11%">
+           <select name="area" id="area" style="width:120px" tabindex="1"  >
+		     <option value="">Select Sales Area</option>
+		     <?php	
+		    $Asql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id'";			
+		     $Asql.=" ORDER BY area_name";
+		     $Aresult=mysql_query($Asql);
+		     while($av=mysql_fetch_object($Aresult)){			
+			$area_id = $av->area_id;	
+			$area_name = $av->area_name;	
+		     ?>
+		     <option value="<?=$area_id?>"<?php if($area_id==$areaid) echo "selected";?> >
+		       <?=$area_name?>
+		       </option>
+		     <?}?>
+		     </select></td>
+		   <td width="7%">Sales Type</td>
+		   <td width="10%">
+		   <select name="sales_type" id="sales_type" style="width:100px">
+		   		<option value="" <? if($sales_type==""){ echo "selected";}?>> Select Sales Type </option>
+				<option value="Institution General Sales" <? if($sales_type=="Institution General Sales"){ echo "selected";}?>>Institution General Sales</option>
+				<option value="Institution Corporate Sales" <? if($sales_type=="Institution Corporate Sales"){ echo "selected";}?>>Institution Corporate Sales</option>
+				<option value="Developer Sales" <? if($sales_type=="Developer Sales"){ echo "selected";}?>>Developer Sales</option>
+				<option value="Tender Sales" <? if($sales_type=="Tender Sales"){ echo "selected";}?>>Tender Sales</option>
+				<option value="Head Office Sales" <? if($sales_type=="Head Office Sales"){ echo "selected";}?>>Head Office Sales</option>
+				<option value="General Sales" <? if($sales_type=="General Sales"){ echo "selected";}?>>General Sales</option>
+				<option value="Others Sales" <? if($sales_type=="Others Sales"){ echo "selected";}?>>Others Sales</option>       
+			</select>	
+				</td>
+		   <td width="6%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+		 </tr>
+		</table>
+		<? if($division_id!=""){ ?>
+		<br>		
+		
+		<br style="clear:both">
+		<div id="printdiv">
+		<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+		  <tr bgcolor="#CCCCCC">
+			<td align="center" class="topbg" height="26">
+			<span><strong>&nbsp;Sundry Debtors Summary  List </strong></span></td>
+		  </tr>
+		  <tr>
+			<td>
+            <?  $project_id = getFromSession('project_id');
+                $psql= "SELECT project_name,location AS address FROM ".PROJECT_TBL." WHERE project_id = '".$project_id."'";
+                $prow = mysql_fetch_object(mysql_query($psql));	
+				
+
+			if($division_only != 1){
+				$divsql= "SELECT * FROM ".DIVISION_TBL." WHERE project_id='$project_id' AND division_id='$division_id' ";				 
+				$divres = mysql_query($divsql);
+				$divrow = mysql_fetch_object($divres);
+			}
+
+								
+                if($district_id!=""){
+       			$disrow = mysql_fetch_object($tres);
+                }
+				if($areaid!=""){
+				$arsql = "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id' AND area_id='$areaid'";			
+                $areaRes=mysql_query($arsql);
+				$arrow = mysql_fetch_object($areaRes);
+				}			 
+            		?>
+			<div align="center">
+			  <span style="font-size:20px; font-weight:bold"> <?=$prow->project_name?></span><br>
+			  <span style="font-size:13px; font-weight:normal"><?=$prow->address?></span>
+              		  <br>
+			<?php if($division_only != 1){ ?>
+			  <span style="font-size:16px; font-weight:bold; text-decoration:underline">
+			  <? 
+			      echo $divrow->division_name_eng;            
+			  ?>
+			  </span>
+              		  <span style="font-size:14px; font-weight:bold; text-decoration:underline;">
+			  <?                          
+			  if($district_id!=""){
+		       		echo "<br><div  style='margin-top:4px'></div> Area-".$disrow->district_name;
+			  }
+			  ?>  
+			  </span>  
+			  <? if($areaid!=""){ ?>
+			  <span style="font-size:13px; font-weight:bold; text-decoration:underline;">
+			  <?  echo "<br><div  style='margin-top:4px'></div> ".$arrow->area_name; ?>  
+			  </span> 
+			  <? }?>
+			<?php } ?>			  				
+			  <br>
+		         <span style="font-size:13px; font-weight:normal">
+		         <? echo formatDate4Display($date_from). " to ".formatDate4Display($date_to); ?>
+		         </span>
+			 
+			 <?
+			 if($odd_date){
+			 ?>
+			 <span style="font-size:12px; font-weight:normal">
+		         <? echo "Odd Date (+)"; ?>
+		         </span>
+			 <?}
+			 if($minus_odd_date){
+			 ?>
+			 <span style="font-size:12px; font-weight:normal">
+		         <? echo "Odd Date (-)"; ?>
+		         </span>
+			 <?}
+			 if($issue_date!="" && ($minus_odd_date!="" || $odd_date!="")){
+			 ?>
+			 <span style="font-size:12px; font-weight:normal">
+		         <? echo " and Issue Date "; ?>
+		         </span>
+			 <?}elseif($issue_date!="" && ($minus_odd_date=="" || $odd_date=="")){
+			 ?>
+			 <span style="font-size:12px; font-weight:normal">
+		         <? echo " Issue Date"; ?>
+		         </span>
+			 <?}
+			 if(($issue_date!="" || $minus_odd_date!="" || $odd_date!="")){
+			 ?>
+			 <span style="font-size:12px; font-weight:normal">
+		         <? echo " Statement"; ?>
+		         </span>
+			 <?}?>
+			 
+		        </div>	
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			<div align="center">	
+			<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+			  <tr>
+			    <td width="2%" align="left" nowrap>Sl</td>
+			    <td width="22%" align="left" nowrap>Particulars</td>
+			    <td width="12%" align="right" nowrap>Opening Balance </td>
+			    <td width="10%" align="right" nowrap>Sales </td>
+			    <td width="10%" align="right">Receipt</td>
+			    <td width="10%" align="right" nowrap>Adjustment</td>
+			    <td width="9%" align="right" nowrap>Bad Debt </td>
+			    <td width="9%" align="right" nowrap>Sales Return </td>
+			    <td width="16%" align="right" nowrap>Closing Balance </td>
+			    </tr>
+				<?php if($division_only == 1){ ?>
+
+				<!-- Division only start -->
+				<?php
+			
+	$from_date 	 = formatDate(getRequest('date_from'));
+	$to_date 	 = formatDate(getRequest('date_to'));
+	$sales_type  	 = getRequest('sales_type');
+	$odd_date 	 = getRequest('odd_date'); 	    
+	$minus_odd_date  = getRequest('minus_odd_date'); 
+
+// Step 1: Get all divisions and districts
+$districts_by_division = [];
+$district_ids = [];
+
+$division_sql = "
+    SELECT d.division_id, d.division_name_eng, ds.district_id
+    FROM " . DIVISION_TBL . " d
+    JOIN " . DISTRICT_TBL . " ds ON ds.division_id = d.division_id
+    WHERE d.project_id = '$project_id' AND ds.project_id = '$project_id'
+    ORDER BY d.division_id ASC
+";
+
+$div_result = mysql_query($division_sql);
+while ($row = mysql_fetch_assoc($div_result)) {
+    $division_id = $row['division_id'];
+    $districts_by_division[$division_id]['division_name'] = $row['division_name_eng'];
+    $districts_by_division[$division_id]['districts'][] = $row['district_id'];
+    $district_ids[] = $row['district_id'];
+}
+
+$area_id_filter = '';
+if (count($district_ids) > 0) {
+				$area_id_filter = " AND area_id IN (" . implode(',', $district_ids) . ")";
+				}
+
+				// Step 2: Opening Balance (OB)
+				$ob_data = [];
+				if ($from_date == "" || $from_date == "2014/01/01") {
+				$ob_sql = "
+				SELECT area_id,
+				SUM(CASE WHEN op_type='Dr' THEN opening_balance ELSE 0 END) AS ob_dr,
+				SUM(CASE WHEN op_type='Cr' THEN opening_balance ELSE 0 END) AS ob_cr
+				FROM " . CUSTOMER_OB_VIEW . "
+				WHERE project_id='$project_id'" . ($sales_type ? " AND sales_type='$sales_type'" : '') . $area_id_filter . "
+				GROUP BY area_id
+				";
+				$res = mysql_query($ob_sql);
+				while ($row = mysql_fetch_assoc($res)) {
+				$ob_data[$row['area_id']] = $row['ob_dr'] - $row['ob_cr'];
+				}
+				} else {
+				$ob_sql = "
+				SELECT area_id, SUM(dr) - SUM(cr) AS value
+				FROM " . CUSTOMER_LEDGER_VIEW . "
+				WHERE project_id='$project_id'" .
+				($from_date ? " AND created_date < '$from_date'" : '') .
+				($sales_type ? " AND sales_type='$sales_type'" : '') .
+				$area_id_filter . "
+				GROUP BY area_id
+				";
+				$res = mysql_query($ob_sql);
+				while ($row = mysql_fetch_assoc($res)) {
+				$ob_data[$row['area_id']] = $row['value'];
+				}
+				}
+
+				// Step 3: Sales
+				$sales_data = [];
+				$sales_date_field = ($odd_date != '' || $minus_odd_date != '') ? "sales_date" : "delivery_date";
+
+$sales_sql = "
+    SELECT area_id, SUM(sales_amount) AS value
+    FROM " . CUSTOMER_SALES_LEDGER_VIEW . "
+    WHERE project_id = '$project_id'
+";
+
+// sales_type condition
+if ($sales_type != '') {
+    $sales_sql .= " AND sales_type = '$sales_type'";
+}
+
+// from_date / to_date conditions
+if ($from_date != '' && $to_date == '') {
+    $sales_sql .= " AND $sales_date_field >= '$from_date'";
+} elseif ($from_date == '' && $to_date != '') {
+    $sales_sql .= " AND $sales_date_field <= '$to_date'";
+} elseif ($from_date != '' && $to_date != '') {
+    $sales_sql .= " AND $sales_date_field BETWEEN '$from_date' AND '$to_date'";
+}
+
+// minus_odd_date logic
+if ($minus_odd_date != '') {
+    $sales_sql .= " AND sales_date = value_date";
+}
+
+// Grouping
+$sales_sql .= " GROUP BY area_id";
+
+// Execute and store
+$res = mysql_query($sales_sql);
+while ($row = mysql_fetch_assoc($res)) {
+    $sales_data[$row['area_id']] = $row['value'];
+}
+
+				// Step 4: Receipt
+				$receipt_data = [];
+				$issue_date    = getRequest('issue_date');
+$created_field = ($issue_date != '') ? 'issue_date' : 'created_date';
+
+// ============ STEP 1: Get All Receipt Amounts (by area_id) =============
+$receipt_sql = "
+    SELECT area_id, SUM(cr) AS receipt_amount
+    FROM " . CUSTOMER_LEDGER_VIEW . "
+    WHERE project_id = '$project_id'
+      AND cr > 0
+      AND description != 'OB'
+      AND adjustment = 0
+      AND beddebts = 0
+";
+
+// Optional filters
+if ($sales_type != '') {
+    $receipt_sql .= " AND sales_type = '$sales_type'";
+}
+if ($from_date != '' && $to_date == '') {
+    $receipt_sql .= " AND $created_field >= '$from_date'";
+} elseif ($from_date == '' && $to_date != '') {
+    $receipt_sql .= " AND $created_field <= '$to_date'";
+} elseif ($from_date != '' && $to_date != '') {
+    $receipt_sql .= " AND $created_field BETWEEN '$from_date' AND '$to_date'";
+}
+
+$receipt_sql .= " GROUP BY area_id";
+
+// Run and store interim results
+$receipt_temp = array();
+$res1 = mysql_query($receipt_sql);
+while ($row = mysql_fetch_assoc($res1)) {
+    $receipt_temp[$row['area_id']] = (float)$row['receipt_amount'];
+}
+
+// ============ STEP 2: Get All Return Amounts (by area_id) =============
+$return_sql = "
+    SELECT area_id, SUM(return_amount) AS return_amount
+    FROM " . CUSTOMER_SALES_RETURN_DETAILS_VIEW . "
+    WHERE project_id = '$project_id'
+";
+
+// Optional filters
+if ($sales_type != '') {
+    $return_sql .= " AND sales_type = '$sales_type'";
+}
+if ($from_date != '' && $to_date == '') {
+    $return_sql .= " AND return_date >= '$from_date'";
+} elseif ($from_date == '' && $to_date != '') {
+    $return_sql .= " AND return_date <= '$to_date'";
+} elseif ($from_date != '' && $to_date != '') {
+    $return_sql .= " AND return_date BETWEEN '$from_date' AND '$to_date'";
+}
+
+$return_sql .= " GROUP BY area_id";
+
+// Merge return amounts with receipt_temp
+$res2 = mysql_query($return_sql);
+while ($row = mysql_fetch_assoc($res2)) {
+    $area_id = $row['area_id'];
+    $return_amt = (float)$row['return_amount'];
+
+    if (!isset($receipt_temp[$area_id])) {
+        $receipt_temp[$area_id] = 0;
+    }
+
+    $net = $receipt_temp[$area_id] - $return_amt;
+    $receipt_data[$area_id] = ($net > 0) ? $net : 0;
+}
+
+// ============ STEP 3: Add remaining areas with only receipts ============
+foreach ($receipt_temp as $area_id => $amount) {
+    if (!isset($receipt_data[$area_id])) {
+        $receipt_data[$area_id] = $amount;
+    }
+}
+
+// Step 5: Adjustment
+$adjust_data = [];
+$adjust_sql = "
+    SELECT area_id, SUM(cr) AS adjust_amount
+    FROM " . CUSTOMER_LEDGER_VIEW . "
+    WHERE project_id = '$project_id'
+      AND cr > 0
+      AND description != 'OB'
+      AND adjustment = 1
+      AND beddebts = 0
+";
+
+// Filters
+if ($sales_type != '') {
+    $adjust_sql .= " AND sales_type = '$sales_type'";
+}
+if ($from_date != '' && $to_date == '') {
+    $adjust_sql .= " AND created_date >= '$from_date'";
+} elseif ($from_date == '' && $to_date != '') {
+    $adjust_sql .= " AND created_date <= '$to_date'";
+} elseif ($from_date != '' && $to_date != '') {
+    $adjust_sql .= " AND created_date BETWEEN '$from_date' AND '$to_date'";
+}
+
+$adjust_sql .= " GROUP BY area_id";
+
+// ============ STEP 2: Execute & Map Results ============
+$res = mysql_query($adjust_sql);
+while ($row = mysql_fetch_assoc($res)) {
+    $adjust_data[$row['area_id']] = (float)$row['adjust_amount'];
+}
+
+				// Step 6: Bad Debt
+				$bed_data = [];
+				$bed_sql = "
+				SELECT area_id, SUM(bed_debt_amount) AS value
+				FROM " . CUSTOMER_BED_DEBT_VIEW . "
+				WHERE project_id='$project_id'
+				";
+				if ($sales_type != '') {
+				$bed_sql .= " AND sales_type='$sales_type'";
+				}
+				if ($from_date != '') {
+				$bed_sql .= " AND bed_debt_date >= '$from_date'";
+				}
+				if ($to_date != '') {
+				$bed_sql .= " AND bed_debt_date <= '$to_date'";
+				}
+				$bed_sql .= $area_id_filter . " GROUP BY area_id";
+
+				$res = mysql_query($bed_sql);
+				while ($row = mysql_fetch_assoc($res)) {
+				$bed_data[$row['area_id']] = $row['value'];
+				}
+
+				// Step 7: Return
+				$return_data = [];
+				$return_sql = "
+				SELECT area_id, SUM(sales_return_amount) AS value
+				FROM " . CUSTOMER_SALES_RETURN_VIEW . "
+				WHERE project_id='$project_id'
+				";
+				if ($sales_type != '') {
+				$return_sql .= " AND sales_type='$sales_type'";
+				}
+				if ($from_date != '') {
+				$return_sql .= " AND sales_return_date >= '$from_date'";
+				}
+				if ($to_date != '') {
+				$return_sql .= " AND sales_return_date <= '$to_date'";
+				}
+				$return_sql .= $area_id_filter . " GROUP BY area_id";
+
+				$res = mysql_query($return_sql);
+				while ($row = mysql_fetch_assoc($res)) {
+				$return_data[$row['area_id']] = $row['value'];
+				}
+
+				// Step 8: Closing Balance
+				$closing_data = [];
+				$closing_sql = "
+				SELECT area_id, SUM(dr) - SUM(cr) AS value
+				FROM " . CUSTOMER_LEDGER_VIEW . "
+				WHERE project_id='$project_id'" .
+				($to_date ? " AND created_date <= '$to_date'" : '') .
+				($sales_type ? " AND sales_type='$sales_type'" : '') .
+				$area_id_filter . "
+				GROUP BY area_id
+				";
+
+				$res = mysql_query($closing_sql);
+				while ($row = mysql_fetch_assoc($res)) {
+				$closing_data[$row['area_id']] = $row['value'];
+				}
+
+				// Step 9: Output loop
+				$asl = 1;
+				$grandTotalOB = $grandTotalSales = $grandTotalReceipt = $grandTotalAdjust = $grandTotalBed = $grandTotalReturn = $grandTotalClosing = 0;
+
+				foreach ($districts_by_division as $division_id => $division_data) {
+				$division_name = isset($division_data['division_name']) ? $division_data['division_name'] : 'N/A';
+				$districts = isset($division_data['districts']) ? $division_data['districts'] : [];
+
+				$totalOB = $totalSales = $totalReceipt = $totalAdjust = $totalBed = $totalReturn = $totalClosing = 0;
+
+				foreach ($districts as $district_id) {
+				$totalOB += isset($ob_data[$district_id]) ? $ob_data[$district_id] : 0;
+				$totalSales += isset($sales_data[$district_id]) ? $sales_data[$district_id] : 0;
+				$totalReceipt += isset($receipt_data[$district_id]) ? $receipt_data[$district_id] : 0;
+				$totalAdjust += isset($adjust_data[$district_id]) ? $adjust_data[$district_id] : 0;
+				$totalBed += isset($bed_data[$district_id]) ? $bed_data[$district_id] : 0;
+				$totalReturn += isset($return_data[$district_id]) ? $return_data[$district_id] : 0;
+				$totalClosing += isset($closing_data[$district_id]) ? $closing_data[$district_id] : 0;
+				}
+
+				// Output Row
+				echo "<tr bgcolor='#F3F3F3'>";
+				echo "<td>$asl</td>";
+				echo "<td style='font-style:oblique'>$division_name</td>";
+				echo "<td align='right'>" . number_format(abs($totalOB), 2, '.', '') . ($totalOB > 0 ? ' Dr' : ' Cr') . "</td>";
+				echo "<td align='right'>" . number_format($totalSales, 2, '.', '') . "</td>";
+				echo "<td align='right'>" . number_format($totalReceipt, 2, '.', '') . "</td>";
+				echo "<td align='right'>" . number_format($totalAdjust, 2, '.', '') . " Cr</td>";
+				echo "<td align='right'>" . number_format($totalBed, 2, '.', '') . "</td>";
+				echo "<td align='right'>" . number_format($totalReturn, 2, '.', '') . "</td>";
+				echo "<td align='right'>" . number_format(abs($totalClosing), 2, '.', '') . ($totalClosing > 0 ? ' Dr' : ' Cr') . "</td>";
+				echo "</tr>";
+
+				$asl++;
+
+				$grandTotalOB      += $totalOB;
+				$grandTotalSales   += $totalSales;
+				$grandTotalReceipt     += $totalReceipt;
+				$grandTotalAdjust     += $totalAdjust;
+				$grandTotalBed     += $totalBed;
+				$grandTotalReturn     += $totalReturn;
+				$grandTotalClosing += $totalClosing;
+
+				}
+
+				echo "<tr style='font-weight:bold'>
+					<td colspan='2' align='right'>Total</td>
+					<td align='right'>" . number_format(abs($grandTotalOB), 2, '.', '') . ($grandTotalOB > 0 ? ' Dr' : ' Cr') . "</td>
+					<td align='right'>" . number_format($grandTotalSales, 2, '.', '') . "</td>
+					<td align='right'>" . number_format($grandTotalReceipt, 2, '.', '') . "</td>
+					<td align='right'>" . number_format($grandTotalAdjust, 2, '.', '') . " Cr</td>
+					<td align='right'>" . number_format($grandTotalBed, 2, '.', '') . "</td>
+					<td align='right'>" . number_format($grandTotalReturn, 2, '.', '') . "</td>
+					<td align='right'>" . number_format(abs($grandTotalClosing), 2, '.', '') . ($grandTotalClosing > 0 ? ' Dr' : ' Cr') . "</td>
+				</tr>";
+				?>
+					
+
+
+				<!-- Division only end -->
+
+				<?php }else{ ?>
+
+				<!-- Start Area -->
+				<?
+				  				  
+				  $asl=1;
+				  
+				  $totalOBAmount =0; $totalSLAmount = 0; $totalReceiptAmount = 0; $totalDBAmount =0; $totalSRAmount=0; $totalCBAmount=0;				  
+				  
+				  $csql = "SELECT * FROM " . DISTRICT_TBL . " WHERE project_id='$project_id' ";
+                                    if ($division_id != "" && $division_id > 0) {
+                                        $csql .= " AND division_id='$division_id'";
+                                    }
+				  if($district_id!=""){
+				  $csql.=" AND district_id='$district_id'";
+				  }
+				  $csql.="ORDER BY division_id";					
+				  
+				  $cres = mysql_query($csql);
+				  while($crow = mysql_fetch_array($cres)){
+				   $crow = (object)$crow;	
+				  $district_id = $crow->district_id;
+				?>
+			   <tr bgcolor="#F3F3F3">
+				<td align="left" nowrap><?=$asl?></td>
+				<td align="left" nowrap style="font-style:oblique">Area-<?=$crow->district_name?></td>
+				<td align="right" nowrap>
+                <? $AreaOB = getTotalAreaOB($district_id,$project_id); echo number_format(abs($AreaOB), 2, '.', ''); 
+                if($AreaOB>0){ echo " Dr"; }else{ echo " Cr";} $totalOBAmount+=$AreaOB;?>                </td>
+				<td align="right" nowrap>
+                <? 
+                 $AreaSales = getTotalAreaSalesAmount($district_id,$project_id); echo number_format($AreaSales, 2, '.', '');
+                 $totalSLAmount+=$AreaSales;
+                 ?>				
+				</td>
+				<td align="right">
+                <? 
+                $AreaReceipt = getTotalAreaReceiptAmount($district_id,$project_id); echo number_format($AreaReceipt, 2, '.', ''); 
+                $totalReceiptAmount+=$AreaReceipt;
+                ?>				
+				</td>
+				<td align="right" nowrap>
+                <? 
+                $AreaAdjust = getTotalAreaAdjustAmount($district_id,$project_id); echo number_format($AreaAdjust, 2, '.', '')." Cr"; 
+                $totalAdjustAmount+=$AreaAdjust;
+                ?></td>
+				<td align="right" nowrap>
+                <? 
+                $AreaBedDebt = getTotalAreaBedDebtAmount($district_id,$project_id); echo number_format($AreaBedDebt, 2, '.', ''); 
+                $totalDBAmount+=$AreaBedDebt;
+                ?>				</td>				
+				<td align="right">
+                <? 
+                $SalesReturn = getTotalAreaSalesReturnAmount($district_id,$project_id); echo number_format($SalesReturn, 2, '.', ''); 
+                $totalSRAmount+=$SalesReturn;
+                ?>				</td>
+				<td align="right">
+                <? $AreaClosingAmount = getTotalAreaClosingAmount($district_id,$project_id); 
+                echo number_format(abs($AreaClosingAmount), 2, '.', ''); $totalCBAmount+=$AreaClosingAmount; ?>
+                <? if($AreaClosingAmount>0){ echo " Dr"; }else{ echo " Cr";}?>			    </td>
+				</tr>
+
+				 	<!-- Start TRT -->
+					<?php
+					  $tsl=1;			  
+					  $project_id  = getFromSession('project_id');  
+					  $trtsql= "SELECT * FROM ".AREA_TBL." WHERE project_id='$project_id' AND district='$district_id' ";
+					  if($areaid!=""){
+					  $trtsql.=" AND `area_id`='$areaid'";
+					  }
+					  $trtsql.="ORDER BY area_name ASC";
+					  $trtres = mysql_query($trtsql);
+					  while($trtrow = mysql_fetch_object($trtres)){	
+					  $trt_id 		= $trtrow->area_id;
+					?>
+					<tr bgcolor="#F3F3F3">
+					<td align="left" nowrap><?=$tsl?></td>
+					<td align="left" nowrap style="font-style:oblique"><?=$trtrow->area_name?></td>
+					<td align="right" nowrap>
+		        <? $TrtOB = getTotalTRTOB($trt_id,$project_id); echo number_format(abs($TrtOB), 2, '.', ''); 
+					if($TrtOB>0){ echo " Dr"; }else{ echo " Cr";}?>				</td>
+					<td align="right" nowrap>
+		        <? $TrtSales = getTotalTRTSalesAmount($trt_id,$project_id); echo number_format($TrtSales, 2, '.', ''); ?>             	</td>
+					<td align="right">
+		        <? $TrtReceipt = getTotalTRTReceiptAmount($trt_id,$project_id); echo number_format($TrtReceipt, 2, '.', ''); ?>				</td>
+					<td align="right" nowrap>
+		        <? $TrtAdjust = getTotalTRTAdjustAmount($trt_id,$project_id); echo number_format($TrtAdjust, 2, '.', '')." Cr"; ?>
+		        </td>
+					<td align="right" nowrap>
+		        <? $TrtBedDebt = getTotalTRTBedDebtAmount($trt_id,$project_id); echo number_format($TrtBedDebt, 2, '.', ''); ?>				</td>				
+					<td align="right">
+		        <? $TrtSalesReturn = getTotalTRTSalesReturnAmount($trt_id,$project_id); 
+					echo number_format($TrtSalesReturn, 2, '.', ''); ?>				</td>
+					<td align="right">
+		        <? $TrtClosingAmount = getTotalTRTClosingAmount($trt_id,$project_id); 
+					echo number_format(abs($TrtClosingAmount), 2, '.', ''); ?>
+		        <? if($TrtClosingAmount>0){ echo " Dr"; }else{ echo " Cr";}?>			    </td>
+					</tr>	
+					<!-- Start Customer -->
+					<?php
+					  if($division_summary!=1){
+					  $csl=1;			  
+					  $project_id  = getFromSession('project_id');  
+					  $cosql= "SELECT * FROM ".CUSTOMER_VIEW." WHERE project_id='$project_id' AND trt_id='$trt_id' AND status='1' ";
+					  $cosql.="ORDER BY sub_head_name ASC";
+					  $cores = mysql_query($cosql);
+					  while($corow = mysql_fetch_object($cores)){	
+					  $sub_id 	   = $corow->sub_id;
+					?>
+					
+					<tr bgcolor="#fff">
+					<td align="left" nowrap style="font-size:11px; font-weight:normal"><?=$csl?></td>
+					<td align="left" nowrap style="font-size:11px; font-weight:normal"><?=(new CommonList())->normalizeUserName($corow->code,$corow->sub_head_name)?></td>
+					<td align="right" nowrap style="font-size:11px; font-weight:normal">
+		        <?php 
+		        $myOB = getCustomerTotalOB($sub_id,$project_id); echo number_format(abs($myOB), 2, '.', ''); 
+					if($myOB>0){ echo " Dr"; }else{ echo " Cr";}
+		        ?>				
+		        </td>
+					<td align="right" nowrap style="font-size:11px; font-weight:normal">
+		        <? $mySales = getCustomerTotalSalesAmount($sub_id,$project_id); echo number_format($mySales, 2, '.', ''); ?>             	</td>
+					<td align="right" style="font-size:11px; font-weight:normal">
+		        <? $myReceipt = getCustomerTotalReceipt($sub_id,$project_id); echo number_format($myReceipt, 2, '.', ''); ?>				</td>
+					<td align="right" nowrap style="font-size:11px; font-weight:normal">
+		        <? echo $myAdjust = getCustomerTotalAdjust($sub_id,$project_id); ?></td>
+					<td align="right" nowrap style="font-size:11px; font-weight:normal">
+		        <? $myBedDebt = getCustomerTotalBaddebts($sub_id,$project_id); echo number_format($myBedDebt, 2, '.', ''); ?>				</td>				
+					<td align="right" style="font-size:11px; font-weight:normal">
+		        <? $mySalesReturn = getCustomerTotalSalesReturn($sub_id,$project_id); 
+					echo number_format($mySalesReturn, 2, '.', ''); ?>				</td>
+					<td align="right" style="font-size:11px; font-weight:normal">
+		        <? $myClosingAmount = getCustomerTotalClosingAmount($sub_id,$project_id); 
+					echo number_format(abs($myClosingAmount), 2, '.', ''); ?> 
+		        <? if($myClosingAmount>0){ echo " Dr"; }else{ echo " Cr";}?>			    </td>
+					</tr>
+					
+					<?php $csl++;} }?>				
+					<!-- End Customer -->			
+					<?php $tsl++;}?>
+					<!-- End TRT -->				
+			<? $asl++;}?> 
+			<!-- End Area -->
+			 <tr>
+				<td colspan="2" align="left" nowrap>
+				<div align="right"><?if($areaid!=""){?> Area <?}?> Total </div></td>
+				<td align="right" nowrap>
+                <? echo number_format(abs($totalOBAmount), 2, '.', ''); if($totalOBAmount>0){ echo " Dr"; }else{ echo " Cr";}?>                </td>
+				<td align="right" nowrap><? echo number_format($totalSLAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalReceiptAmount, 2, '.', '');?></td>
+				<td align="right" nowrap><? echo number_format($totalAdjustAmount, 2, '.', '')." Cr";?></td>
+				<td align="right" nowrap><? echo number_format($totalDBAmount, 2, '.', ''); ?></td>
+				<td align="right" nowrap><? echo number_format($totalSRAmount, 2, '.', ''); ?></td>
+				<td align="right" nowrap>
+                <? echo number_format(abs($totalCBAmount), 2, '.', ''); if($totalCBAmount>0){ echo " Dr"; }else{ echo " Cr";}?>                </td>
+				</tr>
+			 <tr>
+			   <td colspan="2" align="left" nowrap><div align="right"><?if($areaid!=""){?> TRT <?}else{?> Grand <?}?> Total</div></td>
+			   <td align="right" nowrap>
+			   <? $DivisionOB = getTotalDivisionOB($division_id,$project_id); echo number_format(abs($DivisionOB), 2, '.', ''); 
+                if($DivisionOB>0){ echo " Dr"; }else{ echo " Cr";} ?>
+			   </td>
+			   <td align="right" nowrap>
+			   <? 
+                 $DivisionSales = getTotalDivisionSalesAmount($division_id,$project_id); echo number_format($DivisionSales, 2, '.', '');
+               ?>
+			   </td>
+			   <td align="right" nowrap>
+			    <? 
+                $DivisionReceipt = getTotalDivisionReceiptAmount($division_id,$project_id); echo number_format($DivisionReceipt, 2, '.', ''); 
+                ?>
+				</td>
+			   <td align="right" nowrap>               
+                <? 
+                $DivisionAdjust = getTotalDivisionAdjustAmount($division_id,$project_id); echo number_format($DivisionAdjust, 2, '.', '')." Cr"; 
+                ?>
+               </td>
+			   <td align="right" nowrap>
+			   <? 
+                $DivisionBedDebt = getTotalDivisionBedDebtAmount($division_id,$project_id); echo number_format($DivisionBedDebt, 2, '.', ''); 
+                ?></td>
+			   <td align="right" nowrap>
+			   <? 
+                $DivisionSalesReturn = getTotalDivisionSalesReturnAmount($division_id,$project_id); echo number_format($DivisionSalesReturn, 2, '.', ''); 
+                ?>
+				</td>
+			   <td align="right" nowrap>
+			   <? 
+			     $DivisionClosingAmount = getTotalDivisionClosingAmount($division_id,$project_id); 
+                 echo number_format(abs($DivisionClosingAmount), 2, '.', ''); 
+				 if($DivisionClosingAmount>0){ echo " Dr"; }else{ echo " Cr";}
+				?>               
+			   </td>
+			   </tr>
+
+			<?php } ?>
+
+			</table>
+			</div>
+			</td>
+		  </tr>
+		</table>
+		</div>
+        <p class="pageBreak"></p>
+        
+        <p align="center">
+          <input value="Print" onClick="printContent('printdiv')" name="save" class="button" id="viewScreen" type="submit" />
+        </p>
+        <div style="height:45px; display:block"></div>
+		 <?php }?>			
+	  </div>
+	  
+	 
+	  </form>			  
+	  </td>
+	</tr>
+  </tbody>
+</table>
+
+<div style="height:50px; display:block; clear:both"></div>
+</body>
