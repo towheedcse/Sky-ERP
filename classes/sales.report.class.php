@@ -1778,73 +1778,70 @@ class SalesReport
 
 
     function getStoreProductListNEW($from, $to)
-{
-    $from = (int)$from;
-    $to = (int)$to;
+    {
+        $from = (int)$from;
+        $to = (int)$to;
 
-    if ($from == 0 && $to == 0) {
-        $from = 0;
-        $to = 500;
-    }
+        if ($from == 0 && $to == 0) {
+            $from = 0;
+            $to = 500;
+        }
 
-    $main_catagory= getRequest('main_catagory');
-    $catagory     = getRequest('catagory');
-    $subcatagory  = getRequest('subcatagory');
-    $product      = getRequest('product');
-    $product_type = getRequest('product_type');
-    $stock_id     = getRequest('store_id');
-    $project_id   = getFromSession('project_id');
+        $catagory = getRequest('catagory');
+        $subcatagory = getRequest('subcatagory');
+        $product = getRequest('product');
+        $product_type = getRequest('product_type');
+        $stock_id = getRequest('store_id');
+        $project_id = getFromSession('project_id');
 
-    $from_date = dateInputFormatYMD(getRequest('date_from'));
-    $to_date   = dateInputFormatYMD(getRequest('date_to'));
+        $from_date = dateInputFormatYMD(getRequest('date_from'));
+        $to_date = dateInputFormatYMD(getRequest('date_to'));
 
+        // Default to_date = today if empty
+        if (empty($to_date)) {
+            $to_date = date('Y-m-d');
+        }
 
-    // Default to_date = today if empty
-    if (empty($to_date)) {
-        $to_date = date('Y-m-d');
-    }
-
-    // If from_date is empty, take earliest create_date from stock_ledger
-    if (empty($from_date)) {
-        $query  = "SELECT MIN(create_date) AS earliest_date
+        // If from_date is empty, take earliest create_date from stock_ledger
+        if (empty($from_date)) {
+            $query = "SELECT MIN(create_date) AS earliest_date
                    FROM " . STOCK_LEDGER_TBL . "
                    WHERE project_id = '$project_id'
                      AND create_date >= '1970-01-01'";
-        $result = mysql_query($query);
-        if ($result) {
-            $row = mysql_fetch_assoc($result);
-            // Fallback to today if no valid date found
-            $from_date = !empty($row['earliest_date']) ? $row['earliest_date'] : date('Y-m-d');
+            $result = mysql_query($query);
+            if ($result) {
+                $row = mysql_fetch_assoc($result);
+                $from_date = !empty($row['earliest_date']) ? $row['earliest_date'] : date('Y-m-d');
+            }
         }
-    }
 
-    // Period and opening balance conditions
-    $period_cond = " AND create_date BETWEEN '$from_date' AND '$to_date'";
-    $ob_cond     = " AND create_date < '$from_date'";
+        // Period and opening balance conditions
+        $period_cond = " AND create_date BETWEEN '$from_date' AND '$to_date'";
+        $ob_cond = " AND create_date < '$from_date'";
 
-    // Filters
-    $filter = "";
-    if (!empty($main_catagory)) {
-        $filter .= " AND po.main_catagory = '$main_catagory'";
-    }
-    if (!empty($catagory)) {
-        $filter .= " AND po.catagory = '$catagory'";
-    }
-    if (!empty($subcatagory)) {
-        $filter .= " AND po.subcatagory = '$subcatagory'";
-    }
-    if (!empty($product)) {
-        $filter .= " AND po.product_id = '$product'";
-    }
-    if (!empty($product_type)) {
-        $filter .= " AND po.product_type = '$product_type'";
-    }
-    if (!empty($stock_id)) {
-        $filter .= " AND base.store_id = '$stock_id'";
-    }
+        // ✅ Build product JOIN conditions (po.* filters go here, NOT in WHERE)
+        $product_join_cond = "";
+        if (!empty($catagory)) {
+            $product_join_cond .= " AND po.catagory = '$catagory'";
+        }
+        if (!empty($subcatagory)) {
+            $product_join_cond .= " AND po.subcatagory = '$subcatagory'";
+        }
+        if (!empty($product)) {
+            $product_join_cond .= " AND po.product_id = '$product'";
+        }
+        if (!empty($product_type)) {
+            $product_join_cond .= " AND po.product_type = '$product_type'";
+        }
 
-    // Main data query
-    $data_sql = "
+        // ✅ Only base.* filters remain in WHERE
+        $filter = "";
+        if (!empty($stock_id)) {
+            $filter .= " AND base.store_id = '$stock_id'";
+        }
+
+        // Main data query
+        $data_sql = "
     SELECT 
         base.store_id,
         base.product_id,
@@ -1864,8 +1861,10 @@ class SalesReport
         FROM " . STOCK_LEDGER_TBL . "
         WHERE project_id = '$project_id'
     ) base
-    LEFT JOIN " . PRODUCT_TBL . " po ON po.product_id = base.product_id
-    LEFT JOIN " . DELIVERY_POINT_TBL . " d ON d.delivery_pid = base.store_id
+    LEFT JOIN " . PRODUCT_TBL . " po 
+        ON po.product_id = base.product_id $product_join_cond
+    LEFT JOIN " . DELIVERY_POINT_TBL . " d 
+        ON d.delivery_pid = base.store_id
     LEFT JOIN (
         SELECT product_id, store_id, (SUM(dr) - SUM(cr)) AS opening_qty
         FROM " . STOCK_LEDGER_TBL . "
@@ -1883,17 +1882,17 @@ class SalesReport
     LIMIT $from, $to
     ";
 
-    $result = mysql_query($data_sql);
-    $data   = array();
+        $result = mysql_query($data_sql);
+        $data = array();
 
-    if ($result) {
-        while ($row = mysql_fetch_object($result)) {
-            $data[] = $row;
+        if ($result) {
+            while ($row = mysql_fetch_object($result)) {
+                $data[] = $row;
+            }
         }
-    }
 
-    // Total rows count
-    $count_sql = "
+        // Total rows count
+        $count_sql = "
     SELECT COUNT(*) AS total_rows FROM (
         SELECT base.product_id, base.store_id
         FROM (
@@ -1901,7 +1900,8 @@ class SalesReport
             FROM " . STOCK_LEDGER_TBL . "
             WHERE project_id = '$project_id'
         ) base
-        LEFT JOIN " . PRODUCT_TBL . " po ON po.product_id = base.product_id
+        LEFT JOIN " . PRODUCT_TBL . " po 
+            ON po.product_id = base.product_id $product_join_cond
         LEFT JOIN (
             SELECT product_id, store_id
             FROM " . STOCK_LEDGER_TBL . "
@@ -1918,19 +1918,18 @@ class SalesReport
     ) AS count_data
     ";
 
-    $count_result = mysql_query($count_sql);
-    $total_rows   = 0;
-    if ($count_result) {
-        $row        = mysql_fetch_assoc($count_result);
-        $total_rows = $row['total_rows'];
+        $count_result = mysql_query($count_sql);
+        $total_rows = 0;
+        if ($count_result) {
+            $row = mysql_fetch_assoc($count_result);
+            $total_rows = $row['total_rows'];
+        }
+
+        return array(
+            'data' => $data,
+            'total' => $total_rows
+        );
     }
-
-    return array(
-        'data'  => $data,
-        'total' => $total_rows
-    );
-}
-
 
 
     function getStoreProductList($from, $to)
@@ -2602,24 +2601,24 @@ class SalesReport
         $today = date('Y-m-d');
         $info = array();
 
-	$sqlSet = "SET GLOBAL group_concat_max_len = 10000";
+        $sqlSet = "SET GLOBAL group_concat_max_len = 10000";
         mysql_fetch_object(mysql_query($sqlSet));
 
-	$info['table'] = 'bill b 
+        $info['table'] = 'bill b 
 	    LEFT JOIN bill_invoices bi ON b.bill_id = bi.bill_id
 	    LEFT JOIN ' . PROJECT_TBL . ' p ON b.project_id = p.project_id
 	    LEFT JOIN ' . CURRENCY_TBL . ' c ON b.currency = c.currency_id';
 
-	$info['fields'] = array(
-	    'b.*',
-	    'p.project_name',
-	    'p.location',
-	    "DATE_FORMAT(b.bill_date,'%d %b %y') as billDate",
-	    "DATE_FORMAT(b.aging_date,'%d %b %y') as agingDate",
-	    'c.curr_symble',
-	    "GROUP_CONCAT(bi.invoice_no SEPARATOR ', ') as invoices",
-	    "GROUP_CONCAT(bi.wo_no SEPARATOR ', ') as wo_numbers"
-	);
+        $info['fields'] = array(
+            'b.*',
+            'p.project_name',
+            'p.location',
+            "DATE_FORMAT(b.bill_date,'%d %b %y') as billDate",
+            "DATE_FORMAT(b.aging_date,'%d %b %y') as agingDate",
+            'c.curr_symble',
+            "GROUP_CONCAT(bi.invoice_no SEPARATOR ', ') as invoices",
+            "GROUP_CONCAT(bi.wo_no SEPARATOR ', ') as wo_numbers"
+        );
 
         $sql = "b.project_id = '" . $project_id . "' AND b.status=1";
         if ($customer != "") {
@@ -2636,12 +2635,12 @@ class SalesReport
             $sql .= " AND b.bill_date BETWEEN '$date_from' AND '$date_to'";
         }
 
-	if($is_aging_over == 1){
+        if ($is_aging_over == 1) {
             $sql .= " AND b.aging_date <= '$today'";
-	}
+        }
 
         $info['where'] = $sql;
-	$info['groupby'] = array("b.bill_id");
+        $info['groupby'] = array("b.bill_id");
 
         $totalrecord = count(select($info));
 
@@ -2709,7 +2708,7 @@ class SalesReport
             $table = SALES_MASTER_TBL;
         }
 
-	$info['table'] = $table . " pm
+        $info['table'] = $table . " pm
 	    LEFT JOIN " . PROJECT_TBL . " p ON pm.project_id = p.project_id
 	    LEFT JOIN " . CURRENCY_TBL . " c ON pm.currency = c.currency_id";
 
@@ -2730,10 +2729,10 @@ class SalesReport
         if ($delivery_point != "") {
             $sql .= " AND pm.delivery_point = '$delivery_point'";
         }
-	if ($wo_no != "") {
-	    $wo_no = addslashes($wo_no);
-	    $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
-	}
+        if ($wo_no != "") {
+            $wo_no = addslashes($wo_no);
+            $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
+        }
         if ($date_from != "" && $date_to == "") {
             $sql .= " AND pm.sales_date >= '$date_from'";
         } elseif ($date_from == "" && $date_to != "") {
@@ -2774,7 +2773,7 @@ class SalesReport
             $table = SALES_MASTER_TBL;
         }
 
-	$info['table'] = $table . " pm
+        $info['table'] = $table . " pm
 	    LEFT JOIN " . PROJECT_TBL . " p ON pm.project_id = p.project_id
 	    LEFT JOIN " . CURRENCY_TBL . " c ON pm.currency = c.currency_id";
 
@@ -2794,10 +2793,10 @@ class SalesReport
         if ($delivery_point != "") {
             $sql .= " AND pm.delivery_point = '$delivery_point'";
         }
-	if ($wo_no != "") {
-	    $wo_no = addslashes($wo_no);
-	    $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
-	}
+        if ($wo_no != "") {
+            $wo_no = addslashes($wo_no);
+            $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
+        }
         if ($date_from != "" && $date_to == "") {
             $sql .= " AND pm.sales_date >= '$date_from'";
         } elseif ($date_from == "" && $date_to != "") {
@@ -3009,10 +3008,10 @@ class SalesReport
         $project_id = getFromSession('project_id');
 
         $info = array();
-	$info['table'] = SALES_MASTER_TBL . " pm
+        $info['table'] = SALES_MASTER_TBL . " pm
 	    LEFT JOIN " . PROJECT_TBL . " p ON pm.project_id = p.project_id
 	    LEFT JOIN " . CURRENCY_TBL . " c ON pm.currency = c.currency_id";
-        
+
         $info['fields'] = array('pm.voucher_no', 'p.project_name', 'p.location', 'pm.customer as sub_id', 'pm.und_wo_no', 'pm.gate_pass', 'pm.track_no', 'pm.salse_type', 'pm.total_value', "DATE_FORMAT(pm.sales_date,'%d %b %y' ) as sales_date", 'pm.mode_of_payment', 'c.curr_symble', 'pm.bank_name', 'pm.acc_no', 'pm.check_no', 'pm.check_no', 'pm.discount', 'pm.net_payble', 'pm.paid_amount', 'pm.due', 'pm.item_delivery_amount', 'pm.return_amount', 'pm.ref_no', 'pm.created_date', "DATE_FORMAT(pm.created_date,'%d %b %y' ) as date", "pm.reference", "pm.commission_slot", "pm.total_commission", "pm.commission_adv_paid", "pm.commission_total_paid", "pm.commission_total_due", "pm.commission_status", "pm.created_by", "pm.checked_by", "pm.approved_by", "TIME_FORMAT(pm.approved_time, '%d %b %y, %h %i %p') as approved_time", "pm.ref_voucher");
 
         $sql = "pm.project_id = '" . $project_id . "'  AND pm.item_delivery_amount =0 AND pm.status=1 AND pm.is_deleted=0";
@@ -3031,10 +3030,10 @@ class SalesReport
         if ($delivery_point != "") {
             $sql .= " AND pm.delivery_point = '$delivery_point'";
         }
-	if ($wo_no != "") {
-	    $wo_no = addslashes($wo_no);
-	    $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
-	}
+        if ($wo_no != "") {
+            $wo_no = addslashes($wo_no);
+            $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
+        }
         if ($date_from != "" && $date_to == "") {
             $sql .= " AND pm.sales_date >= '$date_from'";
         } elseif ($date_from == "" && $date_to != "") {
@@ -3068,7 +3067,7 @@ class SalesReport
         $project_id = getFromSession('project_id');
 
         $info = array();
-	$info['table'] = SALES_MASTER_TBL . " pm
+        $info['table'] = SALES_MASTER_TBL . " pm
 	    LEFT JOIN " . PROJECT_TBL . " p ON pm.project_id = p.project_id
 	    LEFT JOIN " . CURRENCY_TBL . " c ON pm.currency = c.currency_id";
 
@@ -3088,10 +3087,10 @@ class SalesReport
         if ($delivery_point != "") {
             $sql .= " AND pm.delivery_point = '$delivery_point'";
         }
-	if ($wo_no != "") {
-	    $wo_no = addslashes($wo_no);
-	    $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
-	}
+        if ($wo_no != "") {
+            $wo_no = addslashes($wo_no);
+            $sql .= " AND pm.ref_voucher LIKE '%$wo_no%'";
+        }
         if ($date_from != "" && $date_to == "") {
             $sql .= " AND pm.sales_date >= '$date_from'";
         } elseif ($date_from == "" && $date_to != "") {
@@ -3804,7 +3803,7 @@ class SalesReport
         $delivery_point = getRequest('delivery_point');
         $project_id = getFromSession('project_id');
 
-	$is_aging_over = getRequest('is_aging_over');
+        $is_aging_over = getRequest('is_aging_over');
 
 
         $direct_invoice = 0;
@@ -3932,7 +3931,7 @@ class SalesReport
 
     }
 
-    
+
     //============ Stock Transfer List =====
     function showStockTransferList()
     {
@@ -3957,8 +3956,8 @@ class SalesReport
         $data['totalrecord'] = $this->getTotalStockTransferList(getRequest('from'), getRequest('to'), true);
         $data['depo_list'] = $comListApp->getDeliveryPointList(true);
 
-	$user_store = $comListApp->getUserStore();
-	$data['user_store'] = array_map('trim', explode(',', $user_store));
+        $user_store = $comListApp->getUserStore();
+        $data['user_store'] = array_map('trim', explode(',', $user_store));
 
         require_once(SHOW_STOCK_UNAPPROVED_TRANSFER_LIST_SKIN);
         return $data[0];
@@ -4020,9 +4019,9 @@ class SalesReport
         $info['groupby'] = array("tm.transfer_no");
         $info['orderby'] = array("tm.transfer_no,tm.delivery_point DESC LIMIT $from,$to");
         if ($pending) {
-             $info['groupby'] = array("tm.id");
-             $info['orderby'] = array("tm.id,tm.delivery_point DESC LIMIT $from,$to");
-	}
+            $info['groupby'] = array("tm.id");
+            $info['orderby'] = array("tm.id,tm.delivery_point DESC LIMIT $from,$to");
+        }
         //$info['debug']  = true;
         $result = select($info);
         $data = array();
@@ -4070,9 +4069,9 @@ class SalesReport
         $info['groupby'] = array("tm.transfer_no");
         $info['orderby'] = array("tm.transfer_no,tm.delivery_point DESC");
         if ($pending) {
-             $info['groupby'] = array("tm.id");
-             $info['orderby'] = array("tm.id,tm.delivery_point DESC LIMIT $from,$to");
-	}
+            $info['groupby'] = array("tm.id");
+            $info['orderby'] = array("tm.id,tm.delivery_point DESC LIMIT $from,$to");
+        }
         $result = select($info);
         $data = array();
         $cnt = count($result);

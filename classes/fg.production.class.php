@@ -465,7 +465,7 @@ class FGProduction
         $temp_production_id = getRequest('production_id');
         $approved_permission = getFromSession('approved_permission');
 
-        if (getFromSession('u_type_id') != 101 || $approved_permission != 1) {
+        if (getFromSession('u_type_id') != 101 && $approved_permission != 1) {
             $msg = "You are not authorized !!!";
             header("location:index.php?app=fg.production&cmd=unapproved_rwm_list&error_msg=$msg");
             exit;
@@ -836,6 +836,67 @@ class FGProduction
     }
 
 
+    function resolvedRWM(){
+        $production_id = "P0009597";
+        $msql = "SELECT pm.*, p.unit_price, p.catagory, p.brand_code, p.m_unit, p.unit_price FROM " . PRODUCTION_MASTER_TBL . " pm LEFT JOIN " . PRODUCT_TBL . " p ON pm.finish_product = p.product_id WHERE pm.production_id = '$production_id'";
+        $master = mysql_fetch_object(mysql_query($msql));
+
+        $out_store_id = $master->out_store_id;
+        $project_id = "P0005";
+        $return_inventory = $master->return_inventory;
+
+        $result = $this->getPendingProductionDetailsList($production_id);
+
+        foreach ($result as $val) {
+            if($val->product== "P000389"){
+                continue;
+            }
+            $stock_ledger_id = $val->stock_ledger_id;
+            $invoice_voucher = $val->invoice_voucher;
+            $pro_detail_id = $val->pro_detail_id;
+
+            /// inset production invoice
+            $production_details_id = $val->pro_detail_id;
+            if ($production_details_id && !empty($invoice_voucher) && !empty($stock_ledger_id)) {
+                $productionRequestdata['production_id'] = $production_id;
+                $productionRequestdata['production_details_id'] = $production_details_id;
+                $productionRequestdata['invoice_voucher'] = $invoice_voucher;
+                $productionRequestdata['stock_ledger_id'] = $stock_ledger_id;
+                $productionRequestdata['qty'] = $val->qty;
+                $productionRequestdata['created_by'] = "saiful islam";
+                $productionRequestdata['created_time'] = "2026-05-17 06:15:05";
+                $productionInfo = array();
+                $productionInfo['table'] = "production_invoice_stock";
+                $productionInfo['data'] = $productionRequestdata;
+                //$info['debug']  	=  true;
+                $res = insert($productionInfo);
+            }
+            // end production invoice
+
+            $product_id = $val->product;
+            $pvoucher_no = $val->pvoucher_no;
+            $amount = $val->amount;
+            $m_unit = $val->m_unit;
+            $product_type = $val->product_type;
+            $used_qty = $val->qty;
+            $used_date = $master->used_date;
+
+            if ($product_id != "") {
+                $totalCR = $this->getTotalCreditStock($product_id, $project_id);
+                $totalDR = $this->getTotalDebitStock($product_id, $project_id);
+
+                if (isset($return_inventory) && $return_inventory == 1) {
+                    $balance = (($totalDR + $used_qty) - $totalCR);
+                    $this->saveStockJournal($production_id, $pvoucher_no, $project_id, $out_store_id, $product_id, $product_type, "Used for production", $amount, $m_unit, $used_qty, 0, $balance, $used_date);
+                } else {
+                    $balance = ($totalDR - ($totalCR + $used_qty));
+                    $this->saveStockJournal($production_id, $pvoucher_no, $project_id, $out_store_id, $product_id, $product_type, "Used for production", $amount, $m_unit, 0, $used_qty, $balance, $used_date);
+                }
+            }
+        }
+    }
+
+
     function insertProductionDetails($production_id, $temp_production_id, $master)
     {
         require_once(CLASS_DIR . '/common.list.class.php');
@@ -843,17 +904,20 @@ class FGProduction
 
         $out_store_id = $master->out_store_id;
         $project_id = getFromSession('project_id');
+        $return_inventory = $master->return_inventory;
 
         $result = $this->getPendingProductionDetailsList($temp_production_id);
         foreach ($result as $val) {
             $stock_ledger_id = $val->stock_ledger_id;
             $invoice_voucher = $val->invoice_voucher;
+            $pro_detail_id = $val->pro_detail_id;
+
             $requestdata = array();
             $requestdata['production_id'] = $production_id;
             $info = array();
             $info['table'] = PRODUCTION_DETAILS_TBL;
             $info['data'] = $requestdata;
-            $info['where'] = "production_id ='$temp_production_id'";
+            $info['where'] = "pro_detail_id ='$pro_detail_id'";
             //$info['debug']  	=  true;
             $res = update($info);
 
