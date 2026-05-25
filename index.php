@@ -124,7 +124,9 @@ switch ($currentApp) {
     case 'supplier.yearending':
     case 'sales.opening':
     case 'sales.opening.by.trt':
+    case 'permission.manager':
     case 'clear.yearending':
+    case 'hrm_gateway':
         include_once("apps/$currentApp.php");
         break;
 

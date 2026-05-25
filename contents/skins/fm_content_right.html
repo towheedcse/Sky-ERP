@@ -1,4 +1,4 @@
-<div id="Conten_right">
+﻿<div id="Conten_right">
 
 			   <div id="content_right_inner" align="center">
 		
@@ -264,6 +264,10 @@
 							<li><a href="?app=accounts.head&cmd=add">COA Setup</a></li>
 							<li><a href="?app=employee">Employee</a></li>
 							<li><a href="?app=user">User</a></li>
+							<li><a href="?app=permission.manager&cmd=permission_list">Permission</a></li>
+							<li><a href="?app=permission.manager&cmd=role_list">Role</a></li>
+							<li><a href="?app=permission.manager&cmd=user_role">User Role</a></li>
+							<li><a href="?app=permission.manager&cmd=user_permission">User Permission</a></li>
 							<!--li><a href="?app=agent&cmd=new_user">New User</a></li>
 							<li><a href="?app=agent&cmd=view_user">View User</a></li-->
 							<?}elseif(getFromSession('u_type_id')==111){?>
@@ -605,8 +609,30 @@
 
 				</div>
 
+				<br />
+
+				<div class="right_block">
+
+					<h3 onclick="show_hide_menu('hrm_menu')"><span style=" display:block;padding: 5px;">HRM</span>
+
+					<span class="arrow_down" id="arrow_hrm_menu">&nbsp;&nbsp;</span></h3>
+
+					<div id="hrm_menu" class="right_block_inner" style="display:none">
+
+						<ul>
+						<li><a href="?app=hrm_gateway&page=dashboard%2FUserhome">Dashboard</a></li>
+						<li><a href="?app=hrm_gateway&page=employee">Employee</a></li>
+						<li><a href="?app=hrm_gateway&page=staff_attendance">Attendance</a></li>
+						<li><a href="?app=hrm_gateway&page=leavemanage">Leave</a></li>
+						<li><a href="?app=hrm_gateway&page=outstationduty">Outstation Duty</a></li>
+						<li><a href="?app=hrm_gateway&page=salary_sheet">Salary Sheet</a></li>
+						<li><a href="?app=hrm_gateway&page=voucher">Voucher</a></li>
+						</ul>
+
+					</div>
+
 				</div>
 
 			   <div style="width:100%; height:15px">&nbsp;</div>
- 
+
 			   </div>

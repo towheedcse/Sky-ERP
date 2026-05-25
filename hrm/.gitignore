@@ -1,0 +1,100 @@
+# ============================================================
+#  HRM — CodeIgniter 3 Project .gitignore
+# ============================================================
+
+
+# ------------------------------------------------------------
+#  CI session files  (runtime, one file per active user)
+# ------------------------------------------------------------
+application/sessions/ci_session*
+
+
+# ------------------------------------------------------------
+#  CI log files  (keep the index.html directory guard)
+# ------------------------------------------------------------
+application/logs/log-*.php
+
+
+# ------------------------------------------------------------
+#  CI cache  (fully regenerated at runtime)
+# ------------------------------------------------------------
+application/cache/*
+!application/cache/index.html
+
+
+# ------------------------------------------------------------
+#  User-uploaded content
+#  Keep the directory + index.html placeholder, ignore uploads
+# ------------------------------------------------------------
+
+# Company logos uploaded via Company Settings
+assets/img/company/*
+!assets/img/company/index.html
+
+# Employee profile photos
+assets/img/photo/*
+!assets/img/photo/index.html
+
+# Notice board images
+assets/img/notice/*
+!assets/img/notice/index.html
+
+# Class routine images
+assets/img/routine/*
+!assets/img/routine/index.html
+
+# Auto-generated thumbnails
+assets/img/thumb/*
+!assets/img/thumb/index.html
+
+# Generated / uploaded PDF documents
+assets/pdf/distioffer/*
+!assets/pdf/distioffer/index.html
+assets/pdf/others/*
+!assets/pdf/others/index.html
+assets/pdf/workorder/*
+!assets/pdf/workorder/index.html
+
+# Data exports / temp uploads
+assets/*
+system/*
+
+application/third_party
+
+# ------------------------------------------------------------
+#  Database dumps  (contain live data — never commit)
+# ------------------------------------------------------------
+database.sql
+sql.text
+
+
+# ------------------------------------------------------------
+#  Composer vendor (if added in the future)
+# ------------------------------------------------------------
+vendor/
+composer.lock
+
+
+# ------------------------------------------------------------
+#  OS noise
+# ------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+
+# ------------------------------------------------------------
+#  Editor / IDE
+# ------------------------------------------------------------
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+nbproject/
+*.swp
+*.swo
+*.orig
+*.bak

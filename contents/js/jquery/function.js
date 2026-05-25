@@ -135,7 +135,7 @@ function showHideBuyerOrder(div_id)
 function show_hide_menu(div_id)
 {
 
-	var all_div_id=new Array('home','sample','order','my_account','buddies','setup');
+	var all_div_id=new Array('home','sample','order','my_account','buddies','setup','hrm_menu');
 
 	for(var i=0; i<all_div_id.length; i++)
 
