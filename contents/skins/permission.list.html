@@ -1,0 +1,282 @@
+<?php
+// Permission List & CRUD skin
+// URL: ?app=permission.manager&cmd=permission_list
+?>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .btn-blue {
+        background-color: #2563eb;
+        color: #fff;
+        border: none;
+        padding: .5rem 1rem;
+        border-radius: .5rem;
+        font-weight: 500;
+        font-size: .875rem;
+        cursor: pointer;
+        transition: background-color .15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-blue:hover {
+        background-color: #1d4ed8;
+        color: #fff;
+    }
+
+    .btn-gray {
+        background-color: #6b7280;
+        color: #fff;
+        border: none;
+        padding: .5rem 1rem;
+        border-radius: .5rem;
+        font-weight: 500;
+        font-size: .875rem;
+        cursor: pointer;
+        transition: background-color .15s;
+    }
+
+    .btn-gray:hover {
+        background-color: #4b5563;
+    }
+
+    .items-start {
+        text-align: start;
+    }
+</style>
+
+<div class="p-4">
+
+    <!-- Add / Edit form -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-5">
+
+        <div id="danger-alert" style="display:none"
+             class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50"
+             role="alert"></div>
+
+        <div id="success-alert" style="display:none"
+             class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50"
+             role="alert"></div>
+
+        <h1 class="text-2xl mb-3 font-bold text-gray-800">Permission</h1>
+        <form id="permForm">
+            <div class="flex items-end gap-3 flex-wrap">
+                <div class="flex flex-col flex-1 min-w-[200px]">
+                    <label class="text-sm font-medium text-gray-700 mb-1 items-start">Name</label>
+                    <input type="text" id="pName" placeholder="e.g. View Stock Transfer"
+                           class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           autocomplete="off"/>
+                    <input type="hidden" id="editId"/>
+                </div>
+                <div class="flex flex-col flex-1 min-w-[200px]">
+                    <label class="text-sm font-medium text-gray-700 mb-1 items-start">Slug</label>
+                    <input type="text" id="pSlug" placeholder="e.g. view.stock.transfer"
+                           class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           autocomplete="off"/>
+                </div>
+                <div class="flex flex-col flex-1 min-w-[200px]">
+                    <label class="text-sm font-medium text-gray-700 mb-1 items-start">Group</label>
+                    <input type="text" id="pGroup" placeholder="e.g. Stock Transfer"
+                           class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           autocomplete="off"/>
+                </div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button id="btnSave" type="submit" class="btn-blue">Save</button>
+                <button id="btnClear" type="button" class="btn-gray">Clear</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- List -->
+    <div class="bg-white p-4 rounded-xl shadow-md">
+
+        <div class="flex mb-3 items-center">
+            <h1 class="text-2xl font-bold mr-auto text-gray-800">Permission List</h1>
+            <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2 w-64 gap-2 bg-white">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                     class="w-4 h-4 text-gray-400 shrink-0">
+                    <path fill-rule="evenodd"
+                          d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                          clip-rule="evenodd"/>
+                </svg>
+                <input type="text" id="search" class="grow outline-none text-sm" placeholder="Search"
+                       onkeyup="currentPage = 1; getPermissionList(1);"/>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto" id="permissionList">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="bg-gray-100 text-gray-700 text-base">
+                <tr>
+                    <th class="px-4 py-3 font-semibold">SL</th>
+                    <th class="px-4 py-3 font-semibold">Name</th>
+                    <th class="px-4 py-3 font-semibold">Slug</th>
+                    <th class="px-4 py-3 font-semibold">Group</th>
+                    <th class="px-4 py-3 font-semibold text-center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="5" class="text-center px-4 py-4 text-gray-500">Loading...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex mt-3">
+            <div class="flex gap-1 ml-auto shadow-sm" id="paginationList"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function ($) {
+        var currentPage = 1;
+
+        /* ---- Load list ---- */
+        window.getPermissionList = function (page) {
+            if (page) currentPage = page;
+            var search = $.trim($('#search').val());
+            $.ajax({
+                type: 'POST',
+                url: 'index.php',
+                data: {app: 'permission.manager', cmd: 'api_permission_list', search: search, page_no: currentPage},
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp && resp.status) {
+                        $('#permissionList').html(resp.data.html);
+                        $('#paginationList').html(resp.data.pagination);
+                    } else if (resp) {
+                        $('#danger-alert').show().html(resp.message || 'Load failed');
+                    }
+                },
+                error: function (xhr) {
+                    $('#danger-alert').show().html('Server error: ' + xhr.status);
+                }
+            });
+        };
+
+        /* Pagination */
+        window.goPage = function (page) {
+            getPermissionList(page);
+        };
+
+        /* Load single permission for editing */
+        window.editPermission = function (id) {
+            $.ajax({
+                type: 'POST',
+                url: 'index.php',
+                data: {app: 'permission.manager', cmd: 'api_permission_by_id', id: id},
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp && resp.status) {
+                        $('#pName').val(resp.data.name);
+                        $('#pSlug').val(resp.data.slug);
+                        $('#pGroup').val(resp.data.group_name);
+                        $('#editId').val(resp.data.id);
+                        $('#success-alert').show().html('Ready to Edit: <strong>' + resp.data.name + '</strong>');
+                        $('#danger-alert').hide();
+                    }
+                }
+            });
+            return false;
+        };
+
+        /* Delete */
+        window.deletePermission = function (id) {
+            if (!confirm('Delete this permission? Related role and user assignments will also be removed.')) {
+                return false;
+            }
+            $.ajax({
+                type: 'POST',
+                url: 'index.php',
+                data: {app: 'permission.manager', cmd: 'api_delete_permission', deleted_id: id},
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp && resp.status) {
+                        $('#success-alert').show().html(resp.message);
+                        $('#danger-alert').hide();
+                        getPermissionList(currentPage);
+                    } else if (resp) {
+                        $('#danger-alert').show().html(resp.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('#danger-alert').show().html('Delete failed: ' + xhr.status);
+                }
+            });
+            return false;
+        };
+
+        /* Clear form */
+        function clearFields() {
+            $('#pName').val('');
+            $('#pSlug').val('');
+            $('#pGroup').val('');
+            $('#editId').val('');
+            $('#search').val('');
+            $('#success-alert').hide();
+            $('#danger-alert').hide();
+        }
+
+        /* Submit */
+        $('#permForm').submit(function (e) {
+            e.preventDefault();
+            $('#success-alert').hide();
+            $('#danger-alert').hide();
+
+            var name = $.trim($('#pName').val());
+            var slug = $.trim($('#pSlug').val());
+            var group = $.trim($('#pGroup').val());
+            var id = $('#editId').val();
+
+            if (!name || !slug) {
+                $('#danger-alert').show().html('Name and Slug are required.');
+                return false;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: 'index.php',
+                data: {
+                    app: 'permission.manager',
+                    cmd: 'api_store_permission',
+                    name: name,
+                    slug: slug,
+                    group: group,
+                    edit_id: id
+                },
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp && resp.status) {
+                        clearFields();
+                        $('#success-alert').show().html(resp.message);
+                        getPermissionList(1);
+                    } else if (resp) {
+                        $('#danger-alert').show().html(resp.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('#danger-alert').show().html('Save failed: ' + xhr.status);
+                }
+            });
+            return false;
+        });
+
+        /* Clear button */
+        $('#btnClear').click(function (e) {
+            e.preventDefault();
+            clearFields();
+            currentPage = 1;
+            getPermissionList(1);
+        });
+
+        /* Init */
+        $(document).ready(function () {
+            getPermissionList(1);
+        });
+
+    }(jQuery));
+</script>

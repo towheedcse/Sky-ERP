@@ -79,7 +79,7 @@ jQuery.fn.validationEngine = function(settings) {
 	if(settings.inlineValidation == true){ 		// Validating Inline ?
 		
 		J(this).not("[type=checkbox]").bind("blur", function(caller){loadValidation(this)})
-		J(this+"[type=checkbox]").bind("click", function(caller){loadValidation(this)})
+		J(this).filter("[type=checkbox]").bind("click", function(caller){loadValidation(this)})
 	}
 	var buildPrompt = function(caller,promptText,showTriangle) {			// ERROR PROMPT CREATION AND DISPLAY WHEN AN ERROR OCCUR
 		var divFormError = document.createElement('div')
@@ -130,10 +130,11 @@ jQuery.fn.validationEngine = function(settings) {
 		});
 	}
 	var loadValidation = function(caller) {		// GET VALIDATIONS TO BE EXECUTED
-		
+
 		rulesParsing = J(caller).attr('class');
 		rulesRegExp = /\[(.*)\]/;
 		getRules = rulesRegExp.exec(rulesParsing);
+		if (!getRules) return false;		// no validate[...] rule in class, skip silently
 		str = getRules[1]
 		pattern = /\W+/;
 		result= str.split(pattern);	

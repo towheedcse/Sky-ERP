@@ -1,0 +1,272 @@
+<?php
+// Role Create skin
+// URL: ?app=permission.manager&cmd=role_create
+// PHP vars available: $permissions (array), $permission_groups (array)
+?>
+<style>
+    .btn-blue {
+        background-color: #2563eb;
+        color: #fff !important;
+        border: none;
+        padding: .5rem 1rem;
+        border-radius: .5rem;
+        font-weight: 500;
+        font-size: .875rem;
+        cursor: pointer;
+        transition: background-color .15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-blue:link, .btn-blue:visited {
+        color: #fff !important;
+    }
+
+    .btn-blue:hover {
+        background-color: #1d4ed8;
+        color: #fff !important;
+    }
+
+    .btn-gray {
+        background-color: #6b7280;
+        color: #fff !important;
+        border: none;
+        padding: .5rem 1rem;
+        border-radius: .5rem;
+        font-weight: 500;
+        font-size: .875rem;
+        cursor: pointer;
+        transition: background-color .15s;
+    }
+
+    .btn-gray:hover {
+        background-color: #4b5563;
+    }
+
+    .btn-sm-blue {
+        background-color: #2563eb;
+        color: #fff !important;
+        border: none;
+        padding: .375rem .75rem;
+        border-radius: .5rem;
+        font-weight: 500;
+        font-size: .875rem;
+        cursor: pointer;
+        transition: background-color .15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-sm-blue:link, .btn-sm-blue:visited {
+        color: #fff !important;
+    }
+
+    .btn-sm-blue:hover {
+        background-color: #1d4ed8;
+        color: #fff !important;
+    }
+
+    .items-start {
+        text-align: start;
+    }
+</style>
+
+<div class="p-4">
+
+    <!-- Header card -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-5">
+
+        <div id="danger-alert" style="display:none"
+             class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50"
+             role="alert"></div>
+        <div id="success-alert" style="display:none"
+             class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50"
+             role="alert"></div>
+
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-2xl font-bold text-gray-800">Create Role</h1>
+            <a href="?app=permission.manager&cmd=role_list" class="btn-sm-blue">
+                Role List
+            </a>
+        </div>
+
+        <form id="roleForm">
+            <div class="flex items-end gap-3 flex-wrap">
+                <div class="flex flex-col w-1/2" style="min-width:220px">
+                    <label class="text-sm font-medium text-gray-700 mb-1 items-start">Role Name</label>
+                    <input type="text" id="roleName" placeholder="Enter role name"
+                           class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           autocomplete="off"/>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btnSave" type="submit" class="btn-blue">Save</button>
+                    <button id="btnClear" type="button" class="btn-gray">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Permission checkboxes -->
+    <div class="bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-xl font-bold mb-3 text-gray-800">Assign Permissions</h2>
+
+        <div class="mb-2 items-start">
+            <input type="checkbox" id="checkAll" name="check_all" class="cursor-pointer" onclick="pmCheckAll(this)"/>
+            <label for="checkAll" class="cursor-pointer text-lg ml-1 font-medium">All</label>
+        </div>
+        <hr class="mb-4"/>
+
+        <?php
+        $gi = 1;
+        foreach ($permission_groups as $group):
+            $groupClass = 'grp-' . $gi;
+        ?>
+        <div class="flex mb-3 flex-wrap items-start perm-group-row">
+            <div style="min-width:185px" class="mb-2">
+                <input type="checkbox" id="grpChk<?= $gi ?>"
+                       name="group_<?= $gi ?>"
+                       class="cursor-pointer groupChk"
+                       data-class="<?= $groupClass ?>"
+                       data-group="<?= htmlspecialchars($group['group_name']) ?>"
+                       data-total="<?= (int)$group['groupTotal'] ?>"
+                       onclick="pmCheckGroup(this)"/>
+                <label for="grpChk<?= $gi ?>" class="cursor-pointer font-semibold ml-1">
+                    <?= htmlspecialchars($group['group_name']) ?>
+                </label>
+            </div>
+            <div class="flex-1 <?= $groupClass ?>">
+                <?php foreach ($permissions as $perm): ?>
+                <?php if ($perm['group_name'] == $group['group_name']): ?>
+                <div>
+                    <input type="checkbox" id="pChk<?= (int)$perm['id'] ?>"
+                           class="cursor-pointer permChk"
+                           name="permissions[]"
+                           value="<?= (int)$perm['id'] ?>"
+                           data-class="<?= $groupClass ?>"
+                           data-grpid="grpChk<?= $gi ?>"
+                           data-grptotal="<?= (int)$group['groupTotal'] ?>"
+                           onclick="pmCheckPerm(this)"/>
+                    <label for="pChk<?= (int)$perm['id'] ?>" class="cursor-pointer ml-1">
+                        <?= htmlspecialchars($perm['name']) ?>
+                    </label>
+                </div>
+                <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php $gi++; endforeach; ?>
+    </div>
+</div>
+
+<script>
+    var pmSelectedIds = [];
+
+    function pmCheckAll(el) {
+        var chk = el.checked;
+        jQuery('.permChk, .groupChk').each(function () {
+            this.checked = chk;
+        });
+        pmSelectedIds = [];
+        if (chk) {
+            jQuery('.permChk').each(function () {
+                pmSelectedIds.push(parseInt(jQuery(this).val()));
+            });
+        }
+    }
+
+    function pmCheckGroup(el) {
+        var chk = el.checked;
+        var $row = jQuery(el).closest('.perm-group-row');
+        $row.find('.permChk').each(function () {
+            var id = parseInt(jQuery(this).val());
+            if (chk) {
+                if (pmSelectedIds.indexOf(id) === -1) pmSelectedIds.push(id);
+            } else {
+                pmSelectedIds = pmSelectedIds.filter(function (x) {
+                    return x !== id;
+                });
+            }
+            this.checked = chk;
+        });
+        pmSyncAll();
+    }
+
+    function pmCheckPerm(el) {
+        var id = parseInt(jQuery(el).val());
+        var chk = el.checked;
+        if (chk) {
+            if (pmSelectedIds.indexOf(id) === -1) pmSelectedIds.push(id);
+        } else {
+            pmSelectedIds = pmSelectedIds.filter(function (x) {
+                return x !== id;
+            });
+        }
+        var $row = jQuery(el).closest('.perm-group-row');
+        var $perms = $row.find('.permChk');
+        var allChecked = $perms.length > 0 && $perms.filter(':checked').length === $perms.length;
+        $row.find('.groupChk').each(function () {
+            this.checked = allChecked;
+        });
+        pmSyncAll();
+    }
+
+    function pmSyncAll() {
+        var $perms = jQuery('.permChk');
+        var allChecked = $perms.length > 0 && $perms.filter(':checked').length === $perms.length;
+        var allEl = document.getElementById('checkAll');
+        if (allEl) allEl.checked = allChecked;
+    }
+
+    jQuery(document).ready(function () {
+        jQuery('#roleForm').submit(function (e) {
+            e.preventDefault();
+            jQuery('#success-alert, #danger-alert').hide();
+            document.getElementById('btnSave').disabled = true;
+
+            var name = jQuery.trim(jQuery('#roleName').val());
+            if (!name) {
+                jQuery('#danger-alert').show().html('Role name must not be empty!');
+                document.getElementById('btnSave').disabled = false;
+                return false;
+            }
+            if (pmSelectedIds.length === 0) {
+                jQuery('#danger-alert').show().html('Please select at least one permission!');
+                document.getElementById('btnSave').disabled = false;
+                return false;
+            }
+
+            jQuery.ajax({
+                type: 'POST',
+                url: 'index.php',
+                data: {app: 'permission.manager', cmd: 'api_store_role', name: name, 'permissions[]': pmSelectedIds},
+                dataType: 'json',
+                success: function (resp) {
+                    document.getElementById('btnSave').disabled = false;
+                    if (resp.status) {
+                        jQuery('#success-alert').show().html(resp.message);
+                        jQuery('#roleName').val('');
+                        pmSelectedIds = [];
+                        jQuery('input[type=checkbox]').each(function () {
+                            this.checked = false;
+                        });
+                    } else {
+                        jQuery('#danger-alert').show().html(resp.message);
+                    }
+                }
+            });
+            return false;
+        });
+
+        jQuery('#btnClear').click(function (e) {
+            e.preventDefault();
+            pmSelectedIds = [];
+            jQuery('input[type=checkbox]').each(function () {
+                this.checked = false;
+            });
+            jQuery('#roleName').val('');
+            jQuery('#success-alert, #danger-alert').hide();
+        });
+    });
+</script>
