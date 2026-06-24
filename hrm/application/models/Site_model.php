@@ -16,7 +16,7 @@ class Site_model extends CI_Model {
     	define("MENU_PERMISSION_TBL", 	"menu_permission");
 		define("OPTIONS_TBL", 			"options");
     	define("OPTIONS_PERMISSION_TBL","options_permission");
-		define("USER_ROLE_TBL", 		"user_role");
+		define("USER_ROLE_TBL", 		"hrm_user_role");
     	define("USERS_TBL", 			"users");
     	
     	define("GUEST_TBL",             "guest_registration");

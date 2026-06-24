@@ -47,7 +47,9 @@
             <div class="small-box bg-primary">
               <div class="inner">
 				<?php
-				  $CSQL = "SELECT * FROM ".EMPLOYEE_TBL." WHERE company_id=$institute_id AND status=1 ORDER BY `employee_id` ASC";
+				  if(empty($institute_id)){ $institute_id = $this->session->userdata('company_id'); }
+				  if(empty($institute_id)){ $institute_id = 1; } // bridged default company (P0005)
+				  $CSQL = "SELECT * FROM ".EMPLOYEE_TBL." WHERE company_id='".$institute_id."' AND status=1 ORDER BY `employee_id` ASC";
 				  $cquery =$this->db->query($CSQL);
 				  if($cquery->num_rows() >=0){ 
 				?>

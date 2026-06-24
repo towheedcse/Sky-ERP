@@ -6,7 +6,7 @@
 
 define('DB_USER', 'root');
 define('DB_PASS', 'root');
-define('DB_HOST', 'thai_db');
+define('DB_HOST', 'oracle_db');
 define('DB_NAME', 'skyerp');
 define('NDB_NAME', 'skyerp');
 

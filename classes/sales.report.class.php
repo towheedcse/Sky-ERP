@@ -1862,7 +1862,7 @@ class SalesReport
         WHERE project_id = '$project_id'
     ) base
     LEFT JOIN " . PRODUCT_TBL . " po 
-        ON po.product_id = base.product_id $product_join_cond
+        ON po.product_id = base.product_id
     LEFT JOIN " . DELIVERY_POINT_TBL . " d 
         ON d.delivery_pid = base.store_id
     LEFT JOIN (
@@ -1877,7 +1877,7 @@ class SalesReport
         WHERE project_id = '$project_id' $period_cond
         GROUP BY product_id, store_id
     ) period ON period.product_id = base.product_id AND period.store_id = base.store_id
-    WHERE 1=1 $filter
+    WHERE 1=1 $filter $product_join_cond
     ORDER BY po.product_name ASC, d.delivery_point_name ASC
     LIMIT $from, $to
     ";
@@ -1901,7 +1901,7 @@ class SalesReport
             WHERE project_id = '$project_id'
         ) base
         LEFT JOIN " . PRODUCT_TBL . " po 
-            ON po.product_id = base.product_id $product_join_cond
+            ON po.product_id = base.product_id
         LEFT JOIN (
             SELECT product_id, store_id
             FROM " . STOCK_LEDGER_TBL . "
@@ -1914,7 +1914,7 @@ class SalesReport
             WHERE project_id = '$project_id' $period_cond
             GROUP BY product_id, store_id
         ) period ON period.product_id = base.product_id AND period.store_id = base.store_id
-        WHERE 1=1 $filter
+        WHERE 1=1 $filter $product_join_cond
     ) AS count_data
     ";
 
