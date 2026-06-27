@@ -675,23 +675,23 @@ class GroupStockTransfer
 
             if ($transfer_from != "" && $po_no > 0) {
                 //===== Cr Stock ======
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
+                $totalFDR = $this->getTotalDebitStock($product, $project_id, $transfer_from);
+                $totalFCR = $this->getTotalCreditStock($product, $project_id, $transfer_from);
                 $TFbalance = ($totalFDR - ($totalFCR + $transfer_qty));
 
                 $note = "Transfer Stock";
-                $sql1 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$product', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=0,cr=$transfer_qty,balance='$TFbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "'";
+                $sql1 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$product', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=0,cr=$transfer_qty,balance='$TFbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "' AND cr>0";
                 mysql_query($sql1);
             }
 
-            if ($transfer_from != "" && $po_no > 0) {
-                //===== Dr Stock ======
-                $totalFDR = $this->getTotalDebitStock($new_product_id, $project_id);
-                $totalFCR = $this->getTotalCreditStock($new_product_id, $project_id);
+            if ($transfer_to != "" && $po_no > 0) {
+                //===== Dr Stock (NEW product created INTO DESTINATION store) ======
+                $totalFDR = $this->getTotalDebitStock($new_product_id, $project_id, $transfer_to);
+                $totalFCR = $this->getTotalCreditStock($new_product_id, $project_id, $transfer_to);
                 $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
 
                 $note = "Received Stock";
-                $sql2 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$new_product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=$transfer_qty,cr=0,balance='$TTbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "'";
+                $sql2 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_to',product_id='$new_product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=$transfer_qty,cr=0,balance='$TTbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "' AND dr>0";
                 mysql_query($sql2);
             }
         }
@@ -711,8 +711,8 @@ class GroupStockTransfer
 
             if ($transfer_from != "" && $po_no > 0) {
                 //===== Cr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product_id, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product_id, $project_id);
+                $totalFCR = $this->getTotalCreditStock($product_id, $project_id, $transfer_from);
+                $totalFDR = $this->getTotalDebitStock($product_id, $project_id, $transfer_from);
                 $TFbalance = ($totalFDR - ($totalFCR + $qty));
 
                 $note = "Transfer Stock";
@@ -725,10 +725,10 @@ class GroupStockTransfer
 
             }
 
-            if ($transfer_from != "" && $po_no > 0) {
-                //===== Dr Stock ======
-                $totalFDR = $this->getTotalDebitStock($new_product_id, $project_id);
-                $totalFCR = $this->getTotalCreditStock($new_product_id, $project_id);
+            if ($transfer_to != "" && $po_no > 0) {
+                //===== Dr Stock (NEW product created INTO DESTINATION store) ======
+                $totalFDR = $this->getTotalDebitStock($new_product_id, $project_id, $transfer_to);
+                $totalFCR = $this->getTotalCreditStock($new_product_id, $project_id, $transfer_to);
                 $TTbalance = (($totalFDR + $qty) - $totalFCR);
 
                 $note = "Received Stock";
@@ -736,7 +736,7 @@ class GroupStockTransfer
                 $create_date = date('Y-m-d h:i:s');
                 $DR = $qty;
                 $CR = 0;
-                $sql2 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date) VALUES('" . $voucher_no . "','" . $po_no . "','" . $project_id . "','" . $transfer_from . "','" . $new_product_id . "','" . $product_type . "','" . $note . "','" . $unit_price . "','" . $m_unit . "','" . $DR . "','" . $CR . "','" . $TTbalance . "','" . $created_by . "','" . $create_date . "')";
+                $sql2 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date) VALUES('" . $voucher_no . "','" . $po_no . "','" . $project_id . "','" . $transfer_to . "','" . $new_product_id . "','" . $product_type . "','" . $note . "','" . $unit_price . "','" . $m_unit . "','" . $DR . "','" . $CR . "','" . $TTbalance . "','" . $created_by . "','" . $create_date . "')";
                 mysql_query($sql2);
             }
 
@@ -819,24 +819,24 @@ class GroupStockTransfer
             $unit_price = $Pcrow->unit_price;
 
             if ($transfer_from != "" && $po_no > 0) {
-                //===== Cr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $TFbalance = ($totalFDR - ($totalFCR + $transfer_qty));
+                //===== Cr Stock (OUT of SOURCE store) ======
+                $totalFCR = $this->getTotalCreditStock($product_id, $project_id, $transfer_from);
+                $totalFDR = $this->getTotalDebitStock($product_id, $project_id, $transfer_from);
+                $TFbalance = ($totalFDR - ($totalFCR + $qty));
 
                 $note = "Transfer Stock";
-                $sql1 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=0,cr=$qty,balance='$TFbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "'";
+                $sql1 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=0,cr=$qty,balance='$TFbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "' AND cr>0";
                 mysql_query($sql1);
             }
 
-            if ($transfer_from != "" && $po_no > 0) {
-                //===== Dr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
+            if ($transfer_to != "" && $po_no > 0) {
+                //===== Dr Stock (INTO DESTINATION store) ======
+                $totalFCR = $this->getTotalCreditStock($product_id, $project_id, $transfer_to);
+                $totalFDR = $this->getTotalDebitStock($product_id, $project_id, $transfer_to);
+                $TTbalance = (($totalFDR + $qty) - $totalFCR);
 
                 $note = "Received Stock";
-                $sql2 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_from',product_id='$product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=$qty,cr=0,balance='$TTbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "'";
+                $sql2 = "UPDATE " . STOCK_LEDGER_TBL . " SET store_id='$transfer_to',product_id='$product_id', product_type='$product_type',note='$note',unit_price='$unit_price',m_unit='$m_unit',dr=$qty,cr=0,balance='$TTbalance' WHERE voucher_no='" . $voucher_no . "' AND po_no='" . $po_no . "' AND dr>0";
                 mysql_query($sql2);
             }
 
@@ -857,35 +857,35 @@ class GroupStockTransfer
             $unit_price = $Pcrow->unit_price;
 
             if ($transfer_from != "" && $po_no > 0) {
-                //===== Cr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $TFbalance = ($totalFDR - ($totalFCR + $transfer_qty));
+                //===== Cr Stock (OUT of SOURCE store) ======
+                $totalFCR = $this->getTotalCreditStock($product_id, $project_id, $transfer_from);
+                $totalFDR = $this->getTotalDebitStock($product_id, $project_id, $transfer_from);
+                $TFbalance = ($totalFDR - ($totalFCR + $qty));
 
                 $note = "Transfer Stock";
                 $created_by = getFromSession('userid');
                 $create_date = date('Y-m-d h:i:s');
                 $DR = 0;
                 $CR = $qty;
-                $sql1 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date) 
+                $sql1 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date)
 	VALUES('" . $voucher_no . "','" . $po_no . "','" . $project_id . "','" . $transfer_from . "','" . $product_id . "','" . $product_type . "','" . $note . "','" . $unit_price . "','" . $m_unit . "','" . $DR . "','" . $CR . "','" . $TFbalance . "','" . $created_by . "','" . $create_date . "')";
                 mysql_query($sql1);
 
             }
 
-            if ($transfer_from != "" && $po_no > 0) {
-                //===== Dr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
+            if ($transfer_to != "" && $po_no > 0) {
+                //===== Dr Stock (INTO DESTINATION store) ======
+                $totalFCR = $this->getTotalCreditStock($product_id, $project_id, $transfer_to);
+                $totalFDR = $this->getTotalDebitStock($product_id, $project_id, $transfer_to);
+                $TTbalance = (($totalFDR + $qty) - $totalFCR);
 
                 $note = "Received Stock";
                 $created_by = getFromSession('userid');
                 $create_date = date('Y-m-d h:i:s');
                 $DR = $qty;
                 $CR = 0;
-                $sql2 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date) 
-	VALUES('" . $voucher_no . "','" . $po_no . "','" . $project_id . "','" . $transfer_from . "','" . $product_id . "','" . $product_type . "','" . $note . "','" . $unit_price . "','" . $m_unit . "','" . $DR . "','" . $CR . "','" . $TTbalance . "','" . $created_by . "','" . $create_date . "')";
+                $sql2 = "INSERT INTO " . STOCK_LEDGER_TBL . " (voucher_no,po_no,project_id,store_id,product_id,product_type,note,unit_price,m_unit,dr,cr,balance,created_by,create_date)
+	VALUES('" . $voucher_no . "','" . $po_no . "','" . $project_id . "','" . $transfer_to . "','" . $product_id . "','" . $product_type . "','" . $note . "','" . $unit_price . "','" . $m_unit . "','" . $DR . "','" . $CR . "','" . $TTbalance . "','" . $created_by . "','" . $create_date . "')";
                 mysql_query($sql2);
             }
 
@@ -1726,48 +1726,50 @@ class GroupStockTransfer
 
         if (($stock_qty > 0) && ($stock_qty >= $transfer_qty)) {
 
-            // Old Product CR
+            $is_convert = (isset($new_product) && !empty($new_product));
+
+            // ===== OLD product =====
+            // Normal transfer  -> moves source -> destination (CR source + DR destination)
+            // Product convert   -> only consumed at source (CR source only)
             if (isset($Pcrow->product_id) && !empty($Pcrow->product_id)) {
                 $m_unit = $Pcrow->m_unit;
                 $product_type = $Pcrow->product_type;
                 $unit_price = $Pcrow->unit_price;
 
-                //===== Cr Stock ======
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
+                //===== Cr Stock (OUT of SOURCE store) ======
+                $totalFDR = $this->getTotalDebitStock($product, $project_id, $transfer_from);
+                $totalFCR = $this->getTotalCreditStock($product, $project_id, $transfer_from);
                 $TFbalance = ($totalFDR - ($totalFCR + $transfer_qty));
                 $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $transfer_from, $product, $product_type, "Transfer Stock", $unit_price, $m_unit, 0, $transfer_qty, $TFbalance, $transfer_date);
 
-                //===== Dr Stock ======
-                $totalFCR = $this->getTotalCreditStock($product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($product, $project_id);
-                $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
-                $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $store_id, $product, $product_type, "Received Stock", $unit_price, $m_unit, $transfer_qty, 0, $TTbalance, $transfer_date);
-
+                //===== Dr Stock (INTO DESTINATION store) -- normal transfer only ======
+                if (!$is_convert) {
+                    $totalFCR = $this->getTotalCreditStock($product, $project_id, $store_id);
+                    $totalFDR = $this->getTotalDebitStock($product, $project_id, $store_id);
+                    $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
+                    $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $store_id, $product, $product_type, "Received Stock", $unit_price, $m_unit, $transfer_qty, 0, $TTbalance, $transfer_date);
+                }
             }
 
 
-            // New Product DR
-            $Pcsql = "SELECT product_id,product_type,m_unit,unit_price FROM " . PRODUCT_TBL . " WHERE product_id='$new_product' AND project_id='$project_id'";
-            $Pcrow = mysql_fetch_object(mysql_query($Pcsql));
+            // ===== NEW product (product convert only) =====
+            // Created at destination only (DR destination). It is NOT credited at the
+            // source, because the new product never existed there.
+            if ($is_convert) {
+                $Pcsql = "SELECT product_id,product_type,m_unit,unit_price FROM " . PRODUCT_TBL . " WHERE product_id='$new_product' AND project_id='$project_id'";
+                $Pcrow = mysql_fetch_object(mysql_query($Pcsql));
 
-            if (isset($Pcrow->product_id) && !empty($Pcrow->product_id)) {
-                $m_unit = $Pcrow->m_unit;
-                $product_type = $Pcrow->product_type;
-                $unit_price = $Pcrow->unit_price;
+                if (isset($Pcrow->product_id) && !empty($Pcrow->product_id)) {
+                    $m_unit = $Pcrow->m_unit;
+                    $product_type = $Pcrow->product_type;
+                    $unit_price = $Pcrow->unit_price;
 
-
-                //===== Cr Stock ======
-                $totalFCR = $this->getTotalCreditStock($new_product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($new_product, $project_id);
-                $TFbalance = ($totalFDR - ($totalFCR + $transfer_qty));
-                $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $transfer_from, $new_product, $product_type, "Transfer Stock", $unit_price, $m_unit, 0, $transfer_qty, $TFbalance, $transfer_date);
-
-                //===== Dr Stock ======
-                $totalFCR = $this->getTotalCreditStock($new_product, $project_id);
-                $totalFDR = $this->getTotalDebitStock($new_product, $project_id);
-                $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
-                $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $store_id, $new_product, $product_type, "Received Stock", $unit_price, $m_unit, $transfer_qty, 0, $TTbalance, $transfer_date);
+                    //===== Dr Stock (INTO DESTINATION store) ======
+                    $totalFCR = $this->getTotalCreditStock($new_product, $project_id, $store_id);
+                    $totalFDR = $this->getTotalDebitStock($new_product, $project_id, $store_id);
+                    $TTbalance = (($totalFDR + $transfer_qty) - $totalFCR);
+                    $this->saveStockJournal($voucher_no, $transfer_id, $project_id, $store_id, $new_product, $product_type, "Received Stock", $unit_price, $m_unit, $transfer_qty, 0, $TTbalance, $transfer_date);
+                }
             }
 
             return true;
@@ -2453,9 +2455,12 @@ class GroupStockTransfer
         return $debit_amount;
     }
 
-    function getTotalCreditStock($acc_head, $project_id)
+    function getTotalCreditStock($acc_head, $project_id, $store_id = "")
     {
         $sql = "SELECT sum(`cr`) as credit_amount FROM " . STOCK_LEDGER_TBL . " WHERE product_id = '$acc_head' AND project_id = '$project_id'";
+        if ($store_id != "") {
+            $sql .= " AND store_id = '$store_id'";
+        }
         $row = mysql_fetch_object(mysql_query($sql));
         $credit_amount = $row->credit_amount;
         if (empty($credit_amount)) {
@@ -2464,9 +2469,12 @@ class GroupStockTransfer
         return $credit_amount;
     }
 
-    function getTotalDebitStock($acc_head, $project_id)
+    function getTotalDebitStock($acc_head, $project_id, $store_id = "")
     {
         $sql = "SELECT sum(`dr`) as debit_amount FROM " . STOCK_LEDGER_TBL . " WHERE product_id = '$acc_head' AND project_id = '$project_id'";
+        if ($store_id != "") {
+            $sql .= " AND store_id = '$store_id'";
+        }
         $row = mysql_fetch_object(mysql_query($sql));
         $debit_amount = $row->debit_amount;
         if (empty($debit_amount)) {
