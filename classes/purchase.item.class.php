@@ -156,10 +156,10 @@ class PurchaseItem extends Journal
 	}
 
         $info = array();
-        $info['table'] = SPR_PURCHASE_MASTER_TBL . ' spm,' . PROJECT_TBL . ' p,' . CURRENCY_TBL . ' c';
+        $info['table'] = SPR_PURCHASE_MASTER_TBL . ' spm INNER JOIN ' . PROJECT_TBL . ' p ON spm.project_id = p.project_id LEFT JOIN ' . CURRENCY_TBL . ' c ON spm.currency = c.currency_id';
         $info['fields'] = array('spm.*', 'p.project_name', 'p.location', "DATE_FORMAT(spm.purchase_date,'%d %b %y' ) as formated_purchase_date", 'c.curr_symble', "DATE_FORMAT(spm.created_date,'%d %b %y' ) as formated_created_date");
 
-        $sql = "spm.project_id = p.project_id AND spm.currency = c.currency_id AND spm.project_id = '" . $project_id . "'  AND spm.complete_status='".$complete_status."'";
+        $sql = "spm.project_id = '" . $project_id . "'  AND spm.complete_status='".$complete_status."'";
         if ($delivery_point != "") {
             $sql .= " AND spm.store_id = '$delivery_point'";
         }
@@ -414,7 +414,6 @@ class PurchaseItem extends Journal
                 $infoM['table'] = SPR_PURCHASE_MASTER_TBL;
                 $infoM['data'] = $requestData;
                 $infoM['where'] = "voucher_no='$voucher_no'";
-                $infoM['debug']  	=  true;
                 update($infoM);
 
                 $getSql = "DELETE FROM " . TEMP_SPR_TBL . " WHERE created_by = '" . getFromSession('userid') . "' AND project_id='" . $project_id . "'";
@@ -502,7 +501,7 @@ class PurchaseItem extends Journal
    function getPOList(){
 	$info = array();
         $info['table'] = PURCHASE_OREDR_MASTER_TBL;
-        $info['where'] = "complete_status = 0";
+        $info['where'] = "complete_status = 0 AND approved_status = 1";
         $info['orderby'] = array("voucher_no DESC");
 
         //$info['debug']  = true;
@@ -1104,16 +1103,16 @@ class PurchaseItem extends Journal
 		exit;
 	}
 	if($voucher_no != ""){
-		$sql = "SELECT complete_status FROM " . SPR_PURCHASE_MASTER_TBL . " WHERE voucher_no='$voucher_no'";
+		$sql = "SELECT approved_status, complete_status FROM " . SPR_PURCHASE_MASTER_TBL . " WHERE voucher_no='$voucher_no'";
 		$res = mysql_query($sql);
-		$complete_status = mysql_fetch_object($res)->complete_status;
 		if (mysql_num_rows($res) <= 0) {
                 	$msg = "Record not found!!!";
 			header("location:index.php?app=purchase.item&cmd=spr_list&error_msg=$msg");
 			exit;
                 }
-		if (isset($complete_status) && $complete_status == 1) {
-                	$msg = "Not authorize to approved !!!";
+		$row = mysql_fetch_object($res);
+		if (isset($row->approved_status) && $row->approved_status == 1) {
+                	$msg = "Already approved !!!";
 			header("location:index.php?app=purchase.item&cmd=spr_list&error_msg=$msg");
 			exit;
                 }
@@ -1124,7 +1123,6 @@ class PurchaseItem extends Journal
                 $infoM['table'] = SPR_PURCHASE_MASTER_TBL;
                 $infoM['data'] = $requestData;
                 $infoM['where'] = "voucher_no='$voucher_no'";
-                //$infoM['debug'] = true;
                 update($infoM);
 
 		$msg = "Record Approved successfully !!!";

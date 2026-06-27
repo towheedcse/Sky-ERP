@@ -311,7 +311,6 @@ class PurchaseOrder
                 $info['table'] = SPR_PURCHASE_DETAILS_TBL;
                 $info['data'] = $requestDetailsdata;
                 $info['where'] = "voucher_no='$spr_voucher' AND id='$spd_id'";
-                $info['debug'] = true;
                 $res = update($info);
             }
 
@@ -426,7 +425,6 @@ class PurchaseOrder
         $info = array();
         $info['table'] = CREDIT_VOUCHAR_TBL;
         $info['data'] = $requestdata;
-        $info['debug'] = true;
         $res = insert($info);
         $created_date = $requestdata['created_date'];
 
@@ -616,7 +614,6 @@ class PurchaseOrder
             $info['table'] = PURCHASE_OREDR_MASTER_TBL;
             $info['data'] = $requestdata;
             $info['where'] = "voucher_no='$voucher_no'";
-            $info['debug'] = true;
             $res = update($info);
 
             $msg = "Record updated successfully!!!";
@@ -725,7 +722,6 @@ class PurchaseOrder
             $info['table'] = PURCHASE_OREDR_MASTER_TBL;
             $info['data'] = $requestdata;
 
-            $info['debug'] = true;
             $res = insert($info);
 
             if ($res['affected_rows']) {
@@ -1486,16 +1482,16 @@ class PurchaseOrder
             exit;
         }
         if ($voucher_no != "") {
-            $sql = "SELECT complete_status FROM " . PURCHASE_OREDR_MASTER_TBL . " WHERE voucher_no='$voucher_no'";
+            $sql = "SELECT approved_status, complete_status FROM " . PURCHASE_OREDR_MASTER_TBL . " WHERE voucher_no='$voucher_no'";
             $res = mysql_query($sql);
-            $complete_status = mysql_fetch_object($res)->complete_status;
             if (mysql_num_rows($res) <= 0) {
                 $msg = "Record not found!!!";
                 header("location:index.php?app=purchase_order&cmd=po_list&error_msg=$msg");
                 exit;
             }
-            if (isset($complete_status) && $complete_status == 1) {
-                $msg = "Not authorize to approved !!!";
+            $row = mysql_fetch_object($res);
+            if (isset($row->approved_status) && $row->approved_status == 1) {
+                $msg = "Already approved !!!";
                 header("location:index.php?app=purchase_order&cmd=po_list&error_msg=$msg");
                 exit;
             }
@@ -1506,7 +1502,6 @@ class PurchaseOrder
             $infoM['table'] = PURCHASE_OREDR_MASTER_TBL;
             $infoM['data'] = $requestData;
             $infoM['where'] = "voucher_no='$voucher_no'";
-            $infoM['debug'] = true;
             update($infoM);
 
             $msg = "Record Approved successfully !!!";

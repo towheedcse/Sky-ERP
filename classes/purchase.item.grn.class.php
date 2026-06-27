@@ -176,10 +176,10 @@ class PurchaseItemGRN extends Journal
         }
 
         $info = array();
-        $info['table'] = SPR_PURCHASE_MASTER_TBL . ' spm,' . PROJECT_TBL . ' p,' . CURRENCY_TBL . ' c';
+        $info['table'] = SPR_PURCHASE_MASTER_TBL . ' spm INNER JOIN ' . PROJECT_TBL . ' p ON spm.project_id = p.project_id LEFT JOIN ' . CURRENCY_TBL . ' c ON spm.currency = c.currency_id';
         $info['fields'] = array('spm.*', 'p.project_name', 'p.location', "DATE_FORMAT(spm.purchase_date,'%d %b %y' ) as formated_purchase_date", 'c.curr_symble', "DATE_FORMAT(spm.created_date,'%d %b %y' ) as formated_created_date");
 
-        $sql = "spm.project_id = p.project_id AND spm.currency = c.currency_id AND spm.project_id = '" . $project_id . "'  AND spm.complete_status='" . $complete_status . "'";
+        $sql = "spm.project_id = '" . $project_id . "'  AND spm.complete_status='" . $complete_status . "'";
         if ($delivery_point != "") {
             $sql .= " AND spm.store_id = '$delivery_point'";
         }
@@ -458,6 +458,16 @@ class PurchaseItemGRN extends Journal
     {
         $voucher_no = $_REQUEST['voucher_no'];
         if ($voucher_no != "") {
+            $chkSql = "SELECT approved_status FROM " . SPR_PURCHASE_MASTER_TBL . " WHERE voucher_no='" . $voucher_no . "'";
+            $chkRes = mysql_query($chkSql);
+            if (mysql_num_rows($chkRes) > 0) {
+                $chkRow = mysql_fetch_object($chkRes);
+                if ($chkRow->approved_status == 1) {
+                    $msg = "Cannot delete approved SPR !!!";
+                    header("location:?app=purchase.item.grn&cmd=spr_list&error_msg=$msg");
+                    exit();
+                }
+            }
             $dsql = "DELETE FROM " . SPR_PURCHASE_DETAILS_TBL . " WHERE voucher_no ='" . $voucher_no . "'";
             mysql_query($dsql);
 
@@ -1087,6 +1097,17 @@ class PurchaseItemGRN extends Journal
     {
         $voucher_no = getRequest('voucher_no');
         if ($voucher_no) {
+            $chkSql = "SELECT approved_status FROM " . SPR_PURCHASE_MASTER_TBL . " WHERE voucher_no='" . $voucher_no . "'";
+            $chkRes = mysql_query($chkSql);
+            if (mysql_num_rows($chkRes) > 0) {
+                $chkRow = mysql_fetch_object($chkRes);
+                if ($chkRow->approved_status == 1) {
+                    $msg = "Cannot edit approved SPR !!!";
+                    header("location:index.php?app=purchase.item.grn&cmd=spr_list&error_msg=$msg");
+                    exit;
+                }
+            }
+
             require_once(CLASS_DIR . '/common.list.class.php');
             $comListApp = new CommonList();
 
@@ -1568,7 +1589,7 @@ class PurchaseItemGRN extends Journal
                 $spdInitQty = $spdResult->init_qty;
 
                 $newQty = (float)$spdPrevQty + (float)$delQty;
-                if ($spdPrevQty < $spdInitQty && $newQty <= $spdInitQty && $spdPrevQty != $delQty) {
+                if ($spdPrevQty < $spdInitQty && $newQty <= $spdInitQty) {
                     $requestSPDdata['qty'] = $newQty;
                 }
 
@@ -2755,7 +2776,7 @@ class PurchaseItemGRN extends Journal
 
     function getAccounceBalance($account_id, $project_id)
     {
-        $sql = "SELECT (sum(`dr`) - sum(`cr`)) as balance_amount FROM " . ACCOUNT_JOURNAL_TBL . " WHERE product_id = '$product_id' AND project_id = '$project_id'";
+        $sql = "SELECT (sum(`dr`) - sum(`cr`)) as balance_amount FROM " . ACCOUNT_JOURNAL_TBL . " WHERE product_id = '$account_id' AND project_id = '$project_id'";
 
         $row = mysql_fetch_object(mysql_query($sql));
         $balance_amount = $row->balance_amount;

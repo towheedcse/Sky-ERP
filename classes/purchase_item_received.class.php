@@ -103,7 +103,7 @@ class PurchaseItemReceived
    function getPOList(){
 	$info = array();
         $info['table'] = PURCHASE_OREDR_MASTER_TBL;
-        $info['where'] = "complete_status = 0";
+        $info['where'] = "complete_status = 0 AND approved_status = 1";
         $info['orderby'] = array("voucher_no");
 
         //$info['debug']  = true;
@@ -322,7 +322,7 @@ class PurchaseItemReceived
 		if($poInitQty != (float)$max_qty){
 			$newPOQty = $poTotalQty + (float)$addQty;
 		}else{
-			$newPOQty = (float)$add_qty;
+			$newPOQty = (float)$addQty;
 		}
 
 		$requestSPDdata['qty'] = $newPOQty;
@@ -567,7 +567,8 @@ class PurchaseItemReceived
 		$arr_catagory_product_id	= array();
 
 		$project_id  				= getFromSession('project_id');
-      			
+		$store_id					= getRequest('store_id');
+
       	$arr_catagory_product_id	= getRequest('input_catagory_product_id');
       	$arr_podtl_id        		= getRequest('input_podtl_id');
       	$arr_serial        			= getRequest('input_serial');
@@ -745,7 +746,6 @@ class PurchaseItemReceived
 		if($store_id!=""){
 			$grn_voucher = $this->createGRNVoucharID();
 			$voucher_no = $this->saveDebitVouchar();
-print_r($voucher_no);exit();	
 			$PreviousPartyBalance = $this->saveCreditVouchar($voucher_no,$grn_voucher);
 			$this->insertPurchaseMaster($voucher_no,$PreviousPartyBalance,$grn_voucher);
 			$this->insertGRNPurchaseDetails($voucher_no); 
