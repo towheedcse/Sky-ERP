@@ -624,17 +624,21 @@ function calTotalValue() {
 }
 
 function calTotalValueCore() {
-    var edit_max_qty = parseFloat(document.getElementById('edit_max_qty').value);
-    //var edit_min_qty = parseFloat(document.getElementById('edit_min_qty').value);
-    var edit_spr_no = document.getElementById('edit_spr_no').value;
+    var edit_max_qty_el    = document.getElementById('edit_max_qty');
+    var edit_spr_no_el     = document.getElementById('edit_spr_no');
+    var edit_product_id_el = document.getElementById('edit_product_id');
+    var product_el         = document.getElementById('product');
+
+    var edit_max_qty    = edit_max_qty_el    ? parseFloat(edit_max_qty_el.value)    : NaN;
+    var edit_spr_no     = edit_spr_no_el     ? (edit_spr_no_el.value || "")         : "";
+    var edit_product_id = edit_product_id_el ? parseFloat(edit_product_id_el.value) : NaN;
 
     var qty = parseFloat(document.frmbuyerorder.qty.value);
 
-    var edit_product_id = parseFloat(document.getElementById('edit_product_id').value);
-    var product = parseFloat(document.getElementById('product').value);
-    if (product) {
-        var product = product.split("###");
-        var product_id = product[0];
+    var product_id;
+    if (product_el && product_el.value) {
+        var product = product_el.value.split("###");
+        product_id = product[0];
     }
 
     if (edit_product_id && edit_product_id != "" && product_id == edit_product_id) {
@@ -645,17 +649,16 @@ function calTotalValueCore() {
         }
     }
 
-
     if (edit_max_qty && edit_max_qty != "" && edit_max_qty < qty && edit_spr_no != "") {
         document.getElementById('qty').value = edit_max_qty;
         qty = edit_max_qty;
-        alert(`Product Qty must be less than or equall to ${edit_max_qty}`);
+        alert(`Product Qty must be less than or equal to ${edit_max_qty}`);
     }
 
     //if (edit_min_qty && edit_min_qty != "" && edit_min_qty > qty) {
-    //	document.getElementById('qty').value = edit_min_qty;
-    //	qty = edit_min_qty;
-    //	alert(`Product Qty must be greater than or equal to ${edit_min_qty}`);
+    //  document.getElementById('qty').value = edit_min_qty;
+    //  qty = edit_min_qty;
+    //  alert(`Product Qty must be greater than or equal to ${edit_min_qty}`);
     //}
 
     var unit_price = document.frmbuyerorder.unit_price.value;
