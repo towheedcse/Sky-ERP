@@ -18,7 +18,7 @@
    $thisUser = new User();
 
    //Including header
-	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp' )
+	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'pending_save_tmp' )
 	{
 	require_once(HEADER);
 	}
@@ -36,7 +36,7 @@
    }
    
    //Including footer
-	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp')
+	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'pending_save_tmp')
 	{
 	//require_once(FOOTER);
 	}

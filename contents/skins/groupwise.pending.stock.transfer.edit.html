@@ -64,9 +64,7 @@
 				<table width="89%" class="addBorder" cellspacing="0" cellpadding="2">
 					<tr>
 						<td class="topHeader" colspan="9">
-							<div id="tblTitle" align="left">Edit Pending Stock Transfer &nbsp;
-								<span style="font-size:11px;font-weight:normal;color:#aaa;">(ID: <?=$edit_transfer_id?>)</span>
-							</div>
+							<div id="tblTitle" align="left">Edit Pending Stock Transfer</div>
 						</td>
 					</tr>
 
@@ -421,7 +419,6 @@
 
 		var unit_price   = parseFloat(document.getElementById('unit_price').value);
 		var qty          = parseFloat(document.getElementById('qty').value);
-		var stock_qty    = parseFloat(document.getElementById('stock_qty').value);
 		var total        = (unit_price * qty);
 		var currencyIdName = document.getElementById('currency').value;
 		var currencyArr  = currencyIdName.split("###");
@@ -561,19 +558,18 @@
 			J('#new_product').trigger('chosen:updated');
 		}
 
-		// Pre-fill numeric fields (these will be wiped by getProductStock/handlePSResponse
-		// but restored by the overridden handlePSResponse above)
+		// Change button label to show we are updating
+		document.getElementById('next_btn').value = 'Update';
+
+		// Trigger stock refresh first (it synchronously resets qty=0, then async-loads stock qty/unit label)
+		getProductStock();
+
+		// Pre-fill numeric fields AFTER getProductStock() so its synchronous qty=0 reset cannot clobber them.
+		// This makes the FIRST Update save the correct qty without waiting for the async stock response.
 		document.getElementById('qty').value        = qty;
 		document.getElementById('unit_price').value = unitPrice;
 		document.getElementById('total').value      = total;
 		document.getElementById('m_unit').value     = munit;
-
-		// Change button label to show we are updating
-		document.getElementById('next_btn').value = 'Update';
-
-		// Trigger stock refresh (to show current stock qty and unit label for this product)
-		// handlePSResponse override above ensures qty/unit_price/total are restored afterwards
-		getProductStock();
 
 		// Scroll into view
 		document.getElementById('product').scrollIntoView({ behavior: 'smooth', block: 'center' });

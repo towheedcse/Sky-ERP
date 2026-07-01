@@ -289,6 +289,7 @@ class Product
                 'product_code' => trim($row['product_code']),
 		'catagory' => trim($row['category']),
                 'subcatagory' => trim($row['subcategory']),
+                'main_catagory' => isset($row['main_category']) ? trim($row['main_category']) : '',
                 'project_id' => trim($row['project_id']),
                 'product_type' => trim($row['product_type']),
                 'brand_code' => trim($row['brand_code']),
@@ -300,8 +301,15 @@ class Product
                 'purchase_unit_price' => $row['purchase_price'],
                 'reorder_level' => $row['reorder_level'],
                 'weight' => trim($row['weight']),
-                'status' => $row['status']
+                'status' => $row['status'],
+                'approval_status' => isset($row['approval_status']) ? trim($row['approval_status']) : ''
             ];
+
+            // When approval_status is 1, also record who approved and when
+            if (isset($row['approval_status']) && trim($row['approval_status']) == '1') {
+                $fields['approved_by'] = getFromSession('userid');
+                $fields['approved_at'] = date('Y-m-d H:i:s');
+            }
 
             // Escaping and filtering only non-empty values
             $filteredFields = [];

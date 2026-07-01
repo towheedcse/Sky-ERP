@@ -23,6 +23,31 @@ if (!function_exists('userNotAllowed')) {
     }
 }
 
+if (!function_exists('hasApprovedPermission')) {
+    /**
+     * True if the user is allowed to approve, driven by the
+     * `approved_permission` column on the `user` table.
+     * imran/superadmin remain allowed as an admin fallback.
+     */
+    function hasApprovedPermission($userId = null)
+    {
+        if ($userId === null) {
+            $userId = getFromSession('userid');
+        }
+        if (userCondition(false)) {
+            return true;
+        }
+        if (empty($userId)) {
+            return false;
+        }
+        $safeUser = mysql_real_escape_string($userId);
+        $row = mysql_fetch_object(mysql_query(
+            "SELECT approved_permission FROM " . USER_TBL . " WHERE userid = '$safeUser' LIMIT 1"
+        ));
+        return $row && (int) $row->approved_permission === 1;
+    }
+}
+
 
 if (!function_exists('dd')) {
     /**

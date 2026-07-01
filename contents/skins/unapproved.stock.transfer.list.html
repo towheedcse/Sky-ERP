@@ -248,7 +248,7 @@ newwin.document.close()
           <td align="center" nowrap><? echo $val->total_amount.' '.$val->curr_symble;?></td>
           <td align="center" nowrap><div class="table-option">
 <?php
-	if (in_array($val->delivery_point, $user_store)) {
+	if (in_array($val->delivery_point, $user_store) || hasApprovedPermission()) {
 ?>
 	  <a onClick='approvedRecord("<?=$transfer_no?>")' href="javascript:void(0)" title="Approved"><img src='<?=IMAGE_DIR?>/common/icons/approved.gif' alt="Approved" width="18" border='0'></a>&nbsp;&nbsp;&nbsp;
 <?php }?>
@@ -261,7 +261,7 @@ $printChallan = "pending_print_convert_challan";
 }
 
 ?>
-          <a href="?app=groupwise.stock.transfer&cmd=pending_edit&transfer_id=<?=$transfer_no?>" title="Edit"><img src='<?=IMAGE_DIR?>/common/icons/edit.gif' alt="Edit" width="18" border='0'></a>&nbsp;&nbsp;&nbsp;
+          <a href="?app=groupwise.stock.transfer&cmd=pending_edit&transfer_id=<?=$transfer_no?>&fresh=1" title="Edit"><img src='<?=IMAGE_DIR?>/common/icons/edit.gif' alt="Edit" width="18" border='0'></a>&nbsp;&nbsp;&nbsp;
           <a target="_blank" href="?app=groupwise.stock.transfer&cmd=<?=$printChallan?>&transfer_no=<?=$transfer_no?>">Challan</a>&nbsp;&nbsp;&nbsp;
           <? if(getFromSession('userid')=="imran" || getFromSession('userid')=="admin2"){ ?>
 		  <a onClick="return doConfirm(PROMPT_DELETE_CONFIRM);" href=javascript:deleteRecord("<?=$transfer_no?>") title="Delete"><img src='<?=IMAGE_DIR?>/common/icons/delete.gif' alt="Delete" width="18" border='0'></a>

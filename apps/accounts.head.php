@@ -7,7 +7,7 @@
    $thisUser = new User();
 
    //Including header 
-   if(getRequest('cmd') != 'loadsubhtype' && getRequest('cmd') != 'loadchildhtype' && getRequest('cmd') != 'loadSL3Htype')
+   if(getRequest('cmd') != 'loadsubhtype' && getRequest('cmd') != 'loadchildhtype' && getRequest('cmd') != 'loadSL3Htype' && getRequest('cmd') != 'bulk_import' && getRequest('cmd') != 'check_head_code')
    {
    require_once(HEADER);
    }
@@ -23,7 +23,7 @@
    {
       $thisUser->goLogin();
    }
-  if(getRequest('cmd') != 'loadsubhtype' && getRequest('cmd') != 'loadchildhtype' && getRequest('cmd') != 'loadSL3Htype')
+  if(getRequest('cmd') != 'loadsubhtype' && getRequest('cmd') != 'loadchildhtype' && getRequest('cmd') != 'loadSL3Htype' && getRequest('cmd') != 'bulk_import' && getRequest('cmd') != 'check_head_code')
    { 
    //Including footer
    require_once(FOOTER); 

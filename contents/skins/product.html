@@ -71,9 +71,31 @@ if($message==""){ $message = getRequest('msg');}
         margin-bottom: 15px;
     }
     #previewModal .btn{
-        width: inherit;
-        padding-bottom: 29px !important;
+        width: auto !important;
+        height: auto !important;
+        display: inline-block;
+        padding: 6px 16px !important;
+        margin-left: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #fff !important;
+        border: 1px solid transparent !important;
+        border-radius: 4px !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        cursor: pointer;
     }
+    #previewModal .btn-sm{ padding: 3px 10px !important; font-size: 12px; margin: 0 !important; }
+    #previewModal .btn-success{ background: #198754 !important; border-color: #198754 !important; }
+    #previewModal .btn-success:hover{ background: #157347 !important; }
+    #previewModal .btn-secondary{ background: #6c757d !important; border-color: #6c757d !important; }
+    #previewModal .btn-secondary:hover{ background: #5c636a !important; }
+    #previewModal .btn-danger{ background: #dc3545 !important; border-color: #dc3545 !important; }
+    #previewModal .btn-danger:hover{ background: #bb2d3b !important; }
+    #previewModal .btn-warning{ background: #ffc107 !important; border-color: #ffc107 !important; color: #000 !important; }
+    #previewModal .btn-warning:hover{ background: #ffca2c !important; }
     p#product_code_error {
         color: red;
         margin-top: 3px;
@@ -96,15 +118,56 @@ if($message==""){ $message = getRequest('msg');}
         text-align: left;
     }
 
-    button#exportConfirm {
-        padding: 0;
+    #columnModal .btn {
+        width: auto !important;
+        height: auto !important;
+        display: inline-block;
+        padding: 6px 16px !important;
+        margin-left: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.5;
         color: #fff !important;
+        border: 1px solid transparent !important;
+        border-radius: 4px !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        cursor: pointer;
     }
+    #columnModal .btn-success { background: #198754 !important; border-color: #198754 !important; }
+    #columnModal .btn-success:hover { background: #157347 !important; }
+    #columnModal .btn-secondary { background: #6c757d !important; border-color: #6c757d !important; }
+    #columnModal .btn-secondary:hover { background: #5c636a !important; }
 
-    button.btn.btn-secondary {
-        padding: 0;
-        color: #fff !important;
+    #export_btn, .demoFileDownload {
+        display: block;
+        width: 100%;
+        height: auto !important;
+        padding: 4px 10px !important;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        text-align: center;
+        border-radius: 4px !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        cursor: pointer;
     }
+    #export_btn {
+        background: #ffc107 !important;
+        border: 1px solid #ffc107 !important;
+        color: #000 !important;
+    }
+    #export_btn:hover { background: #ffca2c !important; border-color: #ffca2c !important; }
+    .demoFileDownload {
+        background: #0d6efd !important;
+        border: 1px solid #0d6efd !important;
+        color: #fff !important;
+        text-decoration: none;
+    }
+    .demoFileDownload:hover { background: #0b5ed7 !important; border-color: #0b5ed7 !important; color: #fff !important; }
 
 
     #loader {
@@ -207,6 +270,8 @@ if($message==""){ $message = getRequest('msg');}
                             <th>Reorder Level</th>
                             <th>Weight</th>
                             <th>Status</th>
+                            <th>Main Category</th>
+                            <th>Approval Status</th>
                             <th>Upload Status</th>
                             <th>Action</th>
                         </tr>
@@ -473,7 +538,7 @@ if($message==""){ $message = getRequest('msg');}
                                             <div style="padding: 11px 0px;display: flex; flex-direction: column;">
                                                 <a href="<?=REL_EXT_DIR."/demofile/product_upload.xlsx"?>" class="btn demoFileDownload" target="_blank">Download Demo File</a>
 
-                                                <span style="margin-top: 7px;padding: 3px 0; font-size: 14px;" id="export_btn" class="btn btn-block btn-warning"><i
+                                                <span style="margin-top: 7px;width: 150px;" id="export_btn" class="btn btn-warning"><i
                                                         class="fa fa-cloud-download"></i> Export</span>
                                             </div>
 
@@ -917,6 +982,8 @@ if($message==""){ $message = getRequest('msg');}
             <td contenteditable="true">${row[13] || ''}</td>
 	    <td contenteditable="true">${row[14] || ''}</td>
 	    <td contenteditable="true">${row[15] || ''}</td>
+	    <td contenteditable="true">${row[16] || ''}</td>
+	    <td contenteditable="true">${row[17] || ''}</td>
             <td class="status status-pending">⏳ Pending</td>
             <td><button class="btn btn-sm btn-danger delete-row">Delete</button><button class="btn btn-sm btn-warning retry d-none mt-2">Retry</button></td>
         `);
@@ -1009,7 +1076,9 @@ if($message==""){ $message = getRequest('msg');}
                 purchase_price: cells.eq(13).text().trim(),
                 reorder_level: cells.eq(14).text().trim(),
                 weight: cells.eq(15).text().trim(),
-                status: cells.eq(16).text().trim()
+                status: cells.eq(16).text().trim(),
+                main_category: cells.eq(17).text().trim(),
+                approval_status: cells.eq(18).text().trim()
             });
         });
 
@@ -1131,7 +1200,9 @@ if($message==""){ $message = getRequest('msg');}
                         purchase_price: cells.eq(13).text().trim(),
                         reorder_level: cells.eq(14).text().trim(),
                         weight: cells.eq(15).text().trim(),
-                        status: cells.eq(16).text().trim()
+                        status: cells.eq(16).text().trim(),
+                        main_category: cells.eq(17).text().trim(),
+                        approval_status: cells.eq(18).text().trim()
                     });
                 });
 
@@ -1219,7 +1290,9 @@ if($message==""){ $message = getRequest('msg');}
             purchase_price: row.find('td').eq(13).text().trim(),
             reorder_level: row.find('td').eq(14).text().trim(),
             weight: row.find('td').eq(15).text().trim(),
-            status: 1
+            status: 1,
+            main_category: row.find('td').eq(17).text().trim(),
+            approval_status: row.find('td').eq(18).text().trim()
         };
 
         statusCell.removeClass('status-failed').addClass('status-pending')

@@ -119,9 +119,47 @@ if(mysql_num_rows($gres)>0){
 			margin-bottom: 15px;
 		}
 		#previewModal .btn{
-			width: inherit;
-			padding-bottom: 29px !important;
+			width: auto !important;
+			height: auto !important;
+			display: inline-block;
+			padding: 6px 16px !important;
+			margin-left: 6px;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 1.5;
+			color: #fff !important;
+			border: 1px solid transparent !important;
+			border-radius: 4px !important;
+			background-image: none !important;
+			box-shadow: none !important;
+			text-shadow: none !important;
+			cursor: pointer;
 		}
+		#previewModal .btn-sm{ padding: 3px 10px !important; font-size: 12px; margin: 0 !important; }
+		#previewModal .btn-success{ background: #198754 !important; border-color: #198754 !important; }
+		#previewModal .btn-success:hover{ background: #157347 !important; }
+		#previewModal .btn-secondary{ background: #6c757d !important; border-color: #6c757d !important; }
+		#previewModal .btn-secondary:hover{ background: #5c636a !important; }
+		#previewModal .btn-danger{ background: #dc3545 !important; border-color: #dc3545 !important; }
+		#previewModal .btn-danger:hover{ background: #bb2d3b !important; }
+		#previewModal .btn-primary{ background: #0d6efd !important; border-color: #0d6efd !important; }
+		#previewModal .btn-outline-secondary{ background: #fff !important; color: #333 !important; border: 1px solid #ced4da !important; }
+		.demoFileDownload{
+			display: inline-block;
+			padding: 6px 14px !important;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 1.5;
+			color: #fff !important;
+			background: #0d6efd !important;
+			border: 1px solid #0d6efd !important;
+			border-radius: 4px !important;
+			background-image: none !important;
+			box-shadow: none !important;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.demoFileDownload:hover{ background: #0b5ed7 !important; border-color: #0b5ed7 !important; color: #fff !important; }
 		p#product_code_error {
 			color: red;
 			margin-top: 3px;
@@ -140,7 +178,7 @@ if(mysql_num_rows($gres)>0){
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
-				<h5 class="modal-title" id="previewModalLabel"><i class="fas fa-table"></i> Product Import Preview</h5>
+				<h5 class="modal-title" id="previewModalLabel"><i class="fas fa-table"></i> Stock Verification Import Preview</h5>
 				<button type="button" class="btn-close btn-close-white" onclick="modalClose()" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">

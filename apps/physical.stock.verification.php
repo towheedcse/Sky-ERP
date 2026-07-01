@@ -18,7 +18,7 @@
    $thisUser = new User();
 
    //Including header
-	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'save_tmp' )
+	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'stock_bulk_import' && getRequest('cmd') != 'get_product_info' )
 	{
 	require_once(HEADER);
 	}
@@ -36,7 +36,7 @@
    }
    
    //Including footer
-	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'save_tmp')
+	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'stock_bulk_import' && getRequest('cmd') != 'get_product_info')
 	{
 	//require_once(FOOTER);
 	}

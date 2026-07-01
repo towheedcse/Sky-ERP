@@ -191,8 +191,17 @@ class GroupStockTransfer
         require_once(CLASS_DIR . '/common.list.class.php');
         $comListApp = new CommonList();
 
-        // Pre-populate temp table with existing pending transfer items
-        $this->insertPendingDetailsIntoTemp($transfer_id);
+        // Load this transfer's lines into temp on fresh entry (fresh=1), or whenever temp
+        // does not already hold THIS transfer's rows (empty after a save/back, or leftover
+        // rows from a different transfer). Existing rows for this transfer are kept so
+        // edits/deletions persist on reload.
+        $u = getFromSession('userid');
+        $pj = getFromSession('project_id');
+        $tcnt = mysql_fetch_object(mysql_query("SELECT COUNT(*) AS c FROM " . TEMP_STOCK_TRANSFER_TBL . "
+                    WHERE created_by = '$u' AND project_id = '$pj' AND transfer_no = '" . intval($transfer_id) . "'"));
+        if (getRequest('fresh') == 1 || !$tcnt || (int) $tcnt->c === 0) {
+            $this->insertPendingDetailsIntoTemp($transfer_id);
+        }
 
         // Load master record info
         $advArr = $this->getPendingTransferMasterInfo($transfer_id);
@@ -286,6 +295,11 @@ class GroupStockTransfer
                              '$userid')";
             mysql_query($isql);
         }
+
+        // Tag the freshly loaded rows with the transfer being edited
+        mysql_query("UPDATE " . TEMP_STOCK_TRANSFER_TBL . "
+                     SET transfer_no = '" . intval($transfer_id) . "'
+                     WHERE created_by = '$userid' AND project_id = '$project_id'");
     }
 
     // Same as getTempSales() but delete links redirect back to the edit page
@@ -466,6 +480,11 @@ class GroupStockTransfer
                              '$brandname', '$munit', '$qty', '$unit_price', '$total', '$userid')";
             mysql_query($isql);
         }
+
+        // Keep transfer tagging correct (covers newly added rows)
+        mysql_query("UPDATE " . TEMP_STOCK_TRANSFER_TBL . "
+                     SET transfer_no = '" . intval($transfer_id) . "'
+                     WHERE created_by = '$userid' AND project_id = '$project_id'");
 
         // Discard any framework HTML already buffered so the AJAX caller
         // receives only the delimited string, nothing else.
@@ -1854,7 +1873,7 @@ class GroupStockTransfer
         $user_store = $comListApp->getUserStore();
         $userStoreArray = array_map('trim', explode(',', $user_store));
 
-        if (!in_array($toStore, $userStoreArray)) {
+        if (!in_array($toStore, $userStoreArray) && !hasApprovedPermission()) {
             header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=Your are not authorize!!");
             exit;
         }

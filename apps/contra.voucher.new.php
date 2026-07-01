@@ -18,7 +18,7 @@
    $thisUser = new User();
 
    //Including header
-    if(getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'save_vouchar' && getRequest('cmd') != 'get_temp_dtl' && getRequest('cmd') != 'check-mr'){
+    if(getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'save_vouchar' && getRequest('cmd') != 'get_temp_dtl' && getRequest('cmd') != 'check-mr' && getRequest('cmd') != 'voucher_bulk_import' && getRequest('cmd') != 'voucher_account_info'){
 	require_once(HEADERS);
 	}
 
@@ -32,8 +32,8 @@
    }
    
    //Including footer
-   if(getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'save_vouchar' && getRequest('cmd') != 'get_temp_dtl' && getRequest('cmd') != 'check-mr')
+   if(getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'save_vouchar' && getRequest('cmd') != 'get_temp_dtl' && getRequest('cmd') != 'check-mr' && getRequest('cmd') != 'voucher_bulk_import' && getRequest('cmd') != 'voucher_account_info')
    {
-   require_once(FOOTER); 
+   require_once(FOOTER);
    }
 ?>
