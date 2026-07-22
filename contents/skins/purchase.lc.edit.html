@@ -1076,7 +1076,7 @@ function showInventoryList(section, sub_id){
 	}
 
 
-	const supplierData = <?= $supplierData; ?>;
+	const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 
 	const inventoryID = "<?= $inventory_id; ?>";
 	var section = "<?= $section; ?>";

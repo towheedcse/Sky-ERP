@@ -913,7 +913,7 @@ require_once(CLASS_DIR.'/common.list.class.php');
 		document.getElementById('grand_total').value = netPayableWithVat.toFixed(9);
 	}
 
-	const supplierData = <?=$supplierData;?>;
+	const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 
 	function purchaseType(store_id) {
 		let purchase_type = "";

@@ -342,7 +342,7 @@ require_once(CLASS_DIR . '/common.list.class.php');
     "maintenance" : <?= json_encode($maintanance_list); ?>
     };
 
-    const supplierData = <?= $supplierData; ?>;
+    const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 
 </script>
 

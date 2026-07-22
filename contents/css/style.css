@@ -224,9 +224,11 @@ width: 100%;
 
 #content_right_inner ul li#active a{ display:block;width: 100%; font-weight:bold; height:20px; color: #CCCCCC ; padding:  5px 0px 0px 5px; background-color: #333333; font-weight:bold;}
 
+#content_right_inner {
+	padding: 5px 6px 10px !important;
+}
 
-
-.right_block{width: 95%; height: auto; }
+.right_block{width: 95%; height: auto; margin: -5px 0px;}
 
 .right_block h3{ display:block; width: 100%; height:35px; font-size: 16px; font-weight: bold; color: #CCCCCC; background: url(../../images/menu_top_back.png) repeat-x top left; margin:0; padding:0; cursor:pointer; vertical-align: middle; text-align: left}
 

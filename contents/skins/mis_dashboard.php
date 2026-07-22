@@ -424,165 +424,22 @@ const PROJECTID = "P0005";
             </div>
             <div class="mis-col-two">
                 <div class="mis-box">
-                    <div class="box-title">Top 5 Payable</div>
-                    <div class="items">
-                        <div class="item">
-                            <div class="box-content">
-                                Gulshan Footwear
-                                <span>:</span>
-                            </div>
-                            <div class="numbers">0</div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content">
-                                New Maharaja Footwear
-                                <span>:</span>
-                            </div>
-                            <div class="numbers">0</div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content">
-                                Anand Footwear
-                                <span>:</span>
-                            </div>
-                            <div class="numbers">0</div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content">
-                                Nice Shoe Company
-                                <span>:</span>
-                            </div>
-                            <div class="numbers">0</div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content">
-                                Ayush Industries
-                                <span>:</span>
-                            </div>
-                            <div class="numbers">0</div>
-                        </div>
-                    </div>
+                    <div class="box-title">Top 10 Payable</div>
+                    <div class="items" id="top_payable_items"></div>
                 </div>
 		<div class="mis-box">
-                    <div class="box-title">Fast Moving Items</div>
-                    <div class="items">
-                        <div class="item">
-                            <div class="box-content-item">
-                                Pvc Foot Wear
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                Footwear Undear 500
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                COLOURS LADIES CHAPPAL'
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                TENNIS 6-9
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                TITAS 123
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="box-title">Top 10 Receivable</div>
+                    <div class="items" id="top_receivable_items"></div>
                 </div>
             </div>
             <div class="mis-col-two">
                 <div class="mis-box">
-                    <div class="box-title">Slow Moving Items</div>
-                    <div class="items">
-                        <div class="item">
-                            <div class="box-content-item">
-                                780043-ART.G-0075-MIX-6X10
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                780049-ART.G-0075-MIX-6X10
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                780066-ART.G-0075-MIX-6X10
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                6
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                780222-ART.G-0075-MIX-6X10
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="box-content-item">
-                                Campus 1399
-                                <span>:</span>
-                            </div>
-                            <div class="numbers-item">
-                                0
-                                <span>Pcs</span>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="box-title">Inventory Status</div>
+                    <div class="items" id="inventory_status_items"></div>
                 </div>
                 <div class="mis-box">
                     <div class="box-title">Non Moving Items</div>
-                    <div class="items">
-                        <div class="item">
-                            <div class="box-content-item"></div>
-                            <div class="numbers-item"></div>
-                        </div>
-                    </div>
+                    <div class="items" id="non_moving_items"></div>
                 </div>
             </div>
         </div>
@@ -1344,7 +1201,7 @@ function cashFlowChart(){
 
 cashFlowChart();
 
-selectDate('month'); 
+selectDate('month'); // prefill dates only; reports load when the filter button is clicked
 
 
 function formatDate(date) {
@@ -1421,6 +1278,81 @@ function getAllReport(from_date, to_date){
 	loans(from_date, to_date);
 	profitAndLoss(from_date, to_date);
 	//overDueInvoice(from_date, to_date);
+	topPayable(from_date, to_date);
+	topReceivable(from_date, to_date);
+	inventoryStatus(from_date, to_date);
+	nonMovingItems(from_date, to_date);
+}
+
+
+// ---- helpers for the party/stock boxes ----
+function misRow(name, amount, unit){
+	const suffix = unit ? ' <span>'+unit+'</span>' : '';
+	return '<div class="item">'
+		+ '<div class="box-content-item">'+ $('<div>').text(name).html() +' <span>:</span></div>'
+		+ '<div class="numbers-item">'+ amount + suffix +'</div>'
+		+ '</div>';
+}
+
+function misEmptyRow(){
+	return '<div class="item"><div class="box-content-item" style="opacity:.6">No data for this period</div><div class="numbers-item"></div></div>';
+}
+
+function renderMisRows(containerId, rows, unit){
+	let html = "";
+	if(rows && rows.length){
+		rows.forEach(function(r){ html += misRow(r.name, r.amount, unit); });
+	} else {
+		html = misEmptyRow();
+	}
+	$("#"+containerId).html(html);
+}
+
+function topPayable(from_date, to_date){
+	axios.post("?app=sales.report&cmd=mis_dashboard_report", {from_date, to_date, report:"top_payable"})
+	.then(function(response){
+		if(response.data.status == true){
+			renderMisRows("top_payable_items", response.data.data.rows, "");
+		}
+	});
+}
+
+function topReceivable(from_date, to_date){
+	axios.post("?app=sales.report&cmd=mis_dashboard_report", {from_date, to_date, report:"top_receivable"})
+	.then(function(response){
+		if(response.data.status == true){
+			renderMisRows("top_receivable_items", response.data.data.rows, "Tk");
+		}
+	});
+}
+
+function inventoryStatus(from_date, to_date){
+	axios.post("?app=sales.report&cmd=mis_dashboard_report", {from_date, to_date, report:"inventory_status"})
+	.then(function(response){
+		if(response.data.status == true){
+			const data = response.data.data;
+			let html = "";
+			if(data.rows && data.rows.length){
+				data.rows.forEach(function(r){ html += misRow(r.name, r.amount, "Tk"); });
+			} else {
+				html = misEmptyRow();
+			}
+			html += '<div class="item box-content-total">'
+				+ '<div class="box-content-item"><strong>Total Stock Amount</strong> <span>:</span></div>'
+				+ '<div class="numbers-item"><strong>'+ data.total +'</strong> <span>Tk</span></div>'
+				+ '</div>';
+			$("#inventory_status_items").html(html);
+		}
+	});
+}
+
+function nonMovingItems(from_date, to_date){
+	axios.post("?app=sales.report&cmd=mis_dashboard_report", {from_date, to_date, report:"non_moving_items"})
+	.then(function(response){
+		if(response.data.status == true){
+			renderMisRows("non_moving_items", response.data.data.rows, "Tk");
+		}
+	});
 }
 
 

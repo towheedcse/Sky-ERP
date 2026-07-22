@@ -1128,7 +1128,7 @@ if(mysql_num_rows($gres)>0){
 	}
 
 
-	const supplierData = <?= $supplierData; ?>;
+	const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 	const selectedStoreID = "<?= $store_id; ?>";
 	if(selectedStoreID != ""){
 		handleStoreChange(selectedStoreID);

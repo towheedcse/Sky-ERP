@@ -386,7 +386,7 @@ function showInventoryList(section, sub_id){
 	}
 }
 
-const supplierData = <?= $supplierData; ?>;
+const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 
 function handleStoreChange(store_id){
 	const match = supplierData.find(item => item.point_id === store_id);

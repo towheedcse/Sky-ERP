@@ -1521,7 +1521,7 @@ if(mysql_num_rows($gres)>0){
 		}
 	}
 
-	const supplierData = <?= $supplierData; ?>;
+	const supplierData = <?= (isset($supplierData) && is_string($supplierData) && $supplierData !== '') ? $supplierData : '[]' ?>;
 
 	function handleStoreChange(store_id){
 		getProductStock();

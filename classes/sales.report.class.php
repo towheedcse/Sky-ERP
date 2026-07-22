@@ -63,6 +63,9 @@ class SalesReport
                 case 'pending_transfer_list'    :
                     $screen = $this->showUnapprovedStockTransferList("Report Page");
                     break;
+                case 'approved_requisition_list' :
+                    $screen = $this->showApprovedRequisitionList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -221,6 +224,9 @@ class SalesReport
                 case 'pending_transfer_list'    :
                     $screen = $this->showUnapprovedStockTransferList("Report Page");
                     break;
+                case 'approved_requisition_list' :
+                    $screen = $this->showApprovedRequisitionList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -372,6 +378,9 @@ class SalesReport
                 case 'pending_transfer_list'    :
                     $screen = $this->showUnapprovedStockTransferList("Report Page");
                     break;
+                case 'approved_requisition_list' :
+                    $screen = $this->showApprovedRequisitionList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -507,6 +516,9 @@ class SalesReport
                 case 'pending_transfer_list'    :
                     $screen = $this->showUnapprovedStockTransferList("Report Page");
                     break;
+                case 'approved_requisition_list' :
+                    $screen = $this->showApprovedRequisitionList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $this->showStockVerifyList("Report Page");
                     break;
@@ -598,6 +610,9 @@ class SalesReport
                     break;
                 case 'pending_transfer_list'    :
                     $screen = $this->showUnapprovedStockTransferList("Report Page");
+                    break;
+                case 'approved_requisition_list' :
+                    $screen = $this->showApprovedRequisitionList("Report Page");
                     break;
                 //case 'verify_list' 	: $screen = $this->showStockVerifyList("Report Page");    break;
                 case 'salesreturn_list' :
@@ -3952,9 +3967,11 @@ class SalesReport
         $comListApp = new CommonList();
         $data = array();
         $data['cmd'] = getRequest('cmd');
-        $data['sdcrecord_list'] = $this->getStockTransferList(getRequest('from'), getRequest('to'), true);
-        $data['totalrecord'] = $this->getTotalStockTransferList(getRequest('from'), getRequest('to'), true);
+        $data['sdcrecord_list'] = $this->getStockTransferList(getRequest('from'), getRequest('to'), true, 0);
+        $data['totalrecord'] = $this->getTotalStockTransferList(getRequest('from'), getRequest('to'), true, 0);
         $data['depo_list'] = $comListApp->getDeliveryPointList(true);
+
+        $data['is_pending'] = true;
 
         $user_store = $comListApp->getUserStore();
         $data['user_store'] = array_map('trim', explode(',', $user_store));
@@ -3963,7 +3980,28 @@ class SalesReport
         return $data[0];
     }
 
-    function getStockTransferList($from, $to, $pending = false)
+    // Approved requisitions awaiting the real transfer (pending rows, approved_status=1).
+    // Rendered with a Transfer button that fires cmd=do_transfer.
+    function showApprovedRequisitionList()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+        $data = array();
+        $data['cmd'] = getRequest('cmd');
+        $data['sdcrecord_list'] = $this->getStockTransferList(getRequest('from'), getRequest('to'), true, 1);
+        $data['totalrecord'] = $this->getTotalStockTransferList(getRequest('from'), getRequest('to'), true, 1);
+        $data['depo_list'] = $comListApp->getDeliveryPointList(true);
+
+        $data['is_pending'] = true;
+
+        $user_store = $comListApp->getUserStore();
+        $data['user_store'] = array_map('trim', explode(',', $user_store));
+
+        require_once(SHOW_APPROVED_REQUISITION_TRANSFER_LIST_SKIN);
+        return $data[0];
+    }
+
+    function getStockTransferList($from, $to, $pending = false, $approved_status = null)
     {
         if ($from == "" && $to == "") {
             $from = 0;
@@ -4003,6 +4041,11 @@ class SalesReport
 
         $sql = "tm.project_id = '" . $project_id . "'";
 
+        // Requisition lifecycle filter (pending tables only): 0 = Unapproved list,
+        // 1 = Approved Requisition list. Null = no status filter (back-compat).
+        if ($pending && $approved_status !== null) {
+            $sql .= " AND tm.approved_status = '" . intval($approved_status) . "'";
+        }
 
         if ($delivery_point != "") {
             $sql .= " AND tm.delivery_point = '$delivery_point'";
@@ -4035,7 +4078,7 @@ class SalesReport
         return $data;
     }
 
-    function getTotalStockTransferList($from, $to, $pending = false)
+    function getTotalStockTransferList($from, $to, $pending = false, $approved_status = null)
     {
         $date_from = formatDate(getRequest('date_from'));
         $date_to = formatDate(getRequest('date_to'));
@@ -4054,6 +4097,9 @@ class SalesReport
             $info['fields'] = array('tm.id');
         }
         $sql = "tm.delivery_point=d.delivery_pid AND tm.project_id=p.project_id AND tm.currency=c.currency_id AND tm.project_id='" . $project_id . "'";
+        if ($pending && $approved_status !== null) {
+            $sql .= " AND tm.approved_status = '" . intval($approved_status) . "'";
+        }
         if ($delivery_point != "") {
             $sql .= " AND tm.delivery_point = '$delivery_point'";
         }
@@ -4760,6 +4806,20 @@ class SalesReport
 
     function misDAshboardReport()
     {
+		// Ensure a valid default timezone so DateTime (used by the Profit/Loss
+		// chart) does not throw when php.ini has no date.timezone set.
+		if (!ini_get('date.timezone')) {
+			date_default_timezone_set('Asia/Dhaka');
+		}
+		// Release the PHP session lock early. This endpoint only READS session
+		// data (project_id, already loaded), so closing the session here frees
+		// the lock and lets other pages/forms load in parallel instead of
+		// queuing behind these slow report queries.
+		if (session_id() !== '') {
+			session_write_close();
+		}
+
+
         $date_from = getRequest('from');
         $date_to = getRequest('to');
         $date_to = getRequest('report');
@@ -4802,7 +4862,15 @@ class SalesReport
             $result = $this->getLoanReport($from_date, $to_date);
         } elseif ($report_type == "profit_and_loss") {
             $result = $this->getProfitAndLossReport($from_date, $to_date);
-        } else {
+	}elseif($report_type == "top_payable"){
+		$result = $this->getTopPayableReport($from_date,$to_date);
+	}elseif($report_type == "top_receivable"){
+		$result = $this->getTopReceivableReport($from_date,$to_date);
+	}elseif($report_type == "inventory_status"){
+		$result = $this->getInventoryStatusReport($from_date,$to_date);
+	}elseif($report_type == "non_moving_items"){
+		$result = $this->getNonMovingItemsReport($from_date,$to_date);
+		} else {
             $result = null;
         }
 
@@ -5231,7 +5299,7 @@ class SalesReport
     function getSLClosingBalance($project_id, $head_type, $subhead_type = NULL, $childheadtype = NULL, $from_date, $to_date)
     {
         $totalAmount = 0;
-        $bsql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $bsql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($subhead_type != "") {
             $bsql .= " AND s.sub_headtype='$subhead_type'";
         }
@@ -5259,7 +5327,7 @@ class SalesReport
     function getGLClosingBalance($project_id, $head_type, $subhead_type = NULL, $childheadtype = NULL, $from_date, $to_date)
     {
         $totalAmount = 0;
-        $bsql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $bsql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($subhead_type != "") {
             $bsql .= " AND s.sub_headtype='$subhead_type'";
         }
@@ -5286,8 +5354,7 @@ class SalesReport
 
     function getISTotalSalesAmount($project_id, $head_type, $head_id = NULL, $from_date, $to_date)
     {
-        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS TotalSales FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY 
-	a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS TotalSales FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($head_id != "") {
             $sql .= " AND $head_id";
         }
@@ -5379,6 +5446,115 @@ class SalesReport
         ];
 
     }
+
+
+// Top 10 sub-accounts (parties) with the highest outstanding balance
+// under a given head/subhead. $balanceExpr decides Dr-heavy (receivable)
+// vs Cr-heavy (payable) ordering.
+function getTopPartyList($project_id,$head_type,$subhead_type,$balanceExpr,$to_date){
+	$data = array();
+	$sql = "SELECT s.sub_id, s.sub_head_name, ($balanceExpr) AS balance
+		FROM ".ACCOUNT_JOURNAL_TBL." AS a, ".SUB_ACC_HEAD_TBL." AS s
+		WHERE a.`sub_id` = s.`sub_id`
+		  AND s.project_id = '$project_id'
+		  AND s.`head_type` = '$head_type'
+		  AND s.`sub_headtype` = '$subhead_type'";
+	if($to_date != ""){
+		$sql .= " AND a.created_date <= '$to_date'";
+	}
+	$sql .= " GROUP BY s.sub_id, s.sub_head_name
+		HAVING balance > 0
+		ORDER BY balance DESC
+		LIMIT 10";
+	$res = mysql_query($sql);
+	if($res){
+		while($row = mysql_fetch_assoc($res)){
+			$data[] = array(
+				"name"   => $row['sub_head_name'],
+				"amount" => number_format(abs($row['balance']), 2, '.', ','),
+			);
+		}
+	}
+	return $data;
+}
+
+function getTopPayableReport($from_date,$to_date){
+	$project_id = getFromSession('project_id');
+	return array(
+		"rows" => $this->getTopPartyList($project_id,"Current Liabilities","S137","SUM(a.cr) - SUM(a.dr)",$to_date)
+	);
+}
+
+function getTopReceivableReport($from_date,$to_date){
+	$project_id = getFromSession('project_id');
+	return array(
+		"rows" => $this->getTopPartyList($project_id,"Current Assets","S128","SUM(a.dr) - SUM(a.cr)",$to_date)
+	);
+}
+
+function getInventoryStatusReport($from_date,$to_date){
+	$project_id = getFromSession('project_id');
+	$rows = array();
+	$total = 0;
+		// Stock value is a point-in-time balance, so we take the closing
+	// balance as of $to_date (the From date does not apply to a balance).
+	$sql = "SELECT d.delivery_point_name AS store_name,
+		       SUM(t.bal * po.unit_price) AS stock_value
+		FROM (
+			SELECT store_id, product_id, (SUM(dr) - SUM(cr)) AS bal
+			FROM ".STOCK_LEDGER_TBL."
+			WHERE project_id = '$project_id'
+			  AND create_date <= '$to_date'
+			GROUP BY store_id, product_id
+		) t, ".PRODUCT_TBL." po, ".DELIVERY_POINT_TBL." d
+		WHERE t.product_id = po.product_id
+		  AND t.store_id = d.delivery_pid
+		GROUP BY t.store_id, d.delivery_point_name
+		HAVING stock_value <> 0
+		ORDER BY stock_value DESC";
+	$res = mysql_query($sql);
+	if($res){
+		while($row = mysql_fetch_assoc($res)){
+			$value = (float)$row['stock_value'];
+			$total += $value;
+			$rows[] = array(
+				"name"   => $row['store_name'],
+				"amount" => number_format($value, 2, '.', ','),
+			);
+		}
+	}
+	return array(
+		"rows"  => $rows,
+		"total" => number_format($total, 2, '.', ','),
+	);
+}
+
+function getNonMovingItemsReport($from_date,$to_date){
+	$project_id = getFromSession('project_id');
+	$rows = array();
+	// Items that are in stock but had no outward movement (never issued/sold)
+	$sql = "SELECT po.product_name,
+		       SUM(s.balance) AS balance,
+		       SUM(s.balance * po.unit_price) AS stock_value
+		FROM ".STORE_STOCK_VIEW." s, ".PRODUCT_TBL." po
+		WHERE s.product_id = po.product_id
+		  AND s.project_id = '$project_id'
+		GROUP BY s.product_id, po.product_name
+		HAVING SUM(s.outstock) = 0 AND SUM(s.balance) > 0
+		ORDER BY stock_value DESC
+		LIMIT 10";
+	$res = mysql_query($sql);
+	if($res){
+		while($row = mysql_fetch_assoc($res)){
+			$rows[] = array(
+				"name"   => $row['product_name'],
+				"amount" => number_format((float)$row['stock_value'], 2, '.', ','),
+			);
+		}
+	}
+	return array("rows" => $rows);
+}
+
 
 
     function getGroupType($from_date, $to_date)
@@ -5499,6 +5675,14 @@ class SalesReport
         /* ------------------------------------------
      *  DAILY MODE
      * ------------------------------------------ */
+        // Pre-fetch which periods actually have ledger activity; empty periods
+        // net to 0, so skip the expensive getGrossProfit() call for them.
+        $__afmt   = ($mode == 'daily') ? '%Y-%m-%d' : (($mode == 'yearly') ? '%Y' : '%Y-%m');
+        $__pid    = getFromSession('project_id');
+        $__active = array();
+        $__ares = mysql_query("SELECT DISTINCT DATE_FORMAT(created_date, '$__afmt') AS k FROM ".ACCOUNT_JOURNAL_TBL." WHERE project_id = '$__pid' AND created_date BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'");
+        if ($__ares) { while ($__r = mysql_fetch_assoc($__ares)) { $__active[$__r['k']] = true; } }
+
         if ($mode == 'daily') {
 
             $period = new DatePeriod($from, new DateInterval('P1D'), $to->modify('+1 day'));
@@ -5510,8 +5694,10 @@ class SalesReport
 
                 $labels[] = $day->format("d M");
 
-                $result = $this->getGrossProfit($start, $end);
-                $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                if (isset($__active[$day->format('Y-m-d')])) {
+                    $result = $this->getGrossProfit($start, $end);
+                    $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                } else { $values[] = "0.00"; }
             }
         } /* ------------------------------------------
      *  WEEKLY MODE
@@ -5554,12 +5740,10 @@ class SalesReport
 
                 $labels[] = $monthStart->format("M Y");
 
-                $result = $this->getGrossProfit(
-                    $monthStart->format('Y-m-d'),
-                    $monthEnd->format('Y-m-d')
-                );
-
-                $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                if (isset($__active[$monthStart->format('Y-m')])) {
+                    $result = $this->getGrossProfit($monthStart->format('Y-m-d'), $monthEnd->format('Y-m-d'));
+                    $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                } else { $values[] = "0.00"; }
             }
 
         } /* ------------------------------------------
@@ -5578,12 +5762,10 @@ class SalesReport
 
                 $labels[] = $yearStart->format("Y");
 
-                $result = $this->getGrossProfit(
-                    $yearStart->format('Y-m-d'),
-                    $yearEnd->format('Y-m-d')
-                );
-
-                $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                if (isset($__active[$yearStart->format('Y')])) {
+                    $result = $this->getGrossProfit($yearStart->format('Y-m-d'), $yearEnd->format('Y-m-d'));
+                    $values[] = isset($result["net_profit"]) ? $result["net_profit"] : 0;
+                } else { $values[] = "0.00"; }
             }
         }
 
@@ -5672,34 +5854,33 @@ class SalesReport
     {
         $project_id = getFromSession('project_id');
 
-        $slhead = "s.sub_headtype='S124' AND s.child_head='C000127'";
-        $TotalSalesAmount = $this->getISTotalSalesAmount($project_id, "Operating Revenue", $slhead, $from_date, $to_date);
+        // Fetch every account-head balance this P&L needs in grouped passes over
+        // the journal instead of ~19 single-head queries. The period window
+        // (BETWEEN from/to) covers revenue and expense heads; getCogsStatementAmount
+        // additionally uses the opening (< from) and closing (<= to) windows, which
+        // it fetches itself. Each figure below is summed in PHP from the grouped
+        // dr/cr totals using the same head filters and the same
+        // dr-cr / abs(dr-cr) arithmetic, so results are identical.
+        $period = $this->fetchGroupedJournal($project_id, ($from_date != "" && $to_date != "") ? " AND a.created_date BETWEEN '$from_date' AND '$to_date'" : "");
 
-        $slhead = "s.sub_headtype='S124' AND s.child_head='C000128' AND s.sl_three_head='S300098'";
-        $TotalSalesDiscount = $this->getISTotalSalesAmount($project_id, "Operating Revenue", $slhead, $from_date, $to_date);
+        $TotalSalesAmount   = $this->groupAbs($period, array('head_type' => 'Operating Revenue', 'sub_headtype' => 'S124', 'child_head' => 'C000127'));
+        $TotalSalesDiscount = $this->groupAbs($period, array('head_type' => 'Operating Revenue', 'sub_headtype' => 'S124', 'child_head' => 'C000128', 'sl_three_head' => 'S300098'));
 
         $TotalSalesAmount = $TotalSalesAmount + $TotalSalesDiscount;
         $TotalSalesDiscount = $TotalSalesDiscount;
 
-        $slrhead = "s.sub_headtype='S124' AND s.child_head='C000129' AND s.sl_three_head='S300099'";
-        $TotalSalesReturn = $this->getISTotalSalesAmount($project_id, "Operating Revenue", $slrhead, $from_date, $to_date);
-        $vhead = "s.sub_headtype='S135' AND s.child_head='C000126' "; // AND s.sl_three_head='S300071' AND s.sub_id='A002103'
-        $TotalVATAmount = $this->getISTotalSalesAmount($project_id, "Direct Expenses", $vhead, $from_date, $to_date); // VAT Lira
-        //$ihead="s.sub_headtype='S121' AND s.child_head='C000131' AND s.sl_three_head='S300064' AND s.sub_id='A000027'";
-        $ihead = "s.sub_headtype='S121'";
-        $OthersIncome = $this->getISTotalSalesAmount($project_id, "Non-Operating Revenue", $ihead, $from_date, $to_date); // Others Income Lira
+        $TotalSalesReturn = $this->groupAbs($period, array('head_type' => 'Operating Revenue', 'sub_headtype' => 'S124', 'child_head' => 'C000129', 'sl_three_head' => 'S300099'));
+        $TotalVATAmount   = $this->groupAbs($period, array('head_type' => 'Direct Expenses', 'sub_headtype' => 'S135', 'child_head' => 'C000126')); // VAT Lira
+        $OthersIncome     = $this->groupAbs($period, array('head_type' => 'Non-Operating Revenue', 'sub_headtype' => 'S121')); // Others Income Lira
         $NetSales = ($TotalSalesAmount - ($TotalVATAmount + $TotalSalesReturn + $TotalSalesDiscount));
         $REVENUE = $NetSales;
         $vatAmount = 0;
-        $cosgAmount = $this->getCogsStatementAmount($from_date, $to_date);
+        $cosgAmount = $this->getCogsStatementAmount($from_date, $to_date, $period);
 
 
-        $advhead = "s.`sub_headtype` = 'S139' AND s.child_head='C000120'";
-        $TotalADEX = $this->getISHeadsBalance($project_id, "Indirect Expenses", $advhead, $from_date, $to_date); //Adv Exp
-        $sndvhead = "s.`sub_headtype` = 'S139' AND s.child_head='C000122'";
-        $TotalSDEX = $this->getISHeadsBalance($project_id, "Indirect Expenses", $sndvhead, $from_date, $to_date); // Sales & Delivery
-        $finhead = "s.`sub_headtype` = 'S139' AND s.child_head='C000121'";
-        $TotalFIEX = $this->getISHeadsBalance($project_id, "Indirect Expenses", $finhead, $from_date, $to_date); // Fin Exp
+        $TotalADEX = $this->groupBal($period, array('head_type' => 'Indirect Expenses', 'sub_headtype' => 'S139', 'child_head' => 'C000120')); //Adv Exp
+        $TotalSDEX = $this->groupBal($period, array('head_type' => 'Indirect Expenses', 'sub_headtype' => 'S139', 'child_head' => 'C000122')); // Sales & Delivery
+        $TotalFIEX = $this->groupBal($period, array('head_type' => 'Indirect Expenses', 'sub_headtype' => 'S139', 'child_head' => 'C000121')); // Fin Exp
 
 
         $profit = true;
@@ -5737,6 +5918,58 @@ class SalesReport
     }
 
 
+    // --- Grouped journal helpers used by getGrossProfit / getCogsStatementAmount ---
+    // One aggregate query per date window returns SUM(dr)/SUM(cr) grouped by the
+    // four head columns; individual figures are then picked out in PHP. This
+    // replaces the ~19 single-head SELECTs the P&L used to fire.
+    function fetchGroupedJournal($project_id, $dateCond)
+    {
+        $sql = "SELECT s.head_type AS head_type, s.sub_headtype AS sub_headtype, s.child_head AS child_head, s.sl_three_head AS sl_three_head, SUM(a.dr) AS dr, SUM(a.cr) AS cr "
+             . "FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s "
+             . "WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id'" . $dateCond . " "
+             . "GROUP BY s.head_type, s.sub_headtype, s.child_head, s.sl_three_head";
+        $rows = array();
+        $res  = mysql_query($sql);
+        if ($res) {
+            while ($r = mysql_fetch_object($res)) { $rows[] = $r; }
+        }
+        return $rows;
+    }
+
+    // Sum dr/cr across every grouped row matching all columns in $filter.
+    function sumGroupedJournal($rows, $filter)
+    {
+        $dr = 0; $cr = 0;
+        foreach ($rows as $r) {
+            $match = true;
+            foreach ($filter as $col => $val) {
+                if ((string)$r->$col !== (string)$val) { $match = false; break; }
+            }
+            if ($match) { $dr += (float)$r->dr; $cr += (float)$r->cr; }
+        }
+        return array($dr, $cr);
+    }
+
+    function groupBal($rows, $filter) { list($dr, $cr) = $this->sumGroupedJournal($rows, $filter); return $dr - $cr; }
+    function groupDr($rows, $filter)  { list($dr, $cr) = $this->sumGroupedJournal($rows, $filter); return $dr; }
+    function groupAbs($rows, $filter) { list($dr, $cr) = $this->sumGroupedJournal($rows, $filter); return abs($dr - $cr); }
+
+    // Opening product value: dr-cr before the period, falling back to the stored
+    // opening_balance ('Raw Materials' row) when zero — matching getISProductOpeingValue.
+    function groupOpeningValue($openingRows, $filter, $project_id)
+    {
+        $totalAmount = $this->groupBal($openingRows, $filter);
+        if ($totalAmount == 0) {
+            $rbsql = "SELECT opening_balance FROM " . OPENING_BALANCE_TBL . " WHERE project_id='$project_id' AND `head_type`='Raw Materials'";
+            $rbres = mysql_query($rbsql);
+            if ($rbres && mysql_num_rows($rbres) > 0) {
+                $rbrow = mysql_fetch_object($rbres);
+                if ($rbrow->opening_balance != "") { $totalAmount = $rbrow->opening_balance; } else { $totalAmount = 0; }
+            }
+        }
+        return $totalAmount;
+    }
+
     function getISHeadsBalance($project_id, $head_type, $head_id = NULL, $from_date, $to_date)
     {
         $totalAmount = 0;
@@ -5744,7 +5977,7 @@ class SalesReport
         // Base SQL
         $bsql = "SELECT (SUM(a.dr) - SUM(a.cr)) AS balance 
              FROM " . ACCOUNT_JOURNAL_TBL . " AS a, " . SUB_ACC_HEAD_TBL . " AS s 
-             WHERE BINARY a.sub_id = s.sub_id
+             WHERE a.sub_id = s.sub_id
              AND s.project_id = '$project_id'
              AND s.head_type = '$head_type'";
 
@@ -5770,31 +6003,38 @@ class SalesReport
     }
 
 
-    function getCogsStatementAmount($from_date, $to_date)
+    function getCogsStatementAmount($from_date, $to_date, $period = NULL, $opening = NULL, $closing = NULL)
     {
         $project_id = getFromSession('project_id');
 
-        $rmhead = "s.sub_headtype = 'S127' AND s.child_head='C000055' AND s.sl_three_head='S300030'";
-        $TotalRMOB = $this->getISProductOpeingValue($project_id, "Current Assets", $rmhead, $from_date, $to_date); // A000017 is PO RM
-        $TotalRMPB = $this->getISProductPurchaseValue($project_id, "Current Assets", $rmhead, $from_date, $to_date);
-        $TotalRMCB = $this->getISProductClosingValue($project_id, "Current Assets", $rmhead, $from_date, $to_date);
+        // Reuse the caller's period window if supplied; fetch the opening
+        // (< from_date) and closing (<= to_date) windows once each. Figures are
+        // summed in PHP with the same head filters / arithmetic as the old
+        // per-head helpers, so the returned amount is identical.
+        if ($period === NULL)  { $period  = $this->fetchGroupedJournal($project_id, ($from_date != "" && $to_date != "") ? " AND a.created_date BETWEEN '$from_date' AND '$to_date'" : ""); }
+        if ($opening === NULL) { $opening = $this->fetchGroupedJournal($project_id, ($from_date != "") ? " AND a.created_date < '$from_date'" : ""); }
+        if ($closing === NULL) { $closing = $this->fetchGroupedJournal($project_id, ($to_date != "")   ? " AND a.created_date <= '$to_date'"  : ""); }
 
-        $prhead = "s.sub_headtype = 'S127' AND s.child_head='C000135' AND s.sl_three_head='S300076'";
-        $PurchaseReturn = $this->getISProductClosingValue($project_id, "Current Assets", $prhead, $from_date, $to_date);
+        $rmFilter = array('head_type' => 'Current Assets', 'sub_headtype' => 'S127', 'child_head' => 'C000055', 'sl_three_head' => 'S300030');
+        $TotalRMOB = $this->groupOpeningValue($opening, $rmFilter, $project_id); // A000017 is PO RM
+        $TotalRMPB = $this->groupDr($period, $rmFilter);
+        $TotalRMCB = $this->groupBal($closing, $rmFilter);
 
-        $TotalFOVC = $this->getSLDrBalance($project_id, "Direct Expenses", "S138", "C000118", $from_date, $to_date);
+        $prFilter = array('head_type' => 'Current Assets', 'sub_headtype' => 'S127', 'child_head' => 'C000135', 'sl_three_head' => 'S300076');
+        $PurchaseReturn = $this->groupBal($closing, $prFilter);
 
-        $pakmhead = "s.sub_headtype = 'S139' AND s.child_head='C000155'";
-        $TotalPackMat = $this->getCOGSISHeadsBalance($project_id, "Indirect Expenses", $pakmhead, $from_date, $to_date);
+        $TotalFOVC = $this->groupDr($period, array('head_type' => 'Direct Expenses', 'sub_headtype' => 'S138', 'child_head' => 'C000118'));
 
-        $wphead = "s.sub_headtype = 'S127' AND s.child_head='C000057' AND s.sl_three_head='S300031'";
-        $TotalWPOB = $this->getISProductOpeingValue($project_id, "Current Assets", $wphead, $from_date, $to_date); // A000018 is WIP
-        $TotalWPCB = $this->getISProductClosingValue($project_id, "Current Assets", $wphead, $from_date, $to_date);
+        $TotalPackMat = $this->groupDr($period, array('head_type' => 'Indirect Expenses', 'sub_headtype' => 'S139', 'child_head' => 'C000155'));
 
-        $fghead = "s.sub_headtype = 'S127' AND s.child_head='C000056' AND s.sl_three_head='S300029'";
-        $TotalFGOB = $this->getISProductOpeingValue($project_id, "Current Assets", $fghead, $from_date, $to_date); // A000036 is FG
+        $wpFilter = array('head_type' => 'Current Assets', 'sub_headtype' => 'S127', 'child_head' => 'C000057', 'sl_three_head' => 'S300031');
+        $TotalWPOB = $this->groupOpeningValue($opening, $wpFilter, $project_id); // A000018 is WIP
+        $TotalWPCB = $this->groupBal($closing, $wpFilter);
+
+        $fgFilter = array('head_type' => 'Current Assets', 'sub_headtype' => 'S127', 'child_head' => 'C000056', 'sl_three_head' => 'S300029');
+        $TotalFGOB = $this->groupOpeningValue($opening, $fgFilter, $project_id); // A000036 is FG
         $TotalFGPB = 0;
-        $TotalFGCB = $this->getISProductClosingValue($project_id, "Current Assets", $fghead, $from_date, $to_date);
+        $TotalFGCB = $this->groupBal($closing, $fgFilter);
 
         $fgstockid = "A000036";
         $TotalCOGS = $this->getSalesOfCostAmount($fgstockid, $project_id, $from_date, $to_date);
@@ -5840,7 +6080,7 @@ class SalesReport
     function getCOGSISHeadsBalance($project_id, $head_type, $head_id = NULL, $from_date, $to_date)
     {
         $totalAmount = 0;
-        $bsql = "SELECT SUM(a.dr) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY a.sub_id = s.sub_id AND s.project_id = '$project_id' AND s.head_type = '$head_type' ";
+        $bsql = "SELECT SUM(a.dr) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.sub_id = s.sub_id AND s.project_id = '$project_id' AND s.head_type = '$head_type' ";
         if ($head_id != "") {
             $bsql .= " AND $head_id ";
         }
@@ -5866,7 +6106,7 @@ class SalesReport
     {
 
         $totalAmount = 0;
-        $bsql = "SELECT SUM(a.dr) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $bsql = "SELECT SUM(a.dr) AS balance FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($subhead_type != "") {
             $bsql .= " AND s.sub_headtype='$subhead_type'";
         }
@@ -5897,7 +6137,7 @@ class SalesReport
         // Base SQL
         $bsql = "SELECT (SUM(a.dr) - SUM(a.cr)) AS balance 
               FROM " . ACCOUNT_JOURNAL_TBL . " AS a, " . SUB_ACC_HEAD_TBL . " AS s 
-              WHERE BINARY a.sub_id = s.sub_id 
+              WHERE a.sub_id = s.sub_id 
               AND s.project_id = '$project_id' 
               AND s.head_type = '$head_type'";
 
@@ -5927,8 +6167,7 @@ class SalesReport
     function getISProductClosingValue($project_id, $head_type, $head_id = NULL, $from_date, $to_date)
     {
         $closing_value = 0;
-        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS closing_value FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY 
-	a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS closing_value FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($head_id != "") {
             $sql .= " AND $head_id";
         }
@@ -5954,8 +6193,7 @@ class SalesReport
     {
         $totalPVAmount = 0;
 
-        $sql = "SELECT (SUM(a.dr)) AS totalAmount FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY 
-	a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $sql = "SELECT (SUM(a.dr)) AS totalAmount FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($head_id != "") {
             $sql .= " AND $head_id ";
         }
@@ -5981,7 +6219,7 @@ class SalesReport
 
         $totalAmount = 0;
         $totalAmount = 0;
-        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS totalAmount FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE BINARY a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
+        $sql = "SELECT (SUM(a.dr)- SUM(a.cr)) AS totalAmount FROM " . ACCOUNT_JOURNAL_TBL . " AS a," . SUB_ACC_HEAD_TBL . " AS s WHERE a.`sub_id` = s.`sub_id` AND s.project_id = '$project_id' AND s.`head_type` = '$head_type' ";
         if ($head_id != "") {
             $sql .= " AND $head_id";
         }

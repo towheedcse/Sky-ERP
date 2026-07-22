@@ -45,6 +45,12 @@ class GroupStockTransfer
                 case 'approved_transfer'    :
                     $this->approvedTransferRecord("Report Page");
                     break;
+                case 'do_transfer'    :
+                    $this->transferRequisitionRecord();
+                    break;
+                case 'send_back_requisition'    :
+                    $this->sendBackRequisitionRecord();
+                    break;
                 case 'print_challan'        :
                     $this->showPrintEditor($msg);
                     break;
@@ -186,6 +192,12 @@ class GroupStockTransfer
         $transfer_id = getRequest('transfer_id');
         if (!$transfer_id) {
             return;
+        }
+
+        // Direct-link protection: an approved requisition is imran-only to edit.
+        if (!$this->canModifyRequisition($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Only imran can edit an approved requisition!!");
+            exit;
         }
 
         require_once(CLASS_DIR . '/common.list.class.php');
@@ -515,6 +527,13 @@ class GroupStockTransfer
 
         if ($transfer_id == "") {
             return false;
+        }
+
+        // Direct-link protection: block writing back to an approved requisition
+        // unless the user is imran (mirrors the showPendingEditEditor guard).
+        if (!$this->canModifyRequisition($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Only imran can edit an approved requisition!!");
+            exit;
         }
 
         // Validate: convert transfers must all have new_product_id
@@ -1839,6 +1858,12 @@ class GroupStockTransfer
     {
         $project_id = getFromSession('project_id');
 
+        // Direct-link protection: an approved requisition may be deleted ONLY by imran.
+        if (!$this->canModifyRequisition($transfer_no)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Only imran can delete an approved requisition!!");
+            exit;
+        }
+
         mysql_query("START TRANSACTION;");
         //========== Delete All ===========
         $Csql = "DELETE FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " WHERE transfer_id='" . $transfer_no . "' AND project_id='" . $project_id . "'";
@@ -1855,6 +1880,11 @@ class GroupStockTransfer
 
     }
 
+    // Requisition approval — STATUS ONLY. This no longer performs the real
+    // transfer. It just marks the requisition approved (approved_status=1) so it
+    // moves from the Unapproved list to the Approved Requisition list. The actual
+    // stock/account ledger posting happens later in transferRequisitionRecord()
+    // (cmd=do_transfer) when the user clicks Transfer on the approved list.
     function approvedTransferRecord()
     {
         require_once(CLASS_DIR . '/common.list.class.php');
@@ -1869,6 +1899,17 @@ class GroupStockTransfer
         $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_id'";
         $result = mysql_fetch_object(mysql_query($getSql));
 
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=Requisition not found!!");
+            exit();
+        }
+
+        // Already approved -> just send to the approved requisition list.
+        if ($result->approved_status == 1) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&msg=This requisition is already approved.");
+            exit();
+        }
+
         $toStore = $result->delivery_point;
         $user_store = $comListApp->getUserStore();
         $userStoreArray = array_map('trim', explode(',', $user_store));
@@ -1878,10 +1919,64 @@ class GroupStockTransfer
             exit;
         }
 
+        $userid = getFromSession('userid');
+        $now = date('Y-m-d H:i:s');
+        $usql = "UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                 SET approved_status = 1, approved_by = '$userid', approved_time = '$now'
+                 WHERE id = '$transfer_id'";
+        $ok = mysql_query($usql);
+
+        if ($ok) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&msg=Requisition approved successfully. Click Transfer to post it to stock and accounts.");
+        } else {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=Approval failed. Try again!!");
+        }
+        exit();
+    }
+
+    // Requisition transfer — THE REAL POSTING. This is the logic that used to run
+    // on approve: create the real stock_transfer_master/details, hit the stock
+    // ledger and the account ledger, and delete the pending requisition rows.
+    // Only an already-approved requisition (approved_status=1) can be transferred,
+    // and it is gated by the same permission as approve.
+    function transferRequisitionRecord()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list");
+            exit();
+        }
+
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_id'";
+        $result = mysql_fetch_object(mysql_query($getSql));
+
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Requisition not found!!");
+            exit();
+        }
+
+        // Guard: only an approved requisition may be transferred.
+        if ($result->approved_status != 1) {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=This requisition must be approved before transfer!!");
+            exit();
+        }
+
+        $toStore = $result->delivery_point;
+        $user_store = $comListApp->getUserStore();
+        $userStoreArray = array_map('trim', explode(',', $user_store));
+
+        if (!in_array($toStore, $userStoreArray) && !hasApprovedPermission()) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Your are not authorize!!");
+            exit;
+        }
+
         $stockCheck = $this->checkProductStock($result);
         if ($stockCheck['status']) {
             $msg = !empty($stockCheck['message']) ? $stockCheck['message'] : "";
-            header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=$msg");
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=$msg");
             exit();
         }
 
@@ -1901,6 +1996,59 @@ class GroupStockTransfer
             header("location:index.php?app=groupwise.stock.transfer&cmd=$challan&transfer_no=$transfer_no");
             exit();
         }
+    }
+
+    // Send an approved requisition back to the Unapproved list for correction.
+    // Available to every user who can reach this list (no store/permission gate) —
+    // it only reverses the approval flag, it posts nothing. From the Unapproved
+    // list it can then be edited (existing pending_edit flow) and re-approved.
+    function sendBackRequisitionRecord()
+    {
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list");
+            exit();
+        }
+
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_id'";
+        $result = mysql_fetch_object(mysql_query($getSql));
+
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Requisition not found!!");
+            exit();
+        }
+
+        // Already unapproved -> nothing to do.
+        if ($result->approved_status != 1) {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&msg=This requisition is already in the Unapproved list.");
+            exit();
+        }
+
+        $usql = "UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                 SET approved_status = 0, approved_by = NULL, approved_time = NULL
+                 WHERE id = '$transfer_id'";
+        $ok = mysql_query($usql);
+
+        if ($ok) {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&msg=Requisition sent back to Unapproved list for correction.");
+        } else {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Send back failed. Try again!!");
+        }
+        exit();
+    }
+
+    // Server-side guard for the requisition edit/delete direct links. An APPROVED
+    // requisition (approved_status=1) may be edited or deleted ONLY by imran; an
+    // unapproved one (status=0) stays modifiable by any allowed user (existing
+    // behaviour). Returns true if the current user may modify the requisition.
+    function canModifyRequisition($transfer_id)
+    {
+        $row = mysql_fetch_object(mysql_query(
+            "SELECT approved_status FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'"));
+        if (!empty($row) && $row->approved_status == 1 && getFromSession('userid') != "imran") {
+            return false;
+        }
+        return true;
     }
 
 
