@@ -225,7 +225,7 @@ function fieldValidation(frm)
 {
 	with(frm)
 	{
-		if(!RE_DECIMAL.exec(unit_price.value))
+		if(!RE_DECIMAL.exec(unit_price.value) || parseFloat(unit_price.value) <= 0)
 		{
 			highlightTableColumn('unit_price_lbl');
 			alert(ERROR_NUMBER);		
@@ -287,12 +287,14 @@ function prepareTblGrid()
 	var total_unit 		= document.getElementById('total_unit').value;
 	var unit_price 		= parseFloat(document.getElementById('unit_price').value);
 	var qty 		= parseFloat(document.getElementById('qty').value);
-	var unit_discount       = parseFloat(document.getElementById('unit_discount').value); if(unit_discount==""){ unit_discount = 0; }
+	var unit_discount       = parseFloat(document.getElementById('unit_discount').value); if(isNaN(unit_discount)){ unit_discount = 0; }
 	var discount_amount     = parseFloat(document.getElementById('discount_amount').value);
-	var free_qty		= parseFloat(document.getElementById('free_qty').value); if(free_qty==""){ free_qty = 0; }
-	var total		= parseFloat(document.getElementById('total').value); if(total==""){ total = 0; }
+	var free_qty		= parseFloat(document.getElementById('free_qty').value); if(isNaN(free_qty)){ free_qty = 0; }
+	var total		= parseFloat(document.getElementById('total').value); if(isNaN(total)){ total = 0; }
 	var total_bag 	= document.getElementById('total_bag').value;
-	if(unit_price==""){ unit_price = 0; } if(qty==""){ qty = 0; } if(discount_amount==""){ discount_amount = 0; } if(total_bag==""){ total_bag = 0; }
+	// These are parseFloat() results, so an empty box gives NaN - and NaN == ""
+	// is false, so the old `== ""` checks never fired and "NaN" was posted.
+	if(isNaN(unit_price)){ unit_price = 0; } if(isNaN(qty)){ qty = 0; } if(isNaN(discount_amount)){ discount_amount = 0; } if(total_bag==""){ total_bag = 0; }
 	currencyIdName 		= document.getElementById('currency').value;
 	currencyArr  		= currencyIdName.split("###");
 	var currency 	 	= currencyArr[0];
@@ -424,7 +426,11 @@ function calTotalValue()
 		return false;
 	  }
 	   
-	 if(isNaN(qty)){ qty = 0; } if(isNaN(unit_price)){ unit_price = 0;}	
+	 qty = parseFloat(qty); unit_price = parseFloat(unit_price);
+	 if(isNaN(qty)){ qty = 0; } if(isNaN(unit_price)){ unit_price = 0;}
+	 // Discount % is blanked to "" by resetForm() after each Add, and
+	 // parseFloat("") is NaN - without this guard the whole Amount became NaN.
+	 if(isNaN(unit_discount)){ unit_discount = 0; }
      var totalvalue = qty * unit_price;
 	 var discountAmount = ((totalvalue/100)*unit_discount);
 	 totalvalue = (totalvalue-discountAmount);

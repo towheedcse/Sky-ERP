@@ -310,7 +310,7 @@ function prepareGrid()
 	var unit_discount       = parseFloat(document.getElementById('unit_discount').value); if(isNaN(unit_discount) || unit_discount==""){ unit_discount = 0; }
 	var discount_amount     = parseFloat(document.getElementById('discount_amount').value);
 	var free_qty		= parseFloat(document.getElementById('free_qty').value); if(isNaN(free_qty) || free_qty==""){ free_qty = 0; }
-	var total		= parseFloat(document.getElementById('total').value); if(total==""){ total = 0; }
+	var total		= parseFloat(document.getElementById('total').value); if(isNaN(total)){ total = 0; }
 	var total_bag 	= document.getElementById('total_bag').value;
 	if(unit_price==""){ unit_price = 0; } if(qty==""){ qty = 0; } if(discount_amount==""){ discount_amount = 0; } if(total_bag==""){ total_bag = 0; }
 	

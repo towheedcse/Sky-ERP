@@ -1046,7 +1046,7 @@ if(mysql_num_rows($gres)>0){
 		$("#qty").val("");
 		$("#free_qty").val("");
 		$("#unit_price").val("");
-		$("#unit_discount").val("");
+		$("#unit_discount").val("0");   // matches the initial render; "" made Amount NaN
 		$("#total").val("");
 		$("#edit_product_qty").val("");
 		$("#edit_product_id").val("");

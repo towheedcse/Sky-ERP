@@ -204,9 +204,9 @@ function formSetup(frm) {
 
 function fieldValidation(frm) {
     with (frm) {
-        if (!RE_DECIMAL.exec(unit_price.value)) {
+        if (!RE_DECIMAL.exec(unit_price.value) || parseFloat(unit_price.value) <= 0) {
             highlightTableColumn('unit_price_lbl');
-            alert(ERROR_NUMBER);
+            alert("Unit price is required and must be greater than 0.");
             return false;
         } else if (!RE_DECIMAL.exec(qty.value)) {
             highlightTableColumn('qty_lbl');
@@ -416,8 +416,14 @@ function calTotalValue() {
     if (isNaN(qty)) {
         qty = 0;
     }
+    unit_price = parseFloat(unit_price);
     if (isNaN(unit_price)) {
         unit_price = 0;
+    }
+    // Discount % is blanked to "" by resetForm() after each Add, and
+    // parseFloat("") is NaN - without this guard the whole Amount became NaN.
+    if (isNaN(unit_discount)) {
+        unit_discount = 0;
     }
     if (qty <= 0) {
         document.getElementById('qty').value = 1;

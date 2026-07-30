@@ -2408,6 +2408,30 @@ class PurchaseItemGRN extends Journal
         $comListApp = new CommonList();
         $project_id = getFromSession('project_id');
 
+        // === Guard: require a supplier ===
+        // A blank supplier saves a GRN whose print header (inner join on supplier) returns nothing,
+        // so the whole invoice prints empty, and the payable journal head is left empty too.
+        if (trim(getRequest('supplier')) == "") {
+            $msg = "Supplier is required. GRN was not saved.";
+            header("location:index.php?app=purchase.item.grn&cmd=add&msg=" . urlencode($msg));
+            exit;
+        }
+        // === Guard: require a unit price on every received line ===
+        // A line with qty received but unit_price = 0 still writes the quantity to
+        // stock_ledger, but the balancing "Purchase Item" Stock Dr in account_journal is
+        // skipped (guarded by TotalStockAmount > 0 in insertPurchaseDetails), leaving stock
+        // updated with no accounting entry. Block the save instead of posting an unbalanced GRN.
+        $badPrice = mysql_fetch_object(mysql_query("SELECT COUNT(*) AS n FROM " . TEMP_GRN_TBL . "
+            WHERE created_by = '" . getFromSession('userid') . "'
+              AND project_id = '" . $project_id . "'
+              AND qty > 0 AND unit_price <= 0"));
+        if ($badPrice && $badPrice->n > 0) {
+            $msg = "Unit price is required for every item (price must be greater than 0). GRN was not saved.";
+            header("location:index.php?app=purchase.item.grn&cmd=add&msg=" . urlencode($msg));
+            exit;
+        }
+        // === end guard ===
+
         mysql_query("SET AUTOCOMMIT=0");
         mysql_query("START TRANSACTION;");
         $store_id = getRequest('store_id');
@@ -2513,10 +2537,10 @@ class PurchaseItemGRN extends Journal
 
         $project_id = getFromSession('project_id');
         $info = array();
-        $info['table'] = PURCHASE_MASTER_TBL . ' pm,' . SUB_ACC_HEAD_TBL . ' s,' . PROJECT_TBL . ' p,' . CURRENCY_TBL . ' c';
+        $info['table'] = PURCHASE_MASTER_TBL . ' pm LEFT JOIN ' . SUB_ACC_HEAD_TBL . ' s ON pm.supplier=s.sub_id, ' . PROJECT_TBL . ' p,' . CURRENCY_TBL . ' c';
         $info['fields'] = array('pm.voucher_no', 'pm.po_no', 'p.project_name', 'p.location', 'p.project_logo', 'pm.supplier', 's.sub_head_name as name', 's.head_details as address', 's.att_name1 as contact_person', 's.att_designation1 as designation', 'pm.quotation_no', 'pm.lc_no', 'pm.lcopener', 'pm.lcopening_bank', "DATE_FORMAT(pm.lcopening_date,'%d %b %y' ) as lcopening_date", 'pm.country', 'pm.lc_details', 'pm.store_id', 'pm.inventory_type', 'pm.inventory_id', 'pm.store_id as delivery_point', 'pm.quotation_no', 'pm.track_no', 'pm.van_no', 'pm.total_value', "DATE_FORMAT(pm.purchase_date,'%d %b %y' ) as purchase_date", 'pm.purchase_date as purchasedate', 'pm.mode_of_payment', 'c.curr_symble', 'pm.bank_name', 'pm.acc_no', 'pm.check_no', 'pm.check_no', 'pm.additional_discount', 'pm.product_discount', 'pm.general_discount_percent', 'pm.general_discount_amount', 'pm.exclusive_discount_percent', 'pm.exclusive_discount_amount', 'pm.discount', 'pm.net_payble', 'pm.paid_amount', 'pm.previour_balance', 'pm.due', 'pm.ref_no', 'pm.delivery_note', 'pm.payment_note', 'pm.warranty_note', 'pm.created_date', 'pm.cost_center', 'pm.vat_percentage', 'pm.vat_amount', 'pm.at_percentage', 'pm.at_amount', 'pm.grn_voucher', 'pm.created_by');
 
-        $sql = "pm.supplier=s.sub_id AND pm.project_id=p.project_id AND pm.currency=c.currency_id AND pm.project_id='" . $project_id . "' AND pm.voucher_no='$id'";
+        $sql = "pm.project_id=p.project_id AND pm.currency=c.currency_id AND pm.project_id='" . $project_id . "' AND pm.voucher_no='$id'";
         $info['where'] = $sql;
         $info['groupby'] = array("pm.voucher_no");
         //$info['debug']  = true;

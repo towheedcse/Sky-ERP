@@ -2221,6 +2221,18 @@ function insertPurchaseMaster($voucher_no,$PreviousPartyBalance){
 
 	
    function savePurchaseItem(){
+		// === Guard: require a unit price on every received line (see purchase.item.grn) ===
+		// A zero-price line writes qty to stock_ledger but skips the Stock Dr in account_journal.
+		$badPrice = mysql_fetch_object(mysql_query("SELECT COUNT(*) AS n FROM ".TEMP_PURCHASE_TBL."
+			WHERE created_by = '".getFromSession('userid')."'
+			  AND project_id = '".getFromSession('project_id')."'
+			  AND qty > 0 AND unit_price <= 0"));
+		if($badPrice && $badPrice->n > 0){
+			$msg = "Unit price is required for every item (price must be greater than 0). Purchase was not saved.";
+			header("location:index.php?app=purchase.item&cmd=add&msg=".urlencode($msg));
+			exit;
+		}
+		// === end guard ===
 	require_once(CLASS_DIR . '/common.list.class.php');
         $comListApp = new CommonList();
 
