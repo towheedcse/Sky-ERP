@@ -51,6 +51,10 @@
    define('APP_DIR',                   DOCUMENT_ROOT . '/apps');
    define('CONFIG_DIR',                DOCUMENT_ROOT . '/configs');
    define('CLASS_DIR',                 DOCUMENT_ROOT . '/classes');
+   // Encrypted class stubs run via eval() in the auto_prepend, so PHP's "calling script
+   // dir" for a bare require_once('journal.class.php') becomes the prepend folder, not
+   // classes/. Add classes/ to include_path so those relative requires resolve encrypted.
+   set_include_path(get_include_path() . PATH_SEPARATOR . CLASS_DIR);
    define('LIB_DIR',                   DOCUMENT_ROOT . '/libs');
    define('TEMPLATES_DIR',             DOCUMENT_ROOT . '/contents');
    define('TEMPLATES_SKINS',           DOCUMENT_ROOT . '/contents/skins');
