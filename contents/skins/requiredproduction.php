@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $product = isset($_POST['product_id']) ? $_POST['product_id'] : '';
         $project_id = PROJECTID;
 
-        $sql = "SELECT m.delivery_point as store_id,m.project_id,p.project_name,p.location,d.delivery_point_name,s.product as productID,po.product_id,po.product_type,s.details,po.product_name,po.product_desc,po.m_unit,SUM((s.qty+s.free_qty)) as order_qty,po.unit_price,m.sales_date as sales_date,m.voucher_no as invoice, c.sub_head_name as party_name
+        $sql = "SELECT m.delivery_point as store_id,m.project_id,p.project_name,p.location,d.delivery_point_name,s.product as productID,po.product_id,po.product_type,s.details,po.product_code,po.product_name,po.product_desc,po.m_unit,SUM((s.qty+s.free_qty)) as order_qty,po.unit_price,m.sales_date as sales_date,m.voucher_no as invoice, c.sub_head_name as party_name
             FROM sales_master AS m 
             LEFT JOIN sales_details AS s ON m.voucher_no = s.voucher_no AND m.project_id = s.project_id 
             LEFT JOIN product AS po ON s.product = po.product_id 
@@ -321,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $productionNeed = $row["order_qty"] - $stockQty;
 
                 $productName = !empty($row["product_name"]) ? htmlspecialchars_decode($row["product_name"]) : htmlspecialchars_decode($row["details"]);
+                if (!empty($row["product_code"])) { $productName = $row["product_code"] . '::' . $productName; }
 
                 $stocks[] = [
                     "sl" => $sl,
