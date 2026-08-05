@@ -18,7 +18,7 @@
    $thisUser = new User();
 
    //Including header
-	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'pending_save_tmp' )
+	if(getRequest('cmd') != 'loadProduct' && getRequest('cmd') != 'load_stock' && getRequest('cmd') != 'loadstockqty' && getRequest('cmd') != 'save_tmp' && getRequest('cmd') != 'pending_save_tmp' && getRequest('cmd') != 'check_transfer_stock' )
 	{
 	require_once(HEADER);
 	}

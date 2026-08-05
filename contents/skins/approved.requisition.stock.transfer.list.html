@@ -33,9 +33,63 @@ var J = jQuery.noConflict();
 
 function transferRecord(transfer_no)
 {
-    if(confirm('Are you sure you want to TRANSFER this requisition? This will post it to the stock ledger and account ledger.')){
-        window.location.href = "index.php?app=groupwise.stock.transfer&cmd=do_transfer&transfer_id="+transfer_no;
+    // Pre-check stock so we can warn about (and require a note for) a partial transfer.
+    J.ajax({
+        url: "index.php?app=groupwise.stock.transfer&cmd=check_transfer_stock&transfer_id="+transfer_no,
+        dataType: "json",
+        cache: false,
+        success: function(res){
+            if(!res || res.error){
+                alert(res && res.message ? res.message : "Unable to check stock. Please try again.");
+                return;
+            }
+            if(!res.has_any_deliverable){
+                alert(res.message || "No stock available to transfer for this requisition.");
+                return;
+            }
+            if(res.is_partial){
+                var msg = "Some products do not have enough stock:\n\n";
+                for(var i=0; i<res.shortages.length; i++){
+                    var s = res.shortages[i];
+                    msg += "• " + s.product_name + " : requested " + s.requested + ", available " + s.available + "\n";
+                }
+                msg += "\nTransfer the AVAILABLE quantity now and keep the rest pending?";
+                if(!confirm(msg)){ return; }
+                var note = prompt("This is a PARTIAL transfer. Please enter a note/reason (required):", "");
+                if(note === null){ return; }
+                if(note.replace(/^\s+|\s+$/g, "") === ""){
+                    alert("A note is required for a partial transfer.");
+                    return;
+                }
+                submitTransfer(transfer_no, 1, note);
+            } else {
+                if(confirm("Are you sure you want to TRANSFER this requisition? This will post it to the stock ledger and account ledger.")){
+                    submitTransfer(transfer_no, 0, "");
+                }
+            }
+        },
+        error: function(){
+            alert("Unable to check stock. Please try again.");
+        }
+    });
+}
+
+// Post the transfer (POST so the note travels safely, not in the URL).
+function submitTransfer(transfer_no, partial, note)
+{
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = "index.php?app=groupwise.stock.transfer&cmd=do_transfer";
+    function add(n, v){
+        var inp = document.createElement("input");
+        inp.type = "hidden"; inp.name = n; inp.value = v;
+        f.appendChild(inp);
     }
+    add("transfer_id", transfer_no);
+    add("partial", partial);
+    add("note", note);
+    document.body.appendChild(f);
+    f.submit();
 }
 
 function sendBackRecord(transfer_no)
@@ -240,6 +294,7 @@ if (isset($is_pending) && $is_pending == true) {
                 sd.m_unit,
                 sd.unit_price,
                 sd.qty,
+                COALESCE(sd.original_qty, sd.qty) AS original_qty,
                 sd.total
             FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " AS sd
             JOIN " . PRODUCT_TBL . " AS p
@@ -259,10 +314,12 @@ if (isset($is_pending) && $is_pending == true) {
 }
 
 			$sres = mysql_query($ssql);
+			 $orderQty=0; $origQty=0;
 			 if(mysql_num_rows($sres)>0){
-				 $orderQty=0; $psl=1;
+				 $psl=1;
 				 while($srow = mysql_fetch_object($sres)){
 				 $orderQty+= $srow->qty;
+				 $origQty+= isset($srow->original_qty) ? $srow->original_qty : $srow->qty;
 				 //echo $psl."). ".$srow->product_name."<br>";
 				 $m_unit = $srow->m_unit;
 				 $psl++;
@@ -279,7 +336,7 @@ if (isset($is_pending) && $is_pending == true) {
 		}
 
 	  ?> </td>
-          <td align="center" nowrap><? echo $orderQty.' '.$m_unit;?></td>
+          <td align="center" nowrap><? echo $orderQty.' '.$m_unit; if($origQty > $orderQty){ echo ' <span style="color:#b3541e;font-size:11px;">(of '.$origQty.' - partially transferred)</span>'; } ?></td>
           <td align="center" nowrap><? echo $val->total_amount.' '.$val->curr_symble;?></td>
           <td align="center" nowrap><div class="table-option" style="gap:0px !important;">
 <?php

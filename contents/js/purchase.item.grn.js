@@ -204,7 +204,19 @@ function formSetup(frm) {
 
 function fieldValidation(frm) {
     with (frm) {
-        if (!RE_DECIMAL.exec(unit_price.value) || parseFloat(unit_price.value) <= 0) {
+        // #supplier is a hidden mirror of the visible Supplier/Payable dropdowns and can
+        // end up blank on the PO-load path; fall back to the dropdowns so a clearly
+        // selected supplier doesn't wrongly trip "select a Purchase Order first".
+        var supplierVal = document.getElementById('supplier').value;
+        if (supplierVal == "") {
+            supplierVal = document.getElementById('payable_id').value || document.getElementById('supplier_head').value;
+            document.getElementById('supplier').value = supplierVal;
+        }
+        if (supplierVal == "") {
+            highlightTableColumn('supplier_lbl');
+            alert("Please select a Purchase Order first...");
+            return false;
+        } else if (!RE_DECIMAL.exec(unit_price.value) || parseFloat(unit_price.value) <= 0) {
             highlightTableColumn('unit_price_lbl');
             alert("Unit price is required and must be greater than 0.");
             return false;

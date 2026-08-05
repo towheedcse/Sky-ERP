@@ -48,6 +48,9 @@ class GroupStockTransfer
                 case 'do_transfer'    :
                     $this->transferRequisitionRecord();
                     break;
+                case 'check_transfer_stock'    :
+                    $this->checkTransferStock();
+                    break;
                 case 'send_back_requisition'    :
                     $this->sendBackRequisitionRecord();
                     break;
@@ -1973,10 +1976,27 @@ class GroupStockTransfer
             exit;
         }
 
-        $stockCheck = $this->checkProductStock($result);
-        if ($stockCheck['status']) {
-            $msg = !empty($stockCheck['message']) ? $stockCheck['message'] : "";
+        // Build a per-line delivery plan: deliver = min(available stock, requested).
+        // A "partial" transfer is one where at least one line cannot be fully met.
+        $plan = $this->computeDeliveryPlan($result);
+
+        // Nothing can move at all -> block, same as before.
+        if (!$plan['has_any_deliverable']) {
+            $msg = "No stock available to transfer for this requisition.";
             header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=$msg");
+            exit();
+        }
+
+        // Partial fulfilment is gated: the user must have confirmed it AND supplied a
+        // note. The frontend collects both after warning the user; this is the
+        // server-side enforcement so a direct link cannot silently do a partial.
+        $isPartial = $plan['is_partial'];
+        $note = trim(getRequest('note'));
+        $partialConfirmed = (getRequest('partial') == 1);
+
+        if ($isPartial && (!$partialConfirmed || $note === '')) {
+            $shortMsg = "This requisition cannot be fully transferred (not enough stock). Use the Transfer button and confirm the partial transfer with a note.";
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=$shortMsg");
             exit();
         }
 
@@ -1984,8 +2004,10 @@ class GroupStockTransfer
         mysql_query("SET autocommit=0;");
 
         $product_convert = $result->product_convert;
-        $transfer_no = $this->insertStockTransferMaster($result);
-        $this->insertStockTransferDetails($transfer_no, $result);
+        // Post only the delivered amount; carry the note onto the posted transfer.
+        $transfer_no = $this->insertStockTransferMaster($result, $plan['deliver_total_amount'], $note);
+        // Post delivered lines, then reduce/keep the requisition for the remainder.
+        $this->insertStockTransferDetails($transfer_no, $result, $plan, $note);
 
         mysql_query("COMMIT;");
         if ($transfer_no != "") {
@@ -1996,6 +2018,115 @@ class GroupStockTransfer
             header("location:index.php?app=groupwise.stock.transfer&cmd=$challan&transfer_no=$transfer_no");
             exit();
         }
+    }
+
+    // Compute, per requisition line, how much can be transferred right now given the
+    // live balance at the source store. Returns the plan used by both the AJAX
+    // pre-check (checkTransferStock) and the actual posting (transferRequisitionRecord),
+    // so what the user is warned about and what is posted can never drift apart.
+    function computeDeliveryPlan($master)
+    {
+        $transfer_from = $master->transfer_from;
+        $project_id = getFromSession('project_id');
+        $transfer_master_id = $master->id;
+
+        $sql = "SELECT
+                    pd.*,
+                    p.product_name,
+                    COALESCE(s.balance, 0) AS stock_qty
+                FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " pd
+                LEFT JOIN " . PRODUCT_TBL . " p
+                    ON p.product_id = pd.product
+                LEFT JOIN " . STORE_STOCK_VIEW . " s
+                    ON s.product_id = pd.product
+                    AND s.store_id = '$transfer_from'
+                    AND s.project_id = '$project_id'
+                WHERE pd.transfer_id = '$transfer_master_id'";
+
+        $res = mysql_query($sql);
+
+        $lines = array();
+        $shortages = array();
+        $deliverTotalAmount = 0;
+        $isPartial = false;
+        $hasAnyDeliverable = false;
+
+        if ($res && mysql_num_rows($res) > 0) {
+            while ($row = mysql_fetch_object($res)) {
+                $requested = (float) $row->qty;
+                $available = (float) $row->stock_qty;
+                $deliver = ($available < $requested) ? $available : $requested;
+                if ($deliver < 0) {
+                    $deliver = 0;
+                }
+                $remaining = $requested - $deliver;
+                $unit_price = (float) $row->unit_price;
+                $deliverTotal = round($deliver * $unit_price, 2);
+
+                if ($deliver > 0) {
+                    $hasAnyDeliverable = true;
+                }
+                if ($remaining > 0) {
+                    $isPartial = true;
+                    $shortages[] = array(
+                        'product_name' => $row->product_name,
+                        'requested' => $requested,
+                        'available' => $available,
+                    );
+                }
+                $deliverTotalAmount += $deliverTotal;
+
+                $lines[] = array(
+                    'row' => $row,
+                    'id' => $row->id,
+                    'product' => $row->product,
+                    'product_name' => $row->product_name,
+                    'unit_price' => $unit_price,
+                    'requested' => $requested,
+                    'available' => $available,
+                    'deliver' => $deliver,
+                    'remaining' => $remaining,
+                    'deliver_total' => $deliverTotal,
+                );
+            }
+        }
+
+        return array(
+            'lines' => $lines,
+            'shortages' => $shortages,
+            'is_partial' => $isPartial,
+            'has_any_deliverable' => $hasAnyDeliverable,
+            'deliver_total_amount' => round($deliverTotalAmount, 2),
+        );
+    }
+
+    // AJAX endpoint used by the Approved Requisition list before it posts a transfer.
+    // Returns JSON describing whether the transfer would be partial and, if so, which
+    // products are short — so the frontend can warn the user and demand a note.
+    function checkTransferStock()
+    {
+        header('Content-Type: application/json');
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            echo json_encode(array('error' => true, 'message' => 'Requisition not found.'));
+            return;
+        }
+
+        $result = mysql_fetch_object(mysql_query(
+            "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'"));
+        if (empty($result)) {
+            echo json_encode(array('error' => true, 'message' => 'Requisition not found.'));
+            return;
+        }
+
+        $plan = $this->computeDeliveryPlan($result);
+        echo json_encode(array(
+            'error' => false,
+            'is_partial' => (bool) $plan['is_partial'],
+            'has_any_deliverable' => (bool) $plan['has_any_deliverable'],
+            'shortages' => $plan['shortages'],
+            'message' => $plan['has_any_deliverable'] ? '' : 'No stock available to transfer for this requisition.',
+        ));
     }
 
     // Send an approved requisition back to the Unapproved list for correction.
@@ -2097,7 +2228,11 @@ class GroupStockTransfer
     }
 
 
-    function insertStockTransferMaster($master)
+    // $deliverTotal: when provided (partial or unified transfer path), the amount that
+    // is actually being moved now — used for the stored total_amount AND both account
+    // journals, so the ledger reflects the delivered value, not the full requisition.
+    // $extraNote: the mandatory partial-transfer note, appended to remark/narration.
+    function insertStockTransferMaster($master, $deliverTotal = null, $extraNote = null)
     {
         require_once(CLASS_DIR . '/common.list.class.php');
         $comlistApp = new CommonList();
@@ -2106,20 +2241,35 @@ class GroupStockTransfer
 
         $transfer_no = $this->createVoucharID();
 
+        // Amount posted for this (possibly partial) transfer.
+        $total_amount = ($deliverTotal !== null) ? (float) $deliverTotal : $master->total_amount;
+
+        // Carry any note onto the posted transfer's remark/narration.
+        $noteLine = '';
+        if ($extraNote !== null && trim($extraNote) !== '') {
+            $noteLine = "[Partial transfer " . date('Y-m-d') . " by " . getFromSession('userid') . "] " . trim($extraNote);
+        }
+        $remark = $master->remark;
+        $narration = $master->narration;
+        if ($noteLine !== '') {
+            $remark = trim($remark . ' ' . $noteLine);
+            $narration = trim($narration . "\n" . $noteLine);
+        }
+
         $requestdata = getUserDataSet(STOCK_TRANSFER_MASTER_TBL);
         $requestdata['transfer_no'] = $transfer_no;
         $requestdata['project_id'] = getFromSession('project_id');
         $requestdata['transfer_from'] = $master->transfer_from;
         $requestdata['delivery_point'] = $master->delivery_point;
-        $requestdata['total_amount'] = $master->total_amount;
+        $requestdata['total_amount'] = $total_amount;
         $requestdata['transfer_date'] = $master->transfer_date;
         $requestdata['created_by'] = $master->created_by;
         $requestdata['created_date'] = $master->created_date;
         $requestdata['transfer_to'] = $master->transfer_to;
         $requestdata['delivery_point_to'] = $master->delivery_point_to;
-        $requestdata['remark'] = $master->remark;
+        $requestdata['remark'] = $remark;
         $requestdata['product_convert'] = $master->product_convert;;
-        $requestdata['narration'] = $master->narration;
+        $requestdata['narration'] = $narration;
 
         if (!empty($master->job_name)) {
             $requestdata['job_name'] = $master->job_name;
@@ -2143,7 +2293,7 @@ class GroupStockTransfer
             $transfer_date = $master->transfer_date;
 
             // ======= AC Transfer for production Cr =================
-            $total_amount = $master->total_amount;
+            // $total_amount computed above = delivered amount (full or partial).
             $description = "Out Raw Materials";
             $PurchaseId = $comlistApp->getRMStockId($project_id);
             $fromAccountLedger = $comlistApp->getStoreMapLedgerID($transfer_from, "account_ledger");
@@ -2177,39 +2327,57 @@ class GroupStockTransfer
         }
     }
 
-    function insertStockTransferDetails($transfer_no, $master)
+    // $plan: the delivery plan from computeDeliveryPlan(). Each line is posted for its
+    // delivered qty only. A fully delivered line is removed from the requisition; a
+    // partially delivered (or undeliverable) line is kept with its qty reduced to the
+    // remainder (original_qty preserved), so the requisition stays in the Approved list
+    // for the outstanding balance. The requisition master is deleted only when nothing
+    // remains. $extraNote is stamped on the kept requisition too.
+    function insertStockTransferDetails($transfer_no, $master, $plan = null, $extraNote = null)
     {
-        $requestdata = array();
-        $arr_catagory_product_id = array();
         $project_id = getFromSession('project_id');
-        $userid = getFromSession('userid');
         $transfer_master_id = $master->id;
-        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " WHERE transfer_id = '$transfer_master_id'";
-        $gres = mysql_query($getSql);
 
-        if (mysql_num_rows($gres) > 0) {
-            while ($row = mysql_fetch_object($gres)) {
+        // Fallback: if no plan was supplied, transfer every line in full (legacy behaviour).
+        if ($plan === null) {
+            $plan = $this->computeDeliveryPlan($master);
+            foreach ($plan['lines'] as $k => $ln) {
+                $plan['lines'][$k]['deliver'] = $ln['requested'];
+                $plan['lines'][$k]['remaining'] = 0;
+                $plan['lines'][$k]['deliver_total'] = $ln['row']->total;
+            }
+        }
+
+        $res = false;
+        $remainingMasterTotal = 0;
+
+        foreach ($plan['lines'] as $ln) {
+            $row = $ln['row'];
+            $deliver = $ln['deliver'];
+            $remaining = $ln['remaining'];
+            $product_id = $row->product;
+            $new_product_id = $row->new_product_id;
+
+            // ---- Post the delivered portion (if any) ----
+            if ($deliver > 0) {
+                $requestdata = array();
                 $requestdata['transfer_no'] = $transfer_no;
                 $requestdata['transfer_from'] = $master->transfer_from;
                 $requestdata['delivery_point'] = $master->delivery_point;
                 $requestdata['project_id'] = $project_id;
                 $requestdata['catagory'] = $row->catagory;
                 $requestdata['brand_id'] = $row->brand_id;
-                $product_id = $row->product;
                 $requestdata['product'] = $product_id;
                 $requestdata['m_unit'] = $row->m_unit;
-                //$requestdata['details'] 	= $row->details;
                 $requestdata['unit_price'] = $row->unit_price;
-                $requestdata['qty'] = $row->qty;
-                $requestdata['total'] = $row->total;
+                $requestdata['qty'] = $deliver;
+                $requestdata['total'] = $ln['deliver_total'];
                 $requestdata['transfer_date'] = $master->transfer_date;
                 $requestdata['created_by'] = $master->created_by;
                 $requestdata['created_date'] = $master->created_date;
-                $new_product_id = $row->new_product_id;
                 if (!empty($new_product_id)) {
                     $requestdata['new_product_id'] = $new_product_id;
                 }
-
                 if (!empty($row->job_name)) {
                     $requestdata['job_name'] = $row->job_name;
                 }
@@ -2220,24 +2388,53 @@ class GroupStockTransfer
                 $info = array();
                 $info['table'] = STOCK_TRANSFER_DETAILS_TBL;
                 $info['data'] = $requestdata;
-
-                //$info['debug']  	=  true;
                 $res = insert($info);
                 if ($res) {
                     $transfer_id = mysql_insert_id();
-                    $this->convertProductStockQty($transfer_id, $transfer_no, $requestdata['transfer_from'], $requestdata['delivery_point'], $product_id, $new_product_id, $requestdata['qty'], $requestdata['transfer_date']);
+                    $this->convertProductStockQty($transfer_id, $transfer_no, $master->transfer_from, $master->delivery_point, $product_id, $new_product_id, $deliver, $master->transfer_date);
                 }
+            }
+
+            // ---- Handle the remainder for this line ----
+            if ($remaining > 0) {
+                // Keep the line, reduced to the outstanding qty. Preserve the first-ever
+                // requested qty in original_qty so the list can show "remaining of original".
+                $lineId = intval($row->id);
+                $unit_price = (float) $row->unit_price;
+                $remTotal = round($remaining * $unit_price, 2);
+                $usql = "UPDATE " . PENDING_STOCK_TRANSFER_DETAILS_TBL . "
+                         SET qty = $remaining,
+                             total = $remTotal,
+                             original_qty = COALESCE(original_qty, " . $ln['requested'] . ")
+                         WHERE id = $lineId";
+                mysql_query($usql);
+                $remainingMasterTotal += $remTotal;
+            } else {
+                // Fully delivered -> drop this line from the requisition.
+                mysql_query("DELETE FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " WHERE id = " . intval($row->id));
             }
         }
 
-        if ($res) {
-            $dsql = "DELETE FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " WHERE transfer_id = '$transfer_master_id'";
-            //mysql_query($dsql);
-            $d = mysql_query($dsql);
-
-            $msql = "DELETE FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_master_id'";
-            //mysql_query($msql);
-            $m = mysql_query($msql);
+        // ---- Update or remove the requisition master ----
+        if ($remainingMasterTotal > 0) {
+            $remainingMasterTotal = round($remainingMasterTotal, 2);
+            $noteSet = "";
+            if ($extraNote !== null && trim($extraNote) !== '') {
+                $noteLine = "[Partial transfer " . date('Y-m-d') . " by " . getFromSession('userid') . "] " . trim($extraNote);
+                $newRemark = mysql_real_escape_string(trim($master->remark . ' ' . $noteLine));
+                $newNarration = mysql_real_escape_string(trim($master->narration . "\n" . $noteLine));
+                $noteSet = ", remark = '$newRemark', narration = '$newNarration'";
+            }
+            mysql_query("UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                         SET total_amount = $remainingMasterTotal,
+                             updated_by = '" . mysql_real_escape_string(getFromSession('userid')) . "',
+                             updated_time = '" . date('Y-m-d H:i:s') . "'
+                             $noteSet
+                         WHERE id = '$transfer_master_id'");
+        } else {
+            // Nothing left -> requisition fully transferred, remove it.
+            mysql_query("DELETE FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " WHERE transfer_id = '$transfer_master_id'");
+            mysql_query("DELETE FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_master_id'");
         }
     }
 
