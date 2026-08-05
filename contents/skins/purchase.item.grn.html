@@ -942,7 +942,7 @@ if(mysql_num_rows($gres)>0){
 
 							$("#supplier_head").val(response.data.supplier_id);
 							var supplierID = response.data.supplier_id;
-							if(response.data.payable_id !== ""){
+							if(response.data.payable_id){   // truthy: skips null/""/0 so supplier isn't wiped
 								supplierID = response.data.payable_id;
 							}
 							$("#supplier").val(supplierID);
