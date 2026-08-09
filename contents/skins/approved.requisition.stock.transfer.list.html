@@ -31,65 +31,26 @@ $area 			= getRequest('area');
 <script type="text/javascript">
 var J = jQuery.noConflict();
 
-function transferRecord(transfer_no)
+// Source store REQUESTS the transfer. No stock moves yet — the destination store must
+// Accept it (that is where stock/accounts are actually posted). Used for both the first
+// request and for resubmitting a rejected one.
+function transferRecord(transfer_no, resubmit)
 {
-    // Pre-check stock so we can warn about (and require a note for) a partial transfer.
-    J.ajax({
-        url: "index.php?app=groupwise.stock.transfer&cmd=check_transfer_stock&transfer_id="+transfer_no,
-        dataType: "json",
-        cache: false,
-        success: function(res){
-            if(!res || res.error){
-                alert(res && res.message ? res.message : "Unable to check stock. Please try again.");
-                return;
-            }
-            if(!res.has_any_deliverable){
-                alert(res.message || "No stock available to transfer for this requisition.");
-                return;
-            }
-            if(res.is_partial){
-                var msg = "Some products do not have enough stock:\n\n";
-                for(var i=0; i<res.shortages.length; i++){
-                    var s = res.shortages[i];
-                    msg += "• " + s.product_name + " : requested " + s.requested + ", available " + s.available + "\n";
-                }
-                msg += "\nTransfer the AVAILABLE quantity now and keep the rest pending?";
-                if(!confirm(msg)){ return; }
-                var note = prompt("This is a PARTIAL transfer. Please enter a note/reason (required):", "");
-                if(note === null){ return; }
-                if(note.replace(/^\s+|\s+$/g, "") === ""){
-                    alert("A note is required for a partial transfer.");
-                    return;
-                }
-                submitTransfer(transfer_no, 1, note);
-            } else {
-                if(confirm("Are you sure you want to TRANSFER this requisition? This will post it to the stock ledger and account ledger.")){
-                    submitTransfer(transfer_no, 0, "");
-                }
-            }
-        },
-        error: function(){
-            alert("Unable to check stock. Please try again.");
-        }
-    });
+    var q = resubmit
+        ? "Resubmit this transfer request to the destination store?"
+        : "Send a TRANSFER REQUEST for this requisition to the destination store? Stock will move only after the destination store ACCEPTS it.";
+    if(confirm(q)){
+        window.location.href = "index.php?app=groupwise.stock.transfer&cmd=do_transfer&transfer_id="+transfer_no;
+    }
 }
 
-// Post the transfer (POST so the note travels safely, not in the URL).
-function submitTransfer(transfer_no, partial, note)
+// Source pulls back its own outstanding request -> unlocks the requisition so it can be
+// edited and requested again. Only works while the destination has not yet accepted.
+function cancelRequest(transfer_no)
 {
-    var f = document.createElement("form");
-    f.method = "POST";
-    f.action = "index.php?app=groupwise.stock.transfer&cmd=do_transfer";
-    function add(n, v){
-        var inp = document.createElement("input");
-        inp.type = "hidden"; inp.name = n; inp.value = v;
-        f.appendChild(inp);
+    if(confirm("Cancel this transfer request?\nThe requisition will be unlocked so you can edit it and request again.\n(This only works if the destination store has not already accepted it.)")){
+        window.location.href = "index.php?app=groupwise.stock.transfer&cmd=cancel_transfer_request&transfer_id="+transfer_no;
     }
-    add("transfer_id", transfer_no);
-    add("partial", partial);
-    add("note", note);
-    document.body.appendChild(f);
-    f.submit();
 }
 
 function sendBackRecord(transfer_no)
@@ -164,6 +125,8 @@ a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-
 .transferBtn:hover{ background:#065c1d; color:#fff !important; }
 .sendBackBtn{ background:#b3541e; color:#fff !important; padding:3px 10px; border-radius:4px; font-weight:bold; }
 .sendBackBtn:hover{ background:#8a3f16; color:#fff !important; }
+.cancelBtn{ background:#6c757d; color:#fff !important; padding:3px 10px; border-radius:4px; font-weight:bold; }
+.cancelBtn:hover{ background:#545b62; color:#fff !important; }
 </style>
 <script type="text/javascript">
 <!--
@@ -265,7 +228,8 @@ newwin.document.close()
           <td width="16%" align="left" nowrap><div align="left">Transfer  To </div></td>
           <td width="17%" align="left" nowrap>Details </td>
           <td width="9%" align="left" nowrap>Transfer Qty </td>
-          <td width="13%" align="left" nowrap><div align="center">Transfer Amount </div></td>
+          <td width="11%" align="left" nowrap><div align="center">Transfer Amount </div></td>
+          <td width="13%" align="left" nowrap><div align="center">Status</div></td>
           <td width="12%" align="left" nowrap><div align="center">Action</div></td>
         </tr>
         <?php
@@ -338,16 +302,48 @@ if (isset($is_pending) && $is_pending == true) {
 	  ?> </td>
           <td align="center" nowrap><? echo $orderQty.' '.$m_unit; if($origQty > $orderQty){ echo ' <span style="color:#b3541e;font-size:11px;">(of '.$origQty.' - partially transferred)</span>'; } ?></td>
           <td align="center" nowrap><? echo $val->total_amount.' '.$val->curr_symble;?></td>
-          <td align="center" nowrap><div class="table-option" style="gap:0px !important;">
 <?php
-	if (in_array($val->delivery_point, $user_store) || hasApprovedPermission()) {
+    // Request-handshake state for this requisition: 0 = ready to request, 1 = requested
+    // (awaiting acceptance, locked), 2 = rejected by destination (back to source).
+    $rs = isset($val->transfer_request_status) ? (int)$val->transfer_request_status : 0;
+    $isSourceUser = in_array($val->transfer_from, $user_store) || hasApprovedPermission();
 ?>
-	  <a onClick='transferRecord("<?=$transfer_no?>")' href="javascript:void(0)" title="Transfer" class="transferBtn">Transfer</a>&nbsp;&nbsp;&nbsp;
-<?php }?>
+          <td align="center" nowrap>
+<?php
+    if ($rs == 1) {
+        echo '<span style="color:#0a58ca;font-weight:bold;">Requested</span><br><span style="font-size:11px;color:#555;">awaiting acceptance</span>';
+        if (!empty($val->requested_by)) { echo '<br><span style="font-size:11px;color:#555;">by '.htmlspecialchars($val->requested_by).'</span>'; }
+    } else if ($rs == 2) {
+        echo '<span style="color:#c00000;font-weight:bold;">Rejected</span>';
+        if (!empty($val->reject_reason)) { echo '<br><span style="font-size:11px;color:#c00000;">Reason: '.htmlspecialchars($val->reject_reason).'</span>'; }
+        if (!empty($val->responded_by)) { echo '<br><span style="font-size:11px;color:#555;">by '.htmlspecialchars($val->responded_by).'</span>'; }
+    } else {
+        echo '<span style="color:#0a7d28;font-weight:bold;">Approved</span><br><span style="font-size:11px;color:#555;">ready to request</span>';
+    }
+?>
+          </td>
+          <td align="center" nowrap><div class="table-option" style="gap:0px !important;">
+<?php if ($rs == 1) { ?>
+      <span title="Awaiting acceptance by the destination store" style="background:#e9ecef;color:#555;padding:3px 10px;border-radius:4px;font-weight:bold;">Requested &#128274;</span>&nbsp;&nbsp;&nbsp;
+    <?php if ($isSourceUser) { ?>
+      <a onClick='cancelRequest("<?=$transfer_no?>")' href="javascript:void(0)" title="Cancel this request (unlock to edit)" class="cancelBtn">Cancel Request</a>&nbsp;&nbsp;&nbsp;
+    <?php } ?>
+<?php } else if ($rs == 2) { ?>
+    <?php if ($isSourceUser) { ?>
+      <a onClick='transferRecord("<?=$transfer_no?>", 1)' href="javascript:void(0)" title="Resubmit transfer request" class="transferBtn">Resubmit</a>&nbsp;&nbsp;&nbsp;
+    <?php } ?>
+<?php } else { ?>
+    <?php if ($isSourceUser) { ?>
+      <a onClick='transferRecord("<?=$transfer_no?>", 0)' href="javascript:void(0)" title="Request transfer" class="transferBtn">Transfer</a>&nbsp;&nbsp;&nbsp;
+    <?php } ?>
+<?php } ?>
 
+<?php if ($rs != 1) { ?>
 	  <a onClick='sendBackRecord("<?=$transfer_no?>")' href="javascript:void(0)" title="Send Back to Unapproved" class="sendBackBtn">Send Back</a>&nbsp;&nbsp;&nbsp;
+<?php } ?>
 
-<?php if(userCondition(true)){ ?>
+<?php // Lock means lock: no Edit while a request is outstanding (rs==1). ?>
+<?php if($rs != 1 && (userCondition(true) || ($rs == 2 && $isSourceUser))){ ?>
           <a href="?app=groupwise.stock.transfer&cmd=pending_edit&transfer_id=<?=$transfer_no?>&fresh=1" title="Edit" style="width: 30px;"><img src='<?=IMAGE_DIR?>/common/icons/edit.gif' alt="Edit" width="18" border='0'></a>&nbsp;&nbsp;&nbsp;
 <?php }?>
 
@@ -358,7 +354,8 @@ if (isset($is_pending) && $is_pending == true) {
     }
 ?>
           <a target="_blank" href="?app=groupwise.stock.transfer&cmd=<?=$printChallan?>&transfer_no=<?=$transfer_no?>">Challan</a>&nbsp;&nbsp;&nbsp;
-          <?php if(userCondition(true)){ ?>
+          <?php // Lock means lock: no Delete while a request is outstanding (rs==1). ?>
+          <?php if($rs != 1 && userCondition(true)){ ?>
 		  <a onClick="return doConfirm(PROMPT_DELETE_CONFIRM);" href=javascript:deleteRecord("<?=$transfer_no?>") title="Delete" style="width: 30px;"><img src='<?=IMAGE_DIR?>/common/icons/delete.gif' alt="Delete" width="18" border='0'></a>
 		  <?php } ?>
 	    </div>

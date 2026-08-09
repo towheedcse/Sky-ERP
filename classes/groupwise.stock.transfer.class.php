@@ -46,7 +46,20 @@ class GroupStockTransfer
                     $this->approvedTransferRecord("Report Page");
                     break;
                 case 'do_transfer'    :
-                    $this->transferRequisitionRecord();
+                    // Source store requests the transfer; no stock moves yet.
+                    $this->requestTransferRecord();
+                    break;
+                case 'accept_transfer'    :
+                    // Destination store accepts -> the real posting happens here.
+                    $this->acceptTransferRecord();
+                    break;
+                case 'reject_transfer'    :
+                    // Destination store rejects with a reason -> back to source.
+                    $this->rejectTransferRecord();
+                    break;
+                case 'cancel_transfer_request'    :
+                    // Source store pulls back its own request -> unlock (back to status 0).
+                    $this->cancelTransferRequestRecord();
                     break;
                 case 'check_transfer_stock'    :
                     $this->checkTransferStock();
@@ -197,9 +210,10 @@ class GroupStockTransfer
             return;
         }
 
-        // Direct-link protection: an approved requisition is imran-only to edit.
+        // Direct-link protection: a locked (requested) requisition can't be edited until it
+        // is cancelled; an approved (not requested) one is imran-only.
         if (!$this->canModifyRequisition($transfer_id)) {
-            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Only imran can edit an approved requisition!!");
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=This+requisition+cannot+be+edited+now.+If+it+is+awaiting+acceptance,+use+Cancel+Request+first;+approved+requisitions+are+imran-only.");
             exit;
         }
 
@@ -532,10 +546,31 @@ class GroupStockTransfer
             return false;
         }
 
-        // Direct-link protection: block writing back to an approved requisition
-        // unless the user is imran (mirrors the showPendingEditEditor guard).
+        // Direct-link protection: locked (requested) requisitions can't be written back
+        // until cancelled; approved (not requested) ones are imran-only.
         if (!$this->canModifyRequisition($transfer_id)) {
-            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Only imran can edit an approved requisition!!");
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=This+requisition+cannot+be+edited+now.+If+it+is+awaiting+acceptance,+use+Cancel+Request+first;+approved+requisitions+are+imran-only.");
+            exit;
+        }
+
+        // Concurrency backstop: the destination store may have ACCEPTED (and thus posted &
+        // consumed) this requisition while the edit form was open. Re-read it right before
+        // writing and refuse to save if it is gone or has become locked again — otherwise we
+        // would resurrect orphan detail rows (full accept) or reinflate an already-partly-
+        // transferred requisition (partial accept). Nothing is written on abort.
+        $freshRow = mysql_fetch_object(mysql_query(
+            "SELECT transfer_request_status FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+             WHERE id = '" . intval($transfer_id) . "' AND project_id = '" . mysql_real_escape_string($project_id) . "'"));
+        if (empty($freshRow)) {
+            // The requisition is gone (accepted & transferred). Drop this user's edit scratch
+            // rows so the stale set can't leak into a later edit, and tell them plainly.
+            mysql_query("DELETE FROM " . TEMP_STOCK_TRANSFER_TBL . "
+                         WHERE created_by = '" . mysql_real_escape_string($userid) . "' AND project_id = '" . mysql_real_escape_string($project_id) . "'");
+            header("location:index.php?app=sales.report&cmd=transfer_list&error_msg=This+requisition+was+already+accepted+and+transferred+by+the+destination+store.+Your+change+was+NOT+saved.");
+            exit;
+        }
+        if ($freshRow->transfer_request_status == 1) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=This+requisition+is+locked+(awaiting+acceptance).+Cancel+the+request+before+editing.");
             exit;
         }
 
@@ -1937,12 +1972,13 @@ class GroupStockTransfer
         exit();
     }
 
-    // Requisition transfer — THE REAL POSTING. This is the logic that used to run
-    // on approve: create the real stock_transfer_master/details, hit the stock
-    // ledger and the account ledger, and delete the pending requisition rows.
-    // Only an already-approved requisition (approved_status=1) can be transferred,
-    // and it is gated by the same permission as approve.
-    function transferRequisitionRecord()
+    // STEP 1 of the handshake — the SOURCE store requests the transfer (cmd=do_transfer,
+    // "Transfer" button on the Approved Requisition list). This NO LONGER posts anything:
+    // it only flags the approved requisition as "requested" so the destination store sees
+    // it in its Incoming Transfer Requests list. No stock or account ledger is touched.
+    // Gated to the source store (transfer_from) or an approver. Re-requesting a previously
+    // rejected requisition (status 2) clears the rejection.
+    function requestTransferRecord()
     {
         require_once(CLASS_DIR . '/common.list.class.php');
         $comListApp = new CommonList();
@@ -1953,11 +1989,78 @@ class GroupStockTransfer
             exit();
         }
 
-        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '$transfer_id'";
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'";
         $result = mysql_fetch_object(mysql_query($getSql));
 
         if (empty($result)) {
             header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Requisition not found!!");
+            exit();
+        }
+
+        // Must be approved before it can be requested for transfer.
+        if ($result->approved_status != 1) {
+            header("location:index.php?app=sales.report&cmd=pending_transfer_list&error_msg=This requisition must be approved before transfer!!");
+            exit();
+        }
+
+        // Already requested and awaiting acceptance -> nothing to do.
+        if ($result->transfer_request_status == 1) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&msg=This transfer has already been requested and is awaiting acceptance by the destination store.");
+            exit();
+        }
+
+        // Permission: only the SOURCE store user (transfer_from) may request, or an approver.
+        $fromStore = $result->transfer_from;
+        $user_store = $comListApp->getUserStore();
+        $userStoreArray = array_map('trim', explode(',', $user_store));
+
+        if (!in_array($fromStore, $userStoreArray) && !hasApprovedPermission()) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Your are not authorize!!");
+            exit;
+        }
+
+        $userid = getFromSession('userid');
+        $now = date('Y-m-d H:i:s');
+        $usql = "UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                 SET transfer_request_status = 1,
+                     requested_by = '" . mysql_real_escape_string($userid) . "',
+                     requested_time = '$now',
+                     reject_reason = NULL,
+                     responded_by = NULL,
+                     responded_time = NULL
+                 WHERE id = '" . intval($transfer_id) . "'";
+        $ok = mysql_query($usql);
+
+        if ($ok) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&msg=Transfer requested. Awaiting acceptance by the destination store.");
+        } else {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Request failed. Try again!!");
+        }
+        exit();
+    }
+
+    // STEP 2a of the handshake — the DESTINATION store ACCEPTS the request (cmd=accept_transfer,
+    // "Accept" button on the Incoming Transfer Requests list). THIS is the real posting: it
+    // creates the real stock_transfer_master/details, hits the stock ledger and the account
+    // ledger, and consumes the pending requisition rows (partial keeps the remainder).
+    // Only an approved AND requested requisition may be accepted, gated to the destination
+    // store (delivery_point) or an approver.
+    function acceptTransferRecord()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list");
+            exit();
+        }
+
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'";
+        $result = mysql_fetch_object(mysql_query($getSql));
+
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=Requisition not found!!");
             exit();
         }
 
@@ -1967,12 +2070,19 @@ class GroupStockTransfer
             exit();
         }
 
+        // Guard: it must have been requested by the source and be awaiting acceptance.
+        if ($result->transfer_request_status != 1) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=This transfer has not been requested (or was already handled).");
+            exit();
+        }
+
+        // Permission: only the DESTINATION store user (delivery_point) may accept, or an approver.
         $toStore = $result->delivery_point;
         $user_store = $comListApp->getUserStore();
         $userStoreArray = array_map('trim', explode(',', $user_store));
 
         if (!in_array($toStore, $userStoreArray) && !hasApprovedPermission()) {
-            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Your are not authorize!!");
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=Your are not authorize!!");
             exit;
         }
 
@@ -1980,23 +2090,23 @@ class GroupStockTransfer
         // A "partial" transfer is one where at least one line cannot be fully met.
         $plan = $this->computeDeliveryPlan($result);
 
-        // Nothing can move at all -> block, same as before.
+        // Nothing can move at all -> block.
         if (!$plan['has_any_deliverable']) {
             $msg = "No stock available to transfer for this requisition.";
-            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=$msg");
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=$msg");
             exit();
         }
 
-        // Partial fulfilment is gated: the user must have confirmed it AND supplied a
-        // note. The frontend collects both after warning the user; this is the
-        // server-side enforcement so a direct link cannot silently do a partial.
+        // Partial fulfilment is gated: the accepting user must have confirmed it AND supplied a
+        // note. The frontend collects both after warning the user; this is the server-side
+        // enforcement so a direct link cannot silently do a partial.
         $isPartial = $plan['is_partial'];
         $note = trim(getRequest('note'));
         $partialConfirmed = (getRequest('partial') == 1);
 
         if ($isPartial && (!$partialConfirmed || $note === '')) {
-            $shortMsg = "This requisition cannot be fully transferred (not enough stock). Use the Transfer button and confirm the partial transfer with a note.";
-            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=$shortMsg");
+            $shortMsg = "This requisition cannot be fully transferred (not enough stock). Use the Accept button and confirm the partial transfer with a note.";
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=$shortMsg");
             exit();
         }
 
@@ -2007,6 +2117,8 @@ class GroupStockTransfer
         // Post only the delivered amount; carry the note onto the posted transfer.
         $transfer_no = $this->insertStockTransferMaster($result, $plan['deliver_total_amount'], $note);
         // Post delivered lines, then reduce/keep the requisition for the remainder.
+        // The remainder (if partial) is reset to "not requested" inside so the source
+        // can request the outstanding balance again later.
         $this->insertStockTransferDetails($transfer_no, $result, $plan, $note);
 
         mysql_query("COMMIT;");
@@ -2018,6 +2130,131 @@ class GroupStockTransfer
             header("location:index.php?app=groupwise.stock.transfer&cmd=$challan&transfer_no=$transfer_no");
             exit();
         }
+    }
+
+    // STEP 2b of the handshake — the DESTINATION store REJECTS the request (cmd=reject_transfer,
+    // "Reject" button on the Incoming Transfer Requests list). A reason is mandatory. Nothing
+    // is posted; the requisition stays approved and flips to status 2 (rejected) so it returns
+    // to the source's Approved list with the reason, where it can be edited and resubmitted.
+    // Gated to the destination store (delivery_point) or an approver.
+    function rejectTransferRecord()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list");
+            exit();
+        }
+
+        $reason = trim(getRequest('reason'));
+        if ($reason === '') {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=A reason is required to reject a transfer request.");
+            exit();
+        }
+
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'";
+        $result = mysql_fetch_object(mysql_query($getSql));
+
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=Requisition not found!!");
+            exit();
+        }
+
+        // Only a requisition currently awaiting acceptance can be rejected.
+        if ($result->transfer_request_status != 1) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=This transfer is not awaiting acceptance.");
+            exit();
+        }
+
+        // Permission: only the DESTINATION store user (delivery_point) may reject, or an approver.
+        $toStore = $result->delivery_point;
+        $user_store = $comListApp->getUserStore();
+        $userStoreArray = array_map('trim', explode(',', $user_store));
+
+        if (!in_array($toStore, $userStoreArray) && !hasApprovedPermission()) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=Your are not authorize!!");
+            exit;
+        }
+
+        $userid = getFromSession('userid');
+        $now = date('Y-m-d H:i:s');
+        $usql = "UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                 SET transfer_request_status = 2,
+                     reject_reason = '" . mysql_real_escape_string($reason) . "',
+                     responded_by = '" . mysql_real_escape_string($userid) . "',
+                     responded_time = '$now'
+                 WHERE id = '" . intval($transfer_id) . "'";
+        $ok = mysql_query($usql);
+
+        if ($ok) {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&msg=Transfer request rejected and sent back to the source store.");
+        } else {
+            header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=Reject failed. Try again!!");
+        }
+        exit();
+    }
+
+    // The SOURCE store CANCELS its own outstanding request (cmd=cancel_transfer_request,
+    // "Cancel Request" button on the Approved Requisition list). Only possible while the
+    // request is still awaiting acceptance (transfer_request_status=1) — once the destination
+    // has accepted, the requisition is already posted/consumed and there is nothing to cancel.
+    // This unlocks the requisition (back to status 0) so it can be edited and re-requested,
+    // which is what makes "lock means lock" safe: you must cancel before you can edit.
+    // Gated to the source store (transfer_from) or an approver.
+    function cancelTransferRequestRecord()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
+        $transfer_id = getRequest('transfer_id');
+        if (empty($transfer_id)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list");
+            exit();
+        }
+
+        $getSql = "SELECT * FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'";
+        $result = mysql_fetch_object(mysql_query($getSql));
+
+        if (empty($result)) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Requisition not found (it may have already been transferred).");
+            exit();
+        }
+
+        // Only an outstanding request can be cancelled.
+        if ($result->transfer_request_status != 1) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=This request cannot be cancelled (it is not awaiting acceptance).");
+            exit();
+        }
+
+        // Permission: only the SOURCE store user (transfer_from) may cancel, or an approver.
+        $fromStore = $result->transfer_from;
+        $userStoreArray = array_map('trim', explode(',', $comListApp->getUserStore()));
+
+        if (!in_array($fromStore, $userStoreArray) && !hasApprovedPermission()) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Your are not authorize!!");
+            exit;
+        }
+
+        $usql = "UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
+                 SET transfer_request_status = 0,
+                     reject_reason = NULL,
+                     requested_by = NULL,
+                     requested_time = NULL,
+                     responded_by = NULL,
+                     responded_time = NULL
+                 WHERE id = '" . intval($transfer_id) . "' AND transfer_request_status = 1";
+        $ok = mysql_query($usql);
+
+        // affected_rows guards against a destination acceptance sneaking in between the
+        // read and the write: if the row is no longer status=1, nothing is updated.
+        if ($ok && mysql_affected_rows() > 0) {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&msg=Transfer request cancelled. The requisition is unlocked and can be edited or requested again.");
+        } else {
+            header("location:index.php?app=sales.report&cmd=approved_requisition_list&error_msg=Could not cancel — the request may have just been accepted by the destination store.");
+        }
+        exit();
     }
 
     // Compute, per requisition line, how much can be transferred right now given the
@@ -2171,12 +2408,37 @@ class GroupStockTransfer
     // Server-side guard for the requisition edit/delete direct links. An APPROVED
     // requisition (approved_status=1) may be edited or deleted ONLY by imran; an
     // unapproved one (status=0) stays modifiable by any allowed user (existing
-    // behaviour). Returns true if the current user may modify the requisition.
+    // behaviour). EXCEPTION: a requisition the destination REJECTED (transfer_request_status=2)
+    // must be editable by the source store user so they can correct and resubmit it —
+    // allowed for the source store owner (transfer_from) or an approver.
     function canModifyRequisition($transfer_id)
     {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
         $row = mysql_fetch_object(mysql_query(
-            "SELECT approved_status FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'"));
-        if (!empty($row) && $row->approved_status == 1 && getFromSession('userid') != "imran") {
+            "SELECT approved_status, transfer_request_status, transfer_from FROM " . PENDING_STOCK_TRANSFER_MASTER_TBL . " WHERE id = '" . intval($transfer_id) . "'"));
+        if (empty($row)) {
+            return true;
+        }
+
+        // Lock means lock: a requisition awaiting the destination's acceptance
+        // (transfer_request_status=1) cannot be edited or deleted by ANYONE (incl. imran).
+        // It must first be cancelled by the source (Cancel Request -> back to status 0) or
+        // handled by the destination (Accept/Reject). This removes the edit-vs-accept race.
+        if ($row->transfer_request_status == 1) {
+            return false;
+        }
+
+        // A rejected requisition: the source store owner (or approver) may edit/resubmit it.
+        if ($row->transfer_request_status == 2) {
+            $userStoreArray = array_map('trim', explode(',', $comListApp->getUserStore()));
+            if (in_array($row->transfer_from, $userStoreArray) || hasApprovedPermission()) {
+                return true;
+            }
+        }
+
+        if ($row->approved_status == 1 && getFromSession('userid') != "imran") {
             return false;
         }
         return true;
@@ -2425,8 +2687,16 @@ class GroupStockTransfer
                 $newNarration = mysql_real_escape_string(trim($master->narration . "\n" . $noteLine));
                 $noteSet = ", remark = '$newRemark', narration = '$newNarration'";
             }
+            // Reset the request handshake on the outstanding remainder so the source store
+            // can request the balance again (it is back on the Approved list, not requested).
             mysql_query("UPDATE " . PENDING_STOCK_TRANSFER_MASTER_TBL . "
                          SET total_amount = $remainingMasterTotal,
+                             transfer_request_status = 0,
+                             reject_reason = NULL,
+                             requested_by = NULL,
+                             requested_time = NULL,
+                             responded_by = NULL,
+                             responded_time = NULL,
                              updated_by = '" . mysql_real_escape_string(getFromSession('userid')) . "',
                              updated_time = '" . date('Y-m-d H:i:s') . "'
                              $noteSet

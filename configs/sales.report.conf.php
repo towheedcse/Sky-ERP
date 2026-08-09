@@ -26,6 +26,7 @@ define('SUPPLIER_STATUS_LIST_SKIN_BY_TRT', TEMPLATES_SKINS.'/supplier.status.by.
 define('SHOW_STOCK_TRANSFER_LIST_SKIN', TEMPLATES_SKINS.'/stock.transfer.list.html');
 define('SHOW_STOCK_UNAPPROVED_TRANSFER_LIST_SKIN', TEMPLATES_SKINS . '/unapproved.stock.transfer.list.html');
 define('SHOW_APPROVED_REQUISITION_TRANSFER_LIST_SKIN', TEMPLATES_SKINS . '/approved.requisition.stock.transfer.list.html');
+define('SHOW_INCOMING_TRANSFER_REQUEST_LIST_SKIN', TEMPLATES_SKINS . '/incoming.transfer.request.list.html');
 define('SHOW_STOCK_VERIFY_LIST_SKIN', TEMPLATES_SKINS.'/stock.verification.list.html');
 define('SHOW_SALES_RETURN_LIST_SKIN', TEMPLATES_SKINS.'/sales.return.list.html');
 define('SHOW_CASH_BOOK_LIST_SKIN', TEMPLATES_SKINS.'/cash_book_list.html');

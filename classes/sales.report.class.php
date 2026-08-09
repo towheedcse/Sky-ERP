@@ -66,6 +66,9 @@ class SalesReport
                 case 'approved_requisition_list' :
                     $screen = $this->showApprovedRequisitionList("Report Page");
                     break;
+                case 'incoming_transfer_request_list' :
+                    $screen = $this->showIncomingTransferRequestList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -227,6 +230,9 @@ class SalesReport
                 case 'approved_requisition_list' :
                     $screen = $this->showApprovedRequisitionList("Report Page");
                     break;
+                case 'incoming_transfer_request_list' :
+                    $screen = $this->showIncomingTransferRequestList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -381,6 +387,9 @@ class SalesReport
                 case 'approved_requisition_list' :
                     $screen = $this->showApprovedRequisitionList("Report Page");
                     break;
+                case 'incoming_transfer_request_list' :
+                    $screen = $this->showIncomingTransferRequestList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $screen = $this->showStockVerifyList("Report Page");
                     break;
@@ -519,6 +528,9 @@ class SalesReport
                 case 'approved_requisition_list' :
                     $screen = $this->showApprovedRequisitionList("Report Page");
                     break;
+                case 'incoming_transfer_request_list' :
+                    $screen = $this->showIncomingTransferRequestList("Report Page");
+                    break;
                 case 'verify_list'        :
                     $this->showStockVerifyList("Report Page");
                     break;
@@ -613,6 +625,9 @@ class SalesReport
                     break;
                 case 'approved_requisition_list' :
                     $screen = $this->showApprovedRequisitionList("Report Page");
+                    break;
+                case 'incoming_transfer_request_list' :
+                    $screen = $this->showIncomingTransferRequestList("Report Page");
                     break;
                 //case 'verify_list' 	: $screen = $this->showStockVerifyList("Report Page");    break;
                 case 'salesreturn_list' :
@@ -4001,7 +4016,34 @@ class SalesReport
         return $data[0];
     }
 
-    function getStockTransferList($from, $to, $pending = false, $approved_status = null)
+    // Destination inbox: approved requisitions the source has REQUESTED (transfer_request_status=1)
+    // whose destination store (delivery_point) belongs to the current user. Rendered with
+    // Accept / Reject buttons. Accept posts the transfer; Reject sends it back with a reason.
+    function showIncomingTransferRequestList()
+    {
+        require_once(CLASS_DIR . '/common.list.class.php');
+        $comListApp = new CommonList();
+
+        $user_store = $comListApp->getUserStore();
+        $userStoreArray = array_map('trim', explode(',', $user_store));
+
+        // Approver (approved-permission) users can see every store's incoming requests;
+        // ordinary users are scoped to the stores assigned to them.
+        $dest_scope = hasApprovedPermission() ? null : $userStoreArray;
+
+        $data = array();
+        $data['cmd'] = getRequest('cmd');
+        $data['sdcrecord_list'] = $this->getStockTransferList(getRequest('from'), getRequest('to'), true, 1, 1, $dest_scope);
+        $data['totalrecord'] = $this->getTotalStockTransferList(getRequest('from'), getRequest('to'), true, 1, 1, $dest_scope);
+        $data['depo_list'] = $comListApp->getDeliveryPointList(true);
+        $data['is_pending'] = true;
+        $data['user_store'] = $userStoreArray;
+
+        require_once(SHOW_INCOMING_TRANSFER_REQUEST_LIST_SKIN);
+        return $data[0];
+    }
+
+    function getStockTransferList($from, $to, $pending = false, $approved_status = null, $request_status = null, $dest_stores = null)
     {
         if ($from == "" && $to == "") {
             $from = 0;
@@ -4036,7 +4078,10 @@ class SalesReport
         $info['fields'] = array('tm.transfer_no', 'tm.transfer_from', 'tm.delivery_point', 'tm.total_amount', 'p.project_name', 'p.location', 'd.delivery_point_name', 'd.details', "DATE_FORMAT(tm.transfer_date,'%d %b %y' ) as transfer_date", 'tm.created_by', 'tm.created_date', 'tm.narration', 'tm.product_convert', 'tm.approved_status', 'tm.approved_by', 'tm.approved_time', 'tm.job_name', 'pr.product_name as finish_item_name');
 
         if ($pending) {
-            $info['fields'] = array('tm.id', 'tm.transfer_from', 'tm.delivery_point', 'tm.total_amount', 'p.project_name', 'p.location', 'd.delivery_point_name', 'd.details', "DATE_FORMAT(tm.transfer_date,'%d %b %y' ) as transfer_date", 'tm.created_by', 'tm.created_date', 'tm.narration', 'tm.product_convert', 'tm.job_name', 'pr.product_name as finish_item_name');
+            // Request-handshake fields (transfer_request_status / reject_reason / audit) are
+            // exposed so the Approved list can lock/label a requested or rejected row and the
+            // Incoming Requests list can show who requested it.
+            $info['fields'] = array('tm.id', 'tm.transfer_from', 'tm.delivery_point', 'tm.total_amount', 'p.project_name', 'p.location', 'd.delivery_point_name', 'd.details', "DATE_FORMAT(tm.transfer_date,'%d %b %y' ) as transfer_date", 'tm.created_by', 'tm.created_date', 'tm.narration', 'tm.product_convert', 'tm.job_name', 'pr.product_name as finish_item_name', 'tm.transfer_request_status', 'tm.reject_reason', 'tm.requested_by', "DATE_FORMAT(tm.requested_time,'%d %b %y %h:%i %p') as requested_time", 'tm.responded_by', "DATE_FORMAT(tm.responded_time,'%d %b %y %h:%i %p') as responded_time");
         }
 
         $sql = "tm.project_id = '" . $project_id . "'";
@@ -4045,6 +4090,24 @@ class SalesReport
         // 1 = Approved Requisition list. Null = no status filter (back-compat).
         if ($pending && $approved_status !== null) {
             $sql .= " AND tm.approved_status = '" . intval($approved_status) . "'";
+        }
+
+        // Request-handshake filter (Incoming Requests list): 1 = awaiting acceptance.
+        if ($pending && $request_status !== null) {
+            $sql .= " AND tm.transfer_request_status = '" . intval($request_status) . "'";
+        }
+
+        // Destination-store scope (Incoming Requests list): only rows whose destination
+        // (delivery_point) belongs to the current user's assigned stores.
+        if ($pending && is_array($dest_stores)) {
+            $clean = array_filter(array_map('trim', $dest_stores), 'strlen');
+            if (!empty($clean)) {
+                $escaped = array_map('mysql_real_escape_string', $clean);
+                $sql .= " AND tm.delivery_point IN ('" . implode("','", $escaped) . "')";
+            } else {
+                // User has no stores assigned -> show nothing rather than everything.
+                $sql .= " AND 1 = 0";
+            }
         }
 
         if ($delivery_point != "") {
@@ -4078,7 +4141,7 @@ class SalesReport
         return $data;
     }
 
-    function getTotalStockTransferList($from, $to, $pending = false, $approved_status = null)
+    function getTotalStockTransferList($from, $to, $pending = false, $approved_status = null, $request_status = null, $dest_stores = null)
     {
         $date_from = formatDate(getRequest('date_from'));
         $date_to = formatDate(getRequest('date_to'));
@@ -4099,6 +4162,18 @@ class SalesReport
         $sql = "tm.delivery_point=d.delivery_pid AND tm.project_id=p.project_id AND tm.currency=c.currency_id AND tm.project_id='" . $project_id . "'";
         if ($pending && $approved_status !== null) {
             $sql .= " AND tm.approved_status = '" . intval($approved_status) . "'";
+        }
+        if ($pending && $request_status !== null) {
+            $sql .= " AND tm.transfer_request_status = '" . intval($request_status) . "'";
+        }
+        if ($pending && is_array($dest_stores)) {
+            $clean = array_filter(array_map('trim', $dest_stores), 'strlen');
+            if (!empty($clean)) {
+                $escaped = array_map('mysql_real_escape_string', $clean);
+                $sql .= " AND tm.delivery_point IN ('" . implode("','", $escaped) . "')";
+            } else {
+                $sql .= " AND 1 = 0";
+            }
         }
         if ($delivery_point != "") {
             $sql .= " AND tm.delivery_point = '$delivery_point'";

@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Incoming Transfer Requests</title>
+<?php
+extract($data); dateIFrame(REL_EXT_DIR);
+$due=0;
+
+$msg = getRequest('msg');
+$error_msg = getRequest('error_msg');
+
+$sql="SELECT * FROM ".PROJECT_TBL." WHERE project_id='".getFromSession('project_id')."'";
+$row = mysql_fetch_object(mysql_query($sql));
+$district 		= getRequest('district');
+$area 			= getRequest('area');
+?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/cs_received_product.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/common.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/validationEngine.jquery.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/common/template.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/sample.css" type="text/css">
+<link rel="stylesheet" href="<?=REL_CONTENT_DIR?>/css/style.css" type="text/css">
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
+
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var J = jQuery.noConflict();
+
+// Destination ACCEPTS. This is the real posting, so we keep the partial-stock pre-check:
+// warn (and demand a note) when the source store cannot fully satisfy the requisition now.
+function acceptRecord(transfer_no)
+{
+    J.ajax({
+        url: "index.php?app=groupwise.stock.transfer&cmd=check_transfer_stock&transfer_id="+transfer_no,
+        dataType: "json",
+        cache: false,
+        success: function(res){
+            if(!res || res.error){
+                alert(res && res.message ? res.message : "Unable to check stock. Please try again.");
+                return;
+            }
+            if(!res.has_any_deliverable){
+                alert(res.message || "No stock available to transfer for this requisition.");
+                return;
+            }
+            if(res.is_partial){
+                var msg = "The source store does not have enough stock for some products:\n\n";
+                for(var i=0; i<res.shortages.length; i++){
+                    var s = res.shortages[i];
+                    msg += "• " + s.product_name + " : requested " + s.requested + ", available " + s.available + "\n";
+                }
+                msg += "\nAccept and transfer the AVAILABLE quantity now, keeping the rest pending?";
+                if(!confirm(msg)){ return; }
+                var note = prompt("This is a PARTIAL transfer. Please enter a note/reason (required):", "");
+                if(note === null){ return; }
+                if(note.replace(/^\s+|\s+$/g, "") === ""){
+                    alert("A note is required for a partial transfer.");
+                    return;
+                }
+                submitAccept(transfer_no, 1, note);
+            } else {
+                if(confirm("Accept this transfer request? This will post it to the stock ledger and account ledger.")){
+                    submitAccept(transfer_no, 0, "");
+                }
+            }
+        },
+        error: function(){
+            alert("Unable to check stock. Please try again.");
+        }
+    });
+}
+
+// POST the accept (note travels in the body, not the URL).
+function submitAccept(transfer_no, partial, note)
+{
+    postTo("index.php?app=groupwise.stock.transfer&cmd=accept_transfer", {
+        transfer_id: transfer_no, partial: partial, note: note
+    });
+}
+
+// Destination REJECTS with a mandatory reason -> back to the source store.
+function rejectRecord(transfer_no)
+{
+    var reason = prompt("Reject this transfer request?\nPlease enter the reason (required):", "");
+    if(reason === null){ return; }
+    if(reason.replace(/^\s+|\s+$/g, "") === ""){
+        alert("A reason is required to reject a transfer request.");
+        return;
+    }
+    postTo("index.php?app=groupwise.stock.transfer&cmd=reject_transfer", {
+        transfer_id: transfer_no, reason: reason
+    });
+}
+
+function postTo(action, fields)
+{
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = action;
+    for(var k in fields){
+        if(!fields.hasOwnProperty(k)){ continue; }
+        var inp = document.createElement("input");
+        inp.type = "hidden"; inp.name = k; inp.value = fields[k];
+        f.appendChild(inp);
+    }
+    document.body.appendChild(f);
+    f.submit();
+}
+</script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/function.js" type="text/javascript"></script>
+<script src="<?=REL_CONTENT_DIR?>/js/jquery/jquery.validationEngine.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
+<script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>
+
+<script language="javascript1.3">
+      J("[class^=validate]").validationEngine({
+      inlineValidation: false,
+      success :  false,
+      failure : function() { callFailFunction()  }
+      })
+</script>
+<style>
+.bngFont{ font: 128% SutonnyMJ; }
+table, td { border-color: #999999; border-style: solid; }
+table { border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse; }
+td { margin: 0; padding: 4px; border-width: 1px 1px 0 0; font-weight:bold; }
+#tbl{ font-size:12px; font-weight:normal;}
+a:visited{color: #000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; text-decoration:none}
+a{color:#000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;text-decoration:none}
+a:hover{ color: #008000;font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+.acceptBtn{ background:#0a7d28; color:#fff !important; padding:3px 12px; border-radius:4px; font-weight:bold; }
+.acceptBtn:hover{ background:#065c1d; color:#fff !important; }
+.rejectBtn{ background:#c0392b; color:#fff !important; padding:3px 12px; border-radius:4px; font-weight:bold; }
+.rejectBtn:hover{ background:#992d22; color:#fff !important; }
+</style>
+</head>
+
+<body>
+<form name="report" method="post">
+  <table width="75%" align="center" cellpadding="4"cellspacing="0" class="addborder">
+    <tr>
+      <td align="left" class="topbg" height="26" colspan="8"><span><strong>Search Incoming Transfer Requests </strong></span></td>
+    </tr>
+    <tr>
+      <td width="2%">&nbsp;</td>
+      <td width="8%">From</td>
+      <td width="21%"><input name="date_from" id="date_from" style="width:140px;" value="<?=$_REQUEST['date_from']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_from']);return false;" title="calendar" tabindex="4" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="To" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_from']);return false;"> </td>
+      <td width="7%">To</td>
+      <td width="21%"><input name="date_to" id="date_to" style="width:140px;" value="<?=$_REQUEST['date_to']?>" size="20" onFocus="gfPop.fPopCalendar(document.report.elements['date_to']);return false;" title="calendar" tabindex="4" type="text">
+          <img src="<?=IMAGE_DIR?>/common/icons/calendar.gif" alt="From" width="15" height="15" title="calendar" onClick="gfPop.fPopCalendar(document.report.elements['date_to']);return false;"> </td>
+      <td width="13%">Depo Name  </td>
+      <td width="20%">
+	  <select name="delivery_point" id="delivery_point" style="width:180px" tabindex="1">
+        <option value="">Select Depo </option>
+		<?php
+		foreach($depo_list as $i=>$v)
+		{
+			$delivery_pid = $v->delivery_pid;
+			$delivery_point_name = $v->delivery_point_name;
+		?>
+	  <option value="<?=$delivery_pid?>"<?php if($delivery_pid==$delivery_point) echo "selected";?> >
+	  <?=$delivery_point_name?>
+	  </option>
+	  <?}?>
+      </select></td>
+      <td width="8%"><input value="Search" name="submit" class="button" onMouseMove="this.className='saveBtnFocus'" onMouseOut="this.className='button'" type="submit" onClick="if(frmSubmit()){return true;}else{ return false;}" /></td>
+    </tr>
+  </table>
+
+<?php if(isset($msg) && !empty($msg)){?>
+<p style="color: green; margin-top: 10px; padding: 5px 0; background: #f6fff5; border-radius: 5px; width: 98%;"><?=$msg?></p>
+<?php }?>
+
+<?php if(isset($error_msg) && !empty($error_msg)){?>
+<p style="color: red; margin-top: 10px; padding: 5px 0; background: #ffe5ef; border-radius: 5px; width: 98%;"><?=$error_msg?></p>
+<?php }?>
+
+  <br>
+
+<div id="printdiv">
+<table width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0">
+  <tr bgcolor="#CCCCCC">
+    <td align="center" class="topbg" height="26"><span><strong>&nbsp;Incoming Transfer Requests (Awaiting Your Acceptance) </strong></span></td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+      <span style="font-size:25px; font-weight:bold"> <?=$row->project_name?></span><br>
+      <span style="font-size:16px; font-weight:bold"><?=$row->location?></span></div>
+	</td>
+  </tr>
+  <tr>
+    <td>
+	<div align="center">
+	  <table width="99%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
+        <tr>
+          <td width="2%" align="left" nowrap>Sl</td>
+          <td width="14%" align="left" nowrap><div align="left">Transfer  From </div></td>
+          <td width="9%" align="left" nowrap>Transfer Date</td>
+          <td width="14%" align="left" nowrap><div align="left">Transfer  To </div></td>
+          <td width="16%" align="left" nowrap>Details </td>
+          <td width="9%" align="left" nowrap>Transfer Qty </td>
+          <td width="11%" align="center" nowrap>Transfer Amount </td>
+          <td width="10%" align="center" nowrap>Requested By </td>
+          <td width="15%" align="center" nowrap>Action</td>
+        </tr>
+        <?php
+ 		  $total_due = 0; $i=0;
+		  foreach($sdcrecord_list as $val){
+		  $transfer_no= $val->id;
+		  $i++;
+		?>
+        <tr>
+          <td align="left" nowrap><?=$i?></td>
+          <td align="left">
+		  <?php
+		   	$getSql	= "SELECT * FROM ".DELIVERY_POINT_TBL." WHERE delivery_pid = '".$val->transfer_from."'";
+			$gres = mysql_query($getSql);
+			$tfrow = mysql_fetch_object($gres);
+			echo $tfrow->delivery_point_name."<br><i>".$val->created_by."</i>";
+		  ?></td>
+          <td align="left" nowrap><?=$val->transfer_date?></td>
+          <td align="left"><?php echo $val->delivery_point_name;?></td>
+		  <?php
+    $ssql = "SELECT
+                p.product_name,
+                sd.m_unit,
+                sd.unit_price,
+                sd.qty,
+                COALESCE(sd.original_qty, sd.qty) AS original_qty,
+                sd.total
+            FROM " . PENDING_STOCK_TRANSFER_DETAILS_TBL . " AS sd
+            JOIN " . PRODUCT_TBL . " AS p
+                ON sd.product = p.product_id
+            WHERE BINARY sd.transfer_id = '" . $val->id . "'";
+			$sres = mysql_query($ssql);
+			 $orderQty=0; $origQty=0; $m_unit='';
+			 if(mysql_num_rows($sres)>0){
+				 while($srow = mysql_fetch_object($sres)){
+				 $orderQty+= $srow->qty;
+				 $origQty+= isset($srow->original_qty) ? $srow->original_qty : $srow->qty;
+				 $m_unit = $srow->m_unit;
+				 }
+			}
+			?>
+          <td align="left" nowrap><?php
+	 	echo $val->details;
+		if(!empty($val->job_name)){
+		   echo "<br>Job ID/Name: ". $val->job_name;
+		}
+		if(!empty($val->finish_item_name)){
+		   echo "<br>Finish Item: ". $val->finish_item_name;
+		}
+	  ?> </td>
+          <td align="center" nowrap><? echo $orderQty.' '.$m_unit; if($origQty > $orderQty){ echo ' <span style="color:#b3541e;font-size:11px;">(of '.$origQty.')</span>'; } ?></td>
+          <td align="center" nowrap><? echo $val->total_amount.' '.$val->curr_symble;?></td>
+          <td align="center" nowrap><?php echo htmlspecialchars($val->requested_by); if(!empty($val->requested_time)){ echo '<br><span style="font-size:11px;color:#555;">'.$val->requested_time.'</span>'; } ?></td>
+          <td align="center" nowrap><div class="table-option" style="gap:0px !important;">
+	  <a onClick='acceptRecord("<?=$transfer_no?>")' href="javascript:void(0)" title="Accept and transfer" class="acceptBtn">Accept</a>&nbsp;&nbsp;&nbsp;
+	  <a onClick='rejectRecord("<?=$transfer_no?>")' href="javascript:void(0)" title="Reject with reason" class="rejectBtn">Reject</a>&nbsp;&nbsp;&nbsp;
+<?php
+    $printChallan = "pending_print_challan";
+    if($val->product_convert==1){
+        $printChallan = "pending_print_convert_challan";
+    }
+?>
+          <a target="_blank" href="?app=groupwise.stock.transfer&cmd=<?=$printChallan?>&transfer_no=<?=$transfer_no?>">Challan</a>
+		    </div>
+          </td>
+        </tr>
+        <?}?>
+<?php if(empty($sdcrecord_list)){ ?>
+        <tr><td colspan="9" align="center" style="padding:12px;color:#777;font-weight:normal;">No incoming transfer requests.</td></tr>
+<?php } ?>
+      </table>
+	</div>
+	<div style="display:block; height:50px;"></div>
+	</td>
+  </tr>
+</table>
+</div>
+
+</form>
+</body>
+</html>
