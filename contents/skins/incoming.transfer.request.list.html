@@ -30,8 +30,6 @@ $area 			= getRequest('area');
 <script type="text/javascript">
 var J = jQuery.noConflict();
 
-// Destination ACCEPTS. This is the real posting, so we keep the partial-stock pre-check:
-// warn (and demand a note) when the source store cannot fully satisfy the requisition now.
 function acceptRecord(transfer_no)
 {
     J.ajax({
@@ -47,26 +45,7 @@ function acceptRecord(transfer_no)
                 alert(res.message || "No stock available to transfer for this requisition.");
                 return;
             }
-            if(res.is_partial){
-                var msg = "The source store does not have enough stock for some products:\n\n";
-                for(var i=0; i<res.shortages.length; i++){
-                    var s = res.shortages[i];
-                    msg += "• " + s.product_name + " : requested " + s.requested + ", available " + s.available + "\n";
-                }
-                msg += "\nAccept and transfer the AVAILABLE quantity now, keeping the rest pending?";
-                if(!confirm(msg)){ return; }
-                var note = prompt("This is a PARTIAL transfer. Please enter a note/reason (required):", "");
-                if(note === null){ return; }
-                if(note.replace(/^\s+|\s+$/g, "") === ""){
-                    alert("A note is required for a partial transfer.");
-                    return;
-                }
-                submitAccept(transfer_no, 1, note);
-            } else {
-                if(confirm("Accept this transfer request? This will post it to the stock ledger and account ledger.")){
-                    submitAccept(transfer_no, 0, "");
-                }
-            }
+            showAcceptModal(transfer_no, res);
         },
         error: function(){
             alert("Unable to check stock. Please try again.");
@@ -74,12 +53,124 @@ function acceptRecord(transfer_no)
     });
 }
 
-// POST the accept (note travels in the body, not the URL).
-function submitAccept(transfer_no, partial, note)
+function showAcceptModal(transfer_no, res)
 {
-    postTo("index.php?app=groupwise.stock.transfer&cmd=accept_transfer", {
-        transfer_id: transfer_no, partial: partial, note: note
+    J("#acceptModal").remove();
+
+    var html = '<div id="acceptModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;">';
+    html += '<div style="background:#fff;border-radius:8px;padding:20px 25px;max-width:750px;width:95%;max-height:85vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);">';
+    html += '<h3 style="margin:0 0 15px;color:#333;border-bottom:2px solid #0a7d28;padding-bottom:8px;">Accept Transfer - Set Transfer Quantity</h3>';
+
+    html += '<form id="acceptForm" method="POST" action="index.php?app=groupwise.stock.transfer&cmd=accept_transfer">';
+    html += '<input type="hidden" name="transfer_id" value="'+transfer_no+'">';
+
+    html += '<table style="width:100%;border-collapse:collapse;margin-bottom:15px;">';
+    html += '<tr style="background:#f0f0f0;">';
+    html += '<th style="padding:8px;border:1px solid #ccc;text-align:left;">Sl</th>';
+    html += '<th style="padding:8px;border:1px solid #ccc;text-align:left;">Product</th>';
+    html += '<th style="padding:8px;border:1px solid #ccc;text-align:right;">Requested</th>';
+    html += '<th style="padding:8px;border:1px solid #ccc;text-align:right;">Available</th>';
+    html += '<th style="padding:8px;border:1px solid #ccc;text-align:center;width:120px;">Transfer Qty</th>';
+    html += '</tr>';
+
+    var totalTransfer = 0;
+    for(var i=0; i<res.lines.length; i++){
+        var ln = res.lines[i];
+        var maxQty = Math.min(ln.available, ln.requested);
+        if(maxQty < 0) maxQty = 0;
+        var defQty = ln.deliver;
+        var bg = (i % 2 === 0) ? '#fff' : '#f9f9f9';
+        var shortStyle = (ln.available < ln.requested) ? 'color:#c0392b;font-weight:bold;' : '';
+        totalTransfer += defQty * ln.unit_price;
+
+        html += '<tr style="background:'+bg+';">';
+        html += '<td style="padding:6px 8px;border:1px solid #ccc;">'+(i+1)+'</td>';
+        html += '<td style="padding:6px 8px;border:1px solid #ccc;">'+ln.product_name+'</td>';
+        html += '<td style="padding:6px 8px;border:1px solid #ccc;text-align:right;">'+ln.requested.toFixed(3)+'</td>';
+        html += '<td style="padding:6px 8px;border:1px solid #ccc;text-align:right;'+shortStyle+'">'+ln.available.toFixed(3)+'</td>';
+        html += '<td style="padding:6px 8px;border:1px solid #ccc;text-align:center;">';
+        html += '<input type="number" name="deliver_qty['+ln.id+']" value="'+defQty.toFixed(3)+'" ';
+        html += 'min="0" max="'+maxQty.toFixed(3)+'" step="0.001" ';
+        html += 'data-unitprice="'+ln.unit_price+'" data-requested="'+ln.requested+'" ';
+        html += 'style="width:100px;padding:4px;text-align:right;border:1px solid #aaa;border-radius:3px;" ';
+        html += 'onchange="validateTransferQty(this)" onkeyup="validateTransferQty(this)">';
+        html += '</td></tr>';
+    }
+
+    html += '<tr style="background:#e8f5e9;font-weight:bold;">';
+    html += '<td colspan="4" style="padding:8px;border:1px solid #ccc;text-align:right;">Total Transfer Amount:</td>';
+    html += '<td id="modalTotalAmount" style="padding:8px;border:1px solid #ccc;text-align:center;">'+totalTransfer.toFixed(2)+'</td>';
+    html += '</tr>';
+    html += '</table>';
+
+    html += '<div style="margin-bottom:15px;">';
+    html += '<label style="font-weight:bold;display:block;margin-bottom:5px;">Note <span id="noteReqLabel" style="color:#c0392b;display:none;">(required for partial transfer)</span>:</label>';
+    html += '<textarea name="note" id="acceptNote" rows="2" style="width:100%;padding:6px;border:1px solid #aaa;border-radius:3px;resize:vertical;" placeholder="Enter note/reason..."></textarea>';
+    html += '</div>';
+
+    html += '<div style="text-align:right;">';
+    html += '<button type="button" onclick="J(\'#acceptModal\').remove();" style="padding:8px 20px;margin-right:10px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:13px;">Cancel</button>';
+    html += '<button type="button" onclick="submitAcceptForm()" style="padding:8px 20px;border:none;border-radius:4px;background:#0a7d28;color:#fff;cursor:pointer;font-weight:bold;font-size:13px;">Confirm Transfer</button>';
+    html += '</div>';
+
+    html += '</form></div></div>';
+
+    J("body").append(html);
+    checkPartialState();
+}
+
+function validateTransferQty(el)
+{
+    var val = parseFloat(el.value);
+    var max = parseFloat(el.getAttribute("max"));
+    if(isNaN(val) || val < 0) { el.value = "0.000"; val = 0; }
+    if(val > max) { el.value = max.toFixed(3); val = max; }
+    checkPartialState();
+}
+
+function checkPartialState()
+{
+    var isPartial = false;
+    var totalAmt = 0;
+    J("#acceptForm input[name^='deliver_qty']").each(function(){
+        var qty = parseFloat(J(this).val()) || 0;
+        var requested = parseFloat(J(this).attr("data-requested")) || 0;
+        var unitPrice = parseFloat(J(this).attr("data-unitprice")) || 0;
+        totalAmt += qty * unitPrice;
+        if(qty < requested) isPartial = true;
     });
+    J("#modalTotalAmount").text(totalAmt.toFixed(2));
+    if(isPartial){
+        J("#noteReqLabel").show();
+    } else {
+        J("#noteReqLabel").hide();
+    }
+}
+
+function submitAcceptForm()
+{
+    var anyQty = false;
+    var isPartial = false;
+    J("#acceptForm input[name^='deliver_qty']").each(function(){
+        var qty = parseFloat(J(this).val()) || 0;
+        var requested = parseFloat(J(this).attr("data-requested")) || 0;
+        if(qty > 0) anyQty = true;
+        if(qty < requested) isPartial = true;
+    });
+    if(!anyQty){
+        alert("Please enter at least one transfer quantity greater than zero.");
+        return;
+    }
+    var note = J("#acceptNote").val().replace(/^\s+|\s+$/g, "");
+    if(isPartial && note === ""){
+        alert("A note is required for a partial transfer.");
+        J("#acceptNote").focus();
+        return;
+    }
+    if(!confirm("Confirm transfer? This will post to stock ledger and account ledger.")){
+        return;
+    }
+    J("#acceptForm").submit();
 }
 
 // Destination REJECTS with a mandatory reason -> back to the source store.

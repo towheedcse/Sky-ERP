@@ -2090,6 +2090,33 @@ class GroupStockTransfer
         // A "partial" transfer is one where at least one line cannot be fully met.
         $plan = $this->computeDeliveryPlan($result);
 
+        // Apply user-specified transfer quantities (from the Accept modal form).
+        $userQty = isset($_POST['deliver_qty']) ? $_POST['deliver_qty'] : array();
+        if (!empty($userQty)) {
+            $newTotal = 0;
+            $anyDeliverable = false;
+            $anyPartial = false;
+            foreach ($plan['lines'] as &$ln) {
+                $lineId = $ln['id'];
+                if (isset($userQty[$lineId])) {
+                    $userVal = round((float)$userQty[$lineId], 3);
+                    if ($userVal < 0) $userVal = 0;
+                    if ($userVal > $ln['available']) $userVal = $ln['available'];
+                    if ($userVal > $ln['requested']) $userVal = $ln['requested'];
+                    $ln['deliver'] = $userVal;
+                    $ln['remaining'] = $ln['requested'] - $userVal;
+                    $ln['deliver_total'] = round($userVal * $ln['unit_price'], 2);
+                }
+                if ($ln['deliver'] > 0) $anyDeliverable = true;
+                if ($ln['remaining'] > 0) $anyPartial = true;
+                $newTotal += $ln['deliver_total'];
+            }
+            unset($ln);
+            $plan['deliver_total_amount'] = round($newTotal, 2);
+            $plan['has_any_deliverable'] = $anyDeliverable;
+            $plan['is_partial'] = $anyPartial;
+        }
+
         // Nothing can move at all -> block.
         if (!$plan['has_any_deliverable']) {
             $msg = "No stock available to transfer for this requisition.";
@@ -2097,15 +2124,11 @@ class GroupStockTransfer
             exit();
         }
 
-        // Partial fulfilment is gated: the accepting user must have confirmed it AND supplied a
-        // note. The frontend collects both after warning the user; this is the server-side
-        // enforcement so a direct link cannot silently do a partial.
         $isPartial = $plan['is_partial'];
         $note = trim(getRequest('note'));
-        $partialConfirmed = (getRequest('partial') == 1);
 
-        if ($isPartial && (!$partialConfirmed || $note === '')) {
-            $shortMsg = "This requisition cannot be fully transferred (not enough stock). Use the Accept button and confirm the partial transfer with a note.";
+        if ($isPartial && $note === '') {
+            $shortMsg = "A note is required for a partial transfer.";
             header("location:index.php?app=sales.report&cmd=incoming_transfer_request_list&error_msg=$shortMsg");
             exit();
         }
@@ -2357,11 +2380,25 @@ class GroupStockTransfer
         }
 
         $plan = $this->computeDeliveryPlan($result);
+        $lineData = array();
+        foreach ($plan['lines'] as $ln) {
+            $lineData[] = array(
+                'id' => $ln['id'],
+                'product' => $ln['product'],
+                'product_name' => $ln['product_name'],
+                'unit_price' => $ln['unit_price'],
+                'requested' => $ln['requested'],
+                'available' => $ln['available'],
+                'deliver' => $ln['deliver'],
+            );
+        }
         echo json_encode(array(
             'error' => false,
             'is_partial' => (bool) $plan['is_partial'],
             'has_any_deliverable' => (bool) $plan['has_any_deliverable'],
             'shortages' => $plan['shortages'],
+            'lines' => $lineData,
+            'deliver_total_amount' => $plan['deliver_total_amount'],
             'message' => $plan['has_any_deliverable'] ? '' : 'No stock available to transfer for this requisition.',
         ));
     }
