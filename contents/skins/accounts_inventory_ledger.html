@@ -447,85 +447,38 @@ echo "<br>Posting Time: ".$crrow->transaction_date;
 	<td colspan="4" style="font-weight:normal">
               <?php
               //show items details
-              if($rawMaterialItem){
-              $SQL = "
-              SELECT pd.production_id, pd.product, pd.qty, po.product_name, po.product_desc, po.m_unit
-              FROM " . PRODUCTION_DETAILS_TBL . " pd
-              LEFT JOIN " . PRODUCT_TBL . " po ON po.product_id = pd.product
-              LEFT JOIN " . CATAGORY_TBL . " ct ON ct.catagory_code = po.catagory
-              LEFT JOIN " . BRAND_TBL . " b ON b.brand_id = po.brand_code
-              WHERE pd.project_id = '" . $project_id . "'
-              AND pd.production_id = '" . $crrow->voucher_no . "'
-              ";
-
-
-              $SQL .= " ORDER BY pd.production_id ASC";
-
-              $pres = mysql_query($SQL);
-              if (mysql_num_rows($pres) > 0) {
-              while ($itemRow = mysql_fetch_object($pres)) {
-              $product_name = $itemRow->product_name;
-              $product_desc = $itemRow->product_desc;
-              $qty = $itemRow->qty;
-              $m_unit = $itemRow->m_unit;
-
-              $inwardQty = 0.00;
-              $outwardQty = $qty;
-
-              $inward = $inwardQty. " " .$m_unit;
-              $outward = $outwardQty. " " .$m_unit;
-		?>
-              <table class="proDetailsTbl" width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="0" style="border-bottom: 0;">
-                  <tr>
-                      <td style="font-weight: normal;"><?=$product_name;?></td>
-                      <td width="16%" style="font-weight: normal;text-align: right;"><?=$inward;?></td>
-                      <td width="16%" style="font-weight: normal;text-align: right;"><?=$outward;?></td>
-                  </tr>
-              </table>
-              <?php
-              }
-              }
-
-              }
-
-              if($purchaseItem){
-              $SQL = "
-              SELECT pd.voucher_no, pd.product, pd.qty, pd.m_unit, po.product_name, po.product_desc
-              FROM " . PURCHASE_DETAILS_TBL . " pd
-              LEFT JOIN " . PRODUCT_TBL . " po ON po.product_id = pd.product
-              LEFT JOIN " . CATAGORY_TBL . " ct ON ct.catagory_code = po.catagory
-              LEFT JOIN " . BRAND_TBL . " b ON b.brand_id = po.brand_code
-              WHERE pd.project_id = '" . $project_id . "'
-              AND pd.voucher_no = '" . $crrow->voucher_no . "'
-              ";
-
-              $SQL .= " ORDER BY pd.voucher_no ASC";
+              // Inward/Outward qty from the STOCK LEDGER for this voucher, matching this journal
+              // row's direction: a credit to the inventory account = stock went OUT (use sl.cr),
+              // a debit = stock came IN (use sl.dr). For a transfer the source store carries the
+              // cr and the destination the dr, so filtering by direction scopes to the right store.
+              // (Old code looked in production_details/purchase_details by voucher_no, which never
+              //  matched consumption/transfer vouchers like CFG.../T... so the qty stayed blank.)
+              $isOut = ((float)$crrow->cr > 0);
+              $SQL = "SELECT sl.product_id, po.product_code, po.product_name, sl.m_unit, SUM(sl.dr) AS in_qty, SUM(sl.cr) AS out_qty
+              FROM " . STOCK_LEDGER_TBL . " sl
+              LEFT JOIN " . PRODUCT_TBL . " po ON po.product_id = sl.product_id
+              WHERE sl.voucher_no = '" . $crrow->voucher_no . "' AND sl.project_id = '" . $project_id . "'
+              AND " . ($isOut ? "sl.cr > 0" : "sl.dr > 0") . "
+              GROUP BY sl.product_id, sl.m_unit ORDER BY po.product_name ASC";
 
               $pres = mysql_query($SQL);
-              if (mysql_num_rows($pres) > 0) {
+              if ($pres && mysql_num_rows($pres) > 0) {
               while ($itemRow = mysql_fetch_object($pres)) {
+              $product_code = $itemRow->product_code;
               $product_name = $itemRow->product_name;
-              $product_desc = $itemRow->product_desc;
-              $qty = $itemRow->qty;
               $m_unit = $itemRow->m_unit;
-
-              $inwardQty = $qty;
-              $outwardQty = 0.00;
-
-              $inward = $inwardQty. " " .$m_unit;
-              $outward = $outwardQty. " " .$m_unit;
+              $inward  = $isOut ? "" : ($itemRow->in_qty . " " . $m_unit);
+              $outward = $isOut ? ($itemRow->out_qty . " " . $m_unit) : "";
               ?>
               <table class="proDetailsTbl" width="100%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="0" style="border-bottom: 0;">
                   <tr>
-                      <td style="font-weight: normal;"><?=$product_name;?></td>
+                      <td style="font-weight: normal;"><?php if($product_code!=""){ echo $product_code."::"; } echo $product_name;?></td>
                       <td width="16%" style="font-weight: normal;text-align: right;"><?=$inward;?></td>
                       <td width="16%" style="font-weight: normal;text-align: right;"><?=$outward;?></td>
                   </tr>
               </table>
               <?php
               }
-              }
-
               }
 
               ?>

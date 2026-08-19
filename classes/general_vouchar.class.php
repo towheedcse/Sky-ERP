@@ -109,7 +109,12 @@ class GeneralVouchar
    }
    //==================== saveDebitVouchar ====================
     function saveDebitVouchar()
-    {     
+    {
+	  if(empty(getRequest('dr_account')) || empty(getRequest('cr_account'))){
+		header("location:index.php?app=general_vouchar&cmd=add&msg=".urlencode("Dr Account and Cr Account are required"));
+		exit;
+	  }
+
 	  $requestdata = array();
 	  $mode_of_payment = getRequest('mode_of_payment');
 	  $requestdata = getUserDataSet(DEVIT_VOUCHAR_TBL);			  	  		    

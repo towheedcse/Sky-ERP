@@ -362,6 +362,13 @@ class VoucherEdit
 	$check_date	= formatDate(getRequest('check_issue_date')); 
 	$description	= getRequest('description');
 	$description 	= str_replace("'","&rsquo;",$description);
+
+	if(empty($dr_account) || empty($cr_account)){
+		$msg = "Dr Account and Cr Account are required";
+		header("location:index.php?app=voucher.edit&cmd=".$voucher_no."&msg=".urlencode($msg));
+		exit;
+	}
+
 	//========= Rollback for Edit===========
 	mysql_query("START TRANSACTION;");
 	if($vouchar_type!="Payable Vouchar" && $vouchar_type!="Recievable Vouchar"){ 
@@ -410,7 +417,8 @@ class VoucherEdit
 	$data['headlist2']   	= $clistApp->getAccountHeadList("Current Assets","S128","C000105"); // Party
 	$data['headlist3']   	= $clistApp->getAccountHeadList("Non Current Assets","","","S130","C000105"); 
 	$data['headlist4']   	= $clistApp->getAccountHeadList("Current Assets","","","S130","C000105");
-	$data['headlist5']   	= $clistApp->getAccountHeadList("Liabilities");		
+	$data['NLiabilities']   = $clistApp->getAccountHeadList("Non Current Liabilities");
+	$data['CLiabilities']   = $clistApp->getAccountHeadList("Current Liabilities");		
 	$data['headlist6']   	= $clistApp->getAccountHeadList("Capital");	
 	$data['headlist7']   	= $clistApp->getAccountHeadList("Retained earnings");	
 	$data['headlist8']   	= $clistApp->getAccountHeadList("Sales");	

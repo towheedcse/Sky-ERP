@@ -223,7 +223,7 @@ border: 1px solid #006699;
 			foreach($supplier_list as $i=>$v)
 			{
 			?>
-			<option value="<?=$v->supplier_code?>"<?php if($dr_account==$v->supplier_code) echo "selected";?> ><? echo $v->name; ?></option>
+			<option value="<?=$v->sub_id?>"<?php if($dr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; ?></option>
 		       <?}?>
 		</optgroup>	
 		<optgroup label="Assets Account Head">			
@@ -241,16 +241,22 @@ border: 1px solid #006699;
 		       <?}
 		       ?>
 		</optgroup>		
-		<optgroup label="Liabilities Account Head">	
-		  <?php	  	
-			foreach($headlist5 as $i=>$v)
+		<optgroup label="Liabilities Account Head">
+		  <?php
+			foreach($NLiabilities as $i=>$v)
 			{
 			?>
 			<option value="<?=$v->sub_id?>"<?php if($dr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
 		  <?}?>
-		</optgroup>	
-		<optgroup label="Equity Account Head">			
-			<?php	
+		  <?php
+			foreach($CLiabilities as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>"<?php if($dr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		  <?}?>
+		</optgroup>
+		<optgroup label="Equity Account Head">
+			<?php
 			foreach($headlist6 as $i=>$v)
 			{
 			?>
@@ -343,7 +349,7 @@ border: 1px solid #006699;
 			foreach($supplier_list as $i=>$v)
 			{
 			?>
-			<option value="<?=$v->supplier_code?>"<?php if($cr_account==$v->supplier_code) echo "selected";?> ><? echo $v->name; ?></option>
+			<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; ?></option>
 		       <?}?>
 		</optgroup>	
 		<optgroup label="Assets Account Head">			
@@ -361,22 +367,28 @@ border: 1px solid #006699;
 		       <?}
 		       ?>
 		</optgroup>		
-		<optgroup label="Liabilities Account Head">	
-		  <?php	  	
-			foreach($headlist5 as $i=>$v)
+		<optgroup label="Liabilities Account Head">
+		  <?php
+			foreach($NLiabilities as $i=>$v)
 			{
 			?>
 			<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
 		  <?}?>
-		</optgroup>	
-		<optgroup label="Equity Account Head">			
-			<?php	
+		  <?php
+			foreach($CLiabilities as $i=>$v)
+			{
+			?>
+			<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
+		  <?}?>
+		</optgroup>
+		<optgroup label="Equity Account Head">
+			<?php
 			foreach($headlist6 as $i=>$v)
 			{
 			?>
 			<option value="<?=$v->sub_id?>"<?php if($cr_account==$v->sub_id) echo "selected";?> ><? echo $v->sub_head_name; if($v->head_details!=""){ echo ", ".$v->head_details;}?></option>
 		       <?}
-			
+
 			foreach($headlist7 as $i=>$v)
 			{
 			?>
