@@ -178,6 +178,11 @@ if($att_mobile1!=""){
         </tr>
     </table>
 <br><br>
+<?php
+$hasVAT = false;
+foreach($item_list as $v) { if($v->vat_amount > 0) { $hasVAT = true; break; } }
+$colSpan = $hasVAT ? 9 : 8;
+?>
 <table width="98%" bgcolor="#FFFFFF" align="center" cellpadding="0"cellspacing="0" border="1">
   <tr>
     <td width="2%" align="left">SL.</td>
@@ -191,7 +196,7 @@ if($att_mobile1!=""){
       <div align="left"></div></td>
     <td width="7%" align="left"><div align="center">Rate</div></td>
     <td width="5%" align="left"><div align="center">Discount/Pcs % </div></td>
-    <td width="5%" align="left"><div align="center">VAT </div></td>
+    <?php if($hasVAT){ ?><td width="5%" align="left"><div align="center">VAT </div></td><?php } ?>
     <td width="13%" align="left"><div align="right">Total Price </div></td>
   </tr>
   <?
@@ -210,9 +215,9 @@ if($att_mobile1!=""){
 	$total_pd+=($unitDiscountAmount*$val->qty);
 	
 	$usql = "UPDATE ".SALES_DETAILS_TBL." SET total= '$totalAmount' WHERE sal_detail_id=$val->sal_detail_id AND voucher_no='$voucher_no'";
-	//mysql_query($usql);
 	$total_order_qty+=$val->qty;
-	$total_free_qty+=$val->free_qty;		
+	$total_free_qty+=$val->free_qty;
+	if($val->qty > 0 || $val->free_qty > 0){
 	?>
   <tr>
     <td align="left"><?=$i?></td>
@@ -233,75 +238,68 @@ if($att_mobile1!=""){
     <td align="left"><div align="center">
       <? echo number_format($val->discount_per_qty,2)." % ";?> 
     </div></td>
-       <td><div align="center">
+       <?php if($hasVAT){ ?><td><div align="center">
            <? echo number_format($val->vat_amount,2).'('.number_format($val->vat,2) . '%)';?>
-       </div></td>
+       </div></td><?php } ?>
     <td align="right"><div align="right">
-      <? 
+      <?
 	  //number_format($val->total,2).' '.$val->curr_symble;
 	  echo number_format($totalAmount,2).' '.$val->curr_symble;
 	  ?>
     </div></td>
   </tr>
-  <?$i++;}?>
-  
+  <?$i++; } }?>
+
   <tr>
        <td colspan="5" align="left"><div align="right">Grand Total</div></td>
 	   <td align="center"><? echo number_format($total_order_qty,0).' '.$val->m_unit;?></td>
 	   <td align="center"><? echo number_format($total_free_qty,0).' '.$val->m_unit;?></td>
-	   <td colspan="2">&nbsp;</td>
+	   <td colspan="<?=$hasVAT?2:1?>">&nbsp;</td>
 	   <td width="13%" align="right"><div align="right"><? echo number_format($total_order_amount,2).' '.$curr_symble;?></div></td>
-  </tr>  
+  </tr>
+  <?php
+  $GDiscountAmount=(($total_order_amount/100)*$general_discount_percent);
+  $deliveryAmountAfterDiscount = ($total_order_amount - $GDiscountAmount);
+  $EDiscountAmount = (($deliveryAmountAfterDiscount/100)*$exclusive_discount_percent);
+  $order_value = ($total_order_amount-($EDiscountAmount+$GDiscountAmount));
+  $additional_discount = ($order_value > 0) ? (($additional_discount/$order_value)*$order_value) : $additional_discount;
+  $totalDiscountAmount = ($GDiscountAmount+$EDiscountAmount+$additional_discount);
+  $net_payble = (($totalOrderPrice+$additional_vat_amount+$additional_cost)-$totalDiscountAmount);
+  $discount   = ($GDiscountAmount+$EDiscountAmount+$total_pd+$additional_discount);
+  ?>
+<?php if($GDiscountAmount > 0){ ?>
   <tr>
-       <td colspan="9" align="left"><div align="right">General Discount (<?=number_format($general_discount_percent,2)?> %)</div></td>
-       <td align="right">
-	   <? 
-	    $GDiscountAmount=(($total_order_amount/100)*$general_discount_percent);
-	    echo number_format($GDiscountAmount,2).' '.$curr_symble;
-	   ?>
-	   </td>
-     </tr>
-     <tr>
-       <td colspan="9" align="left"><div align="right">Exclusive Discount (<?=number_format($exclusive_discount_percent,2)?> %)</div></td>
-       <td align="right">
-	   <?
-	   $deliveryAmountAfterDiscount = ($total_order_amount - $GDiscountAmount);
-	   $EDiscountAmount = (($deliveryAmountAfterDiscount/100)*$exclusive_discount_percent);
-	   echo number_format($EDiscountAmount,2).' '.$curr_symble;
-	   ?>
-	   </td>
-     </tr>
-     <tr>
-       <td colspan="9" align="left">
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">General Discount (<?=number_format($general_discount_percent,2)?> %)</div></td>
+       <td align="right"><?=number_format($GDiscountAmount,2).' '.$curr_symble?></td>
+  </tr>
+<?php } ?>
+<?php if($EDiscountAmount > 0){ ?>
+  <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Exclusive Discount (<?=number_format($exclusive_discount_percent,2)?> %)</div></td>
+       <td align="right"><?=number_format($EDiscountAmount,2).' '.$curr_symble?></td>
+  </tr>
+<?php } ?>
+<?php if($additional_discount > 0){ ?>
+  <tr>
+       <td colspan="<?=$colSpan?>" align="left">
        <?php if($additional_discount_percent >0){?>
        <div align="right">Additional Discount (<?php echo number_format($additional_discount_percent,2); ?> %) </div>
        <?php }else{?>
        <div align="right">Additional Discount </div>
        <?php }?>
        </td>
-       <td align="right">
-	   <?
-	   $order_value = ($total_order_amount-($EDiscountAmount+$GDiscountAmount));
-	   $additional_discount = (($additional_discount/$order_value)*$order_value);
-	   echo number_format($additional_discount,2).' '.$curr_symble;
-	   ?>
-	   </td>
-     </tr>
-<?php if($additional_cost >0){?>
-     <tr>
-       <td colspan="9" align="left">
-       <div align="right">Additional Cost </div>
-       </td>
-       <td align="right">
-	   <?php echo number_format($additional_cost,2).' '.$curr_symble;?>
-	   </td>
-     </tr>
+       <td align="right"><?=number_format($additional_discount,2).' '.$curr_symble?></td>
+  </tr>
 <?php } ?>
-
-
-
-   <tr>
-	<td colspan="9" align="left">       
+<?php if($additional_cost > 0){ ?>
+  <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Additional Cost </div></td>
+       <td align="right"><?php echo number_format($additional_cost,2).' '.$curr_symble;?></td>
+  </tr>
+<?php } ?>
+<?php if(isset($additional_vat_amount) && $additional_vat_amount > 0){ ?>
+  <tr>
+	<td colspan="<?=$colSpan?>" align="left">
 <?php if(isset($vat_type) && $vat_type == "percent"){?>
 	<div align="right">VAT (<?php echo number_format($additional_vat_percent,2); ?> %) </div>
 <?php }else{?>
@@ -310,25 +308,15 @@ if($att_mobile1!=""){
 	</td>
 	<td align="right"><?=number_format($additional_vat_amount,2).' '.$curr_symble;?></td>
   </tr>
-
-
-  <?php
-
-  $totalDiscountAmount = ($GDiscountAmount+$EDiscountAmount+$additional_discount);
-
-  $net_payble = (($totalOrderPrice+$additional_vat_amount+$additional_cost)-$totalDiscountAmount);
-
-  $discount   = ($GDiscountAmount+$EDiscountAmount+$total_pd+$additional_discount);
-  $usql = "UPDATE ".SALES_MASTER_TBL." SET total_value= '$totalOrderPrice',general_discount_amount='$GDiscountAmount',exclusive_discount_amount='$EDiscountAmount', product_discount = '$total_pd',discount='$discount',net_payble='$net_payble' WHERE voucher_no='$voucher_no'";
-  //mysql_query($usql);
-  ?>	 
- 
+<?php } ?>
+<?php if(($discount-$total_pd) > 0){ ?>
   <tr>
-    <td colspan="9"><div align="right">Total Discount Amount </div></td>
+    <td colspan="<?=$colSpan?>"><div align="right">Total Discount Amount </div></td>
     <td align="left"><div align="right"><? echo number_format(($discount-$total_pd),2).' '.$curr_symble;?></div></td>
   </tr>
+<?php } ?>
   <tr>
-    <td colspan="9"><div align="right">Net Order Amount </div></td>
+    <td colspan="<?=$colSpan?>"><div align="right">Net Order Amount </div></td>
     <td align="left"><div align="right"><?php echo number_format($net_payble,2).' '.$curr_symble;?></div></td>
   </tr>
 </table>
