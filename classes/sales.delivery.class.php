@@ -987,7 +987,7 @@ class SalesDelivery
         $info['table'] = SALES_DETAILS_TBL . ' sd,' . SALES_DELIVERY_CHALLAN_TBL . ' sdi,' . CURRENCY_TBL . ' c,' . PRODUCT_TBL . ' p,' . BRAND_TBL . ' b';
         $info['fields'] = array('sd.sal_detail_id', 'sd.voucher_no', 'sd.project_id', 'sd.catagory', 'sd.serial', 'sd.warranty', 'b.brand_name', 'sd.product', 'sd.details', 'p.product_name', 'p.product_desc', 'sd.m_unit', 'sd.unit_price', 'c.curr_symble', 'sd.discount_per_qty', 'sd.discount_amount', 'sd.qty', 'SUM(sdi.delivery_qty) as delivery_qty', 'sdi.total_amount as delivery_item_amount', 'sd.delivery_qty as totaldelivery_qty', 'sd.total_bag', 'sd.total', 'sd.created_time');
 
-        $sql = "sd.product = sdi.product AND sd.product = p.product_id AND p.brand_code = b.brand_id AND sd.currency = c.currency_id AND sd.voucher_no = '$id' 
+        $sql = "sd.sal_detail_id = sdi.sal_detail_id AND sd.product = sdi.product AND sd.product = p.product_id AND p.brand_code = b.brand_id AND sd.currency = c.currency_id AND sd.voucher_no = '$id'
 		AND sdi.delivery_master_id='$delivery_master_id'";
 
         $info['where'] = $sql;
