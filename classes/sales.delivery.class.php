@@ -123,12 +123,36 @@ class SalesDelivery
         if (getRequest('submit')) {
             $voucher_no = getRequest("voucher_no");
             $project_id = getFromSession('project_id');
+
+            $totalfields = getRequest('ttlfields');
+            $overDeliveryMsg = '';
+            for ($k = 1; $k <= $totalfields; $k++) {
+                $sd_id = getRequest("details_id$k");
+                $del_qty = floatval(getRequest("delivery_qty$k"));
+                if ($sd_id && $del_qty > 0) {
+                    $chkSql = "SELECT sd.qty, sd.delivery_qty, p.product_name FROM " . SALES_DETAILS_TBL . " sd LEFT JOIN " . PRODUCT_TBL . " p ON sd.product=p.product_id WHERE sd.sal_detail_id='" . mysql_real_escape_string($sd_id) . "' AND sd.project_id='$project_id'";
+                    $chkRes = mysql_query($chkSql);
+                    if (mysql_num_rows($chkRes) > 0) {
+                        $chkRow = mysql_fetch_object($chkRes);
+                        $remaining = ($chkRow->qty - $chkRow->delivery_qty);
+                        if ($del_qty > $remaining) {
+                            $overDeliveryMsg = $chkRow->product_name . ': delivery qty ' . $del_qty . ' exceeds remaining ' . $remaining;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($overDeliveryMsg) {
+                header("location:index.php?app=sales.delivery&cmd=delivery&voucher_no=" . $voucher_no . "&msg=" . urlencode($overDeliveryMsg));
+            } else {
             $DcSql = "SELECT * FROM " . SALES_DELIVERY_MASTER_TBL . " WHERE voucher_no='$voucher_no' AND project_id='$project_id'";
             $dcres = mysql_query($DcSql);
             if (mysql_num_rows($dcres) == 0) {
                 $this->saveDeliveryChallan();
             } else {
                 header("location:index.php?app=sales.delivery&cmd=delivery&voucher_no=" . getRequest("voucher_no") . "&msg=Double delivery cannot be processed");
+            }
             }
         } else {
             $voucher_no = getRequest('voucher_no');

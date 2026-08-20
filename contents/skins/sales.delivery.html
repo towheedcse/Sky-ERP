@@ -331,11 +331,11 @@ if(!empty($contact_person)){
       <tr style="<?=$hideTr==true? 'display:none': ''?>">
         <td align="left"><?=$i?></td>
         <td>
-		<?=$val->product_name?>
+		<?=$val->product_code?>::<?=$val->product_name?>
 		<input type="hidden" name="details_id<?=$i?>" id="details_id<?=$i?>" value="<?=$val->sal_detail_id?>">
 		<input type="hidden" name="catagory<?=$i?>" id="catagory<?=$i?>" value="<?=$val->catagory?>">
 		<input type="hidden" name="brand_id<?=$i?>" id="brand_id<?=$i?>" value="<?=$val->brand_id?>">
-		<input type="hidden" name="product<?=$i?>" id="product<?=$i?>" value="<?=$val->product?>">		
+		<input type="hidden" name="product<?=$i?>" id="product<?=$i?>" value="<?=$val->product?>">
 		<input type="hidden" name="m_unit<?=$i?>" id="m_unit<?=$i?>" value="<?=$val->m_unit?>">		</td>
         <!-- <td><?=$val->brand_name?></td> -->
         <td>
