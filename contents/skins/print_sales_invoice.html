@@ -231,7 +231,7 @@ newwin.document.close()
 	$delivery_qty = $crow->delivery_qty;	
 	$delivery_item_amount = $crow->delivery_item_amount;
 
-	if(($order_qty>=0 && $delivery_qty>=0) || ($val->qty==0 && $val->free_qty>0)){
+	if(($order_qty>0 && $delivery_qty>0) || ($val->qty==0 && $val->free_qty>0)){
 	$total_delivery_qty+=$delivery_qty;		
 	$total_order_qty+=$order_qty;	
 	$total_order_amount+=$orderAmount;	
@@ -311,25 +311,31 @@ newwin.document.close()
     $colSpan = 11;
  //}
 ?>
-     <tr>
-       <td colspan="<?=$colSpan?>" align="left"><div align="right">DD Commission (<?=$general_discount_percent?> %)</div></td>
-       <td align="right">
-	   <? 
-	    $GDiscountAmount=(($totalDeliveryAmountBefoureDiscount/100)*$general_discount_percent);
-	    echo number_format($GDiscountAmount,2).' '.$curr_symble;
-	   ?>	   </td>
-     </tr>
-     <tr>
-       <td colspan="<?=$colSpan?>" align="left"><div align="right">Exclusive Discount (<?=$exclusive_discount_percent?> %)</div></td>
-       <td align="right">
-	   <?
+     <?php
+	   $GDiscountAmount=(($totalDeliveryAmountBefoureDiscount/100)*$general_discount_percent);
 	   $deliveryAmountAfterDiscount = ($totalDeliveryAmountBefoureDiscount - $GDiscountAmount);
 	   $EDiscountAmount = (($deliveryAmountAfterDiscount/100)*$exclusive_discount_percent);
-	   echo number_format($EDiscountAmount,2).' '.$curr_symble;
-       $orderValueAfterDiscount = ($total_order_amount-($GDiscountAmount+$EDiscountAmount));
-	   ?>	  
-       </td>
+	   $orderValueAfterDiscount = ($total_order_amount-($GDiscountAmount+$EDiscountAmount));
+	   if($delivery_amount>0){
+	   $additional_discount = ($orderValueAfterDiscount > 0) ? (($additional_discount/$orderValueAfterDiscount)*$orderValueAfterDiscount) : $additional_discount;
+	   }else{
+	   $order_amount=($order_amount-($GDiscountAmount+$EDiscountAmount+$product_discount));
+	   $additional_discount = ($order_amount > 0) ? (($additional_discount/$order_amount)*$order_amount) : $additional_discount;
+	   }
+     ?>
+<?php if($GDiscountAmount > 0){ ?>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">DD Commission (<?=$general_discount_percent?> %)</div></td>
+       <td align="right"><?php echo number_format($GDiscountAmount,2).' '.$curr_symble;?></td>
      </tr>
+<?php } ?>
+<?php if($EDiscountAmount > 0){ ?>
+     <tr>
+       <td colspan="<?=$colSpan?>" align="left"><div align="right">Exclusive Discount (<?=$exclusive_discount_percent?> %)</div></td>
+       <td align="right"><?php echo number_format($EDiscountAmount,2).' '.$curr_symble;?></td>
+     </tr>
+<?php } ?>
+<?php if($additional_discount > 0){ ?>
      <tr>
        <td colspan="<?=$colSpan?>" align="left">
        <?php if($additional_discount_percent >0){?>
@@ -338,31 +344,20 @@ newwin.document.close()
        <div align="right">Additional Discount </div>
        <?php }?>
        </td>
-       <td align="right">
-	   <?
-	   if($delivery_amount>0){
-	   $additional_discount = (($additional_discount/$orderValueAfterDiscount)*$orderValueAfterDiscount);
-	   echo number_format($additional_discount,2).' '.$curr_symble;
-	   }else{
-	   $order_amount=($order_amount-($GDiscountAmount+$EDiscountAmount+$product_discount));
-	   $additional_discount = (($additional_discount/$order_amount)*$order_amount);
-	   echo number_format($additional_discount,2).' '.$curr_symble;
-	   }
-	   ?>	   </td>
+       <td align="right"><?php echo number_format($additional_discount,2).' '.$curr_symble;?></td>
      </tr>
+<?php } ?>
 
 <?php if(isset($additional_cost) && $additional_cost > 0){ ?>
      <tr>
-<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
        <td colspan="<?=$colSpan?>" align="left"><div align="right">Additional Cost</div></td>
-<?php //} ?>
        <td align="right"><?=number_format($additional_cost,2);?></td>
      </tr>
 <?php } ?>
 
-<?php //if(isset($direct_invoice) && $direct_invoice){ ?>
+<?php if(isset($additional_vat_amount) && $additional_vat_amount > 0){ ?>
      <tr>
-       <td colspan="<?=$colSpan?>" align="left">       
+       <td colspan="<?=$colSpan?>" align="left">
        <?php if(isset($vat_type) && $vat_type == "percent"){?>
        <div align="right">VAT (<?php echo $additional_vat_percent; ?> %) </div>
        <?php }else{?>
@@ -371,7 +366,7 @@ newwin.document.close()
        </td>
        <td align="right"><?=number_format($additional_vat_amount,2);?></td>
      </tr>
-<?php //} ?>
+<?php } ?>
 	 <tr>
        <td colspan="<?=$colSpan?>" align="left"><div align="right">Net Delivery Amount </div></td>
        <td align="right"><?php
