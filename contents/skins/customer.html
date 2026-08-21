@@ -5,6 +5,8 @@ $project_id     = getFromSession('project_id');
 if($message==""){ $message = getRequest('msg');}
 if($id==""){ $id = getRequest('id');}
 ?>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/messages.js"></script>
+<script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/common.js"></script>
 <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customer.js"></script>
 <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/customersrc.js"></script>
 <script language="JavaScript" src="<?=REL_CONTENT_DIR?>/js/common/date.js"></script>
@@ -21,13 +23,6 @@ var J = jQuery.noConflict();
 <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/prototype.js"></script>
 <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/effects.js"></script>
 <script type="text/javascript" src="<?=REL_CONTENT_DIR?>/js/jquery/controls.js"></script>	
-<script language="javascript1.3">
-J("[class^=validate]").validationEngine({
-inlineValidation: false,
-success :  false,
-failure : function() { callFailFunction()  }
-})
-</script>
 <script type="text/javascript">
 function show_confirm(val)
 {
@@ -82,7 +77,7 @@ td#save-option{
             <tr> 
               <td colspan="5"><div><?php if($message) echo $message; ?></div></td>
             </tr>                      
-            <tr> 
+            <tr>
               <td colspan="5">
 			  <form name="style" method="post" action="" enctype="multipart/form-data">
 			  <div id="entry" style="display:block">			  
@@ -95,7 +90,7 @@ td#save-option{
 				    <td>&nbsp;</td>
 				    <td>Customer Type</td>
 				    <td colspan="3">
-				      <select name="customer_type" id="customer_type" class="validate[required]" style="width:240px">
+				      <select name="customer_type" id="customer_type" style="width:240px">
 				        <option value="" <? if($customer_type==""){ echo "selected";}?>>Select Type</option>
 				        <option value="Cash" <? if($customer_type=="Cash"){ echo "selected";}?>>Cash</option>
 				        <option value="Credit" <? if($customer_type=="Credit"){ echo "selected";}?>>Credit</option>				      
@@ -113,7 +108,7 @@ td#save-option{
 				    <td>&nbsp;</td>
 				    <td>Sales Type </td>
 				    <td colspan="3">
-				      <select name="sales_type" id="sales_type" class="validate[required]" style="width:240px">
+				      <select name="sales_type" id="sales_type" style="width:240px">
 				        <option value="Institution General Sales" <? if($sales_type=="Institution General Sales"){ echo "selected";}?>>Institution General Sales</option>
 				        <option value="Institution Corporate Sales" <? if($sales_type=="Institution Corporate Sales"){ echo "selected";}?>>Institution Corporate Sales</option>
 				        <option value="Developer Sales" <? if($sales_type=="Developer Sales"){ echo "selected";}?>>Developer Sales</option>
@@ -129,7 +124,7 @@ td#save-option{
 				    <td>&nbsp;</td>
 				    <td>Division Name</td>
 				    <td colspan="3">
-				      <select name="division" id="division" style="width:240px" class="validate[required]" onChange="javascript:getDistrictList(this.value)">
+				      <select name="division" id="division" style="width:240px" onChange="javascript:getDistrictList(this.value)">
 				        <option value="">Select Sales Division</option>
 				        <?php
                         $sql = "SELECT * FROM ".DIVISION_TBL;
@@ -194,7 +189,7 @@ td#save-option{
 				  <tr>
 				        <td width="3%">&nbsp;</td>
 				        <td width="22%">Code </td>
-				        <td colspan="3"><input type="text" name="code" id="code" oninput="checkHeadCode(this.value)" value="<?=$code?>" style="width:290px" class="validate[required]">
+				        <td colspan="3"><input type="text" name="code" id="code" oninput="checkHeadCode(this.value)" value="<?=$code?>" style="width:290px">
 <p id="head_code_error" class="textDanger">Code Already Exists</p></td>
 					
 				        <td width="8%">&nbsp;</td>
@@ -202,7 +197,7 @@ td#save-option{
 				  <tr>
 				   <td width="3%">&nbsp;</td>
 				   <td width="22%">Name </td>
-				   <td colspan="3"><input type="text" name="sub_head_name" id="sub_head_name" value="<?=$sub_head_name?>" style="width:290px" class="validate[required]" tabindex="3"></td>
+				   <td colspan="3"><input type="text" name="sub_head_name" id="sub_head_name" value="<?=$sub_head_name?>" style="width:290px" tabindex="3"></td>
 				   <td width="8%">&nbsp;</td>
 				   </tr>
                   <tr>

@@ -390,3 +390,59 @@ iTemp = iTemp + 1;
 return strTemp;
 
 } //End Function
+
+function doFormSubmit()
+{
+   requiredFields.length = 0;
+   var errCnt = 0;
+   var frm = document.style;
+
+   setupForm(frm);
+   errCnt = validateForm(frm);
+
+   if (errCnt)
+   {
+      alert(MISSING_REQUIRED_FIELDS);
+      return false;
+   }
+   else
+   {
+      if(validateFields(frm))
+      {
+         return true;
+      }
+      else
+         return false;
+   }
+}
+
+function setupForm(frm)
+{
+   with (frm)
+   {
+      setRequiredField(sub_head_name, 'textbox', 'sub_head_name');
+      setRequiredField(code, 'textbox', 'code');
+   }
+}
+
+function validateFields(frm)
+{
+   with(frm)
+   {
+   }
+   return true;
+}
+
+function frmSubmit()
+{
+  if(!doFormSubmit())
+  {
+       document.getElementById('footer_status_msg').style.display = "block";
+       document.getElementById('footer_status_msg').innerHTML = "Please enter value for all red marked required field(s).";
+       return false;
+  } else {
+      document.getElementById('footer_status_msg').style.display = "none";
+      document.getElementById('footer_status_msg').innerHTML ="";
+      return true;
+  }
+}
